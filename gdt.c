@@ -48,12 +48,12 @@ void GDT_Initialize()
         asm (
                 "jmp $0x8, $flush\n\t"
                 "flush:\n\t"
-                "mov %ax, 0x10\n\t"
-                "mov %ds, %ax\n\t"
-                "mov %es, %ax\n\t"
-                "mov %fs, %ax\n\t"
-                "mov %gs, %ax\n\t"
-                "mov %ss, %ax\n\t"
+                "mov $0x10, %ax\n\t"
+                "mov %ax, %ds\n\t"
+                "mov %ax, %es\n\t"
+                "mov %ax, %fs\n\t"
+                "mov %ax, %gs\n\t"
+                "mov %ax, %ss\n\t"
                 );
         return; //Don't enable interrupts yet
 }

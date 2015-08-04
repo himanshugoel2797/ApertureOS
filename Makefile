@@ -1,6 +1,6 @@
 # Environment
 
-SOURCES=boot.o crt0.o gdt.o idt.o
+SOURCES=utils/native.o boot.o crt0.o gdt.o idt.o pic.o
 
 
 
@@ -27,7 +27,7 @@ SDA=sdb
 MKDIR=mkdir
 CP=cp
 CCADMIN=CCadmin
-GCC=clang -target i686-none-elf -ffreestanding -O2 -Wall -Wextra -DDEBUG
+GCC=clang -target i686-none-elf -ffreestanding -O0 -Wall -Wextra -DDEBUG
 ASM=$(PLATFORM)-elf-gcc -DDEBUG -ffreestanding -march=i686
 
 CRTI_OBJ=crti.o
@@ -113,7 +113,7 @@ test:.test-pre
 
 .test-pre: build-tests
 # Add your pre 'test' code here...
-	qemu-system-i386 -cdrom "ISO/os.iso"
+	qemu-system-i386 -enable-kvm -cdrom "ISO/os.iso"
 .test-post:
 # Add your post 'test' code here...
 

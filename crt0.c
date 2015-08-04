@@ -12,11 +12,12 @@
 
 #include "gdt.h"
 #include "idt.h"
+#include "pic.h"
 
 #include "test.h"
 #include "Graphics/font.h"
 
-void writeStr(uint32_t *term, char *str, int yOff, int xOff, int pitch)
+void writeStr(uint32_t *term, const char *str, int yOff, int xOff, int pitch)
 {
         for(int i = 0; str[i] != 0; i++)
         {
@@ -34,32 +35,39 @@ void writeStr(uint32_t *term, char *str, int yOff, int xOff, int pitch)
 void writeInt(uint32_t *term, uint32_t val, int base, int yOff, int xOff, int pitch)
 {
         char str[50];
+        char *opts = "0123456789ABCDEF";
         if(base == 16) {
-                char opts[] = "0123456789ABCDEF";
                 for(int i = 0; i < 8; i++)
                 {
                         str[7 - i] = opts[((val >> (i*4))&0x0F)];
                 }
+                str[8] = 0;
         }else if(base == 2)
         {
                 for(int i = 0; i < 32; i++)
                 {
-                        str[31 - i] = (val >> i) ? '1' : '0';
+                        str[31 - i] = opts[(val >> i) & 1];
                 }
+                str[32] = 0;
         }else{
                 return;
         }
         writeStr(term, str, yOff, xOff, pitch);
 }
 
+int temp = 0;
+uint32_t *term_;
+
 //extern "C"{
 void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
-          GDT_Initialize();
-
+        GDT_Initialize();
+        IDT_Initialize();
+        PIC_Initialize();
         uint32_t *term = 0xA0000;
 
         term = mbd->vbe_mode_info->physbase;
+        term_ = term;
 
         /*for(int b = 0; b < mbd->vbe_mode_info->pitch * mbd->vbe_mode_info->Yres; b +=4)
            {
@@ -96,6 +104,8 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         writeStr(term, "Total Memory:", 50, 80, pitch);
         writeInt(term, mbd->vbe_control_info->TotalMemory, 16, 50, 100, pitch);
 
+        asm volatile ("int $0x3");
+        asm volatile ("int $0x4");
 
         writeStr(term, "Off screen memory:", 400, 80, pitch);
         writeInt(term, mbd->vbe_mode_info->offScrSize, 16, 400, 100, pitch);
@@ -108,9 +118,11 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
         writeStr(term, "WinB Attributes:", 400, 360, pitch);
         writeInt(term, mbd->vbe_mode_info->winB, 2, 400, 400, pitch);
+
+        temp = pitch;
+
 }
 
-int temp = 0;
 
 
 //extern "C"
@@ -121,5 +133,5 @@ void InterruptsTest(int32_t num)
 
 //extern "C" /* Use C linkage for kernel_main. */
 void kernel_main() {
-
+    writeInt(term_, &kernel_main, 16, 600,600, temp);
 }

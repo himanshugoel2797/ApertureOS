@@ -1,9 +1,8 @@
-#include <stddef.h>
-#include <stdint.h>
-
 #include "idt.h"
 
-void IDT_SetEntry(uint8_t index, uint32_t base, uint16_t selector, uint8_t flags);
+
+void IDT_DefaultHandler();
+void IDT_FillSWInterruptHandler(char *idt_handler, uint8_t intNum, uint8_t pushToStack);
 
 typedef struct {
         uint16_t base_lo; // offset bits 0..15
@@ -11,7 +10,7 @@ typedef struct {
         uint8_t zero; // unused, set to 0
         uint8_t type_attr; // type and attributes, see below
         uint16_t base_hi; // offset bits 16..31
-}IDTEntry;
+}__attribute__((packed)) IDTEntry;
 
 //Describes the pointer to the IDT entry
 typedef struct {
@@ -21,6 +20,7 @@ typedef struct {
 
 IDTEntry idt_entries[IDT_ENTRY_COUNT];
 IDTPtr idt_table;
+char idt_handlers[IDT_ENTRY_COUNT][IDT_ENTRY_HANDLER_SIZE];
 
 void IDT_Initialize()
 {
@@ -29,21 +29,99 @@ void IDT_Initialize()
 
         //ensure interrupts are disabled
         asm ("cli");
+        asm ("lidt (%0)" :: "r" (&idt_table));         //Load the IDT
+
+        for(int i = 0; i < IDT_ENTRY_COUNT; i++)
+        {
+                IDT_SetEntry(0, 0, 0, 0);
+        }
 
         //Fill the IDT
-
-
-        asm ("lidt (%0)" :: "r" (&idt_table)); //Load the IDT
-        asm ("sti"); //Enable interrupts
+        int pushesToStack = 1;
+        for(int i = 0; i < 32; i++)
+        {
+                //Setup the hardware interrupts
+                if(i == 8 || (i >= 10 && i <= 14)) pushesToStack = 0;
+                IDT_FillSWInterruptHandler(idt_handlers[i], i, pushesToStack);  //If pushesToStack is non-zero, the value will be pushed to stack
+                IDT_SetEntry(i, idt_handlers[i], 0x08, 0x8E);
+                pushesToStack = 1;
+        }
 
         return;
 }
 
 void IDT_SetEntry(uint8_t index, uint32_t base, uint16_t selector, uint8_t flags)
 {
-    idt_entries[index].base_lo = base & 0x0000FFFF;
-    idt_entries[index].base_hi = (base >> 16);
-    idt_entries[index].type_attr = flags;
-    idt_entries[index].zero = 0;
-    idt_entries[index].selector = selector;
+        idt_entries[index].base_lo = base & 0x0000FFFF;
+        idt_entries[index].base_hi = (base >> 16) & 0x0000FFFF;
+        idt_entries[index].type_attr = flags;
+        idt_entries[index].zero = 0;
+        idt_entries[index].selector = selector;
+}
+
+void IDT_FillSWInterruptHandler(char *idt_handler, uint8_t intNum, uint8_t pushToStack)
+{
+        int index = 0;
+
+        idt_handler[index++] = 0xFA; //CLI
+        //Push dummy error code if the interrupt doesn't do so
+        if(pushToStack) {
+                idt_handler[index++] = 0x68; //Push
+                idt_handler[index++] = pushToStack;
+                idt_handler[index++] = 0;
+                idt_handler[index++] = 0;
+                idt_handler[index++] = 0;
+        }
+
+        idt_handler[index++] = 0x68; //Push
+        idt_handler[index++] = intNum; //Push the interrupt number to stack
+        idt_handler[index++] = 0;
+        idt_handler[index++] = 0;
+        idt_handler[index++] = 0;
+
+        //push jump address and ret
+        idt_handler[index++] = 0x68;
+        idt_handler[index++] = (int)IDT_DefaultHandler & 0x000000FF;  //Calculate the offset
+        idt_handler[index++] = ((int)IDT_DefaultHandler >> 8)& 0x000000FF;  //Calculate the offset
+        idt_handler[index++] = ((int)IDT_DefaultHandler >> 16)& 0x000000FF;  //Calculate the offset
+        idt_handler[index++] = ((int)IDT_DefaultHandler >> 24)& 0x000000FF;  //Calculate the offset
+
+        idt_handler[index++] = 0xC3;
+}
+
+__attribute__((naked, noreturn))
+void IDT_DefaultHandler()
+{
+        asm (
+                "pusha\n\t"
+                "mov %ds, %ax\n\t"
+                "push %eax\n\t"
+                "mov $0x10, %ax\n\t"
+                "mov %ax, %ds\n\t"
+                "mov %ax, %es\n\t"
+                "mov %ax, %fs\n\t"
+                "mov %ax, %gs\n\t"
+                );
+
+        asm (
+                "call IDT_MainHandler"
+                );
+
+        asm (
+                "pop %eax\n\t"
+                "mov %ax, %ds\n\t"
+                "mov %ax, %es\n\t"
+                "mov %ax, %fs\n\t"
+                "mov %ax, %gs\n\t"
+                "popa\n\t"
+                "pop %eax\n\t"
+                "pop %ebx\n\t"
+                //      "sti\n\t"
+                "iret\n\t"
+                );
+}
+
+void IDT_MainHandler(Registers regs)
+{
+
 }
