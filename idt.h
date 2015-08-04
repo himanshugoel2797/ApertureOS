@@ -17,9 +17,11 @@ typedef struct
 } Registers;
 
 extern char idt_handlers[IDT_ENTRY_COUNT][IDT_ENTRY_HANDLER_SIZE];
+extern void(*idt_handler_calls[IDT_ENTRY_COUNT] ) (Registers*);
 
 void IDT_Initialize();
 void IDT_SetEntry(uint8_t index, uint32_t base, uint16_t selector, uint8_t flags);
 void IDT_MainHandler(Registers regs);
+void IDT_RegisterHandler(uint8_t intNum, void (*handler)(Registers*));
 
 #endif /* end of include guard: _IDT_H_ */

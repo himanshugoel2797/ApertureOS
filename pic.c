@@ -14,6 +14,8 @@
 #define ICW4_BUF_MASTER 0x0C    /* Buffered mode/master */
 #define ICW4_SFNM 0x10    /* Special fully nested (not) */
 
+#define PIC_READ_IRR 0x0a    /* OCW3 irq ready next CMD read */
+#define PIC_READ_ISR 0x0b    /* OCW3 irq service next CMD read */
 #define PIC_RESET 0x20  /*Reset signal*/
 
 void PIC_FillHWInterruptHandler(char *idt_handler, uint8_t intNum, uint8_t irqNum);
@@ -28,7 +30,6 @@ void PIC_Initialize()
                 PIC_FillHWInterruptHandler(idt_handlers[i], i, i - 32);
                 IDT_SetEntry(i, idt_handlers[i], 0x08, 0x8E);
         }
-        asm("sti");
 }
 
 void PIC_SetOffset(int offset1, int offset2)
@@ -48,6 +49,15 @@ void PIC_SetOffset(int offset1, int offset2)
 
         outb(PIC1_DATA, a1); // restore saved masks.
         outb(PIC2_DATA, a2);
+}
+
+uint16_t PIC_GetReg(int ocw3)
+{
+        /* OCW3 to PIC CMD to get the register values.  PIC2 is chained, and
+        * represents IRQs 8-15.  PIC1 is IRQs 0-7, with 2 being the chain */
+        outb(PIC1_COMMAND, ocw3);
+        outb(PIC2_COMMAND, ocw3);
+        return (inb(PIC2_COMMAND) << 8) | inb(PIC1_COMMAND);
 }
 
 void PIC_FillHWInterruptHandler(char *idt_handler, uint8_t intNum, uint8_t irqNum)
@@ -95,7 +105,6 @@ void PIC_DefaultHandler()
         asm (
                 "call PIC_MainHandler"
                 );
-
         asm (
                 "pop %ebx\n\t"
                 "mov %bx, %ds\n\t"
@@ -104,7 +113,7 @@ void PIC_DefaultHandler()
                 "mov %bx, %gs\n\t"
                 "popa\n\t"
                 "pop %eax\n\t"
-                "pop %ebx\n\t"
+                "add $4, %esp\n\t"
                 "sti\n\t"
                 "iret\n\t"
                 );
@@ -112,10 +121,14 @@ void PIC_DefaultHandler()
 
 void PIC_MainHandler(Registers regs)
 {
-        if(regs.int_no >= 40)
+        if( ((PIC_GetReg(PIC_READ_ISR) >> regs.int_no) & 1) == 1)
         {
-                outb(PIC2_COMMAND, PIC_RESET);
+                if(regs.int_no >= 40)
+                {
+                        outb(PIC2_COMMAND, PIC_RESET);
+                }
+                outb(PIC1_COMMAND, PIC_RESET);
+
+                if(idt_handler_calls[regs.int_no] != NULL) idt_handler_calls[regs.int_no](&regs);
         }
-        outb(PIC1_COMMAND, PIC_RESET);
-        IDT_MainHandler(regs);
 }

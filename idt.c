@@ -21,6 +21,7 @@ typedef struct {
 IDTEntry idt_entries[IDT_ENTRY_COUNT];
 IDTPtr idt_table;
 char idt_handlers[IDT_ENTRY_COUNT][IDT_ENTRY_HANDLER_SIZE];
+void(*idt_handler_calls[IDT_ENTRY_COUNT] ) (Registers*);
 
 void IDT_Initialize()
 {
@@ -34,6 +35,7 @@ void IDT_Initialize()
         for(int i = 0; i < IDT_ENTRY_COUNT; i++)
         {
                 IDT_SetEntry(0, 0, 0, 0);
+                idt_handler_calls[i] = NULL;
         }
 
         //Fill the IDT
@@ -116,12 +118,17 @@ void IDT_DefaultHandler()
                 "popa\n\t"
                 "pop %eax\n\t"
                 "pop %ebx\n\t"
-                //      "sti\n\t"
+                "sti\n\t"
                 "iret\n\t"
                 );
 }
 
 void IDT_MainHandler(Registers regs)
 {
+        if(idt_handler_calls[regs.int_no] != NULL) idt_handler_calls[regs.int_no](&regs);
+}
 
+void IDT_RegisterHandler(uint8_t intNum, void (*handler)(Registers*))
+{
+        idt_handler_calls[intNum] = handler;
 }

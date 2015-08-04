@@ -14,6 +14,10 @@
 #include "idt.h"
 #include "pic.h"
 
+#include "pit.h"
+
+#include "utils/native.h"
+
 #include "test.h"
 #include "Graphics/font.h"
 
@@ -55,8 +59,14 @@ void writeInt(uint32_t *term, uint32_t val, int base, int yOff, int xOff, int pi
         writeStr(term, str, yOff, xOff, pitch);
 }
 
-int temp = 0;
+int temp = 0, temp2 = 0;
 uint32_t *term_;
+
+void timerHandler(Registers *regs)
+{
+        temp2++;
+        writeInt(term_, temp2, 16, 400, 500, temp);
+}
 
 //extern "C"{
 void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
@@ -64,6 +74,8 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         GDT_Initialize();
         IDT_Initialize();
         PIC_Initialize();
+        IDT_RegisterHandler(32, timerHandler);
+
         uint32_t *term = 0xA0000;
 
         term = mbd->vbe_mode_info->physbase;
@@ -104,9 +116,6 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         writeStr(term, "Total Memory:", 50, 80, pitch);
         writeInt(term, mbd->vbe_control_info->TotalMemory, 16, 50, 100, pitch);
 
-        asm volatile ("int $0x3");
-        asm volatile ("int $0x4");
-
         writeStr(term, "Off screen memory:", 400, 80, pitch);
         writeInt(term, mbd->vbe_mode_info->offScrSize, 16, 400, 100, pitch);
 
@@ -121,6 +130,13 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
         temp = pitch;
 
+        asm ("sti");
+        PIT_SetFrequency(PIT_CH0, PIT_ACCESS_LO_BYTE | PIT_ACCESS_HI_BYTE, PIT_MODE_SQUARE_WAVE, PIT_VAL_16BIT, 50);
+
+        while(1)
+        {
+                //writeInt(term, temp2, 16, 400, 500, pitch);
+        }
 }
 
 
@@ -133,5 +149,5 @@ void InterruptsTest(int32_t num)
 
 //extern "C" /* Use C linkage for kernel_main. */
 void kernel_main() {
-    writeInt(term_, &kernel_main, 16, 600,600, temp);
+        writeInt(term_, &kernel_main, 16, 600,600, temp);
 }

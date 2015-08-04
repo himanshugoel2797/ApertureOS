@@ -1,6 +1,6 @@
 # Environment
 
-SOURCES=utils/native.o boot.o crt0.o gdt.o idt.o pic.o
+SOURCES=utils/native.o boot.o crt0.o gdt.o idt.o pic.o pit.o
 
 
 
