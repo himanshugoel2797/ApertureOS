@@ -21,3 +21,32 @@ void* memset(void *ptr, int val, size_t num)
         }
         return ptr;
 }
+
+void strrev(char *str) {
+  char temp, *end_ptr;
+
+  /* If str is NULL or empty, do nothing */
+  if( str == NULL || !(*str) )
+    return;
+
+  end_ptr = str + strlen(str) - 1;
+
+  /* Swap the chars */
+  while( end_ptr > str ) {
+    temp = *str;
+    *str = *end_ptr;
+    *end_ptr = temp;
+    str++;
+    end_ptr--;
+  }
+}
+
+size_t strlen(const char *str)
+{
+    size_t size = 0;
+    while(str[size] != 0)
+    {
+      size++;
+    }
+    return size;
+}

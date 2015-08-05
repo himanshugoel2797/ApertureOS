@@ -23,54 +23,41 @@
 #include "utils/common.h"
 
 #include "test.h"
-#include "Graphics/font.h"
+#include "Graphics/graphics.h"
 
-void writeStr(uint32_t *term, const char *str, int yOff, int xOff, int pitch)
-{
-        for(int i = 0; str[i] != 0; i++)
-        {
-                for(int b = 0; b < 8; b++)
-                        for(int a = xOff; a < xOff+13; a++) {
-                                term[ (yOff+ (8-b) + (a * pitch/4)) ] = ((letters[str[i] - 32][13 - (a - xOff)] >> b) & 1) * -1;
-                                //term[ (a + b * pitch) ] = (letters[opts[i]][a] >> b) * -1;
-                                //term[ (a + b * pitch) ] = (letters[opts[i]][a] >> b) * -1;
-                        }
 
-                yOff+=16;
-        }
-}
+int temp = 0, temp2 = 0, y, yOff, x, xOff;
+char pixel[4];
 
-void writeInt(uint32_t *term, uint32_t val, int base, int yOff, int xOff, int pitch)
-{
-        char str[50];
-        char *opts = "0123456789ABCDEF";
-        if(base == 16) {
-                for(int i = 0; i < 8; i++)
-                {
-                        str[7 - i] = opts[((val >> (i*4))&0x0F)];
-                }
-                str[8] = 0;
-        }else if(base == 2)
-        {
-                for(int i = 0; i < 32; i++)
-                {
-                        str[31 - i] = opts[(val >> i) & 1];
-                }
-                str[32] = 0;
-        }else{
-                return;
-        }
-        writeStr(term, str, yOff, xOff, pitch);
-}
-
-int temp = 0, temp2 = 0;
-uint32_t *term_;
+char tmp[1920*1080*4];
+size_t q = 0;
 
 void timerHandler(Registers *regs)
 {
         temp2++;
-        writeInt(term_, temp2, 16, 400, 500, temp);
-        writeInt(term_, regs->int_no, 16, 550, 500, temp);
+
+        Graphics_Clear();
+        yOff = 0, xOff = 0;
+
+        char *header_data_backup = header_data;
+
+        q = 0;
+        for(y = 0; y < 1080; y++)
+                for(x = 0; x < 1920; x++)
+                {
+                        HEADER_PIXEL(header_data, pixel);
+                        tmp[q] = pixel[0];
+                        tmp[q + 1] = pixel[1];
+                        tmp[q + 2] = pixel[2];
+                        tmp[q + 3] = pixel[3];
+                        Graphics_SetPixel(x,y, *(int*)&tmp[q]);
+                        q+=4;
+                }
+        header_data = header_data_backup;
+
+        Graphics_WriteInt(temp2, 16, 400, 500);
+        Graphics_WriteInt(100, 10, 550, 500);
+        Graphics_SwapBuffer();
 }
 
 //extern "C"{
@@ -80,8 +67,9 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         IDT_Initialize();
         PIC_Initialize();
 
-        global_pm_info = Bootstrap_malloc(mbd->vbe_interface_len);
-        memcpy(global_pm_info, (void*)(mbd->vbe_interface_seg * 0x10 + mbd->vbe_interface_off), mbd->vbe_interface_len);
+        //global_pm_info = Bootstrap_malloc(mbd->vbe_interface_len);
+        //memcpy(global_pm_info, (void*)(mbd->vbe_interface_seg * 0x10 + mbd->vbe_interface_off), mbd->vbe_interface_len);
+        global_pm_info = (mbd->vbe_interface_seg * 0x10 + mbd->vbe_interface_off);
 
         global_vbe_info = Bootstrap_malloc(sizeof(VbeInfoBlock));
         memcpy(global_vbe_info, mbd->vbe_control_info, sizeof(VbeInfoBlock));
@@ -95,65 +83,61 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         asm ("wbinvd"); //Flush the caches so the dynamic code takes effect
 
         IDT_RegisterHandler(32, timerHandler);
+        Graphics_Initialize();
+
 
         uint32_t *term = 0xA0000;
 
-        term = mbd->framebuffer_addr;
-        term_ = term;
-
         int pitch = mbd->framebuffer_pitch;
-        char pixel[4];
-        int yOff = 0, xOff = 0;
-
-        for(int y = yOff; y < height + yOff; y++)
-                for(int x = xOff; x < width + xOff; x++)
-                {
-                        {
-                                HEADER_PIXEL(header_data, pixel);
-                                term[x + (y * pitch/4)] = *(int*)pixel;
-                        }
-                }
+        //term += pitch/4 * mbd->framebuffer_height;
 
         magic = mbd->vbe_control_info->VbeVersion;
-        writeStr(term, "VBE version:", 50, 30, pitch);
-        writeInt(term, magic, 16, 50, 50, pitch);
+        Graphics_WriteStr("VBE version:", 50, 30);
+        Graphics_WriteInt(global_pm_info->setDisplayStart, 16, 50, 50);
 
 
-        writeStr(term, "Total Memory:", 50, 80, pitch);
-        writeInt(term, mbd->vbe_control_info->TotalMemory, 16, 50, 100, pitch);
+        Graphics_WriteStr("Total Memory:", 50, 80);
+        Graphics_WriteInt((mbd->vbe_interface_seg * 0x10 + mbd->vbe_interface_off), 16, 50, 100);
 
-        writeStr(term, "Off screen memory:", 400, 80, pitch);
-        writeInt(term, mbd->vbe_mode_info->offScrSize, 16, 400, 100, pitch);
+        Graphics_WriteStr("Off screen memory:", 400, 80);
+        Graphics_WriteInt(mbd->vbe_mode_info->offScrSize, 16, 400, 100);
 
-        writeStr(term, "Attributes:", 400, 160, pitch);
-        writeInt(term, mbd->vbe_mode_info->attributes, 2, 400, 200, pitch);
+        Graphics_WriteStr("Attributes:", 400, 160);
+        Graphics_WriteInt(mbd->vbe_mode_info->attributes, 2, 400, 200);
 
-        writeStr(term, "WinA Attributes:", 400, 260, pitch);
-        writeInt(term, mbd->vbe_mode_info->winA, 2, 400, 300, pitch);
+        Graphics_WriteStr("WinA Attributes:", 400, 260);
+        Graphics_WriteInt(mbd->vbe_mode_info->winA, 2, 400, 300);
 
-        writeStr(term, "WinB Attributes:", 400, 360, pitch);
-        writeInt(term, mbd->vbe_mode_info->winB, 2, 400, 400, pitch);
+        Graphics_WriteStr("WinB Attributes:", 400, 360);
+        Graphics_WriteInt(mbd->vbe_mode_info->winB, 2, 400, 400);
 
-        temp = pitch;
+//        Graphics_SwapBuffer();
+
+
+
+        for(y = 0; y < height; y++)
+                for(x = 0; x < width; x++)
+                {
+                        //HEADER_PIXEL(header_data, pixel);
+                        tmp[q] = pixel[0];
+                        tmp[q + 1] = pixel[1];
+                        tmp[q + 2] = pixel[2];
+                        tmp[q + 3] = pixel[3];
+                        q+=4;
+                        //Graphics_SetPixel(x, y,*(int*)pixel);
+                }
 
         asm ("sti");
-        PIT_SetFrequency(PIT_CH0, PIT_ACCESS_LO_BYTE | PIT_ACCESS_HI_BYTE, PIT_MODE_SQUARE_WAVE, PIT_VAL_16BIT, 50);
+        PIT_SetFrequency(PIT_CH0, PIT_ACCESS_LO_BYTE | PIT_ACCESS_HI_BYTE, PIT_MODE_SQUARE_WAVE, PIT_VAL_16BIT, 60);
 
-        while(1)
-        {
-                //writeInt(term, temp2, 16, 400, 500, pitch);
+
+
+        while(1) {
+                //temp2++;
         }
-}
 
-
-
-//extern "C"
-void InterruptsTest(int32_t num)
-{
-        temp = 1;
 }
 
 //extern "C" /* Use C linkage for kernel_main. */
 void kernel_main() {
-        writeInt(term_, &kernel_main, 16, 600,600, temp);
 }
