@@ -9,6 +9,9 @@
 #include <stdint.h>
 
 #include "multiboot.h"
+#include "globals.h"
+
+#include "memorymanager/bootstrap_mem_manager.h"
 
 #include "gdt.h"
 #include "idt.h"
@@ -17,6 +20,7 @@
 #include "pit.h"
 
 #include "utils/native.h"
+#include "utils/common.h"
 
 #include "test.h"
 #include "Graphics/font.h"
@@ -66,6 +70,7 @@ void timerHandler(Registers *regs)
 {
         temp2++;
         writeInt(term_, temp2, 16, 400, 500, temp);
+        writeInt(term_, regs->int_no, 16, 550, 500, temp);
 }
 
 //extern "C"{
@@ -74,37 +79,38 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         GDT_Initialize();
         IDT_Initialize();
         PIC_Initialize();
+
+        global_pm_info = Bootstrap_malloc(mbd->vbe_interface_len);
+        memcpy(global_pm_info, (void*)(mbd->vbe_interface_seg * 0x10 + mbd->vbe_interface_off), mbd->vbe_interface_len);
+
+        global_vbe_info = Bootstrap_malloc(sizeof(VbeInfoBlock));
+        memcpy(global_vbe_info, mbd->vbe_control_info, sizeof(VbeInfoBlock));
+
+        global_mode_info = Bootstrap_malloc(sizeof(ModeInfoBlock));
+        memcpy(global_mode_info, mbd->vbe_mode_info, sizeof(ModeInfoBlock));
+
+        global_multiboot_info = Bootstrap_malloc(sizeof(multiboot_info_t));
+        memcpy(global_multiboot_info, mbd, sizeof(multiboot_info_t));
+
+        asm ("wbinvd"); //Flush the caches so the dynamic code takes effect
+
         IDT_RegisterHandler(32, timerHandler);
 
         uint32_t *term = 0xA0000;
 
-        term = mbd->vbe_mode_info->physbase;
+        term = mbd->framebuffer_addr;
         term_ = term;
 
-        /*for(int b = 0; b < mbd->vbe_mode_info->pitch * mbd->vbe_mode_info->Yres; b +=4)
-           {
-                term[b] = -1; //B
-                term[b+1] = b; //G
-                term[b+2] = 0; //R
-                term[b+3] = -1; //A
-           }*/
-
-        int pitch = mbd->vbe_mode_info->pitch;
-
-        char pixel[4], pixel2[4];
-
+        int pitch = mbd->framebuffer_pitch;
+        char pixel[4];
         int yOff = 0, xOff = 0;
-
 
         for(int y = yOff; y < height + yOff; y++)
                 for(int x = xOff; x < width + xOff; x++)
                 {
                         {
                                 HEADER_PIXEL(header_data, pixel);
-                                pixel2[0] = pixel[2];
-                                pixel2[1] = pixel[1];
-                                pixel2[2] = pixel[0];
-                                term[x + (y * pitch/4)] = *(int*)pixel2;
+                                term[x + (y * pitch/4)] = *(int*)pixel;
                         }
                 }
 

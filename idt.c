@@ -65,7 +65,6 @@ void IDT_FillSWInterruptHandler(char *idt_handler, uint8_t intNum, uint8_t pushT
 {
         int index = 0;
 
-        idt_handler[index++] = 0xFA; //CLI
         //Push dummy error code if the interrupt doesn't do so
         if(pushToStack) {
                 idt_handler[index++] = 0x68; //Push
@@ -103,6 +102,7 @@ void IDT_DefaultHandler()
                 "mov %ax, %es\n\t"
                 "mov %ax, %fs\n\t"
                 "mov %ax, %gs\n\t"
+                "push %esp\n\t"
                 );
 
         asm (
@@ -111,6 +111,7 @@ void IDT_DefaultHandler()
 
         asm (
                 "pop %eax\n\t"
+                "pop %eax\n\t"
                 "mov %ax, %ds\n\t"
                 "mov %ax, %es\n\t"
                 "mov %ax, %fs\n\t"
@@ -118,14 +119,13 @@ void IDT_DefaultHandler()
                 "popa\n\t"
                 "pop %eax\n\t"
                 "pop %ebx\n\t"
-                "sti\n\t"
                 "iret\n\t"
                 );
 }
 
-void IDT_MainHandler(Registers regs)
+void IDT_MainHandler(Registers *regs)
 {
-        if(idt_handler_calls[regs.int_no] != NULL) idt_handler_calls[regs.int_no](&regs);
+        if(idt_handler_calls[regs->int_no] != NULL) idt_handler_calls[regs->int_no](regs);
 }
 
 void IDT_RegisterHandler(uint8_t intNum, void (*handler)(Registers*))

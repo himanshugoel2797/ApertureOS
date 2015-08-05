@@ -64,7 +64,6 @@ void PIC_FillHWInterruptHandler(char *idt_handler, uint8_t intNum, uint8_t irqNu
 {
         int index = 0;
 
-        idt_handler[index++] = 0xFA; //CLI
         //Push dummy error code if the interrupt doesn't do so
         idt_handler[index++] = 0x68;         //Push
         idt_handler[index++] = irqNum;
@@ -100,12 +99,14 @@ void PIC_DefaultHandler()
                 "mov %ax, %es\n\t"
                 "mov %ax, %fs\n\t"
                 "mov %ax, %gs\n\t"
+                "push %esp\n\t"
                 );
 
         asm (
                 "call PIC_MainHandler"
                 );
         asm (
+                "pop %ebx\n\t"
                 "pop %ebx\n\t"
                 "mov %bx, %ds\n\t"
                 "mov %bx, %es\n\t"
@@ -114,21 +115,21 @@ void PIC_DefaultHandler()
                 "popa\n\t"
                 "pop %eax\n\t"
                 "add $4, %esp\n\t"
-                "sti\n\t"
                 "iret\n\t"
                 );
 }
 
-void PIC_MainHandler(Registers regs)
+void PIC_MainHandler(Registers *regs)
 {
-        if( ((PIC_GetReg(PIC_READ_ISR) >> regs.int_no) & 1) == 1)
+        if( ((PIC_GetReg(PIC_READ_ISR) >> regs->int_no) & 1) == 1)
         {
-                if(regs.int_no >= 40)
+                if(regs->int_no >= 40)
                 {
                         outb(PIC2_COMMAND, PIC_RESET);
                 }
                 outb(PIC1_COMMAND, PIC_RESET);
 
-                if(idt_handler_calls[regs.int_no] != NULL) idt_handler_calls[regs.int_no](&regs);
+                //if(idt_handler_calls[regs->int_no] != NULL) idt_handler_calls[regs->int_no](&regs);
+                IDT_MainHandler(regs);
         }
 }

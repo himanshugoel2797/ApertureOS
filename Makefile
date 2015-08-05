@@ -1,6 +1,11 @@
 # Environment
 
-SOURCES=utils/native.o boot.o crt0.o gdt.o idt.o pic.o pit.o
+INCLUDES=-I.
+
+SOURCES=utils/native.o utils/common.o \
+				Graphics/graphics.o	\
+				memorymanager/bootstrap_mem_manager.o memorymanager/paging.o	\
+				boot.o crt0.o gdt.o idt.o pic.o pit.o
 
 
 
@@ -27,7 +32,8 @@ SDA=sdb
 MKDIR=mkdir
 CP=cp
 CCADMIN=CCadmin
-GCC=clang -target i686-none-elf -ffreestanding -O0 -Wall -Wextra -DDEBUG
+GCC=clang -target i686-none-elf
+CFLAGS=-ffreestanding -O0 -Wall -Wextra -DDEBUG $(INCLUDES)
 ASM=$(PLATFORM)-elf-gcc -DDEBUG -ffreestanding -march=i686
 
 CRTI_OBJ=crti.o
@@ -40,7 +46,7 @@ SRC_OBJ=$(CRTI_OBJ) $(CRTBEGIN_OBJ) $(SRC_OBJA:.s=.o) $(CRTEND_OBJ) $(CRTN_OBJ)
 CONF=Debug
 
 .c.o:
-	$(GCC) -S $? -o $(?:.c=.s)
+	$(GCC) $(CFLAGS) -S $? -o $(?:.c=.s)
 	$(ASM) $(?:.c=.s) -c -o $(?:.c=.o)
 	rm -f $(?:.c=.s)
 
