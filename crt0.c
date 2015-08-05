@@ -17,6 +17,7 @@
 #include "idt.h"
 #include "pic.h"
 
+#include "fpu.h"
 #include "pit.h"
 
 #include "utils/native.h"
@@ -30,6 +31,8 @@ int temp = 0, temp2 = 0, y, yOff, x, xOff;
 char pixel[4];
 
 char tmp[1920*1080*4];
+float r = 3.3f;
+
 size_t q = 0;
 
 void timerHandler(Registers *regs)
@@ -56,7 +59,9 @@ void timerHandler(Registers *regs)
         header_data = header_data_backup;
 
         Graphics_WriteInt(temp2, 16, 400, 500);
-        Graphics_WriteInt(100, 10, 550, 500);
+
+        r = 3.1f * temp2;
+        Graphics_WriteFloat(r, 10, 550, 500);
         Graphics_SwapBuffer();
 }
 
@@ -66,6 +71,8 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         GDT_Initialize();
         IDT_Initialize();
         PIC_Initialize();
+        FPU_Initialize();
+
 
         //global_pm_info = Bootstrap_malloc(mbd->vbe_interface_len);
         //memcpy(global_pm_info, (void*)(mbd->vbe_interface_seg * 0x10 + mbd->vbe_interface_off), mbd->vbe_interface_len);
@@ -127,10 +134,17 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
                         //Graphics_SetPixel(x, y,*(int*)pixel);
                 }
 
+
         asm ("sti");
         PIT_SetFrequency(PIT_CH0, PIT_ACCESS_LO_BYTE | PIT_ACCESS_HI_BYTE, PIT_MODE_SQUARE_WAVE, PIT_VAL_16BIT, 60);
 
 
+        /*asm (
+                "fldpi\n\t"
+                //"fsqrt\n\t"
+                "fsts (%0)" : "=r" (r)
+                );
+         */
 
         while(1) {
                 //temp2++;

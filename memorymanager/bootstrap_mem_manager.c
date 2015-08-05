@@ -6,7 +6,7 @@ size_t curLoc = 0;
 void* Bootstrap_malloc(size_t size)
 {
         void *curPos = &memoryPool[curLoc];
-        curLoc += (size & ~3);
+        curLoc += size + (size % 4);
         if(curLoc >= BOOTSTRAP_POOL_SIZE) return NULL;
         return curPos;
 }

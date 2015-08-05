@@ -5,7 +5,7 @@ INCLUDES=-I.
 SOURCES=utils/native.o utils/common.o \
 				Graphics/graphics.o	\
 				memorymanager/bootstrap_mem_manager.o memorymanager/paging.o	\
-				boot.o crt0.o gdt.o idt.o pic.o pit.o
+				boot.o crt0.o gdt.o idt.o pic.o pit.o fpu.o
 
 
 
@@ -119,7 +119,7 @@ test:.test-pre
 
 .test-pre: build-tests
 # Add your pre 'test' code here...
-	qemu-system-i386 -enable-kvm -cdrom "ISO/os.iso"
+	qemu-kvm -cdrom "ISO/os.iso"
 .test-post:
 # Add your post 'test' code here...
 

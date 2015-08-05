@@ -84,13 +84,14 @@ void Graphics_WriteInt(uint32_t val, int base, int yOff, int xOff)
                 str[32] = 0;
         }else if(base < 16)
         {
-                uint8_t digit = 0;
                 int pos = 0;
-                while(val != 0)
-                {
+
+                do{
                         str[pos++] = opts[val % base];
                         val /= base;
                 }
+                while(val != 0);
+
                 str[pos] = 0;
                 strrev(str);
         }else
@@ -98,6 +99,36 @@ void Graphics_WriteInt(uint32_t val, int base, int yOff, int xOff)
                 return;
         }
         Graphics_WriteStr(str, yOff, xOff);
+}
+
+void Graphics_WriteFloat(float val, uint32_t decimalCount, int xOff, int yOff)
+{
+        char str[256];
+        char opts[] = "0123456789";
+
+        long long val_L2 = val;
+        long long val_L = (val * decimalCount) - val_L2;
+
+        int pos = 0;
+        do {
+                str[pos++] = opts[val_L2 % 10];
+                val_L2 /= 10;
+        }
+        while(val_L2 != 0);
+
+        str[pos] = 0;
+        strrev(str);
+        str[pos++] = '.';
+
+        do {
+                str[pos++] = opts[val_L % 10];
+                val_L /= 10;
+        }
+        while(val_L != 0);
+
+        str[pos] = 0;
+        //strrev(str);
+        Graphics_WriteStr(str, xOff, yOff);
 }
 
 void Graphics_SetPixel(uint32_t x, uint32_t y, uint32_t val)
