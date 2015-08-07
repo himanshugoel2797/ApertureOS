@@ -61,7 +61,7 @@ void timerHandler(Registers *regs)
                         q+=4;
                 }
 
-        Graphics_WriteUInt64(allocLoc, 16, 0, 0);
+        Graphics_WriteUInt64(&allocLoc, 16, 0, 0);
         for(int i = 0; i < 40; i++) {
                 Graphics_WriteUInt32(GET_FREE_BITCOUNT(lastNonFullPage + i), 10, 0, 20 * (i+1));
         }
@@ -124,6 +124,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         asm ("wbinvd"); //Flush the caches so the dynamic code takes effect
 
         MemMan_Initialize();
+        Paging_Initialize();
         Graphics_Initialize();
 
 

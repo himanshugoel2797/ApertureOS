@@ -30,14 +30,51 @@
 # cause massive harm. Instead, we'll provide our own stack. We will allocate
 # room for a small temporary stack by creating a symbol at the bottom of it,
 # then allocating 16384 bytes for it, and finally creating a symbol at the top.
-.section .bootstrap_stack, "aw", @nobits
-stack_bottom:
-.skip 16384 # 16 KiB
-stack_top:
 
 # The linker script specifies _start as the entry point to the kernel and the
 # bootloader will jump to this position once the kernel has been loaded. It
 # doesn't make sense to return from this function as the bootloader is gone.
+.set KERNEL_VIRTUAL_BASE, 0xC0000000
+.set KERNEL_PAGE_NUMBER, (KERNEL_VIRTUAL_BASE >> 22)
+
+.section .bootstrap_pageTables, "aw"
+.align 0x1000
+BootPageDirectory:
+
+
+
+
+
+
+
+    .long 0x00000083
+    .rept (KERNEL_PAGE_NUMBER - 1)
+  .long 0
+  .endr
+
+    .long 0x00000083
+    .rept (1024 - KERNEL_PAGE_NUMBER - 1)
+  .long 0
+  .endr
+
+.section .loader
+.global _loader
+.type _loader, @function
+_loader:
+    movl $(BootPageDirectory), %ecx
+    mov %ecx, %cr3
+
+    mov %cr4, %ecx
+    or $0x00000010, %ecx
+    mov %ecx, %cr4
+
+    mov %cr0, %ecx
+    or $0x80000000, %ecx
+    mov %ecx, %cr0
+
+    lea _start, %ecx
+    jmp *%ecx
+
 .section .text
 .global _start
 .type _start, @function
@@ -61,6 +98,11 @@ _start:
  # such code. C doesn't expect much at this point and we only need to set up
  # a stack. Note that the processor is not fully initialized yet and stuff
  # such as floating point instructions are not available yet.
+ mov $0xB00B1E5, %eax
+ mov %eax, %ebx
+ mov %eax, %ecx
+ cli
+ hlt
 
  # To set up a stack, we simply set the esp register to point to the top of
  # our stack (as it grows downwards).
@@ -88,3 +130,7 @@ _start:
 # Set the size of the _start symbol to the current location '.' minus its start.
 # This is useful when debugging or when you implement call tracing.
 .size _start, . - _start
+.section .bootstrap_stack, "aw", @nobits
+stack_bottom:
+.skip 16384 # 16 KiB
+stack_top:

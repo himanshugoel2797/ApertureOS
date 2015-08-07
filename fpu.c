@@ -8,14 +8,17 @@ void FPU_Initialize()
 {
         if(!CPUID_FeatureIsAvailable(CPUID_EDX, CPUID_FEAT_EDX_FPU)) {
                 //OS can't load
+                asm("int $0x9");
                 return;
         }
         if(!CPUID_FeatureIsAvailable(CPUID_EDX, CPUID_FEAT_EDX_SSE)) {
                 //OS can't load
+                asm("int $0x9");
                 return;
         }
         if(!CPUID_FeatureIsAvailable(CPUID_ECX, CPUID_FEAT_ECX_XSAVE)) {
                 //OS can't load
+                asm("int $0x9");
                 return;
         }
 

@@ -4,7 +4,7 @@ INCLUDES=-I.
 
 SOURCES=utils/native.o utils/common.o \
 				Graphics/graphics.o	\
-				memorymanager/bootstrap_mem_manager.o memorymanager/memorymanager.o memorymanager/paging.o	\
+				memorymanager/bootstrap_mem_manager.o memorymanager/memorymanager.o memorymanager/paging.o	memorymanager/paging_bootstrap.o \
 				boot.o crt0.o gdt.o idt.o pic.o pit.o fpu.o cpuid.o interruptmanager.o
 
 
