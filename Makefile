@@ -33,17 +33,14 @@ MKDIR=mkdir
 CP=cp
 CCADMIN=CCadmin
 GCC=clang -target i986-none-elf
-CFLAGS=-ffreestanding -O0 -Wall -Wextra -DDEBUG $(INCLUDES)
+CFLAGS=-ffreestanding -O0 -Wall -Wextra -DDEBUG $(INCLUDES) -fPIC
 ASM=$(PLATFORM)-elf-gcc -DDEBUG -ffreestanding -march=i686
 TEST_CMD=qemu-kvm -m 1024 -cpu SandyBridge,+xsave,+osxsave -soundhw all -d guest_errors,int
 
 CRTI_OBJ=crti.o
-CRTBEGIN_OBJ:=$(shell $(PLATFORM)-elf-gcc -ffreestanding -Wall -Wextra -print-file-name=crtbegin.o)
-CRTEND_OBJ:=$(shell $(PLATFORM)-elf-gcc -ffreestanding -Wall -Wextra -print-file-name=crtend.o)
-CRTN_OBJ=crtn.o
 
 SRC_OBJA=$(SOURCES:.c=.o)
-SRC_OBJ=$(CRTI_OBJ) $(CRTBEGIN_OBJ) $(SRC_OBJA:.s=.o) $(CRTEND_OBJ) $(CRTN_OBJ)
+SRC_OBJ=$(CRTI_OBJ) $(SRC_OBJA:.s=.o)
 CONF=Debug
 
 .c.o:

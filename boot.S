@@ -66,7 +66,6 @@ _start:
 	push %eax
 	push %ebx
 	call setup_kernel_core
-	call _init
 	call kernel_main
 
 	# In case the function returns, we'll want to put the computer into an

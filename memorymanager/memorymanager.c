@@ -25,6 +25,10 @@ void MemMan_Initialize()
         //Determine the total number of pages
         freePageCount = totalPageCount = page_count = memory_size / (uint64_t)PAGE_SIZE;
         lastNonFullPage = 0;
+        lastFourthEmptyPage = 0;
+        lastFourthFullPage = 0;
+        lastHalfEmptyPage = 0;
+        lastEmptyPage = 0;
         /*Allocate multiple page tables, of blocks of
 
            4KB, 8KB, 16KB, 32KB, 64KB, 128KB, 256KB, 512KB, 1MB
@@ -83,7 +87,7 @@ void MemMan_MarkKB4Used(uint64_t addr, uint64_t size)
                 KB4_Blocks_Bitmap[i/32] = SET_BIT(KB4_Blocks_Bitmap[i/32], (i % 32));
 
                 DEC_FREE_BITCOUNT(i/32);
-
+                freePageCount--;
                 n_addr += KB(4);
         }
 }
@@ -95,12 +99,25 @@ void MemMan_MarkUsed(uint64_t addr, uint64_t size)
 
 void* MemMan_Alloc(uint64_t size)
 {
+        if(size == 0) return NULL;
+
         uint64_t orig_size = size;
         uint64_t pageCount = size/KB(4);
         if(pageCount * KB(4) < size) pageCount++;
 
         int b = 0;
+
         uint64_t i = lastNonFullPage;
+
+        if(pageCount <= GET_FREE_BITCOUNT(lastEmptyPage)) i = lastEmptyPage;
+        if(pageCount <= GET_FREE_BITCOUNT(lastFourthFullPage)) i = lastFourthFullPage;
+        if(pageCount <= GET_FREE_BITCOUNT(lastHalfEmptyPage)) i = lastHalfEmptyPage;
+        if(pageCount <= GET_FREE_BITCOUNT(lastFourthEmptyPage)) i = lastFourthEmptyPage;
+
+        //TODO For further optimization, determine fragmentation based on difference from nearest power of 2 from GET_FREE_BITCOUNT(i) + 1, if multiple choices are likely to work, pick the one which has the lowest fragmentation
+
+        //If only one page is necessary, this one's a guaranteed solution
+        if(pageCount == 1) i = lastNonFullPage;
 
         for(; i < KB4_Blocks_Count; i++)
         {
@@ -165,15 +182,66 @@ void* MemMan_Alloc(uint64_t size)
         }
 
         SET_FREE_BITCOUNT(i, GET_FREE_BITCOUNT(i) - pageCount);
+        freePageCount -= pageCount;
 
-        void *f_addr = (((i * 32) + b) * KB(4)) - orig_size;
+        void *f_addr = (((i * 32) + b) * KB(4));
+        if(pageCount > 1) f_addr = (uint64_t)f_addr - orig_size;
 
         //If the currently allocated page is full, find the next non-full page
         //if(KB4_Blocks_Bitmap[lastNonFullPage] == 0xFFFFFFFF) SET_FREE_BITCOUNT(lastNonFullPage, 0);
         while(GET_FREE_BITCOUNT(lastNonFullPage) == 0)
         {
-                lastNonFullPage++;
+                lastNonFullPage++ % KB4_Blocks_Count;
+        }
+
+        if(GET_FREE_BITCOUNT(lastEmptyPage) < 32) {
+
+                while(GET_FREE_BITCOUNT(lastEmptyPage) < 32) lastEmptyPage++ % KB4_Blocks_Count;
+        }
+
+        if(GET_FREE_BITCOUNT(lastFourthFullPage) < 24 | (lastFourthFullPage == lastEmptyPage) | (lastFourthFullPage == lastNonFullPage))
+        {
+                while(GET_FREE_BITCOUNT(lastFourthFullPage) < 24 | (lastFourthFullPage == lastEmptyPage) | (lastFourthFullPage == lastNonFullPage)) lastFourthFullPage++ % KB4_Blocks_Count;
+        }
+
+        if(GET_FREE_BITCOUNT(lastHalfEmptyPage) < 16 | (lastHalfEmptyPage == lastEmptyPage) | (lastHalfEmptyPage == lastNonFullPage) | (lastHalfEmptyPage == lastFourthFullPage))
+        {
+                while(GET_FREE_BITCOUNT(lastHalfEmptyPage) < 16 | (lastHalfEmptyPage == lastEmptyPage) | (lastHalfEmptyPage == lastNonFullPage) | (lastHalfEmptyPage == lastFourthFullPage)) lastHalfEmptyPage++ % KB4_Blocks_Count;
+        }
+
+        if(GET_FREE_BITCOUNT(lastFourthEmptyPage) < 8 | (lastFourthEmptyPage == lastHalfEmptyPage) | (lastFourthEmptyPage == lastNonFullPage))
+        {
+                while(GET_FREE_BITCOUNT(lastFourthEmptyPage) < 8 | (lastFourthEmptyPage == lastHalfEmptyPage) | (lastFourthEmptyPage == lastNonFullPage)) lastFourthEmptyPage++ % KB4_Blocks_Count;
         }
 
         return f_addr;
+}
+
+void MemMan_Free(void *ptr, uint64_t size)
+{
+        if(size == 0) return;
+        uint64_t addr = (uint64_t)ptr;
+        uint64_t n_addr = KB(4) * (addr/KB(4));  //Make addr page aligned
+        size += (addr - n_addr);
+
+        uint64_t base_page = n_addr/(uint64_t)KB(4);
+        uint64_t page_count = size / (uint64_t)KB(4);
+
+        for(uint64_t i = base_page; i < base_page + page_count; i++)
+        {
+                KB4_Blocks_Bitmap[i/32] = CLEAR_BIT(KB4_Blocks_Bitmap[i/32], (i % 32));
+
+                INC_FREE_BITCOUNT(i/32);
+                freePageCount++;
+
+                uint64_t i0 = i / 32;
+                int bitCount = GET_FREE_BITCOUNT(i0);
+
+                if(lastNonFullPage > i0) lastNonFullPage = i0;
+                if(lastFourthEmptyPage > i0 && bitCount >= 8) lastHalfEmptyPage = i0;
+                if(lastHalfEmptyPage > i0 && bitCount >= 16) lastHalfEmptyPage = i0;
+                if(lastFourthFullPage > i0 && bitCount >= 24) lastHalfEmptyPage = i0;
+                if(lastEmptyPage > i0 && bitCount == 32) lastHalfEmptyPage = i0;
+
+        }
 }

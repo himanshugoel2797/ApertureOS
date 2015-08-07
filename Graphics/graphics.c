@@ -61,7 +61,7 @@ void Graphics_WriteStr(const char *str, int yOff, int xOff)
                                 backBuffer[ (yOff+ (8-b) + (a * pitch)) ] = ((letters[str[i] - 32][13 - (a - xOff)] >> b) & 1) * -1;
                         }
 
-                yOff+=16;
+                yOff+=8;
         }
 }
 
