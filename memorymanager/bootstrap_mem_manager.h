@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define BOOTSTRAP_POOL_SIZE  1024 * 1024 * 16    //Allocate 16MB of space for early structures
+#define BOOTSTRAP_POOL_SIZE  1024 * 1024 * 32    //Allocate 32MB of space for early structures
 
 //A very simple watermarking bootstrap memory manager to store important boot time info
 void* Bootstrap_malloc(size_t size);

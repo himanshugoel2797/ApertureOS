@@ -4,8 +4,8 @@ INCLUDES=-I.
 
 SOURCES=utils/native.o utils/common.o \
 				Graphics/graphics.o	\
-				memorymanager/bootstrap_mem_manager.o memorymanager/paging.o	\
-				boot.o crt0.o gdt.o idt.o pic.o pit.o fpu.o
+				memorymanager/bootstrap_mem_manager.o memorymanager/memorymanager.o memorymanager/paging.o	\
+				boot.o crt0.o gdt.o idt.o pic.o pit.o fpu.o cpuid.o interruptmanager.o
 
 
 
@@ -32,9 +32,10 @@ SDA=sdb
 MKDIR=mkdir
 CP=cp
 CCADMIN=CCadmin
-GCC=clang -target i686-none-elf
+GCC=clang -target i986-none-elf
 CFLAGS=-ffreestanding -O0 -Wall -Wextra -DDEBUG $(INCLUDES)
 ASM=$(PLATFORM)-elf-gcc -DDEBUG -ffreestanding -march=i686
+TEST_CMD=qemu-kvm -m 1024 -cpu SandyBridge,+xsave,+osxsave -soundhw all -d guest_errors,int
 
 CRTI_OBJ=crti.o
 CRTBEGIN_OBJ:=$(shell $(PLATFORM)-elf-gcc -ffreestanding -Wall -Wextra -print-file-name=crtbegin.o)
@@ -119,7 +120,7 @@ test:.test-pre
 
 .test-pre: build-tests
 # Add your pre 'test' code here...
-	qemu-kvm -cdrom "ISO/os.iso"
+	$(TEST_CMD) -cdrom "ISO/os.iso"
 .test-post:
 # Add your post 'test' code here...
 

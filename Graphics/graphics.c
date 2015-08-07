@@ -65,7 +65,7 @@ void Graphics_WriteStr(const char *str, int yOff, int xOff)
         }
 }
 
-void Graphics_WriteInt(uint32_t val, int base, int yOff, int xOff)
+void Graphics_WriteUInt32(uint32_t val, int base, int yOff, int xOff)
 {
         char str[50];
         char *opts = "0123456789ABCDEF";
@@ -86,7 +86,43 @@ void Graphics_WriteInt(uint32_t val, int base, int yOff, int xOff)
         {
                 int pos = 0;
 
-                do{
+                do {
+                        str[pos++] = opts[val % base];
+                        val /= base;
+                }
+                while(val != 0);
+
+                str[pos] = 0;
+                strrev(str);
+        }else
+        {
+                return;
+        }
+        Graphics_WriteStr(str, yOff, xOff);
+}
+
+void Graphics_WriteUInt64(uint64_t val, int base, int yOff, int xOff)
+{
+        char str[50];
+        char *opts = "0123456789ABCDEF";
+        if(base == 16) {
+                for(int i = 0; i < 16; i++)
+                {
+                        str[15 - i] = opts[((val >> (i*4))&0x0F)];
+                }
+                str[16] = 0;
+        }else if(base == 2)
+        {
+                for(int i = 0; i < 64; i++)
+                {
+                        str[63 - i] = opts[(val >> i) & 1];
+                }
+                str[64] = 0;
+        }else if(base <= 16)
+        {
+                int pos = 0;
+
+                do {
                         str[pos++] = opts[val % base];
                         val /= base;
                 }

@@ -40,7 +40,7 @@ void IDT_Initialize()
 
         //Fill the IDT
         int pushesToStack = 1;
-        for(int i = 0; i < 32; i++)
+        for(int i = 0; i < IDT_ENTRY_COUNT; i++)
         {
                 //Setup the hardware interrupts
                 if(i == 8 || (i >= 10 && i <= 14)) pushesToStack = 0;
