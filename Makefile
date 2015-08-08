@@ -36,11 +36,6 @@ GCC=clang -target i986-none-elf
 CFLAGS=-ffreestanding -O0 -Wall -Wextra -DDEBUG  -DCURRENT_YEAR=$(CURRENT_YEAR) $(INCLUDES)
 ASM=$(PLATFORM)-elf-gcc -DDEBUG -ffreestanding -march=i686
 TEST_CMD=qemu-kvm $(QEMU_OPTS)
-
-CRTI_OBJ=crti.o
-
-SRC_OBJA=$(SOURCES:.c=.o)
-SRC_OBJ=$(CRTI_OBJ) $(SRC_OBJA:.s=.o)
 CONF=Debug
 
 .c.o:
@@ -51,23 +46,21 @@ CONF=Debug
 .s.o:
 	$(ASM) $? -c -o $(?:.s=.o)
 
+.S.o:
+	$(ASM) $? -c -o $(?:.S=.o)
+
 run: all
 
 # build
-build:$(CRTI_OBJ) $(SOURCES) $(CRTN_OBJ) .build-post
-
-.build-pre:
-# Add your pre 'build' code here...
-
-.build-post:
-# Add your post 'build' code here...
-	$(PLATFORM)-elf-gcc -T linker.ld -o "build/$(CONF)/kernel.bin" -ffreestanding -O2 -nostdlib $(SRC_OBJ) -lgcc
+build:$(SOURCES)
+	mkdir -p build/$(CONF)
+	$(PLATFORM)-elf-gcc -T linker.ld -o "build/$(CONF)/kernel.bin" -ffreestanding -O2 -nostdlib $(SOURCES) -lgcc
 
 # clean
 clean:
-	rm -f *.o
-	rm -f build/$(CONF)/kernel.bin
-	rm -f ISO/os.iso
+	rm -f $(SOURCES)
+	rm -rf build/*
+	rm -rf ISO/*
 
 .clean-pre:
 # Add your pre 'clean' code here...
@@ -96,7 +89,7 @@ all:test
 
 
 # build tests
-build-tests:clean build
+build-tests:build
 	mkdir -p ISO
 	mkdir -p ISO/isodir
 	mkdir -p ISO/isodir/boot
