@@ -4,7 +4,7 @@ INCLUDES=-I.
 
 SOURCES=utils/native.o utils/common.o \
 				Graphics/graphics.o	\
-				memorymanager/bootstrap_mem_manager.o memorymanager/memorymanager.o memorymanager/paging.o	memorymanager/paging_bootstrap.o \
+				memorymanager/bootstrap_mem_manager.o memorymanager/memorymanager.o memorymanager/paging.o \
 				boot.o crt0.o gdt.o idt.o pic.o pit.o fpu.o cpuid.o interruptmanager.o
 
 
@@ -33,7 +33,7 @@ MKDIR=mkdir
 CP=cp
 CCADMIN=CCadmin
 GCC=clang -target i986-none-elf
-CFLAGS=-ffreestanding -O0 -Wall -Wextra -DDEBUG $(INCLUDES) -fPIC
+CFLAGS=-ffreestanding -O0 -Wall -Wextra -DDEBUG $(INCLUDES)
 ASM=$(PLATFORM)-elf-gcc -DDEBUG -ffreestanding -march=i686
 TEST_CMD=qemu-kvm -m 1024 -cpu SandyBridge,+xsave,+osxsave -soundhw all -d guest_errors,int
 

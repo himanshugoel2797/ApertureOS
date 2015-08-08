@@ -17,6 +17,7 @@
 #include "memorymanager/pagetable.h"
 
 #include "memorymanager/priv_memorymanager.h"
+#include "memorymanager/priv_paging.h"
 
 #include "gdt.h"
 #include "idt.h"
@@ -61,12 +62,13 @@ void timerHandler(Registers *regs)
                         q+=4;
                 }
 
-        Graphics_WriteUInt64(&allocLoc, 16, 0, 0);
-        for(int i = 0; i < 40; i++) {
-                Graphics_WriteUInt32(GET_FREE_BITCOUNT(lastNonFullPage + i), 10, 0, 20 * (i+1));
+        Graphics_WriteUInt32(sizeof(PT_Entry), 10, 0, 0);
+        uint32_t *pdu = pd_nopse;
+        for(int i = 0; i < 1024; i++) {
+                Graphics_WriteUInt32(pd_pse[i].low_addr, 2, 0, 20 * (i+1));
         }
         for(int i = 0; i < 40; i++) {
-                Graphics_WriteUInt32(KB4_Blocks_Bitmap[lastNonFullPage + i], 2, 200, 20 * (i+1));
+                //Graphics_WriteUInt32(KB4_Blocks_Bitmap[lastNonFullPage + i], 2, 200, 20 * (i+1));
         }
         Graphics_WriteUInt32(lastNonFullPage, 16, 800, 0);
         Graphics_WriteUInt32(GET_FREE_BITCOUNT(lastNonFullPage), 10, 950, 0);
@@ -97,7 +99,6 @@ void timerHandler(Registers *regs)
 
 //extern "C"{
 void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
-
         GDT_Initialize();
         IDT_Initialize();
         PIC_Initialize();
@@ -121,10 +122,12 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         global_memory_map = Bootstrap_malloc(global_memory_map_size);
         memcpy(global_memory_map, mbd->mmap_addr, global_memory_map_size);
 
+
         asm ("wbinvd"); //Flush the caches so the dynamic code takes effect
 
         MemMan_Initialize();
         Paging_Initialize();
+
         Graphics_Initialize();
 
 

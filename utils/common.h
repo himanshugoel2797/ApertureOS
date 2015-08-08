@@ -5,8 +5,8 @@
 #include <stddef.h>
 
 #define KB(x) (x * 1024)
-#define MB(x) (KB(1) * 1024)
-#define GB(x) (uint64_t)(MB(1) * 1024)
+#define MB(x) (KB(1) * 1024 * x)
+#define GB(x) (uint64_t)(MB(1) * 1024 * x)
 
 #define SET_BIT(x, index) (x | (1 << index))
 #define CLEAR_BIT(x, index) (x & ~(1 << index))

@@ -61,10 +61,16 @@ void MemMan_Initialize()
                 //Mark the corresponding pages as in use
                 if(hdr->sh_size != 0)
                 {
-                        MemMan_MarkUsed(hdr->sh_addr, hdr->sh_size);
+                        MemMan_MarkUsed(hdr->sh_addr - 0xC0000000, hdr->sh_size);
                 }
 
                 hdr++;
+        }
+
+        //Mark first 1MB as allocated (save for vm86 mode)
+        for(int i = 0; i < MB(1); i+=KB(4))
+        {
+            MemMan_Alloc(KB(4));
         }
 }
 

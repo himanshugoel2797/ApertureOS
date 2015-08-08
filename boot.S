@@ -28,46 +28,6 @@
 # The linker script specifies _start as the entry point to the kernel and the
 # bootloader will jump to this position once the kernel has been loaded. It
 # doesn't make sense to return from this function as the bootloader is gone.
-.set KERNEL_VIRTUAL_BASE, 0xC0000000
-.set KERNEL_PAGE_NUMBER, (KERNEL_VIRTUAL_BASE >> 22)
-
-.section .bootstrap_pageTables, "aw"
-.align 0x1000
-BootPageDirectory:
-    // This page directory entry identity-maps the first 4MB of the 32-bit physical address space.
-    // All bits are clear except the following:
-    // bit 7: PS The kernel page is 4MB.
-    // bit 1: RW The kernel page is read/write.
-    // bit 0: P  The kernel page is present.
-    // This entry must be here -- otherwise the kernel will crash immediately after paging is
-    // enabled because it can't fetch the next instruction! It's ok to unmap this page later.
-    .long 0x00000083
-    .rept (KERNEL_PAGE_NUMBER - 1)
-		.long 0                 // Pages before kernel space.
-		.endr
-    // This page directory entry defines a 4MB page containing the kernel.
-    .long 0x00000083
-    .rept (1024 - KERNEL_PAGE_NUMBER - 1)
-		.long 0  // Pages after the kernel image.
-		.endr
-
-.section .loader
-.global _loader
-.type _loader, @function
-_loader:
-    movl $(BootPageDirectory), %ecx
-    mov %ecx, %cr3
-
-    mov %cr4, %ecx
-    or $0x00000010, %ecx
-    mov %ecx, %cr4
-
-    mov %cr0, %ecx
-    or $0x80000000, %ecx
-    mov %ecx, %cr0
-
-    lea _start, %ecx
-    jmp *%ecx
 
 .section .text
 .global _start
@@ -92,11 +52,7 @@ _start:
 	# such code. C doesn't expect much at this point and we only need to set up
 	# a stack. Note that the processor is not fully initialized yet and stuff
 	# such as floating point instructions are not available yet.
-	mov $0xB00B1E5, %eax
-	mov %eax, %ebx
-	mov %eax, %ecx
-	cli
-	hlt
+
 
 	# To set up a stack, we simply set the esp register to point to the top of
 	# our stack (as it grows downwards).

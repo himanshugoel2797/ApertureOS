@@ -1,6 +1,8 @@
 #include "graphics.h"
 
 #include "memorymanager/bootstrap_mem_manager.h"
+#include "memorymanager/paging.h"
+
 #include "utils/common.h"
 #include "globals.h"
 
@@ -33,6 +35,10 @@ void Graphics_Initialize()
         //Specify the pointers for both framebuffers
         frameBufferA = global_multiboot_info->framebuffer_addr;
         frameBufferB = Bootstrap_malloc(buffer_size);
+
+        Paging_MapPage(frameBufferA, MB(4), 0, 1);
+        Paging_MapPage(frameBufferA + MB(4), MB(8), 0, 1);
+        frameBufferA = MB(4);
 
         //frameBufferB = bbuf;
         backBuffer = (uint32_t*)frameBufferB;
