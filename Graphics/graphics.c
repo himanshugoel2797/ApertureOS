@@ -60,11 +60,18 @@ void Graphics_Clear()
 
 void Graphics_WriteStr(const char *str, int yOff, int xOff)
 {
+        uint32_t curBufVal = 0;
+
         for(int i = 0; str[i] != 0; i++)
         {
                 for(int b = 0; b < 8; b++)
                         for(int a = xOff; a < xOff+13; a++) {
-                                backBuffer[ (yOff+ (8-b) + (a * pitch)) ] = ((letters[str[i] - 32][13 - (a - xOff)] >> b) & 1) * -1;
+
+                                curBufVal = backBuffer[ (yOff+ (8-b) + (a * pitch)) ];
+
+                                backBuffer[ (yOff+ (8-b) + (a * pitch)) ] = (1 - ((letters[str[i] - 32][13 - (a - xOff)] >> b) & 1)) * curBufVal;
+
+                                //if(backBuffer[ (yOff+ (8-b) + (a * pitch)) ] == 0)backBuffer = curBufVal;
                         }
 
                 yOff+=8;

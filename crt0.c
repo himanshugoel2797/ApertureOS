@@ -27,6 +27,8 @@
 #include "fpu.h"
 #include "pit.h"
 
+#include "drivers/drivers.h"
+
 #include "interruptmanager.h"
 
 #include "utils/native.h"
@@ -47,13 +49,14 @@ size_t q = 0;
 
 void timerHandler(Registers *regs)
 {
-        temp2++;
+        //temp2++;
         Graphics_Clear();
 
 
-        allocLoc = MemMan_Alloc( (temp2 % 31) * KB(4));
-        MemMan_Free(allocLoc, (temp2 % 31) * KB(4));
+        //allocLoc = MemMan_Alloc( (temp2 % 31) * KB(4));
+        //MemMan_Free(allocLoc, (temp2 % 31) * KB(4));
 
+        asm volatile("movl %%cr0, %0" : "=r"(temp2));
 
         q = 0;
         for(y = 0; y < 1080; y++)
@@ -65,7 +68,9 @@ void timerHandler(Registers *regs)
         RTC_Time t;
         CMOS_GetRTCTime(&t);
 
-        Graphics_WriteUInt32(t.seconds, 10, 0, 0);
+        COM_WriteStr("Hello World");
+
+        Graphics_WriteUInt32(temp2, 2, 0, 0);
         uint32_t *pdu = pd_nopse;
         for(int i = 0; i < 1024; i++) {
                 //Graphics_WriteUInt32(pd_pse[i].low_addr, 2, 0, 20 * (i+1));
@@ -102,6 +107,9 @@ void timerHandler(Registers *regs)
 
 //extern "C"{
 void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
+
+        COM_Initialize();
+
         GDT_Initialize();
         IDT_Initialize();
         PIC_Initialize();
