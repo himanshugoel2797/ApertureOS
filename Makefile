@@ -5,9 +5,14 @@ INCLUDES=-I.
 SOURCES=utils/native.o utils/common.o \
 				Graphics/graphics.o	\
 				memorymanager/bootstrap_mem_manager.o memorymanager/memorymanager.o memorymanager/paging.o \
-				drivers/COM.o	\
+				drivers/apic/apic.o \
+				drivers/cmos/cmos.o \
+				drivers/fpu/fpu.o \
+				drivers/pic/pic.o \
+				drivers/pit/pit.o \
 				drivers/ps2/ps2.o drivers/ps2/ps2_keyboard.o \
-				boot.o crt0.o gdt.o idt.o pic.o pit.o fpu.o cpuid.o interruptmanager.o cmos.o \
+				drivers/serial/COM.o	\
+				boot.o crt0.o gdt.o idt.o cpuid.o interruptmanager.o \
 
 
 
@@ -15,7 +20,7 @@ PLATFORM=/opt/cross/bin/i686
 
 SDA=sdb
 
-QEMU_OPTS=-m 1024 -cpu SandyBridge,+xsave,+osxsave -soundhw all -d guest_errors,int
+QEMU_OPTS=-m 1024 -cpu SandyBridge,+xsave,+osxsave -d guest_errors,int
 
 CURRENT_YEAR=$(shell date +"%Y")
 COM_ENABLED=1

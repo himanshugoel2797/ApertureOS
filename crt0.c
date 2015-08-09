@@ -21,11 +21,6 @@
 
 #include "gdt.h"
 #include "idt.h"
-#include "pic.h"
-#include "cmos.h"
-
-#include "fpu.h"
-#include "pit.h"
 
 #include "drivers/drivers.h"
 #include "drivers/ps2/priv_ps2.h"

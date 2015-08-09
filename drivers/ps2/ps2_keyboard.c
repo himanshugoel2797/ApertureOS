@@ -13,6 +13,8 @@ uint8_t PS2Keyboard_Initialize()
         uint8_t ack = PS2_ReadData(PS2_DATA_PORT);
         if( (bat_status != PS2_RETVAL_BAT_SUCCESS) | (ack != PS2_RETVAL_ACK)) return -1;
 
+        PS2Keyboard_SetScancodeSet(2);
+
         return 0;
 }
 
@@ -28,7 +30,10 @@ void PS2Keyboard_SetScancodeSet(uint8_t set_num)
 {
         if(set_num == 0 || set_num > 3) return;
         uint8_t set = 1 << set_num;
+
+        while(IS_OUTPUTBUF_FULL) ;
         outb(PS2_DATA_PORT, KBD_ENC_SET_SCANCODE_SET);
+        while(IS_OUTPUTBUF_FULL) ;
         outb(PS2_DATA_PORT, set);
 }
 
