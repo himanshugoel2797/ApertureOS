@@ -1,52 +1,136 @@
 #include "common.h"
 
+/*
+ * Copyright (C) 1991,1992,1993,1997,1998,2003, 2005 Free Software Foundation, Inc.
+ * This file is part of the GNU C Library.
+ *
+ * See file CREDITS for list of people who contributed to this
+ * project.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ * MA 02111-1307 USA
+ */
+/* From glibc-2.14, sysdeps/i386/memcpy.c */
 void* memcpy(void *dest, void *src, size_t size)
 {
-        char *d = (char*)dest;
-        char *s = (char*)src;
-
-        for(size_t i = 0; i < size; i++)
-        {
-                d[i] = s[i];
-        }
+        unsigned long d0, d1, d2;
+        asm volatile (
+                "rep ; movsl\n\t"
+                "movl %4,%%ecx\n\t"
+                "rep ; movsb\n\t"
+                : "=&c" (d0), "=&D" (d1), "=&S" (d2)
+                : "0" (size >> 2), "g" (size & 3), "1" (dest), "2" (src)
+                : "memory"
+                );
         return dest;
 }
 
-void* memset(void *ptr, int val, size_t num)
+/*
+ * Copyright (C) 1991,1992,1993,1997,1998,2003, 2005 Free Software Foundation, Inc.
+ * This file is part of the GNU C Library.
+ *
+ * See file CREDITS for list of people who contributed to this
+ * project.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ * MA 02111-1307 USA
+ */
+/* From glibc-2.14, sysdeps/i386/memset.c */
+void* memset(void *dstpp, int c, size_t len)
 {
-        char* p = (char*)ptr;
-        for(size_t i = 0; i < num; i++)
-        {
-                p[i] = (char)val;
+        int d0;
+        unsigned long int dstp = (unsigned long int) dstpp;
+        /* This explicit register allocation improves code very much indeed. */
+        register uint32_t x asm ("ax");
+        x = (unsigned char) c;
+        /* Clear the direction flag, so filling will move forward.  */
+        asm volatile ("cld");
+        /* This threshold value is optimal.  */
+        if (len >= 12) {
+                /* Fill X with four copies of the char we want to fill with. */
+                x |= (x << 8);
+                x |= (x << 16);
+                /* Adjust LEN for the bytes handled in the first loop.  */
+                len -= (-dstp) % sizeof(uint32_t);
+                /*
+                 * There are at least some bytes to set. No need to test for
+                 * LEN == 0 in this alignment loop.
+                 */
+                /* Fill bytes until DSTP is aligned on a longword boundary. */
+                asm volatile (
+                        "rep\n"
+                        "stosb" /* %0, %2, %3 */ :
+                        "=D" (dstp), "=c" (d0) :
+                        "0" (dstp), "1" ((-dstp) % sizeof(uint32_t)), "a" (x) :
+                        "memory");
+                /* Fill longwords.  */
+                asm volatile (
+                        "rep\n"
+                        "stosl" /* %0, %2, %3 */ :
+                        "=D" (dstp), "=c" (d0) :
+                        "0" (dstp), "1" (len / sizeof(uint32_t)), "a" (x) :
+                        "memory");
+                len %= sizeof(uint32_t);
         }
-        return ptr;
+        /* Write the last few bytes. */
+        asm volatile (
+                "rep\n"
+                "stosb" /* %0, %2, %3 */ :
+                "=D" (dstp), "=c" (d0) :
+                "0" (dstp), "1" (len), "a" (x) :
+                "memory");
+        return dstpp;
 }
 
 void strrev(char *str) {
-  char temp, *end_ptr;
+        char temp, *end_ptr;
 
-  /* If str is NULL or empty, do nothing */
-  if( str == NULL || !(*str) )
-    return;
+        /* If str is NULL or empty, do nothing */
+        if( str == NULL || !(*str) )
+                return;
 
-  end_ptr = str + strlen(str) - 1;
+        end_ptr = str + strlen(str) - 1;
 
-  /* Swap the chars */
-  while( end_ptr > str ) {
-    temp = *str;
-    *str = *end_ptr;
-    *end_ptr = temp;
-    str++;
-    end_ptr--;
-  }
+        /* Swap the chars */
+        while( end_ptr > str ) {
+                temp = *str;
+                *str = *end_ptr;
+                *end_ptr = temp;
+                str++;
+                end_ptr--;
+        }
 }
 
 size_t strlen(const char *str)
 {
-    size_t size = 0;
-    while(str[size] != 0)
-    {
-      size++;
-    }
-    return size;
+        size_t size = 0;
+        while(str[size] != 0)
+        {
+                size++;
+        }
+        return size;
 }

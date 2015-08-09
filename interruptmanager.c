@@ -72,6 +72,14 @@ void InterruptManager_InterruptHandler(Registers *regs)
         {
                 Graphics_WriteStr(interruptMessages[regs->int_no], 0, 0);
                 Graphics_SwapBuffer();
-                while(1) { asm volatile("hlt"); }
+                while(1) { asm volatile ("hlt"); }
+        }
+}
+
+uint8_t InterruptManager_GetFreePriority(uint8_t int_no)
+{
+        for(int i = INTERRUPT_MANAGER_LOWEST_PRIORITY; i > INTERRUPT_MANAGER_HIGHEST_PRIORITY; i--)
+        {
+                if(interruptHandlers[i] == NULL) return i;
         }
 }

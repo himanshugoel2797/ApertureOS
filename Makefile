@@ -6,6 +6,7 @@ SOURCES=utils/native.o utils/common.o \
 				Graphics/graphics.o	\
 				memorymanager/bootstrap_mem_manager.o memorymanager/memorymanager.o memorymanager/paging.o \
 				drivers/COM.o	\
+				drivers/ps2/ps2.o drivers/ps2/ps2_keyboard.o \
 				boot.o crt0.o gdt.o idt.o pic.o pit.o fpu.o cpuid.o interruptmanager.o cmos.o \
 
 
@@ -65,7 +66,7 @@ clean:
 
 
 # all
-all:test
+all:build-tests
 
 # build tests
 build-tests:build
