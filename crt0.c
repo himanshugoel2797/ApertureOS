@@ -22,6 +22,7 @@
 #include "gdt.h"
 #include "idt.h"
 #include "pic.h"
+#include "cmos.h"
 
 #include "fpu.h"
 #include "pit.h"
@@ -61,11 +62,13 @@ void timerHandler(Registers *regs)
                         Graphics_SetPixel(x,y, *(int*)&tmp[q]);
                         q+=4;
                 }
+        RTC_Time t;
+        CMOS_GetRTCTime(&t);
 
-        Graphics_WriteUInt32(sizeof(PT_Entry), 10, 0, 0);
+        Graphics_WriteUInt32(t.seconds, 10, 0, 0);
         uint32_t *pdu = pd_nopse;
         for(int i = 0; i < 1024; i++) {
-                Graphics_WriteUInt32(pd_pse[i].low_addr, 2, 0, 20 * (i+1));
+                //Graphics_WriteUInt32(pd_pse[i].low_addr, 2, 0, 20 * (i+1));
         }
         for(int i = 0; i < 40; i++) {
                 //Graphics_WriteUInt32(KB4_Blocks_Bitmap[lastNonFullPage + i], 2, 200, 20 * (i+1));
@@ -142,9 +145,9 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
                 for(x = 0; x < width; x++)
                 {
                         HEADER_PIXEL(header_data, pixel);
-                        tmp[q] = pixel[0];
+                        tmp[q] = pixel[2];
                         tmp[q + 1] = pixel[1];
-                        tmp[q + 2] = pixel[2];
+                        tmp[q + 2] = pixel[0];
                         tmp[q + 3] = pixel[3];
                         q+=4;
                 }
