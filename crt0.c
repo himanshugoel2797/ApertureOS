@@ -16,14 +16,10 @@
 #include "memorymanager/memorymanager.h"
 #include "memorymanager/pagetable.h"
 
-#include "memorymanager/priv_memorymanager.h"
-#include "memorymanager/priv_paging.h"
-
 #include "gdt.h"
 #include "idt.h"
 
 #include "drivers/drivers.h"
-#include "drivers/ps2/priv_ps2.h"
 
 #include "interruptmanager.h"
 
@@ -80,35 +76,7 @@ void timerHandler(Registers *regs)
                 CMOS_GetRTCTime(&t);
 
                 Graphics_WriteUInt32(temp2, 16, 0, 0);
-                uint32_t *pdu = pd_nopse;
-                for(int i = 0; i < 1024; i++) {
-                        //Graphics_WriteUInt32(pd_pse[i].low_addr, 2, 0, 20 * (i+1));
-                }
-                for(int i = 0; i < 40; i++) {
-                        //Graphics_WriteUInt32(KB4_Blocks_Bitmap[lastNonFullPage + i], 2, 200, 20 * (i+1));
-                }
-                Graphics_WriteUInt32(lastNonFullPage, 16, 800, 0);
-                Graphics_WriteUInt32(GET_FREE_BITCOUNT(lastNonFullPage), 10, 950, 0);
-                Graphics_WriteStr("Last Non Full Page", 1000, 0);
-
-                Graphics_WriteUInt32(lastFourthEmptyPage, 16, 800, 20);
-                Graphics_WriteUInt32(GET_FREE_BITCOUNT(lastFourthEmptyPage), 10, 950, 20);
-                Graphics_WriteStr("Last Fourth Empty Page", 1000, 20);
-
-
-                Graphics_WriteUInt32(lastHalfEmptyPage, 16, 800, 40);
-                Graphics_WriteUInt32(GET_FREE_BITCOUNT(lastHalfEmptyPage), 10, 950, 40);
-                Graphics_WriteStr("Last Half Empty Page", 1000, 40);
-
-
-                Graphics_WriteUInt32(lastEmptyPage, 16, 800, 60);
-                Graphics_WriteUInt32(GET_FREE_BITCOUNT(lastEmptyPage), 10, 950, 60);
-                Graphics_WriteStr("Last Empty Page", 1000, 60);
-
-
-                Graphics_WriteUInt32(lastFourthFullPage, 16, 800, 80);
-                Graphics_WriteUInt32(GET_FREE_BITCOUNT(lastFourthFullPage), 10, 950, 80);
-                Graphics_WriteStr("Last Fourth Full Page", 1000, 80);
+                Graphics_WriteUInt32(temp, 16, 0, 16);
 
                 Graphics_SwapBuffer();
         }
@@ -118,6 +86,7 @@ void timerHandler(Registers *regs)
 void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
         COM_Initialize();
+        temp = ACPITables_Initialize();
 
         GDT_Initialize();
         IDT_Initialize();

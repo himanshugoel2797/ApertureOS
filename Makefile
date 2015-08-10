@@ -1,10 +1,11 @@
 # Environment
 
-INCLUDES=-I.
+INCLUDES=-I. -Idrivers
 
 SOURCES=utils/native.o utils/common.o \
 				Graphics/graphics.o	\
 				memorymanager/bootstrap_mem_manager.o memorymanager/memorymanager.o memorymanager/paging.o \
+				drivers/acpi_tables/acpi_tables.o \
 				drivers/apic/apic.o \
 				drivers/cmos/cmos.o \
 				drivers/fpu/fpu.o \
@@ -20,7 +21,7 @@ PLATFORM=/opt/cross/bin/i686
 
 SDA=sdb
 
-QEMU_OPTS=-m 1024 -cpu SandyBridge,+xsave,+osxsave -d guest_errors,int
+QEMU_OPTS=-m 1024 -cpu host -d guest_errors,int
 
 CURRENT_YEAR=$(shell date +"%Y")
 COM_ENABLED=1
