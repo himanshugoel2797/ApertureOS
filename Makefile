@@ -90,5 +90,5 @@ test: build-tests
 # Add your pre 'test' code here...
 	$(TEST_CMD) -cdrom "ISO/os.iso"
 
-install:build-tests
+install:clean build-tests
 	sudo dd if="ISO/os.iso" of=/dev/$(SDA) && sync

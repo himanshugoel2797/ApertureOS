@@ -45,15 +45,29 @@ uint8_t ACPITables_ValidateChecksum(ACPISDTHeader *header)
 void* ACPITables_FindTable(const char *table_name)
 {
         if(rsdp == NULL) return NULL;
-        RSDT *rsdt = (RSDT *) rsdp->firstPart.RsdtAddress;
-        if(!ACPITables_ValidateChecksum(rsdt)) return -1;
 
-        int entries = RSDT_GET_POINTER_COUNT((rsdt->h));
+        if(rsdp->firstPart.Revision == ACPI_VERSION_1) {
+                RSDT *rsdt = (RSDT *) rsdp->firstPart.RsdtAddress;
+                if(!ACPITables_ValidateChecksum(rsdt)) return -1;
 
-        for (int i = 0; i < entries; i++)
-        {
-                ACPISDTHeader *h = (ACPISDTHeader *) rsdt->PointerToOtherSDT[i];
-                if (!strncmp(h->Signature, table_name, 4) && ACPITables_ValidateChecksum(h)) return (void *) h;
+                int entries = RSDT_GET_POINTER_COUNT((rsdt->h));
+
+                for (int i = 0; i < entries; i++)
+                {
+                        ACPISDTHeader *h = (ACPISDTHeader *) rsdt->PointerToOtherSDT[i];
+                        if (!strncmp(h->Signature, table_name, 4) && ACPITables_ValidateChecksum(h)) return (void *) h;
+                }
+        }else{
+                XSDT *xsdt = (XSDT*)rsdp->XsdtAddress;
+                if(!ACPITables_ValidateChecksum(xsdt)) return -1;
+
+                int entries = XSDT_GET_POINTER_COUNT((xsdt->h));
+
+                for (int i = 0; i < entries; i++)
+                {
+                        ACPISDTHeader *h = (ACPISDTHeader *) xsdt->PointerToOtherSDT[i];
+                        if (!strncmp(h->Signature, table_name, 4) && ACPITables_ValidateChecksum(h)) return (void *) h;
+                }
         }
 
         return NULL;

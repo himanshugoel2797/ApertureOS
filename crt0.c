@@ -88,7 +88,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         APIC_Initialize();
         rval = HPET_Initialize();
 
-        InterruptManager_RegisterHandler(1, 30, timerHandler);
+        InterruptManager_RegisterHandler(31, 30, timerHandler);
         FPU_Initialize();
 
         //Backup all important information from the bootloader
@@ -140,9 +140,6 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         InterruptManager_RegisterHandler(32, 0, keyboard_test);
         temp2 = PS2_Initialize();
 
-        while(1) {
-                asm ("int $0x1");
-        }
         while(1) ;
         asm ("hlt");
 

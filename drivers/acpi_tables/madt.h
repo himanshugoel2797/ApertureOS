@@ -9,6 +9,7 @@ typedef struct {
         ACPISDTHeader h;
         uint32_t local_controller_addr;
         uint32_t flags;
+        uint8_t entries[1];
 }MADT;
 
 typedef struct {

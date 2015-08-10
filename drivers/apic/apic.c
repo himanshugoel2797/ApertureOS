@@ -16,7 +16,7 @@ void APIC_EOI_HANDLER(Registers *Regs)
         APIC_SendEOI(Regs->int_no);
 }
 
-uint8_t APIC_Initialize()
+uint8_t APIC_LocalInitialize()
 {
         PIC_Initialize(); //Initialize the PIC
         PIC_MaskAll();    //Temporarily disable all interrupts from the PIC

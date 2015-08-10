@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-uint8_t APIC_Initialize();
+uint8_t APIC_LocalInitialize();
 void APIC_SetEnableMode(uint8_t enabled);
 uint8_t APIC_GetID();
 
