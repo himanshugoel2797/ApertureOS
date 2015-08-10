@@ -9,6 +9,7 @@ SOURCES=utils/native.o utils/common.o \
 				drivers/apic/apic.o \
 				drivers/cmos/cmos.o \
 				drivers/fpu/fpu.o \
+				drivers/hpet/hpet.o \
 				drivers/pic/pic.o \
 				drivers/pit/pit.o \
 				drivers/ps2/ps2.o drivers/ps2/ps2_keyboard.o \
@@ -21,7 +22,7 @@ PLATFORM=/opt/cross/bin/i686
 
 SDA=sdb
 
-QEMU_OPTS=-m 1024 -cpu host -d guest_errors,int
+QEMU_OPTS=-m 1024 -cpu Haswell -d guest_errors,int
 
 CURRENT_YEAR=$(shell date +"%Y")
 COM_ENABLED=1
@@ -41,7 +42,7 @@ MKDIR=mkdir
 CP=cp
 CCADMIN=CCadmin
 GCC=clang -target i986-none-elf
-CFLAGS=-ffreestanding -O0 -Wall -Wextra -DDEBUG  -DCURRENT_YEAR=$(CURRENT_YEAR) -DCOM_ENABLED=$(COM_ENABLED) $(INCLUDES)
+CFLAGS= -ffreestanding -O1 -Wall -Wextra -DDEBUG  -DCURRENT_YEAR=$(CURRENT_YEAR) -DCOM_ENABLED=$(COM_ENABLED) $(INCLUDES)
 ASM=$(PLATFORM)-elf-gcc -DDEBUG -ffreestanding -march=i686
 TEST_CMD=qemu-kvm $(QEMU_OPTS)
 CONF=Debug

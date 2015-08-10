@@ -39,22 +39,55 @@ typedef struct {
 
 typedef struct {
         ACPISDTHeader h;
-        uint64_t *PointerToOtherSDT;
+        uint64_t PointerToOtherSDT[1];
 }XSDT;
 
 typedef struct {
         ACPISDTHeader h;
-        uint32_t *PointerToOtherSDT;
+        uint32_t PointerToOtherSDT[1];
 }RSDT;
+
+typedef struct
+{
+        uint8_t address_space_id; // 0 - system memory, 1 - system I/O
+        uint8_t register_bit_width;
+        uint8_t register_bit_offset;
+        uint8_t reserved;
+        uint64_t address;
+} address_structure
+__attribute__((packed));
 
 #define XSDT_GET_POINTER_COUNT(h) ((h.Length - sizeof(h)) / 8)
 #define RSDT_GET_POINTER_COUNT(h) ((h.Length - sizeof(h)) / 4)
 #define BIOS_SEARCH_START 0x000E0000
 #define BIOS_SEARCH_END   0x000FFFFF
 
-RSDPDescriptor20 *rsdp;
-
 uint8_t ACPITables_ValidateChecksum(ACPISDTHeader *header);
 void* ACPITables_FindTable(const char *table_name);
+RSDPDescriptor20 *rsdp;
+
+//TODO this should eventually go into the PCI base driver
+typedef struct pci_vendor {
+        uint16_t ven_id;
+        const char *ven_name;
+} pci_vendor_t;
+
+typedef struct pci_device {
+        uint16_t ven_id;
+        uint16_t dev_id;
+        const char *dev_name;
+} pci_device_t;
+
+typedef struct pci_baseclass {
+        uint8_t baseclass;
+        const char *name;
+} pci_baseclass_t;
+
+typedef struct pci_subclass {
+        uint8_t baseclass;
+        uint8_t subclass;
+        const char *name;
+} pci_subclass_t;
+
 
 #endif /* end of include guard: _PRIV_ACPI_TABLES_DRIVER_H_ */

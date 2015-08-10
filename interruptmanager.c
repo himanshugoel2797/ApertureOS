@@ -2,6 +2,7 @@
 
 #include "utils/common.h"
 #include "Graphics/graphics.h"
+#include "drivers/drivers.h"
 
 void (*interruptHandlers[IDT_ENTRY_COUNT][INTERRUPT_MANAGER_PRIORITY_COUNT]) (Registers*);
 
@@ -70,6 +71,7 @@ void InterruptManager_InterruptHandler(Registers *regs)
         //Show the exception message and stop if no handler was registered
         if(regs->int_no < 0x20 && handlerCalled == 0)
         {
+                COM_WriteStr(interruptMessages[regs->int_no]);
                 Graphics_WriteStr(interruptMessages[regs->int_no], 0, 0);
                 Graphics_SwapBuffer();
                 while(1) { asm volatile ("hlt"); }
@@ -80,6 +82,6 @@ uint8_t InterruptManager_GetFreePriority(uint8_t int_no)
 {
         for(int i = INTERRUPT_MANAGER_LOWEST_PRIORITY; i > INTERRUPT_MANAGER_HIGHEST_PRIORITY; i--)
         {
-                if(interruptHandlers[i] == NULL) return i;
+                if(interruptHandlers[int_no][i] == NULL) return i;
         }
 }

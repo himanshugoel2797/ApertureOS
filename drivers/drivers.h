@@ -5,6 +5,7 @@
 #include "apic/apic.h"                //Local APIC Driver
 #include "cmos/cmos.h"                //CMOS Time Driver
 #include "fpu/fpu.h"                  //VFPU Driver
+#include "hpet/hpet.h"                //HPET Driver
 #include "pic/pic.h"                  //PIC Driver
 #include "pit/pit.h"                  //PIT Driver
 #include "ps2/ps2.h"                  //PS/2 Controller Driver

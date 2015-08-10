@@ -1,26 +1,28 @@
 #include "acpi_tables.h"
 #include "priv_acpi_tables.h"
 
+
 uint8_t ACPITables_Initialize()
 {
+        rsdp = NULL;
         //Find the RSDP table
         uint8_t *rsdp_sig = (uint8_t*)BIOS_SEARCH_START;
         while( (uint32_t)rsdp_sig < BIOS_SEARCH_END)
         {
                 if(rsdp_sig[0] == RSDP_EXPECTED_SIG[0])
                 {
-                        int pass = 1;
-
                         //Check the full signature
-                        for(int i = 0; i < 8; i++)
+                        if(!strncmp(rsdp_sig, RSDP_EXPECTED_SIG, 8))
                         {
-                                if(rsdp_sig[i] != RSDP_EXPECTED_SIG[i]) pass = 0;
-                        }
-
-                        //Table found!
-                        if(pass) {
                                 rsdp = (RSDPDescriptor20*) rsdp_sig;
-                                return rsdp->firstPart.Revision;
+                                uint32_t checksum = 0;
+
+                                for(uint8_t *tmp = rsdp_sig; tmp < rsdp_sig + sizeof(RSDPDescriptor); tmp++) {
+                                        checksum += *tmp;
+                                }
+                                COM_WriteStr(rsdp->firstPart.Signature);
+                                if((checksum & 0xFF) == 0) return rsdp->firstPart.Revision;
+                                else rsdp = NULL;
                         }
                 }
                 rsdp_sig += 16;         //Move ahead 16 bytes if the first
@@ -31,11 +33,11 @@ uint8_t ACPITables_Initialize()
 
 uint8_t ACPITables_ValidateChecksum(ACPISDTHeader *header)
 {
-        unsigned char sum = 0;
+        uint8_t sum = 0;
 
         for (int i = 0; i < header->Length; i++)
         {
-                sum += ((char *) header)[i];
+                sum += ((char *)header)[i];
         }
 
         return sum == 0;
@@ -43,8 +45,11 @@ uint8_t ACPITables_ValidateChecksum(ACPISDTHeader *header)
 
 void* ACPITables_FindTable(const char *table_name)
 {
+        if(rsdp == NULL) return NULL;
         RSDT *rsdt = (RSDT *) rsdp->firstPart.RsdtAddress;
-        int entries = RSDT_GET_POINTER_COUNT(rsdt->h);
+        if(!ACPITables_ValidateChecksum(rsdt)) return -1;
+
+        int entries = RSDT_GET_POINTER_COUNT((rsdt->h));
 
         for (int i = 0; i < entries; i++)
         {

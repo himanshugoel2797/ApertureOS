@@ -6,6 +6,7 @@
 
 #define MADT "APIC"
 #define FADT "FACP"
+#define HPET "HPET"
 
 uint8_t ACPITables_Initialize();
 void* ACPITables_FindTable(const char *table_name);

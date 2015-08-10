@@ -30,7 +30,7 @@
 #include "Graphics/graphics.h"
 
 
-int temp = 0, temp2 = 0, y, yOff, x, xOff;
+int temp = 0, temp2 = 0, y, yOff, x, xOff, rval = 0;
 char *tmp;
 
 
@@ -44,7 +44,7 @@ void timerHandler(Registers *regs);
 
 void keyboard_test(Registers *regs)
 {
-        COM_WriteStr("Keyboard Input Recieved!\r\n");
+        //COM_WriteStr("Keyboard Input Recieved!\r\n");
         temp2 = inb(0x60);
         //outb(0x60, inb(0x61));
         //temp2 = -1;
@@ -58,13 +58,6 @@ void timerHandler(Registers *regs)
                 //temp2++;
                 Graphics_Clear();
 
-                COM_WriteStr("Graphics Update!");
-
-                //allocLoc = MemMan_Alloc( (temp2 % 31) * KB(4));
-                //MemMan_Free(allocLoc, (temp2 % 31) * KB(4));
-
-                //asm volatile("movl %%cr0, %0" : "=r"(temp2));
-
                 q = 0;
                 for(y = 0; y < 1080; y++)
                         for(x = 0; x < 1920; x++)
@@ -76,7 +69,7 @@ void timerHandler(Registers *regs)
                 CMOS_GetRTCTime(&t);
 
                 Graphics_WriteUInt32(temp2, 16, 0, 0);
-                Graphics_WriteUInt32(temp, 16, 0, 16);
+                Graphics_WriteUInt32(rval, 16, 0, 16);
 
                 Graphics_SwapBuffer();
         }
@@ -86,11 +79,12 @@ void timerHandler(Registers *regs)
 void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
         COM_Initialize();
-        temp = ACPITables_Initialize();
+        rval = ACPITables_Initialize();
 
         GDT_Initialize();
         IDT_Initialize();
-        APIC_Initialize();
+        PIC_Initialize();
+        rval = HPET_Initialize();
         InterruptManager_Initialize();
 
         InterruptManager_RegisterHandler(32, 30, timerHandler);
@@ -141,12 +135,12 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         COM_WriteStr("Init!");
         PIT_SetFrequency(PIT_CH0, PIT_ACCESS_LO_BYTE | PIT_ACCESS_HI_BYTE, PIT_MODE_SQUARE_WAVE, PIT_VAL_16BIT, 75);
 
-
         asm ("sti");
+        asm ("int $0x9");
         InterruptManager_RegisterHandler(32, 0, keyboard_test);
         temp2 = PS2_Initialize();
-        COM_WriteStr("const char *str");
 
+        while(1) ;
         asm ("hlt");
 
 }
