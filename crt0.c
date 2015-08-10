@@ -53,7 +53,7 @@ void keyboard_test(Registers *regs)
 void timerHandler(Registers *regs)
 {
         Graphics_Clear();
-        COM_WriteStr("Update!\r\n");
+        //COM_WriteStr("Update!\r\n");
 
         q = 0;
         for(y = 0; y < 1080; y++)
@@ -67,7 +67,7 @@ void timerHandler(Registers *regs)
 
         Graphics_WriteUInt64(allocLoc, 16, 0, 0);
         Graphics_WriteUInt32(rval, 16, 0, 16);
-        Graphics_WriteUInt32(t.seconds, 10, 0, 32);
+        Graphics_WriteUInt32(t.seconds, 2, 0, 32);
 
         Graphics_SwapBuffer();
 
@@ -132,18 +132,13 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
                         q+=4;
                 }
 
-
-        char tester[50];
-        sprintf(tester, "%d%d\r\n", 10, -20, 30);
-
-        COM_WriteStr(tester);
+        COM_WriteStr("\r\n%d%d", 10, -20);
         asm ("sti");
         //asm ("int $0x31");
         //asm ("int $0x31");
         InterruptManager_RegisterHandler(32, 0, keyboard_test);
         temp2 = PS2_Initialize();
 
-        while(1) ;
         asm ("hlt");
 
 }

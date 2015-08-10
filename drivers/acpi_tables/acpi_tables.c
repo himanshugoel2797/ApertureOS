@@ -1,6 +1,7 @@
 #include "acpi_tables.h"
 #include "priv_acpi_tables.h"
 
+#include "utils/common.h"
 
 uint8_t ACPITables_Initialize()
 {

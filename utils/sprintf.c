@@ -21,9 +21,9 @@ char* itoa(int64_t val, char *ostr, int base, int sign)
         {
                 int pos = 0;
                 int negative = 0;
-                if(val < 0){
-                  negative = 1;
-                  val = -val;
+                if(val < 0) {
+                        negative = 1;
+                        val = -val;
                 }
                 do {
                         str[pos++] = opts[val % base];
@@ -32,7 +32,6 @@ char* itoa(int64_t val, char *ostr, int base, int sign)
                 while(val != 0);
 
                 if(sign && negative) str[pos++] = '-';
-
                 str[pos] = 0;
                 strrev(str);
         }else{
@@ -42,7 +41,7 @@ char* itoa(int64_t val, char *ostr, int base, int sign)
         return ostr + strlen(str);
 }
 
-int sprintf ( char * str, const char * format, ... )
+int vsnprintf ( char * str, const char * format, va_list vl )
 {
         int n = 0;
 
@@ -51,8 +50,6 @@ int sprintf ( char * str, const char * format, ... )
         {
                 if(format[i] == '%' && format[i + 1] != '%') n++;
         }
-        va_list vl;
-        va_start(vl, format);
 
         //Generate the real string
         for(int i = 0; i < strlen(format); i++)
@@ -67,7 +64,6 @@ int sprintf ( char * str, const char * format, ... )
                         char padding_char = ' ';
                         int padding_size = 0;
                         int precision = 0;
-                        char *num_opts = "0123456789ABCDEF";
                         while(in_format) {
                                 //Perform a substitution here based on the specifier
                                 switch(format[i])
@@ -78,6 +74,7 @@ int sprintf ( char * str, const char * format, ... )
                                 case '#':
                                         *str++ = '0';
                                         *str++ = 'x';
+                                        i++;
                                         break;
                                 case '1':
                                 case '2':
@@ -123,16 +120,21 @@ int sprintf ( char * str, const char * format, ... )
                                 }
                                 break;
                                 case 'u':
-                                        str = itoa(va_arg(vl, int), str++, 10, 0);
+                                        str = itoa(va_arg(vl, int), str, 10, 0);
+                                        in_format = 0;
+                                        break;
+                                case 'b':
+                                        str = itoa(va_arg(vl, int), str, 2, 0);
                                         in_format = 0;
                                         break;
                                 case 'o':
-                                        str = itoa(va_arg(vl, int), str++, 8, 0);
+                                        str = itoa(va_arg(vl, int), str, 8, 0);
                                         in_format = 0;
                                         break;
                                 case 'x':
                                 case 'X':
-                                        str = itoa(va_arg(vl, int), str++, 16, 0);
+                                        str = itoa(va_arg(vl, int), str, 16, 0);
+                                        str++;
                                         in_format = 0;
                                         break;
                                 case 'f':
@@ -141,7 +143,7 @@ int sprintf ( char * str, const char * format, ... )
                                         in_format = 0;
                                         break;
                                 case 'c':
-                                        *str++ = va_arg(vl, char);
+                                        *str++ = va_arg(vl, int) & 0xFF;
                                         in_format = 0;
                                         break;
                                 case 's':
@@ -161,6 +163,15 @@ int sprintf ( char * str, const char * format, ... )
                 }
         }
 
+        *str = 0;
+        return 0;
+}
+
+int sprintf ( char * str, const char * format, ... )
+{
+        va_list vl;
+        va_start(vl, format);
+        vsnprintf(str, format, vl);
         va_end(vl);
         return 0;
 }

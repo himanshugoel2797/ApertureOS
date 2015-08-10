@@ -20,6 +20,7 @@ void* memset(void *ptr, int val, size_t num);
 void strrev(char *str);
 size_t strlen(const char *str);
 int strncmp(const char * s1, const char * s2, size_t n);
+int vsnprintf ( char * str, const char * format, va_list vl );
 int sprintf ( char * str, const char * format, ... );
 
 #endif /* end of include guard: _UTILS_COMMON_H_ */

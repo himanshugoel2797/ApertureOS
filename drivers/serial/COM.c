@@ -1,5 +1,6 @@
 #include "COM.h"
 
+#include <stdarg.h>
 #include "utils/native.h"
 
 #define PORT 0x03F8
@@ -27,14 +28,19 @@ uint8_t COM_ready()
 
 }
 
-void COM_WriteStr(const char *str)
+void COM_WriteStr(const char *fmt, ...)
 {
   #if COM_ENABLED == 1
+        char str[1024];
         int index = 0;
+        va_list vl;
+        va_start(vl, fmt);
+        vsnprintf(str, fmt, vl);
         while(str[index])
         {
                 while(COM_ready() == 0) ;
                 outb(PORT, str[index++]);
         }
+        va_end(vl);
         #endif
 }
