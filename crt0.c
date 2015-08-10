@@ -133,7 +133,10 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
                 }
 
 
-        COM_WriteStr("Init!");
+        char tester[50];
+        sprintf(tester, "%d%d\r\n", 10, -20, 30);
+
+        COM_WriteStr(tester);
         asm ("sti");
         //asm ("int $0x31");
         //asm ("int $0x31");

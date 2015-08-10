@@ -39,6 +39,7 @@ void IOAPIC_MapIRQ(uint8_t global_irq, uint8_t apic_vector, uint64_t apic_id)
                         baseAddr = (uint32_t*)ioapics[i].baseAddr;
                 }
         }
+        if(baseAddr == NULL)return; //No match found!
 
         const uint32_t low_index = 0x10 + irq_pin*2;
         const uint32_t high_index = 0x10 + irq_pin*2 + 1;

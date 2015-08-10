@@ -2,7 +2,7 @@
 
 INCLUDES=-I. -Idrivers
 
-SOURCES=utils/native.o utils/common.o \
+SOURCES=utils/native.o utils/common.o utils/sprintf.o \
 				Graphics/graphics.o	\
 				memorymanager/bootstrap_mem_manager.o memorymanager/memorymanager.o memorymanager/paging.o \
 				drivers/acpi_tables/acpi_tables.o \

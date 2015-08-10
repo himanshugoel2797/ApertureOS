@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <stdarg.h>
 
 #define KB(x) (x * 1024)
 #define MB(x) (KB(1) * 1024 * x)
@@ -19,5 +20,6 @@ void* memset(void *ptr, int val, size_t num);
 void strrev(char *str);
 size_t strlen(const char *str);
 int strncmp(const char * s1, const char * s2, size_t n);
+int sprintf ( char * str, const char * format, ... );
 
 #endif /* end of include guard: _UTILS_COMMON_H_ */
