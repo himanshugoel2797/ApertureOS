@@ -64,7 +64,7 @@ void InterruptManager_InterruptHandler(Registers *regs)
         {
                 if(interruptHandlers[regs->int_no][i] != NULL) {
                         interruptHandlers[regs->int_no][i](regs);
-                        handlerCalled = 1;
+                        if(i < INTERRUPT_MANAGER_PRIORITY_COUNT - 1) handlerCalled = 1;
                 }
         }
 

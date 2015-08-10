@@ -6,4 +6,7 @@
 
 uint8_t HPET_Initialize();
 
+uint64_t HPET_GetGlobalCounter();
+void HPET_SetGlobalCounter(uint64_t val);
+
 #endif /* end of include guard: _HPET_DRIVER_H_ */

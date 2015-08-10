@@ -52,42 +52,43 @@ void keyboard_test(Registers *regs)
 
 void timerHandler(Registers *regs)
 {
-        temp++;
-        temp = temp % 10;
-        if(temp == 0) {
-                //temp2++;
-                Graphics_Clear();
+        Graphics_Clear();
+        COM_WriteStr("Update!\r\n");
 
-                q = 0;
-                for(y = 0; y < 1080; y++)
-                        for(x = 0; x < 1920; x++)
-                        {
-                                Graphics_SetPixel(x,y, *(int*)&tmp[q]);
-                                q+=4;
-                        }
-                RTC_Time t;
-                CMOS_GetRTCTime(&t);
+        q = 0;
+        for(y = 0; y < 1080; y++)
+                for(x = 0; x < 1920; x++)
+                {
+                        Graphics_SetPixel(x,y, *(int*)&tmp[q]);
+                        q+=4;
+                }
+        RTC_Time t;
+        CMOS_GetRTCTime(&t);
 
-                Graphics_WriteUInt32(temp2, 16, 0, 0);
-                Graphics_WriteUInt32(rval, 16, 0, 16);
+        Graphics_WriteUInt64(allocLoc, 16, 0, 0);
+        Graphics_WriteUInt32(rval, 16, 0, 16);
+        Graphics_WriteUInt32(t.seconds, 10, 0, 32);
 
-                Graphics_SwapBuffer();
-        }
+        Graphics_SwapBuffer();
+
 }
 
 //extern "C"{
 void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
         COM_Initialize();
-        rval = ACPITables_Initialize();
+
+        ACPITables_Initialize();
 
         GDT_Initialize();
         IDT_Initialize();
-        PIC_Initialize();
-        rval = HPET_Initialize();
         InterruptManager_Initialize();
 
-        InterruptManager_RegisterHandler(32, 30, timerHandler);
+        CMOS_Initialize();
+        APIC_Initialize();
+        rval = HPET_Initialize();
+
+        InterruptManager_RegisterHandler(1, 30, timerHandler);
         FPU_Initialize();
 
         //Backup all important information from the bootloader
@@ -133,13 +134,15 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
 
         COM_WriteStr("Init!");
-        PIT_SetFrequency(PIT_CH0, PIT_ACCESS_LO_BYTE | PIT_ACCESS_HI_BYTE, PIT_MODE_SQUARE_WAVE, PIT_VAL_16BIT, 75);
-
         asm ("sti");
-        asm ("int $0x9");
+        //asm ("int $0x31");
+        //asm ("int $0x31");
         InterruptManager_RegisterHandler(32, 0, keyboard_test);
         temp2 = PS2_Initialize();
 
+        while(1) {
+                asm ("int $0x1");
+        }
         while(1) ;
         asm ("hlt");
 

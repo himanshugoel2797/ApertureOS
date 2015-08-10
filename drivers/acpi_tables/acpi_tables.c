@@ -20,7 +20,6 @@ uint8_t ACPITables_Initialize()
                                 for(uint8_t *tmp = rsdp_sig; tmp < rsdp_sig + sizeof(RSDPDescriptor); tmp++) {
                                         checksum += *tmp;
                                 }
-                                COM_WriteStr(rsdp->firstPart.Signature);
                                 if((checksum & 0xFF) == 0) return rsdp->firstPart.Revision;
                                 else rsdp = NULL;
                         }

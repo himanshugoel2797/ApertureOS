@@ -9,10 +9,27 @@
 #include "utils/common.h"
 #include "utils/native.h"
 
+#include "interruptmanager.h"
+
+void APIC_EOI_HANDLER(Registers *Regs)
+{
+        APIC_SendEOI(Regs->int_no);
+}
+
 uint8_t APIC_Initialize()
 {
         PIC_Initialize(); //Initialize the PIC
         PIC_MaskAll();    //Temporarily disable all interrupts from the PIC
+
+        for(int i = 0; i < 32; i++) {
+                InterruptManager_RegisterHandler(i, INTERRUPT_MANAGER_PRIORITY_COUNT - 1, APIC_EOI_HANDLER);  //The very last handler is always the EOI
+        }
+
+        //Register the APIC interrupt handlers
+        for(int i = 32; i < IDT_ENTRY_COUNT; i++) {
+                APIC_FillHWInterruptHandler(idt_handlers[i], i, i - 32);
+                IDT_SetEntry(i, idt_handlers[i], 0x08, 0x8E);
+        }
 
         //Initialize the local APIC
         uint8_t apic_available = CPUID_FeatureIsAvailable(CPUID_EDX, CPUID_FEAT_EDX_APIC);
@@ -30,9 +47,6 @@ uint8_t APIC_Initialize()
         svr |= 0xFF;
         wrmsr(APIC_SVR, svr);
 
-        //Mask all non essential interrupts
-
-
         //Software enable the APIC by setting the msr
         APIC_SetEnableMode(1);
 
@@ -46,9 +60,10 @@ void APIC_SetEnableMode(uint8_t enabled)
         wrmsr(APIC_SVR, svr);
 }
 
-
-void APIC_DefaultHandler();
-void APIC_MainHandler(Registers *regs);
+uint8_t APIC_GetID()
+{
+        return (uint8_t)rdmsr(APIC_ID);
+}
 
 void APIC_FillHWInterruptHandler(char *idt_handler, uint8_t intNum, uint8_t irqNum)
 {
@@ -77,6 +92,7 @@ void APIC_FillHWInterruptHandler(char *idt_handler, uint8_t intNum, uint8_t irqN
         idt_handler[index++] = 0xC3;
 }
 
+void APIC_MainHandler(Registers *regs);
 __attribute__((naked, noreturn))
 void APIC_DefaultHandler()
 {
@@ -109,9 +125,19 @@ void APIC_DefaultHandler()
                 );
 }
 
+void APIC_SendEOI(uint8_t int_num)
+{
+//Test if this is in service and send EOI
+        uint32_t isr_msr = APIC_ISR_BASE + (int_num / 32);
+        uint64_t val = rdmsr(isr_msr);
+        if( CHECK_BIT(val, (int_num % 32)) ) {
+                wrmsr(APIC_EOI, 0xDEADBEEF);
+        }
+}
+
 void APIC_MainHandler(Registers *regs)
 {
-        //if(idt_handler_calls[regs->int_no] != NULL) idt_handler_calls[regs->int_no](&regs);
+        uint8_t int_num = regs->int_no;
         IDT_MainHandler(regs);
-
+        APIC_SendEOI(int_num);
 }

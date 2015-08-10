@@ -14,6 +14,7 @@ typedef struct{
   uint8_t century;
 }RTC_Time;
 
+void CMOS_Initialize();
 void CMOS_GetRTCTime(RTC_Time *rtc);
 
 #endif /* end of include guard: _CMOS_H_ */

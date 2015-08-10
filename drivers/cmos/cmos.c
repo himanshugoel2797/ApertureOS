@@ -1,9 +1,22 @@
 #include "cmos.h"
 
+#include "acpi_tables/acpi_tables.h"
+#include "acpi_tables/fadt.h"
+
 #include "utils/native.h"
 
 #define CMOS_REG_SELECT_PORT 0x70
 #define CMOS_REG_SET_PORT 0x71
+
+int century_register = 0;
+
+void CMOS_Initialize()
+{
+        FADT *fadt = ACPITables_FindTable(FADT_SIG);
+        if(fadt != NULL) {
+                century_register = fadt->Century;
+        }
+}
 
 void CMOS_SelectRegister(uint8_t nmi_disabled, uint8_t cmos_reg)
 {
@@ -29,10 +42,9 @@ uint8_t CMOS_UpdateInProgress()
 
 void CMOS_GetRTCTime(RTC_Time *rtc)
 {
-        int century_register = 0;
         uint8_t second, minute, hour, day, month;
         uint16_t year;
-        unsigned char century;
+        unsigned char century = 0;
         unsigned char last_second;
         unsigned char last_minute;
         unsigned char last_hour;

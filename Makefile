@@ -6,7 +6,7 @@ SOURCES=utils/native.o utils/common.o \
 				Graphics/graphics.o	\
 				memorymanager/bootstrap_mem_manager.o memorymanager/memorymanager.o memorymanager/paging.o \
 				drivers/acpi_tables/acpi_tables.o \
-				drivers/apic/apic.o \
+				drivers/apic/apic.o drivers/apic/apic_init.o drivers/apic/io_apic/io_apic.o \
 				drivers/cmos/cmos.o \
 				drivers/fpu/fpu.o \
 				drivers/hpet/hpet.o \
@@ -26,7 +26,7 @@ QEMU_OPTS=-m 1024 -cpu Haswell -d guest_errors,int
 
 CURRENT_YEAR=$(shell date +"%Y")
 COM_ENABLED=1
-
+install:COM_ENABLED=0
 
 
 

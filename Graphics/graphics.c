@@ -116,7 +116,7 @@ void Graphics_WriteUInt32(uint32_t val, int base, int yOff, int xOff)
 
 void Graphics_WriteUInt64(uint64_t val, int base, int yOff, int xOff)
 {
-        char str[50];
+        char str[500];
         char *opts = "0123456789ABCDEF";
         if(base == 16) {
                 for(int i = 0; i < 16; i++)

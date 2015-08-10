@@ -54,7 +54,7 @@ typedef struct
         uint8_t register_bit_offset;
         uint8_t reserved;
         uint64_t address;
-} address_structure
+} GenericAddressStructure
 __attribute__((packed));
 
 #define XSDT_GET_POINTER_COUNT(h) ((h.Length - sizeof(h)) / 8)
