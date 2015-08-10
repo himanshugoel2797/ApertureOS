@@ -1,6 +1,7 @@
 #include "pic.h"
 #include "idt.h"
 #include "utils/native.h"
+#include "utils/common.h"
 
 #define ICW1_ICW4 0x01    /* ICW4 (not) needed */
 #define ICW1_SINGLE 0x02    /* Single (cascade) mode */
@@ -30,6 +31,33 @@ void PIC_Initialize()
                 PIC_FillHWInterruptHandler(idt_handlers[i], i, i - 32);
                 IDT_SetEntry(i, idt_handlers[i], 0x08, 0x8E);
         }
+}
+
+//Necessary for APIC operation
+void PIC_MaskAll()
+{
+        outb(PIC2_DATA, 0xFF);
+        outb(PIC1_DATA, 0xFF);
+}
+
+void PIC_MaskIRQ(uint8_t irq)
+{
+        uint16_t port = PIC1_DATA;
+        if(irq >= 40) {
+                port = PIC2_DATA;
+                irq -= 40;
+        }
+        outb(port, SET_BIT(inb(port), irq));
+}
+
+void PIC_UnMaskIRQ(uint8_t irq)
+{
+        uint16_t port = PIC1_DATA;
+        if(irq >= 40) {
+                port = PIC2_DATA;
+                irq -= 40;
+        }
+        outb(port, CLEAR_BIT(inb(port), irq));
 }
 
 void PIC_SetOffset(int offset1, int offset2)

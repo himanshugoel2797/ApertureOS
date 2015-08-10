@@ -90,7 +90,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
         GDT_Initialize();
         IDT_Initialize();
-        PIC_Initialize();
+        APIC_Initialize();
         InterruptManager_Initialize();
 
         InterruptManager_RegisterHandler(32, 30, timerHandler);
@@ -146,8 +146,6 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         InterruptManager_RegisterHandler(32, 0, keyboard_test);
         temp2 = PS2_Initialize();
         COM_WriteStr("const char *str");
-
-        while(1) {temp2++; }
 
         asm ("hlt");
 

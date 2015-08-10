@@ -12,6 +12,7 @@
 #define CLEAR_BIT(x, index) (x & ~(1 << index))
 #define TOGGLE_BIT(x, index) (x ^ (1 << index))
 #define CHECK_BIT(x, index) ((x & (1 << index)) >> index)
+#define SET_VAL_BIT(number, n, x) ( number ^ ((-x ^ number) & (1 << n)))
 
 void* memcpy(void *dest, void *src, size_t size);
 void* memset(void *ptr, int val, size_t num);
