@@ -16,6 +16,9 @@ uint8_t HPET_Initialize()
 
         if(hpet == NULL) return -1; //No HPET, system should default to PIT
         hpet_base_addr = (uint64_t*)hpet->address.address;
+        //if(hpet_base_addr == 0) hpet_base_addr = 0xFED00000;
+
+        COM_WriteStr("%x          \r\n", hpet_base_addr);
 
         //Get HPET capabilities
         capabilities = HPET_Read(HPET_CAP_REG);
@@ -28,7 +31,7 @@ uint8_t HPET_Initialize()
         //Calculate the HPET frequency
         frequency = numerator/(capabilities >> 32);
 
-        return (capabilities >> 8) & 0xF;
+        return 0;
 }
 
 uint8_t HPET_GetTimerCount(){
@@ -49,12 +52,12 @@ void HPET_SetEnable(int enable)
 
 void HPET_Write(uint32_t reg, uint64_t val)
 {
-        *(hpet_base_addr + reg) = val;
+        hpet_base_addr[reg/8] = val;
 }
 
 uint64_t HPET_Read(uint32_t reg)
 {
-        return *(hpet_base_addr + reg);
+        return hpet_base_addr[reg/8];
 }
 
 uint64_t HPET_GetGlobalCounter()
