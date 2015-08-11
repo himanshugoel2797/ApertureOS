@@ -3,8 +3,14 @@
 INCLUDES=-I. -Idrivers
 
 SOURCES=utils/native.o utils/common.o utils/sprintf.o \
-				Graphics/graphics.o	\
-				memorymanager/bootstrap_mem_manager.o memorymanager/memorymanager.o memorymanager/paging.o \
+				graphics/graphics.o	\
+				managers/bootstrap_mem_pool/bootstrap_mem_pool.o \
+				managers/msg_manager/msg_manager.o \
+				managers/interrupt/interrupt_manager.o \
+				managers/phys_mem_manager/phys_mem_manager.o \
+				managers/timer/timer_manager.o \
+				managers/virt_mem_manager/virt_mem_manager.o \
+				memorymanager/paging.o \
 				drivers/acpi_tables/acpi_tables.o \
 				drivers/apic/apic.o drivers/apic/apic_init.o drivers/apic/io_apic/io_apic.o \
 				drivers/cmos/cmos.o \

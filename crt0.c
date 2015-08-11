@@ -27,7 +27,7 @@
 #include "utils/common.h"
 
 #include "test.h"
-#include "Graphics/graphics.h"
+#include "graphics/graphics.h"
 
 
 int temp = 0, temp2 = 0, y, yOff, x, xOff, rval = 0;

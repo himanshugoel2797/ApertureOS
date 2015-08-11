@@ -137,8 +137,13 @@ size_t strlen(const char *str)
 
 int strncmp(const char* s1, const char* s2, size_t n)
 {
-    while(n--)
-        if(*s1++!=*s2++)
-            return *(unsigned char*)(s1 - 1) - *(unsigned char*)(s2 - 1);
-    return 0;
+        while(n--)
+                if(*s1++!=*s2++)
+                        return *(unsigned char*)(s1 - 1) - *(unsigned char*)(s2 - 1);
+        return 0;
+}
+
+char * strcpy ( char * destination, const char * source )
+{
+        return (char*)memcpy(destination, source, strlen(source));
 }

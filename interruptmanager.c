@@ -1,7 +1,7 @@
 #include "interruptmanager.h"
 
 #include "utils/common.h"
-#include "Graphics/graphics.h"
+#include "graphics/graphics.h"
 #include "drivers/drivers.h"
 
 void (*interruptHandlers[IDT_ENTRY_COUNT][INTERRUPT_MANAGER_PRIORITY_COUNT]) (Registers*);
