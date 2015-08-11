@@ -38,7 +38,7 @@ uint8_t APIC_LocalInitialize()
         if(!apic_available) return -1;
 
         uint64_t apic_base_msr = rdmsr(IA32_APIC_BASE);
-        apic_base_addr = apic_base_msr & 0xfffff000;
+        apic_base_addr = (uint32_t)apic_base_msr & 0xfffff000;
         apic_base_msr |= (1 << 11); //Enable the apic
         wrmsr(IA32_APIC_BASE, apic_base_msr);
 
@@ -53,35 +53,24 @@ uint8_t APIC_LocalInitialize()
 
         APIC_SetEnableMode(1);
 
-        uint32_t timer = APIC_Read(APIC_TIMER);
-        timer &= ~(3<<17);
-        timer |= (1<<17);
-        APIC_Write(APIC_TIMER, timer);
-
-        APIC_Write(APIC_INITIAL_COUNT, 1000);
-
-        APIC_SetVector(APIC_TIMER, 32);
-        APIC_SetEnableInterrupt(APIC_TIMER, 1);
-
-
         return 0;
 }
 
 void APIC_Write(uint32_t reg, uint32_t val)
 {
-    *(apic_base_addr + reg) = val;
+        apic_base_addr[reg/4] = val;
 }
 
 uint32_t APIC_Read(uint32_t reg)
 {
-    return *(apic_base_addr + reg);
+        return apic_base_addr[reg/4];
 }
 
 void APIC_SetEnableInterrupt(uint32_t interrupt, int enableMode)
 {
         if(interrupt < 0x320 || interrupt > 0x360) return;
         uint32_t val = APIC_Read(interrupt);
-        val = SET_VAL_BIT(val, 16, !(enableMode & 1));
+        val = SET_VAL_BIT(val, 16, (~enableMode & 1));
         APIC_Write(interrupt, val);
 }
 
@@ -168,7 +157,7 @@ void APIC_DefaultHandler()
 void APIC_SendEOI(uint8_t int_num)
 {
 //Test if this is in service and send EOI
-        uint32_t isr_msr = APIC_ISR_BASE + (int_num / 32);
+        uint32_t isr_msr = APIC_ISR_BASE + ((int_num / 32) * 0x10);
         uint32_t val = APIC_Read(isr_msr);
         if( CHECK_BIT(val, (int_num % 32)) ) {
                 COM_WriteStr("Sending EOI for int %d\r\n", int_num);

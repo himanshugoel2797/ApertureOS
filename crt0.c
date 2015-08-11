@@ -36,7 +36,7 @@ char *tmp;
 
 float r = 3.3f;
 
-uint64_t allocLoc;
+uint64_t allocLoc = 0;
 size_t q = 0;
 
 
@@ -46,6 +46,7 @@ void keyboard_test(Registers *regs)
 {
         COM_WriteStr("Keyboard Input Recieved!\r\n");
         temp2 = inb(0x60);
+        allocLoc++;
         //outb(0x60, inb(0x61));
         //temp2 = -1;
 }
@@ -53,9 +54,8 @@ void keyboard_test(Registers *regs)
 void timerHandler(Registers *regs)
 {
         temp++;
-        if(temp % 10 == 0) {
+        if(temp % 1 == 0) {
                 Graphics_Clear();
-                COM_WriteStr("Update!\r\n");
 
                 q = 0;
                 for(y = 0; y < 1080; y++)
@@ -70,6 +70,7 @@ void timerHandler(Registers *regs)
                 Graphics_WriteUInt64(temp2, 16, 0, 16);
                 Graphics_WriteUInt32(rval, 16, 0, 32);
                 Graphics_WriteUInt32(t.seconds, 2, 0, 48);
+                Graphics_WriteUInt32(allocLoc, 2, 0, 64);
 
                 Graphics_SwapBuffer();
         }
@@ -86,11 +87,20 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         IDT_Initialize();
         InterruptManager_Initialize();
 
-        InterruptManager_RegisterHandler(32, 30, timerHandler);
+        InterruptManager_RegisterHandler(31, 0, timerHandler);
+        InterruptManager_RegisterHandler(32, 0, keyboard_test);
 
         CMOS_Initialize();
         APIC_Initialize();
-        //rval = HPET_Initialize();
+        rval = HPET_Initialize();
+        HPET_SetTimerConfig(0, 32, 1, 1, 1, 1000);
+        HPET_SetGlobalCounter(0);
+        HPET_SetEnable(1);
+
+
+
+
+
 
         FPU_Initialize();
 
@@ -135,15 +145,24 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
                         q+=4;
                 }
 
-        PIT_SetFrequency(PIT_CH0, PIT_ACCESS_LO_BYTE | PIT_ACCESS_HI_BYTE, PIT_MODE_ONESHOT, PIT_VAL_16BIT, 30);
+        //PIT_SetFrequency(PIT_CH0, PIT_ACCESS_LO_BYTE | PIT_ACCESS_HI_BYTE, PIT_MODE_SQUARE_WAVE, PIT_VAL_16BIT, 30000);
 
         //InterruptManager_RegisterHandler(33, 0, keyboard_test);
-        //PS2_Initialize();
+        PS2_Initialize();
 
         asm ("sti");
-        while(1){
-          asm("int $32");
-          //timerHandler(NULL);
+        uint32_t timer = APIC_Read(APIC_TIMER);
+        timer &= ~(3<<17);
+        timer |= (1<<17);
+        APIC_Write(APIC_TIMER, timer);
+
+        APIC_Write(0x380, 256);
+
+        APIC_SetVector(APIC_TIMER, 31);
+        APIC_SetEnableInterrupt(APIC_TIMER, 1);
+
+
+        while(1) {
         }
 
         asm ("hlt");
