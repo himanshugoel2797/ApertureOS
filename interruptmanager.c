@@ -64,7 +64,7 @@ void InterruptManager_InterruptHandler(Registers *regs)
         {
                 if(interruptHandlers[regs->int_no][i] != NULL) {
                         interruptHandlers[regs->int_no][i](regs);
-                        if(i < INTERRUPT_MANAGER_PRIORITY_COUNT - 1) handlerCalled = 1;
+                        if(i < (INTERRUPT_MANAGER_PRIORITY_COUNT - 1)) handlerCalled = 1;
                 }
         }
 
@@ -74,8 +74,11 @@ void InterruptManager_InterruptHandler(Registers *regs)
                 COM_WriteStr(interruptMessages[regs->int_no]);
                 Graphics_WriteStr(interruptMessages[regs->int_no], 0, 0);
                 Graphics_SwapBuffer();
-                while(1) { asm volatile ("hlt"); }
+        }else if(handlerCalled == 0) {
+                COM_WriteStr("Interrupt %d\r\n", regs->int_no);
         }
+        if(handlerCalled == 0)
+                while(1) { asm volatile ("hlt"); }
 }
 
 uint8_t InterruptManager_GetFreePriority(uint8_t int_no)

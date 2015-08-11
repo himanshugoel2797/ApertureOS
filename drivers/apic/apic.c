@@ -16,6 +16,8 @@ void APIC_EOI_HANDLER(Registers *Regs)
         APIC_SendEOI(Regs->int_no);
 }
 
+uint32_t *apic_base_addr = 0;
+
 uint8_t APIC_LocalInitialize()
 {
         PIC_Initialize(); //Initialize the PIC
@@ -33,36 +35,74 @@ uint8_t APIC_LocalInitialize()
 
         //Initialize the local APIC
         uint8_t apic_available = CPUID_FeatureIsAvailable(CPUID_EDX, CPUID_FEAT_EDX_APIC);
-        uint8_t x2apic_available = CPUID_FeatureIsAvailable(CPUID_ECX, CPUID_FEAT_ECX_x2APIC);
-
         if(!apic_available) return -1;
-        if(!x2apic_available) return -2;
 
         uint64_t apic_base_msr = rdmsr(IA32_APIC_BASE);
-        apic_base_msr |= (3 << 10); //Enable both apic and x2apic mode
+        apic_base_addr = apic_base_msr & 0xfffff000;
+        apic_base_msr |= (1 << 11); //Enable the apic
         wrmsr(IA32_APIC_BASE, apic_base_msr);
 
-        //Set the spurious vector
-        uint64_t svr = rdmsr(APIC_SVR);
-        svr |= 0xFF;
-        wrmsr(APIC_SVR, svr);
+        uint32_t tpr = APIC_Read(APIC_TPR);
+        tpr &= ~(0xFF);
+        APIC_Write(APIC_TPR, tpr);
 
-        //Software enable the APIC by setting the msr
+        //Set the spurious vector
+        uint32_t svr = APIC_Read(APIC_SVR);
+        svr |= 0xFF;
+        APIC_Write(APIC_SVR, svr);
+
         APIC_SetEnableMode(1);
+
+        uint32_t timer = APIC_Read(APIC_TIMER);
+        timer &= ~(3<<17);
+        timer |= (1<<17);
+        APIC_Write(APIC_TIMER, timer);
+
+        APIC_Write(APIC_INITIAL_COUNT, 1000);
+
+        APIC_SetVector(APIC_TIMER, 32);
+        APIC_SetEnableInterrupt(APIC_TIMER, 1);
+
 
         return 0;
 }
 
+void APIC_Write(uint32_t reg, uint32_t val)
+{
+    *(apic_base_addr + reg) = val;
+}
+
+uint32_t APIC_Read(uint32_t reg)
+{
+    return *(apic_base_addr + reg);
+}
+
+void APIC_SetEnableInterrupt(uint32_t interrupt, int enableMode)
+{
+        if(interrupt < 0x320 || interrupt > 0x360) return;
+        uint32_t val = APIC_Read(interrupt);
+        val = SET_VAL_BIT(val, 16, !(enableMode & 1));
+        APIC_Write(interrupt, val);
+}
+
+void APIC_SetVector(uint32_t interrupt, uint8_t vector)
+{
+        if(interrupt < 0x320 || interrupt > 0x360) return;
+        uint32_t val = APIC_Read(interrupt);
+        val |= vector;
+        APIC_Write(interrupt, val);
+}
+
 void APIC_SetEnableMode(uint8_t enabled)
 {
-        uint64_t svr = rdmsr(APIC_SVR);
-        svr = SET_VAL_BIT(svr, 8, enabled & 1);
-        wrmsr(APIC_SVR, svr);
+        uint32_t svr = APIC_Read(APIC_SVR);
+        svr = SET_VAL_BIT(svr, 8, (enabled & 1));
+        APIC_Write(APIC_SVR, svr);
 }
 
 uint8_t APIC_GetID()
 {
-        return (uint8_t)rdmsr(APIC_ID);
+        return (uint8_t)APIC_Read(APIC_ID);
 }
 
 void APIC_FillHWInterruptHandler(char *idt_handler, uint8_t intNum, uint8_t irqNum)
@@ -129,9 +169,10 @@ void APIC_SendEOI(uint8_t int_num)
 {
 //Test if this is in service and send EOI
         uint32_t isr_msr = APIC_ISR_BASE + (int_num / 32);
-        uint64_t val = rdmsr(isr_msr);
+        uint32_t val = APIC_Read(isr_msr);
         if( CHECK_BIT(val, (int_num % 32)) ) {
-                wrmsr(APIC_EOI, 0xDEADBEEF);
+                COM_WriteStr("Sending EOI for int %d\r\n", int_num);
+                APIC_Write(APIC_EOI, 0xDEADBEEF);
         }
 }
 

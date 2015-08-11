@@ -22,7 +22,7 @@ PLATFORM=/opt/cross/bin/i686
 
 SDA=sdb
 
-QEMU_OPTS=-m 1024 -cpu Haswell -d guest_errors,int
+QEMU_OPTS=-m 1024 -cpu SandyBridge -d guest_errors,int
 
 CURRENT_YEAR=$(shell date +"%Y")
 COM_ENABLED=1

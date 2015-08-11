@@ -44,7 +44,7 @@ void timerHandler(Registers *regs);
 
 void keyboard_test(Registers *regs)
 {
-        //COM_WriteStr("Keyboard Input Recieved!\r\n");
+        COM_WriteStr("Keyboard Input Recieved!\r\n");
         temp2 = inb(0x60);
         //outb(0x60, inb(0x61));
         //temp2 = -1;
@@ -52,25 +52,27 @@ void keyboard_test(Registers *regs)
 
 void timerHandler(Registers *regs)
 {
-        Graphics_Clear();
-        //COM_WriteStr("Update!\r\n");
+        temp++;
+        if(temp % 10 == 0) {
+                Graphics_Clear();
+                COM_WriteStr("Update!\r\n");
 
-        q = 0;
-        for(y = 0; y < 1080; y++)
-                for(x = 0; x < 1920; x++)
-                {
-                        Graphics_SetPixel(x,y, *(int*)&tmp[q]);
-                        q+=4;
-                }
-        RTC_Time t;
-        CMOS_GetRTCTime(&t);
+                q = 0;
+                for(y = 0; y < 1080; y++)
+                        for(x = 0; x < 1920; x++)
+                        {
+                                Graphics_SetPixel(x,y, *(int*)&tmp[q]);
+                                q+=4;
+                        }
+                RTC_Time t;
+                CMOS_GetRTCTime(&t);
 
-        Graphics_WriteUInt64(allocLoc, 16, 0, 0);
-        Graphics_WriteUInt32(rval, 16, 0, 16);
-        Graphics_WriteUInt32(t.seconds, 2, 0, 32);
+                Graphics_WriteUInt64(temp2, 16, 0, 16);
+                Graphics_WriteUInt32(rval, 16, 0, 32);
+                Graphics_WriteUInt32(t.seconds, 2, 0, 48);
 
-        Graphics_SwapBuffer();
-
+                Graphics_SwapBuffer();
+        }
 }
 
 //extern "C"{
@@ -84,11 +86,12 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         IDT_Initialize();
         InterruptManager_Initialize();
 
+        InterruptManager_RegisterHandler(32, 30, timerHandler);
+
         CMOS_Initialize();
         APIC_Initialize();
-        rval = HPET_Initialize();
+        //rval = HPET_Initialize();
 
-        InterruptManager_RegisterHandler(31, 30, timerHandler);
         FPU_Initialize();
 
         //Backup all important information from the bootloader
@@ -106,7 +109,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         memcpy(global_memory_map, mbd->mmap_addr, global_memory_map_size);
 
 
-        asm ("wbinvd"); //Flush the caches so the dynamic code takes effect
+        //asm ("wbinvd"); //Flush the caches so the dynamic code takes effect
 
         MemMan_Initialize();
         Paging_Initialize();
@@ -132,12 +135,16 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
                         q+=4;
                 }
 
-        COM_WriteStr("\r\n%d%d", 10, -20);
+        PIT_SetFrequency(PIT_CH0, PIT_ACCESS_LO_BYTE | PIT_ACCESS_HI_BYTE, PIT_MODE_ONESHOT, PIT_VAL_16BIT, 30);
+
+        //InterruptManager_RegisterHandler(33, 0, keyboard_test);
+        //PS2_Initialize();
+
         asm ("sti");
-        //asm ("int $0x31");
-        //asm ("int $0x31");
-        InterruptManager_RegisterHandler(32, 0, keyboard_test);
-        temp2 = PS2_Initialize();
+        while(1){
+          asm("int $32");
+          //timerHandler(NULL);
+        }
 
         asm ("hlt");
 

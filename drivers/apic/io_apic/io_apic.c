@@ -16,14 +16,14 @@ uint8_t IOAPIC_Initialize(uint32_t baseAddr, uint32_t global_int_base, uint32_t 
 
 uint32_t IOAPIC_Read(uint32_t* io_apic_baseAddr, uint32_t index)
 {
-        *io_apic_baseAddr = index;
-        return *(io_apic_baseAddr + 0x10);
+        io_apic_baseAddr[0] = index;
+        return io_apic_baseAddr[4];
 }
 
 void IOAPIC_Write(uint32_t* io_apic_baseAddr, uint32_t index, uint32_t val)
 {
-        *io_apic_baseAddr = index;
-        *(io_apic_baseAddr + 0x10) = val;
+        io_apic_baseAddr[0] = index;
+        io_apic_baseAddr[4] = val;
 }
 
 void IOAPIC_MapIRQ(uint8_t global_irq, uint8_t apic_vector, uint64_t apic_id)
@@ -54,7 +54,7 @@ void IOAPIC_MapIRQ(uint8_t global_irq, uint8_t apic_vector, uint64_t apic_id)
 
         // unmask the IRQ
         low &= ~(1<<16);
-
+        low &= ~(1<<13);
         // set to physical delivery mode
         low &= ~(1<<11);
 
