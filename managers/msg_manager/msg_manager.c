@@ -1,26 +1,43 @@
 #include "msg_manager.h"
 
-Message msg_pool[ERROR_POOL_SIZE];
-uint32_t cur_msg_index = 0;
+#include "utils/common.h"
+#include "drivers/drivers.h"
 
-void Message_Add(Message *err)
+void MessageMan_Add(Message *err)
 {
-        if(err->msg_priority == MP_CRITICAL)
-        {
-                //Immediately deal with critical messages
-        }else{  //Other messages can wait
-                strcpy(msg_pool[cur_error_index].message, err->message);
-                msg_pool[cur_msg_index].system_id = err->system_id;
-                msg_pool[cur_msg_index].stack_pointer = err->stack_pointer;
-                msg_pool[cur_msg_index].msg_id = err->msg_id;
-                msg_pool[cur_msg_index].msg_type = err->msg_type;
-                msg_pool[cur_msg_index].msg_priority = err->msg_priority;
+        if(err == NULL) return; //Ignore all invalid pointers
 
-                cur_msg_index++;
+        SystemData sys;
+        SysMan_GetSystemData(err->system_id, &sys);
+
+        char *sys_n = "Unknown";
+
+        if(sys.sys_id != err->system_id) {
+                COM_WriteStr("SEVERE WARNING [MessageMan]: Invalid System ID for message %s\r\n", err->message);
+        }else{
+                sys_n = sys.sys_name;
         }
-}
 
-void Error_HandleErrors()
-{
+        COM_WriteStr("PRIORITY %d, STATUS %d, ID %d [%s]: %s\r\n",
+                     err->msg_priority, err->msg_type, err->msg_id, sys_n, err->message);
 
+        //If this is a valid system ID, call the message handler if available
+        if(sys.sys_id == err->system_id)
+        {
+                if(sys.msg_cb != NULL) {
+                        uint8_t res = sys.msg_cb(err);
+                        if(res == 0) {
+                                COM_WriteStr("[%s] Situation Solved", sys_n);
+                        }else{
+                                COM_WriteStr("[%s] Failed to resolve situation! [CODE %d]", res, sys_n);
+                        }
+                }else if(err->msg_priority != MP_CRITICAL) {
+                        COM_WriteStr("SEVERE WARNING [MessageMan]: System %s does not have a message callback setup, messages will be ignored", sys_n);
+                }else{
+                        COM_WriteStr("%s System with ID%d has a critical message waiting, this message must be handled, execution will be stopped", sys_n, err->system_id);
+                }
+        }
+        else if(err->msg_priority == MP_CRITICAL) {
+                COM_WriteStr("Unknown System with ID%d has a critical message waiting, this message must be handled, execution will be stopped", err->system_id);
+        }
 }
