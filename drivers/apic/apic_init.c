@@ -21,6 +21,8 @@ uint32_t APIC_Initialize()
 
         if(madt != NULL) {
                 uint32_t len = madt->h.Length - 8;
+                uint32_t ioapic_count = 0;
+try_again:
                 for(uint32_t i = 0; i < len; i++)
                 {
                         switch(madt->entries[i])
@@ -41,13 +43,15 @@ uint32_t APIC_Initialize()
                                 MADT_EntryIOAPIC *ioapic = (MADT_EntryIOAPIC*)&madt->entries[i];
                                 i+= ioapic->h.entry_size  - 1;
 
+                                ioapic_count++;
+
                                 COM_WriteStr("\r\nIOAPIC\r\n");
                                 COM_WriteStr("\tLen: %d\r\n", ioapic->h.entry_size);
                                 COM_WriteStr("\tID: %x\r\n", ioapic->io_apic_id);
                                 COM_WriteStr("\tBase Address: %x\r\n", ioapic->io_apic_base_addr);
                                 COM_WriteStr("\tGlobal Interrupt Base: %x\r\n", ioapic->global_sys_int_base);
 
-                                IOAPIC_Initialize(ioapic->io_apic_base_addr, ioapic->global_sys_int_base, ioapic->io_apic_id);
+                                IOAPIC_Initialize(ioapic->io_apic_base_addr, ioapic->global_sys_int_base);
 
                                 //Map IRQ 0-15 to 32-47
                                 for(int j = 0; j < 16; j++) {
@@ -78,7 +82,22 @@ uint32_t APIC_Initialize()
                         }
                         if( ((MADT_EntryHeader*)&madt->entries[i])->entry_size == 0) break;
                 }
+                if(ioapic_count == 0) {
+                        IOAPIC_Initialize(0xFEC00000, 0);
+                        //Map IRQ 0-15 to 32-47
+                        for(int j = 0; j < 16; j++) {
+                                IOAPIC_MapIRQ(j, 32 + j, APIC_GetID(), 0, 0);
+                        }
+                        ioapic_count++;
+                        COM_WriteStr("Trying again!");
+                        goto try_again;
+                }
+        }else{
+                COM_WriteStr("MADT not found!");
+                return -1;
         }
+
+        COM_WriteStr("Done!");
 
         return 0;
 }
