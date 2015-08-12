@@ -69,7 +69,7 @@ void graphics_WriteStr(const char *str, int yOff, int xOff)
 
                                 curBufVal = backBuffer[ (yOff+ (8-b) + (a * pitch)) ];
 
-                                backBuffer[ (yOff+ (8-b) + (a * pitch)) ] = (1 - ((letters[str[i] - 32][13 - (a - xOff)] >> b) & 1)) * curBufVal;
+                                backBuffer[ (yOff+ (8-b) + (a * pitch)) ] = (1 - ((letters[str[i] - 32][13 - (a - xOff)] >> b) & 1)) * -1;
 
                                 //if(backBuffer[ (yOff+ (8-b) + (a * pitch)) ] == 0)backBuffer = curBufVal;
                         }

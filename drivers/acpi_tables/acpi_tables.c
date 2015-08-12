@@ -43,33 +43,45 @@ uint8_t ACPITables_ValidateChecksum(ACPISDTHeader *header)
         return sum == 0;
 }
 
-void* ACPITables_FindTable(const char *table_name)
+void* ACPITables_FindTable(const char *table_name, int index)
 {
         if(rsdp == NULL) return NULL;
 
-        //if(rsdp->firstPart.Revision == ACPI_VERSION_1) {
+        if(rsdp->firstPart.Revision == ACPI_VERSION_1) {
                 RSDT *rsdt = (RSDT *) rsdp->firstPart.RsdtAddress;
                 if(!ACPITables_ValidateChecksum((ACPISDTHeader*)rsdt)) return (void*)-1;
 
                 int entries = RSDT_GET_POINTER_COUNT((rsdt->h));
+                int cur_index = 0;
 
                 for (int i = 0; i < entries; i++)
                 {
                         ACPISDTHeader *h = (ACPISDTHeader *) rsdt->PointerToOtherSDT[i];
-                        if (!strncmp(h->Signature, table_name, 4) && ACPITables_ValidateChecksum(h)) return (void *) h;
+                        if (!strncmp(h->Signature, table_name, 4) && ACPITables_ValidateChecksum(h)) {
+                                if(cur_index == index) {
+                                        return (void *) h;
+                                }
+                                cur_index++;
+                        }
                 }
-        /*}else{
+        }else{
                 XSDT *xsdt = (XSDT*)rsdp->XsdtAddress;
                 if(!ACPITables_ValidateChecksum((ACPISDTHeader*)xsdt)) return (void*)-1;
 
                 int entries = XSDT_GET_POINTER_COUNT((xsdt->h));
+                int cur_index = 0;
 
                 for (int i = 0; i < entries; i++)
                 {
                         ACPISDTHeader *h = (ACPISDTHeader *) xsdt->PointerToOtherSDT[i];
-                        if (!strncmp(h->Signature, table_name, 4) && ACPITables_ValidateChecksum(h)) return (void *) h;
+                        if (!strncmp(h->Signature, table_name, 4) && ACPITables_ValidateChecksum(h)) {
+                                if(cur_index == index) {
+                                        return (void *) h;
+                                }
+                                cur_index++;
+                        }
                 }
-        }*/
+        }
 
         return NULL;
 }

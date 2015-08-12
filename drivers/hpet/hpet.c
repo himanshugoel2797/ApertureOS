@@ -11,7 +11,7 @@ uint8_t timer_count = 0;
 uint8_t HPET_Initialize()
 {
         hpet_base_addr = NULL;
-        hpet = ACPITables_FindTable(HPET_SIG);  //Find the HPET table
+        hpet = ACPITables_FindTable(HPET_SIG, 0);  //Find the HPET table
         frequency = 0;
 
         if(hpet == NULL) return -1; //No HPET, system should default to PIT

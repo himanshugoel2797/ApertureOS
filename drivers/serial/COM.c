@@ -28,20 +28,20 @@ uint8_t COM_ready()
         #endif
 
 }
-
+int ln = 0;
 void COM_WriteStr(const char *fmt, ...)
 {
-  #if COM_ENABLED == 1
         char str[1024];
         int index = 0;
         va_list vl;
         va_start(vl, fmt);
         vsnprintf(str, fmt, vl);
+        va_end(vl);
+          #if COM_ENABLED == 1
         while(str[index])
         {
                 while(COM_ready() == 0) ;
                 outb(PORT, str[index++]);
         }
-        va_end(vl);
         #endif
 }

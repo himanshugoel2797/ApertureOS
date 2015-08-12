@@ -61,7 +61,6 @@ typedef struct
 #define BIOS_SEARCH_END   0x000FFFFF
 
 uint8_t ACPITables_ValidateChecksum(ACPISDTHeader *header);
-void* ACPITables_FindTable(const char *table_name);
 RSDPDescriptor20 *rsdp;
 
 //TODO this should eventually go into the PCI base driver

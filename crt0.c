@@ -65,9 +65,11 @@ void timerHandler(Registers *regs)
                 RTC_Time t;
                 CMOS_GetRTCTime(&t);
 
-                graphics_WriteUInt64(temp2, 16, 0, 16);
+                asm("mov %%cr0, %0" : "=r"(temp));
+
+                graphics_WriteUInt64(temp, 2, 0, 16);
                 graphics_WriteUInt32(rval, 16, 0, 32);
-                graphics_WriteUInt32(t.seconds, 2, 0, 48);
+                graphics_WriteUInt32(t.seconds, 10, 0, 48);
                 graphics_WriteUInt32(allocLoc, 2, 0, 64);
 
                 graphics_SwapBuffer();
@@ -77,21 +79,8 @@ void timerHandler(Registers *regs)
 //extern "C"{
 void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
-        COM_Initialize();
-        ACPITables_Initialize();
         GDT_Initialize();
         IDT_Initialize();
-
-        bootstrap_setup();
-        Interrupts_Setup();
-
-
-        Interrupts_RegisterHandler(IRQ(0), 0, timerHandler);
-
-        CMOS_Initialize();
-        FPU_Initialize();
-
-
 
 
 
@@ -119,6 +108,22 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
         graphics_Initialize();
 
+
+
+        COM_Initialize();
+        ACPITables_Initialize();
+
+
+
+
+        bootstrap_setup();
+        Interrupts_Setup();
+
+
+        Interrupts_RegisterHandler(IRQ(0), 0, timerHandler);
+
+        CMOS_Initialize();
+        FPU_Initialize();
 
         allocLoc = MemMan_Alloc( (31 % 31) * KB(4));
         MemMan_Free(allocLoc, (31 % 31) * KB(4));

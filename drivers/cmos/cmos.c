@@ -12,7 +12,7 @@ int century_register = 0;
 
 void CMOS_Initialize()
 {
-        FADT *fadt = ACPITables_FindTable(FADT_SIG);
+        FADT *fadt = ACPITables_FindTable(FADT_SIG, 0);
         if(fadt != NULL) {
                 century_register = fadt->Century;
         }

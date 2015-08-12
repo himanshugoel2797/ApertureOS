@@ -8,6 +8,6 @@
 #define HPET_SIG "HPET"
 
 uint8_t ACPITables_Initialize();
-void* ACPITables_FindTable(const char *table_name);
+void* ACPITables_FindTable(const char *table_name, int index);
 
 #endif /* end of include guard: _ACPI_TABLES_DRIVER_H_ */

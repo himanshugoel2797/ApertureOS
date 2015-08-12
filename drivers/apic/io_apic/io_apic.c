@@ -55,11 +55,11 @@ void IOAPIC_MapIRQ(uint8_t global_irq, uint8_t apic_vector, uint64_t apic_id, ui
 
         // unmask the IRQ
         low &= ~(1<<16);
-        //low &= ~(1<<13);
-        //low |= ((polarity & 1) << 13);
+        low &= ~(1<<13);
+        low |= ((polarity & 1) << 13);
 
-        //low &= ~(1<<15);
-        //low |= ((trigger_mode & 1) << 15);
+        low &= ~(1<<15);
+        low |= ((trigger_mode & 1) << 15);
 
         // set to physical delivery mode
         low &= ~(1<<11);
