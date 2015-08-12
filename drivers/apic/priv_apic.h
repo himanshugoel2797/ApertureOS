@@ -12,7 +12,6 @@
 #define APIC_TPR 0x080
 #define APIC_INITIAL_COUNT 0x380
 
-void APIC_SendEOI(uint8_t int_num);
 void APIC_FillHWInterruptHandler(char *idt_handler, uint8_t intNum, uint8_t irqNum);
 void APIC_DefaultHandler();
 void APIC_Write(uint32_t reg, uint32_t val);

@@ -22,7 +22,7 @@
 void PIC_FillHWInterruptHandler(char *idt_handler, uint8_t intNum, uint8_t irqNum);
 void PIC_DefaultHandler();
 
-void PIC_Initialize()
+uint32_t PIC_Initialize()
 {
         PIC_SetOffset(32, 40); //Remap PIC1 to raise interrupts in 32-39 and PIC1 to raise interrupts in 40-47
 
@@ -31,6 +31,7 @@ void PIC_Initialize()
                 PIC_FillHWInterruptHandler(idt_handlers[i], i, i - 32);
                 IDT_SetEntry(i, (uint32_t)idt_handlers[i], 0x08, 0x8E);
         }
+        return 0;
 }
 
 //Necessary for APIC operation
@@ -47,7 +48,7 @@ void PIC_MaskIRQ(uint8_t irq)
                 port = PIC2_DATA;
                 irq -= 40;
         }
-        outb(port, SET_BIT(inb(port), irq));
+        outb(port, SET_BIT(inb(port), (irq - 32)));
 }
 
 void PIC_UnMaskIRQ(uint8_t irq)
@@ -57,7 +58,7 @@ void PIC_UnMaskIRQ(uint8_t irq)
                 port = PIC2_DATA;
                 irq -= 40;
         }
-        outb(port, CLEAR_BIT(inb(port), irq));
+        outb(port, CLEAR_BIT(inb(port), (irq - 32)));
 }
 
 void PIC_SetOffset(int offset1, int offset2)
@@ -147,17 +148,22 @@ void PIC_DefaultHandler()
                 );
 }
 
-void PIC_MainHandler(Registers *regs)
+void PIC_SendEOI(uint8_t irq)
 {
-        if( ((PIC_GetReg(PIC_READ_ISR) >> regs->int_no) & 1) == 1)
+        if( ((PIC_GetReg(PIC_READ_ISR) >> irq) & 1) == 1)
         {
-                if(regs->int_no >= 40)
+                if(irq >= 40)
                 {
                         outb(PIC2_COMMAND, PIC_RESET);
                 }
                 outb(PIC1_COMMAND, PIC_RESET);
+        }
+}
 
-                //if(idt_handler_calls[regs->int_no] != NULL) idt_handler_calls[regs->int_no](&regs);
+void PIC_MainHandler(Registers *regs)
+{
+        if( ((PIC_GetReg(PIC_READ_ISR) >> regs->int_no) & 1) == 1)
+        {
                 IDT_MainHandler(regs);
         }
 }

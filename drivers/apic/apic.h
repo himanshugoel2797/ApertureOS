@@ -11,10 +11,11 @@
 #define APIC_LINT1    0x360
 
 uint8_t APIC_LocalInitialize();
-uint8_t APIC_Initialize();
+uint32_t APIC_Initialize();
 void APIC_SetEnableMode(uint8_t enabled);
 uint8_t APIC_GetID();
 void APIC_SetEnableInterrupt(uint32_t interrupt, int enableMode);
 void APIC_SetVector(uint32_t interrupt, uint8_t vector);
+void APIC_SendEOI(uint8_t int_num);
 
 #endif /* end of include guard: _APIC_DRIVER_H_ */

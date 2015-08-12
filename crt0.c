@@ -12,7 +12,6 @@
 #include "elf.h"
 #include "globals.h"
 
-#include "memorymanager/bootstrap_mem_manager.h"
 #include "memorymanager/memorymanager.h"
 #include "memorymanager/pagetable.h"
 
@@ -21,8 +20,6 @@
 
 #include "drivers/drivers.h"
 #include "managers/managers.h"
-
-#include "interruptmanager.h"
 
 #include "utils/native.h"
 #include "utils/common.h"
@@ -81,24 +78,24 @@ void timerHandler(Registers *regs)
 void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
         COM_Initialize();
-
         ACPITables_Initialize();
-
         GDT_Initialize();
         IDT_Initialize();
-        InterruptManager_Initialize();
 
-        InterruptManager_RegisterHandler(32, 0, timerHandler);
+        bootstrap_setup();
+        Interrupts_Setup();
+
+
+        Interrupts_RegisterHandler(IRQ(0), 0, timerHandler);
 
         CMOS_Initialize();
-        APIC_Initialize();
-
-
-
-
-
-
         FPU_Initialize();
+
+
+
+
+
+
 
         //Backup all important information from the bootloader
         global_vbe_info = bootstrap_malloc(sizeof(VbeInfoBlock));
@@ -149,7 +146,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         HPET_SetTimerConfig(0, 0, 1, 1, 1, 100);
         HPET_SetEnable(1);
 
-        InterruptManager_RegisterHandler(33, 0, keyboard_test);
+        Interrupts_RegisterHandler(IRQ(1), 0, keyboard_test);
         PS2_Initialize();
 
         asm ("sti");

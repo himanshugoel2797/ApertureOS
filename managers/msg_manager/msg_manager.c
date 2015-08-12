@@ -27,17 +27,19 @@ void MessageMan_Add(Message *err)
                 if(sys.msg_cb != NULL) {
                         uint8_t res = sys.msg_cb(err);
                         if(res == 0) {
-                                COM_WriteStr("[%s] Situation Solved", sys_n);
+                                COM_WriteStr("[%s] Situation Solved\r\n", sys_n);
                         }else{
-                                COM_WriteStr("[%s] Failed to resolve situation! [CODE %d]", res, sys_n);
+                                COM_WriteStr("[%s] Failed to resolve situation! [CODE %d]\r\n", sys_n, res);
                         }
                 }else if(err->msg_priority != MP_CRITICAL) {
-                        COM_WriteStr("SEVERE WARNING [MessageMan]: System %s does not have a message callback setup, messages will be ignored", sys_n);
+                        COM_WriteStr("SEVERE WARNING [MessageMan]: System %s does not have a message callback setup, messages will be ignored\r\n", sys_n);
                 }else{
-                        COM_WriteStr("%s System with ID%d has a critical message waiting, this message must be handled, execution will be stopped", sys_n, err->system_id);
+                        COM_WriteStr("%s System with ID%d has a critical message waiting, this message must be handled, execution will be stopped\r\n", sys_n, err->system_id);
+                        while(1);
                 }
         }
         else if(err->msg_priority == MP_CRITICAL) {
                 COM_WriteStr("Unknown System with ID%d has a critical message waiting, this message must be handled, execution will be stopped", err->system_id);
+                while(1);
         }
 }

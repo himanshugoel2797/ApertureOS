@@ -9,33 +9,17 @@
 #include "utils/common.h"
 #include "utils/native.h"
 
-#include "interruptmanager.h"
-
-void APIC_EOI_HANDLER(Registers *Regs)
-{
-        APIC_SendEOI(Regs->int_no);
-}
-
 uint32_t *apic_base_addr = 0;
 
 uint8_t APIC_LocalInitialize()
 {
-        PIC_Initialize(); //Initialize the PIC
-        PIC_MaskAll();    //Temporarily disable all interrupts from the PIC
-
-        for(int i = 0; i < 32; i++) {
-                InterruptManager_RegisterHandler(i, INTERRUPT_MANAGER_PRIORITY_COUNT - 1, APIC_EOI_HANDLER);  //The very last handler is always the EOI
-        }
+        PIC_MaskAll();    //disable all interrupts from the PIC
 
         //Register the APIC interrupt handlers
         for(int i = 32; i < IDT_ENTRY_COUNT; i++) {
                 APIC_FillHWInterruptHandler(idt_handlers[i], i, i - 32);
                 IDT_SetEntry(i, (uint32_t)idt_handlers[i], 0x08, 0x8E);
         }
-
-        //Initialize the local APIC
-        uint8_t apic_available = CPUID_FeatureIsAvailable(CPUID_EDX, CPUID_FEAT_EDX_APIC);
-        if(!apic_available) return -1;
 
         uint64_t apic_base_msr = rdmsr(IA32_APIC_BASE);
         apic_base_addr = (uint32_t*)((uint32_t)apic_base_msr & 0xfffff000);
@@ -167,7 +151,5 @@ void APIC_SendEOI(uint8_t int_num)
 
 void APIC_MainHandler(Registers *regs)
 {
-        uint8_t int_num = regs->int_no;
         IDT_MainHandler(regs);
-        APIC_SendEOI(int_num);
 }

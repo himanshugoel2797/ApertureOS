@@ -15,6 +15,8 @@ typedef struct
         uint32_t eip, cs, eflags, useresp, ss; // Pushed by the processor automatically.
 } Registers;
 
+typedef void (*IDT_InterruptHandler)(Registers*);
+
 extern char idt_handlers[IDT_ENTRY_COUNT][IDT_ENTRY_HANDLER_SIZE];
 extern void(*idt_handler_calls[IDT_ENTRY_COUNT] ) (Registers*);
 

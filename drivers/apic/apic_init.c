@@ -5,9 +5,14 @@
 #include "acpi_tables/madt.h"
 
 #include "drivers.h"
+#include "cpuid.h"
 
-uint8_t APIC_Initialize()
+uint32_t APIC_Initialize()
 {
+        //Initialize the local APIC
+        uint8_t apic_available = CPUID_FeatureIsAvailable(CPUID_EDX, CPUID_FEAT_EDX_APIC);
+        if(!apic_available) return -1;
+
         //Initialize the local APIC
         APIC_LocalInitialize();
 
@@ -75,5 +80,5 @@ uint8_t APIC_Initialize()
                 }
         }
 
-        return 1;
+        return 0;
 }

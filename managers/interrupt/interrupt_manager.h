@@ -2,6 +2,19 @@
 #define _INTERRUPT_MANAGER_H_
 
 #include "types.h"
+#include "idt.h"
 
+typedef uint32_t (*InterruptHandler)(Registers*);
+
+#define INTERRUPT_HANDLER_SLOTS 128
+#define INTERRUPT_COUNT IDT_ENTRY_COUNT
+#define IRQ(n) (n + 32)
+#define INTR(n) (n)
+
+void Interrupts_Setup();
+void Interrupts_RegisterHandler(uint8_t intrpt, uint8_t slot, InterruptHandler handler);
+uint8_t Interrupts_GetFreeSlot(uint8_t intrpt);
+void Interrupts_SetEnableMode(bool enabled);
+void Interrupts_SetInterruptMaskMode(uint8_t intrpt, bool masked);
 
 #endif /* end of include guard: _INTERRUPT_MANAGER_H_ */

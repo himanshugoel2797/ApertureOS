@@ -3,7 +3,7 @@
 
 uint8_t mem_pool[BOOTSTRAP_MEM_POOL];
 uint32_t pos = 0;
-SystemData *sys = NULL;
+SystemData *btstrp_sys = NULL;
 
 uint32_t bootstrap_Initialize();
 void bootstrap_callback(uint32_t res);
@@ -11,14 +11,14 @@ uint8_t bootstrap_messageHandler(Message *msg);
 
 void bootstrap_setup()
 {
-        sys = SysMan_RegisterSystem();
-        strcpy(sys->sys_name, "bootstrapMan");
-        sys->prerequisites[0] = 0; //No prereqs
-        sys->init = bootstrap_Initialize;
-        sys->init_cb = bootstrap_callback;
-        sys->msg_cb = bootstrap_messageHandler;
+        btstrp_sys = SysMan_RegisterSystem();
+        strcpy(btstrp_sys->sys_name, "bootstrapMan");
+        btstrp_sys->prerequisites[0] = 0; //No prereqs
+        btstrp_sys->init = bootstrap_Initialize;
+        btstrp_sys->init_cb = bootstrap_callback;
+        btstrp_sys->msg_cb = bootstrap_messageHandler;
 
-        SysMan_StartSystem(sys->sys_id);
+        SysMan_StartSystem(btstrp_sys->sys_id);
 }
 
 uint32_t bootstrap_Initialize()
@@ -46,8 +46,8 @@ void* bootstrap_malloc(size_t size)
         {
                 Message msg;
                 strcpy(msg.message, "Not enough space for allocation");
-                msg.system_id = sys->sys_id;
-                msg.src_id = sys->sys_id;
+                msg.system_id = btstrp_sys->sys_id;
+                msg.src_id = btstrp_sys->sys_id;
                 msg.msg_id = MI_OUT_OF_MEMORY;
                 msg.msg_type = MT_ERROR;
                 msg.msg_priority = MP_CRITICAL;

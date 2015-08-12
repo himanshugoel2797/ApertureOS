@@ -1,8 +1,8 @@
 #include "fpu.h"
 #include "cpuid.h"
-#include "interruptmanager.h"
+#include "managers.h"
 
-void FPU_StateHandler(Registers *regs);
+uint32_t FPU_StateHandler(Registers *regs);
 
 void FPU_Initialize()
 {
@@ -43,7 +43,7 @@ void FPU_Initialize()
         //Set the control register to the new value
         asm volatile ("mov %0, %%cr4" :: "r" (bitmask));
 
-        InterruptManager_RegisterHandler(7, 0, FPU_StateHandler);
+        Interrupts_RegisterHandler(7, 0, FPU_StateHandler);
 
         asm ("fninit");
 }
@@ -58,8 +58,9 @@ void FPU_EnableInterrupts()
         asm volatile ("mov %0, %%cr0" :: "r" (bitmask));
 }
 
-void FPU_StateHandler(Registers *regs)
+uint32_t FPU_StateHandler(Registers *regs)
 {
         //TODO FXSSAVE
         asm volatile ("clts");
+        return 0;
 }

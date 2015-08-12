@@ -10,10 +10,11 @@
 #define PIC2_COMMAND  PIC2
 #define PIC2_DATA (PIC2+1)
 
-void PIC_Initialize();
+uint32_t PIC_Initialize();
 void PIC_SetOffset(int off1, int off2);
 void PIC_MaskAll();
 void PIC_MaskIRQ(uint8_t irq);
 void PIC_UnMaskIRQ(uint8_t irq);
+void PIC_SendEOI(uint8_t irq);
 
 #endif /* end of include guard: _PIC_H_ */
