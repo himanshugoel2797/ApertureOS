@@ -47,7 +47,7 @@ void* ACPITables_FindTable(const char *table_name)
 {
         if(rsdp == NULL) return NULL;
 
-        if(rsdp->firstPart.Revision == ACPI_VERSION_1) {
+        //if(rsdp->firstPart.Revision == ACPI_VERSION_1) {
                 RSDT *rsdt = (RSDT *) rsdp->firstPart.RsdtAddress;
                 if(!ACPITables_ValidateChecksum((ACPISDTHeader*)rsdt)) return (void*)-1;
 
@@ -58,7 +58,7 @@ void* ACPITables_FindTable(const char *table_name)
                         ACPISDTHeader *h = (ACPISDTHeader *) rsdt->PointerToOtherSDT[i];
                         if (!strncmp(h->Signature, table_name, 4) && ACPITables_ValidateChecksum(h)) return (void *) h;
                 }
-        }else{
+        /*}else{
                 XSDT *xsdt = (XSDT*)rsdp->XsdtAddress;
                 if(!ACPITables_ValidateChecksum((ACPISDTHeader*)xsdt)) return (void*)-1;
 
@@ -69,7 +69,7 @@ void* ACPITables_FindTable(const char *table_name)
                         ACPISDTHeader *h = (ACPISDTHeader *) xsdt->PointerToOtherSDT[i];
                         if (!strncmp(h->Signature, table_name, 4) && ACPITables_ValidateChecksum(h)) return (void *) h;
                 }
-        }
+        }*/
 
         return NULL;
 }

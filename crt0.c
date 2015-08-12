@@ -141,10 +141,10 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         //PIT_SetFrequency(PIT_CH0, PIT_ACCESS_LO_BYTE | PIT_ACCESS_HI_BYTE, PIT_MODE_ONESHOT, PIT_VAL_16BIT, 300);
 
 
-        rval = HPET_Initialize();
-        HPET_SetGlobalCounter(0);
-        HPET_SetTimerConfig(0, 0, 1, 1, 1, 100);
-        HPET_SetEnable(1);
+        //rval = HPET_Initialize();
+        //HPET_SetGlobalCounter(0);
+        //HPET_SetTimerConfig(0, 0, 1, 1, 1, 100);
+        //HPET_SetEnable(1);
 
         Interrupts_RegisterHandler(IRQ(1), 0, keyboard_test);
         PS2_Initialize();
