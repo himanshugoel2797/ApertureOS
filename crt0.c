@@ -141,7 +141,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
                         q+=4;
                 }
 
-        PIT_SetFrequency(PIT_CH0, PIT_ACCESS_LO_BYTE | PIT_ACCESS_HI_BYTE, PIT_MODE_ONESHOT, PIT_VAL_16BIT, 300);
+        //PIT_SetFrequency(PIT_CH0, PIT_ACCESS_LO_BYTE | PIT_ACCESS_HI_BYTE, PIT_MODE_ONESHOT, PIT_VAL_16BIT, 300);
 
 
         rval = HPET_Initialize();

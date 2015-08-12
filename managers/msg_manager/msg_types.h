@@ -8,7 +8,8 @@
 typedef enum {
         MI_NONE = 0,
         MI_INITIALIZATION_FAILURE = 1,
-        MI_UNSUPPORTED_FEATURE = 2
+        MI_UNSUPPORTED_FEATURE = 2,
+        MI_OUT_OF_MEMORY = 3,
 } MESSAGE_ID;
 
 typedef enum {
@@ -25,6 +26,7 @@ typedef enum {
 typedef struct {
         char message[MESSAGE_LEN];
         UID system_id;
+        UID src_id;
         uint8_t *stack_pointer; //This is used to generate a stack trace (ebp)
         MESSAGE_ID msg_id;
         MESSAGE_TYPE msg_type;

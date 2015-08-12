@@ -39,10 +39,10 @@ void MemMan_Initialize()
          */
 
         KB4_Blocks_Count = memory_size/((uint64_t)KB(4) * 32);
-        KB4_Blocks_Bitmap = Bootstrap_malloc(KB4_Blocks_Count * sizeof(uint32_t));
+        KB4_Blocks_Bitmap = bootstrap_malloc(KB4_Blocks_Count * sizeof(uint32_t));
 
         KB4_Blocks_FreeBitCount_EntryNum = KB4_Blocks_Count / KB4_DIVISOR;
-        KB4_Blocks_FreeBitCount = Bootstrap_malloc(KB4_Blocks_FreeBitCount_EntryNum * sizeof(uint32_t));
+        KB4_Blocks_FreeBitCount = bootstrap_malloc(KB4_Blocks_FreeBitCount_EntryNum * sizeof(uint32_t));
 
         if(KB4_Blocks_Bitmap == NULL) asm volatile ("int $0x9");
 

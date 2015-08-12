@@ -1,6 +1,6 @@
 #include "graphics.h"
 
-#include "memorymanager/bootstrap_mem_manager.h"
+#include "managers.h"
 #include "memorymanager/paging.h"
 
 #include "utils/common.h"
