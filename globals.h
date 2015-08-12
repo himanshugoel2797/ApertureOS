@@ -1,8 +1,7 @@
 #ifndef _GLOBALS_H_
 #define _GLOBALS_H_
 
-#include <stdint.h>
-#include <stddef.h>
+#include "types.h"
 #include "multiboot.h"
 
 VbeInfoBlock *global_vbe_info;

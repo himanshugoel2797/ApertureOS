@@ -1,8 +1,7 @@
 #ifndef _HPET_DRIVER_H_
 #define _HPET_DRIVER_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 uint8_t HPET_Initialize();
 uint8_t HPET_GetTimerCount();

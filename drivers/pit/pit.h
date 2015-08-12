@@ -1,8 +1,7 @@
 #ifndef _PIT_H_
 #define _PIT_H_
 
-#include <stdint.h>
-#include <stddef.h>
+#include "types.h"
 
 #define PIT_CH0_DATA 0x40
 #define PIT_CH2_DATA 0x42

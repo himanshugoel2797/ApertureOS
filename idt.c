@@ -26,7 +26,7 @@ void(*idt_handler_calls[IDT_ENTRY_COUNT] ) (Registers*);
 void IDT_Initialize()
 {
         idt_table.limit = (sizeof(IDTEntry) * IDT_ENTRY_COUNT) - 1;
-        idt_table.base = &idt_entries;
+        idt_table.base = (uint32_t)&idt_entries;
 
         //ensure interrupts are disabled
         asm ("cli");
@@ -45,7 +45,7 @@ void IDT_Initialize()
                 //Setup the hardware interrupts
                 if(i == 8 || (i >= 10 && i <= 14)) pushesToStack = 0;
                 IDT_FillSWInterruptHandler(idt_handlers[i], i, pushesToStack);  //If pushesToStack is non-zero, the value will be pushed to stack
-                IDT_SetEntry(i, idt_handlers[i], 0x08, 0x8E);
+                IDT_SetEntry(i, (uint32_t)idt_handlers[i], 0x08, 0x8E);
                 pushesToStack = 1;
         }
 

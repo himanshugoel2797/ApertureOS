@@ -1,8 +1,7 @@
 #ifndef _APIC_DRIVER_H_
 #define _APIC_DRIVER_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 #include "io_apic/io_apic.h"
 
 #define APIC_TIMER 0x320

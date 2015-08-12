@@ -1,8 +1,7 @@
 #ifndef _PRIV_MEMORY_MANAGER_H_
 #define _PRIV_MEMORY_MANAGER_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 #define KB4_DIVISOR 5
 #define KB4_MAX_VAL 32

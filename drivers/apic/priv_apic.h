@@ -1,8 +1,7 @@
 #ifndef _PRIV_APIC_DRIVER_H_
 #define _PRIV_APIC_DRIVER_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 #define IA32_APIC_BASE 0x01B
 

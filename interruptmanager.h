@@ -1,8 +1,7 @@
 #ifndef _INTERRUPT_MANAGER_H_
 #define _INTERRUPT_MANAGER_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 #include "idt.h"
 

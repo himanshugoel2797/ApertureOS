@@ -1,8 +1,7 @@
 #ifndef _MULTIBOOT_HEADER_H_
 #define _MULTIBOOT_HEADER_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 typedef unsigned char multiboot_uint8_t;
 typedef unsigned short multiboot_uint16_t;

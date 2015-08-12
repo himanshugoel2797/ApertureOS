@@ -4,6 +4,8 @@
 #include "acpi_tables/acpi_tables.h"
 #include "acpi_tables/madt.h"
 
+#include "drivers.h"
+
 uint8_t APIC_Initialize()
 {
         //Initialize the local APIC
@@ -11,7 +13,6 @@ uint8_t APIC_Initialize()
 
         //Ask ACPI for the MADT table
         MADT *madt = ACPITables_FindTable(MADT_SIG);
-        int k = 0;
 
         if(madt != NULL) {
                 uint32_t len = madt->h.Length - 8;

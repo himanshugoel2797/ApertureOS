@@ -1,8 +1,7 @@
 #ifndef _CMOS_H_
 #define _CMOS_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 typedef struct{
   uint8_t seconds;

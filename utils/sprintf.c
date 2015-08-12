@@ -46,13 +46,13 @@ int vsnprintf ( char * str, const char * format, va_list vl )
         int n = 0;
 
         //Parse the format string
-        for(int i = 0; i < strlen(format); i++)
+        for(size_t i = 0; i < strlen(format); i++)
         {
                 if(format[i] == '%' && format[i + 1] != '%') n++;
         }
 
         //Generate the real string
-        for(int i = 0; i < strlen(format); i++)
+        for(size_t i = 0; i < strlen(format); i++)
         {
                 if(format[i] != '%')
                 {
@@ -149,7 +149,7 @@ int vsnprintf ( char * str, const char * format, va_list vl )
                                 case 's':
                                 {
                                         const char *arg = va_arg(vl, char*);
-                                        memcpy(str, arg, strlen(arg));
+                                        memcpy(str, (void*)arg, strlen(arg));
                                         str += strlen(arg);
                                         in_format = 0;
                                 }

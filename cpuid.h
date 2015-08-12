@@ -1,8 +1,7 @@
 #ifndef _CPUID_H_
 #define _CPUID_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 typedef enum {
     CPUID_FEAT_ECX_SSE3         = 1 << 0,

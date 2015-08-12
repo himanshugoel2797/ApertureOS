@@ -72,8 +72,8 @@ void InterruptManager_InterruptHandler(Registers *regs)
         if(regs->int_no < 0x20 && handlerCalled == 0)
         {
                 COM_WriteStr(interruptMessages[regs->int_no]);
-                Graphics_WriteStr(interruptMessages[regs->int_no], 0, 0);
-                Graphics_SwapBuffer();
+                graphics_WriteStr(interruptMessages[regs->int_no], 0, 0);
+                graphics_SwapBuffer();
         }else if(handlerCalled == 0) {
                 COM_WriteStr("Interrupt %d\r\n", regs->int_no);
         }

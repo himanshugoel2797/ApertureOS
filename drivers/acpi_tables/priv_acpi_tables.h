@@ -1,8 +1,7 @@
 #ifndef _PRIV_ACPI_TABLES_DRIVER_H_
 #define _PRIV_ACPI_TABLES_DRIVER_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 typedef struct {
         char Signature[8];
@@ -54,8 +53,7 @@ typedef struct
         uint8_t register_bit_offset;
         uint8_t reserved;
         uint64_t address;
-} GenericAddressStructure
-__attribute__((packed));
+} GenericAddressStructure;
 
 #define XSDT_GET_POINTER_COUNT(h) ((h.Length - sizeof(h)) / 8)
 #define RSDT_GET_POINTER_COUNT(h) ((h.Length - sizeof(h)) / 4)

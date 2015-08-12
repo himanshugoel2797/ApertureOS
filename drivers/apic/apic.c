@@ -30,7 +30,7 @@ uint8_t APIC_LocalInitialize()
         //Register the APIC interrupt handlers
         for(int i = 32; i < IDT_ENTRY_COUNT; i++) {
                 APIC_FillHWInterruptHandler(idt_handlers[i], i, i - 32);
-                IDT_SetEntry(i, idt_handlers[i], 0x08, 0x8E);
+                IDT_SetEntry(i, (uint32_t)idt_handlers[i], 0x08, 0x8E);
         }
 
         //Initialize the local APIC
@@ -38,7 +38,7 @@ uint8_t APIC_LocalInitialize()
         if(!apic_available) return -1;
 
         uint64_t apic_base_msr = rdmsr(IA32_APIC_BASE);
-        apic_base_addr = (uint32_t)apic_base_msr & 0xfffff000;
+        apic_base_addr = (uint32_t*)((uint32_t)apic_base_msr & 0xfffff000);
         apic_base_msr |= (1 << 11); //Enable the apic
         wrmsr(IA32_APIC_BASE, apic_base_msr);
 

@@ -20,6 +20,7 @@
 #include "idt.h"
 
 #include "drivers/drivers.h"
+#include "managers/managers.h"
 
 #include "interruptmanager.h"
 
@@ -55,24 +56,24 @@ void timerHandler(Registers *regs)
 {
         temp++;
         if(temp % 1 == 0) {
-                Graphics_Clear();
+                graphics_Clear();
 
                 q = 0;
                 for(y = 0; y < global_multiboot_info->framebuffer_height; y++)
                         for(x = 0; x < global_multiboot_info->framebuffer_width; x++)
                         {
-                                Graphics_SetPixel(x,y, *(int*)&tmp[q]);
+                                graphics_SetPixel(x,y, *(int*)&tmp[q]);
                                 q+=4;
                         }
                 RTC_Time t;
                 CMOS_GetRTCTime(&t);
 
-                Graphics_WriteUInt64(temp2, 16, 0, 16);
-                Graphics_WriteUInt32(rval, 16, 0, 32);
-                Graphics_WriteUInt32(t.seconds, 2, 0, 48);
-                Graphics_WriteUInt32(allocLoc, 2, 0, 64);
+                graphics_WriteUInt64(temp2, 16, 0, 16);
+                graphics_WriteUInt32(rval, 16, 0, 32);
+                graphics_WriteUInt32(t.seconds, 2, 0, 48);
+                graphics_WriteUInt32(allocLoc, 2, 0, 64);
 
-                Graphics_SwapBuffer();
+                graphics_SwapBuffer();
         }
 }
 
@@ -100,17 +101,17 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         FPU_Initialize();
 
         //Backup all important information from the bootloader
-        global_vbe_info = Bootstrap_malloc(sizeof(VbeInfoBlock));
+        global_vbe_info = bootstrap_malloc(sizeof(VbeInfoBlock));
         memcpy(global_vbe_info, mbd->vbe_control_info, sizeof(VbeInfoBlock));
 
-        global_mode_info = Bootstrap_malloc(sizeof(ModeInfoBlock));
+        global_mode_info = bootstrap_malloc(sizeof(ModeInfoBlock));
         memcpy(global_mode_info, mbd->vbe_mode_info, sizeof(ModeInfoBlock));
 
-        global_multiboot_info = Bootstrap_malloc(sizeof(multiboot_info_t));
+        global_multiboot_info = bootstrap_malloc(sizeof(multiboot_info_t));
         memcpy(global_multiboot_info, mbd, sizeof(multiboot_info_t));
 
         global_memory_map_size = mbd->mmap_length;
-        global_memory_map = Bootstrap_malloc(global_memory_map_size);
+        global_memory_map = bootstrap_malloc(global_memory_map_size);
         memcpy(global_memory_map, mbd->mmap_addr, global_memory_map_size);
 
 
@@ -119,14 +120,14 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         MemMan_Initialize();
         Paging_Initialize();
 
-        Graphics_Initialize();
+        graphics_Initialize();
 
 
         allocLoc = MemMan_Alloc( (31 % 31) * KB(4));
         MemMan_Free(allocLoc, (31 % 31) * KB(4));
 
 
-        tmp = Bootstrap_malloc(1080*1920*4);
+        tmp = bootstrap_malloc(1080*1920*4);
         char pixel[4];
 
         for(y = 0; y < height; y++)

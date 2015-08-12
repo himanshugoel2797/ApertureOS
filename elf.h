@@ -1,8 +1,7 @@
 #ifndef _ELF_H_
 #define _ELF_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 typedef uint16_t Elf32_Half;  // Unsigned half int
 typedef uint32_t Elf32_Off; // Unsigned offset

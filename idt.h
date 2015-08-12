@@ -1,8 +1,7 @@
 #ifndef _IDT_H_
 #define _IDT_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 #define IDT_ENTRY_COUNT 256
 #define IDT_ENTRY_HANDLER_SIZE 0x30

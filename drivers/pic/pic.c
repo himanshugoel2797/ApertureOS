@@ -29,7 +29,7 @@ void PIC_Initialize()
         for(int i = 32; i < 48; i++)
         {
                 PIC_FillHWInterruptHandler(idt_handlers[i], i, i - 32);
-                IDT_SetEntry(i, idt_handlers[i], 0x08, 0x8E);
+                IDT_SetEntry(i, (uint32_t)idt_handlers[i], 0x08, 0x8E);
         }
 }
 

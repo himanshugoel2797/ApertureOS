@@ -1,8 +1,7 @@
 #ifndef _PRIV_PS2_KEYBOARD_H_
 #define _PRIV_PS2_KEYBOARD_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 #include "utils/keycodes.h"
 
 

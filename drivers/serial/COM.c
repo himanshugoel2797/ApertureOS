@@ -2,6 +2,7 @@
 
 #include <stdarg.h>
 #include "utils/native.h"
+#include "utils/common.h"
 
 #define PORT 0x03F8
 

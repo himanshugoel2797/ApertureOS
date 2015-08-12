@@ -1,8 +1,7 @@
 #ifndef _FPU_H_
 #define _FPU_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 void FPU_Initialize();
 void FPU_EnableInterrupts();

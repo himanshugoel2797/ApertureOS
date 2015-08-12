@@ -1,8 +1,7 @@
 #ifndef _MEM_PAGING_H_
 #define _MEM_PAGING_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 void Paging_Initialize();
 void Paging_MapPage(uint64_t physAddress, uint32_t virtualAddress, int userAccessible, int pse);

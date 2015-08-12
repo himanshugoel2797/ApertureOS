@@ -1,8 +1,7 @@
 #ifndef _PRIV_IO_APIC_DRIVER_H_
 #define _PRIV_IO_APIC_DRIVER_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 
 uint32_t IOAPIC_Read(uint32_t* io_apic_baseAddr, uint32_t index);

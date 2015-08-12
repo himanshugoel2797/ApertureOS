@@ -1,8 +1,7 @@
 #ifndef _ACPI_TABLES_DRIVER_H_
 #define _ACPI_TABLES_DRIVER_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 #define MADT_SIG "APIC"
 #define FADT_SIG "FACP"

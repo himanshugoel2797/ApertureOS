@@ -15,7 +15,8 @@ void Paging_Initialize()
         //Stop if the necessary paging features aren't available
         if(!CPUID_FeatureIsAvailable(CPUID_EDX, CPUID_FEAT_EDX_PSE) | !CPUID_FeatureIsAvailable(CPUID_EDX, CPUID_FEAT_EDX_PSE36)) asm ("int $0x9");
 
-        pd_pse = pd_nopse = MemMan_Alloc(KB(4));
+        pd_nopse = MemMan_Alloc(KB(4));
+        pd_pse = (PD_Entry_PSE*)pd_nopse;
 
         for(int i = 0; i < 1024; i++)
         {

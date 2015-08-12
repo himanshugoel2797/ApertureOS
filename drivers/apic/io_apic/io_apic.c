@@ -10,7 +10,7 @@ uint8_t IOAPIC_Initialize(uint32_t baseAddr, uint32_t global_int_base, uint32_t 
         ioapics[curIOAPIC_index].baseAddr = baseAddr;
         ioapics[curIOAPIC_index].global_int_base = global_int_base;
         ioapics[curIOAPIC_index].ID = id;
-        ioapics[curIOAPIC_index].entry_count = (IOAPIC_Read(baseAddr, 0x01) >> 16) & 0xFF;
+        ioapics[curIOAPIC_index].entry_count = (IOAPIC_Read((uint32_t*)baseAddr, 0x01) >> 16) & 0xFF;
         curIOAPIC_index++;
         return 0;
 }
@@ -59,7 +59,7 @@ void IOAPIC_MapIRQ(uint8_t global_irq, uint8_t apic_vector, uint64_t apic_id, ui
         low |= ((polarity & 1) << 13);
 
         low &= ~(1<<15);
-        low |= ((polarity & 1) << 15);
+        low |= ((trigger_mode & 1) << 15);
 
         // set to physical delivery mode
         low &= ~(1<<11);

@@ -1,8 +1,7 @@
 #ifndef _PRIV_PS2_CTRL_H_
 #define _PRIV_PS2_CTRL_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 #define PS2_CTRL_PORT 0x64
 #define PS2_DATA_PORT 0x60

@@ -1,8 +1,7 @@
 #ifndef _IO_APIC_DRIVER_H_
 #define _IO_APIC_DRIVER_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 #define MAX_IOAPIC_COUNT 128
 #define IOAPIC_PIN_COUNT 24

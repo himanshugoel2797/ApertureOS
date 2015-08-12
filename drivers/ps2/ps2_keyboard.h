@@ -1,8 +1,7 @@
 #ifndef _PS2_KEYBOARD_H_
 #define _PS2_KEYBOARD_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 uint8_t PS2Keyboard_Initialize();
 

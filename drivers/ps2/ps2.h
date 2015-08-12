@@ -1,8 +1,7 @@
 #ifndef _PS2_CTRL_H_
 #define _PS2_CTRL_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 #include "ps2_keyboard.h"
 

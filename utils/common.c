@@ -145,5 +145,5 @@ int strncmp(const char* s1, const char* s2, size_t n)
 
 char * strcpy ( char * destination, const char * source )
 {
-        return (char*)memcpy(destination, source, strlen(source));
+        return (char*)memcpy(destination, (void*)source, strlen(source));
 }

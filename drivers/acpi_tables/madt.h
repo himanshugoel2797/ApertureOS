@@ -1,8 +1,7 @@
 #ifndef _MADT_ACPI_TABLE_H_
 #define _MADT_ACPI_TABLE_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 #include "priv_acpi_tables.h"
 
 typedef struct {

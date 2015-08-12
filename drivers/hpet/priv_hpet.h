@@ -1,8 +1,7 @@
 #ifndef _PRIV_HPET_DRIVER_H_
 #define _PRIV_HPET_DRIVER_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 #include "acpi_tables/priv_acpi_tables.h"
 
@@ -19,7 +18,7 @@ typedef struct
         uint8_t hpet_number;
         uint16_t minimum_tick;
         uint8_t page_protection;
-}HPET __attribute__((packed));
+}HPET;
 
 HPET *hpet;
 uint64_t frequency;

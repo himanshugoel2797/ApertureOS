@@ -1,8 +1,7 @@
 #ifndef _UTILS_COMMON_H_
 #define _UTILS_COMMON_H_
 
-#include <stdint.h>
-#include <stddef.h>
+#include "types.h"
 #include <stdarg.h>
 
 #define KB(x) (x * 1024)

@@ -13,7 +13,7 @@ uint8_t ACPITables_Initialize()
                 if(rsdp_sig[0] == RSDP_EXPECTED_SIG[0])
                 {
                         //Check the full signature
-                        if(!strncmp(rsdp_sig, RSDP_EXPECTED_SIG, 8))
+                        if(!strncmp((const char*)rsdp_sig, RSDP_EXPECTED_SIG, 8))
                         {
                                 rsdp = (RSDPDescriptor20*) rsdp_sig;
                                 uint32_t checksum = 0;
@@ -35,7 +35,7 @@ uint8_t ACPITables_ValidateChecksum(ACPISDTHeader *header)
 {
         uint8_t sum = 0;
 
-        for (int i = 0; i < header->Length; i++)
+        for (uint32_t i = 0; i < header->Length; i++)
         {
                 sum += ((char *)header)[i];
         }
@@ -49,7 +49,7 @@ void* ACPITables_FindTable(const char *table_name)
 
         if(rsdp->firstPart.Revision == ACPI_VERSION_1) {
                 RSDT *rsdt = (RSDT *) rsdp->firstPart.RsdtAddress;
-                if(!ACPITables_ValidateChecksum(rsdt)) return -1;
+                if(!ACPITables_ValidateChecksum((ACPISDTHeader*)rsdt)) return (void*)-1;
 
                 int entries = RSDT_GET_POINTER_COUNT((rsdt->h));
 
@@ -60,7 +60,7 @@ void* ACPITables_FindTable(const char *table_name)
                 }
         }else{
                 XSDT *xsdt = (XSDT*)rsdp->XsdtAddress;
-                if(!ACPITables_ValidateChecksum(xsdt)) return -1;
+                if(!ACPITables_ValidateChecksum((ACPISDTHeader*)xsdt)) return (void*)-1;
 
                 int entries = XSDT_GET_POINTER_COUNT((xsdt->h));
 

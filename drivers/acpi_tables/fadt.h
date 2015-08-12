@@ -1,9 +1,8 @@
 #ifndef _FADT_ACPI_TABLE_H_
 #define _FADT_ACPI_TABLE_H_
 
-#include <stddef.h>
-#include <stdint.h>
 
+#include "types.h"
 #include "priv_acpi_tables.h"
 
 

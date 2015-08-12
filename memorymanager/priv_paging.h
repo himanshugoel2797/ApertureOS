@@ -1,8 +1,7 @@
 #ifndef _PRIV_PAGING_H_
 #define _PRIV_PAGING_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 //Page Directory Entry
 typedef struct {
