@@ -32,4 +32,4 @@
 # Debug files
 *.dSYM/
 build/
-ISO/isodir
+ISO/

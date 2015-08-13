@@ -48,7 +48,6 @@ void keyboard_test(Registers *regs)
         while(inb(0x64) & 1) inb(0x60);
 
         allocLoc++;
-        timerHandler(regs);
 //temp2 = -1;
 }
 
@@ -122,7 +121,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         Interrupts_Setup();
 
 
-        //Interrupts_RegisterHandler(IRQ(0), 0, timerHandler);
+        Interrupts_RegisterHandler(IRQ(0), 0, timerHandler);
 
         CMOS_Initialize();
         FPU_Initialize();
@@ -148,10 +147,10 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         PIT_SetFrequency(PIT_CH0, PIT_ACCESS_LO_BYTE | PIT_ACCESS_HI_BYTE, PIT_MODE_ONESHOT, PIT_VAL_16BIT, 300);
 
 
-        //rval = HPET_Initialize();
-        //HPET_SetGlobalCounter(0);
-        //HPET_SetTimerConfig(0, 0, 1, 1, 1, 100);
-        //HPET_SetEnable(1);
+        rval = HPET_Initialize();
+        HPET_SetGlobalCounter(0);
+        HPET_SetTimerConfig(0, 0, 1, 1, 1, 100);
+        HPET_SetEnable(1);
 
 
         IOAPIC_MapIRQ(1, IRQ(1), APIC_GetID(), 0, 0);
@@ -162,7 +161,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
         asm ("sti");
         uint8_t c = 0;
-        //while(1) { 
+        //while(1) {
           asm volatile ("int $33");
         // }
         uint32_t timer = APIC_Read(APIC_TIMER);
@@ -173,7 +172,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         APIC_Write(0x380, 256);
 
         APIC_SetVector(APIC_TIMER, 32);
-        APIC_SetEnableInterrupt(APIC_TIMER, 0);
+        APIC_SetEnableInterrupt(APIC_TIMER, 1);
 
         while(1) {
                 asm ("hlt");
