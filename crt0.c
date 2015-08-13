@@ -44,44 +44,47 @@ void keyboard_test(Registers *regs)
 {
         COM_WriteStr("Keyboard Input Recieved!\r\n");
         temp2 = inb(0x60);
+
+        while(inb(0x64) & 1) inb(0x60);
+
         allocLoc++;
-        //outb(0x60, inb(0x61));
-        //temp2 = -1;
+        timerHandler(regs);
+//temp2 = -1;
 }
 
 void timerHandler(Registers *regs)
 {
         temp++;
-        if(temp % 1 == 0) {
-                graphics_Clear();
+        graphics_Clear();
 
-                q = 0;
-                for(y = 0; y < global_multiboot_info->framebuffer_height; y++)
-                        for(x = 0; x < global_multiboot_info->framebuffer_width; x++)
-                        {
-                                graphics_SetPixel(x,y, *(int*)&tmp[q]);
-                                q+=4;
-                        }
-                RTC_Time t;
-                CMOS_GetRTCTime(&t);
+        q = 0;
+        for(y = 0; y < global_multiboot_info->framebuffer_height; y++)
+                for(x = 0; x < global_multiboot_info->framebuffer_width; x++)
+                {
+                        graphics_SetPixel(x,y, *(int*)&tmp[q]);
+                        q+=4;
+                }
+        RTC_Time t;
+        CMOS_GetRTCTime(&t);
 
-                asm("mov %%cr0, %0" : "=r"(temp));
+        graphics_WriteUInt64(temp, 2, 0, 16);
+        graphics_WriteUInt32(temp2, 16, 0, 32);
+        graphics_WriteUInt32(t.seconds, 10, 0, 48);
+        graphics_WriteUInt32(allocLoc, 2, 0, 64);
 
-                graphics_WriteUInt64(temp, 2, 0, 16);
-                graphics_WriteUInt32(rval, 16, 0, 32);
-                graphics_WriteUInt32(t.seconds, 10, 0, 48);
-                graphics_WriteUInt32(allocLoc, 2, 0, 64);
+        graphics_SwapBuffer();
 
-                graphics_SwapBuffer();
-        }
 }
 
 //extern "C"{
 void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
+        asm ("cli");
+
         GDT_Initialize();
         IDT_Initialize();
 
+        bootstrap_setup();
 
 
 
@@ -116,11 +119,10 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
 
 
-        bootstrap_setup();
         Interrupts_Setup();
 
 
-        Interrupts_RegisterHandler(IRQ(0), 0, timerHandler);
+        //Interrupts_RegisterHandler(IRQ(0), 0, timerHandler);
 
         CMOS_Initialize();
         FPU_Initialize();
@@ -143,7 +145,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
                         q+=4;
                 }
 
-        //PIT_SetFrequency(PIT_CH0, PIT_ACCESS_LO_BYTE | PIT_ACCESS_HI_BYTE, PIT_MODE_ONESHOT, PIT_VAL_16BIT, 300);
+        PIT_SetFrequency(PIT_CH0, PIT_ACCESS_LO_BYTE | PIT_ACCESS_HI_BYTE, PIT_MODE_ONESHOT, PIT_VAL_16BIT, 300);
 
 
         //rval = HPET_Initialize();
@@ -151,25 +153,32 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         //HPET_SetTimerConfig(0, 0, 1, 1, 1, 100);
         //HPET_SetEnable(1);
 
+
+        IOAPIC_MapIRQ(1, IRQ(1), APIC_GetID(), 0, 0);
         Interrupts_RegisterHandler(IRQ(1), 0, keyboard_test);
-        PS2_Initialize();
+
+        allocLoc = PS2_Initialize();
+        //while(inb(0x64) & 1) {temp2 = inb(0x60); }
 
         asm ("sti");
+        uint8_t c = 0;
+        //while(1) { 
+          asm volatile ("int $33");
+        // }
         uint32_t timer = APIC_Read(APIC_TIMER);
         timer &= ~(3<<17);
         timer |= (1<<17);
         APIC_Write(APIC_TIMER, timer);
 
-        APIC_Write(0x380, 25600);
+        APIC_Write(0x380, 256);
 
-        APIC_SetVector(APIC_TIMER, 31);
+        APIC_SetVector(APIC_TIMER, 32);
         APIC_SetEnableInterrupt(APIC_TIMER, 0);
 
-
         while(1) {
+                asm ("hlt");
         }
 
-        asm ("hlt");
 
 }
 

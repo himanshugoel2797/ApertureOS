@@ -117,8 +117,7 @@ void IDT_DefaultHandler()
                 "mov %ax, %fs\n\t"
                 "mov %ax, %gs\n\t"
                 "popa\n\t"
-                "pop %eax\n\t"
-                "pop %ebx\n\t"
+                "add $8, %esp\n\t"
                 "iret\n\t"
                 );
 }

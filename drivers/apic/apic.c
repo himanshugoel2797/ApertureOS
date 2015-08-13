@@ -132,8 +132,7 @@ void APIC_DefaultHandler()
                 "mov %bx, %fs\n\t"
                 "mov %bx, %gs\n\t"
                 "popa\n\t"
-                "pop %eax\n\t"
-                "add $4, %esp\n\t"
+                "add $8, %esp\n\t"
                 "iret\n\t"
                 );
 }

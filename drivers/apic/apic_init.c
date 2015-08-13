@@ -59,9 +59,8 @@ uint32_t APIC_Initialize()
 
                                                 IOAPIC_Initialize(ioapic->io_apic_base_addr, ioapic->global_sys_int_base);
 
-                                                //Map IRQ 0-15 to 32-47
                                                 for(int j = 0; j < 16; j++) {
-                                                        IOAPIC_MapIRQ(j, 32 + j, APIC_GetID(), 0, 0);
+                                                        IOAPIC_MapIRQ(j, j + 32, APIC_GetID(), 0, 0);
                                                 }
                                         }
                                         break;
@@ -73,7 +72,7 @@ uint32_t APIC_Initialize()
                                                 int polarity = isaovr->flags & 3;
                                                 int triggerMode = (isaovr->flags >> 2) & 3;
 
-                                                IOAPIC_MapIRQ(isaovr->global_sys_int, 32 + isaovr->irq_src, APIC_GetID(), triggerMode >> 1,polarity >> 1);
+                                                IOAPIC_MapIRQ(isaovr->global_sys_int, isaovr->irq_src, APIC_GetID(), triggerMode >> 1,polarity >> 1);
 
                                                 COM_WriteStr("\r\nISAOVR\r\n");
                                                 COM_WriteStr("\tLen: %d\r\n", isaovr->h.entry_size);

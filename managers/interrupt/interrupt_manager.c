@@ -48,7 +48,6 @@ uint32_t interrupts_Initialize()
 
 void interrupts_IDTHandler(Registers *Regs)
 {
-        COM_WriteStr("rec!!!");
         for(int i = 0; i < INTERRUPT_HANDLER_SLOTS + 1; i++)
         {
                 if(int_handlers[Regs->int_no][i] != NULL)
