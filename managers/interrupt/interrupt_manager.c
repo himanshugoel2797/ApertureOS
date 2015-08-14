@@ -96,6 +96,19 @@ uint8_t Interrupts_GetFreeSlot(uint8_t intrpt)
         return free_slot - 1;
 }
 
+void Interrupts_EmptySlot(uint8_t intrpt, uint8_t slot)
+{
+        if(slot < INTERRUPT_HANDLER_SLOTS) int_handlers[intrpt][slot] = NULL;
+}
+
+void Interrupts_GetHandler(uint8_t intrpt, uint8_t slot, InterruptHandler* o_handler)
+{
+        if(slot < INTERRUPT_HANDLER_SLOTS)
+        {
+                *o_handler = int_handlers[intrpt][slot];
+        }
+}
+
 void Interrupts_SetEnableMode(bool enabled)
 {
         if(enabled) {
@@ -105,14 +118,24 @@ void Interrupts_SetEnableMode(bool enabled)
         }
 }
 
-void Interrupts_SetInterruptMaskMode(uint8_t intrpt, bool masked)
+void Interrupts_SetInterruptEnableMode(uint8_t intrpt, bool enabled)
 {
         if(intrpt >= 32) {
                 if(using_apic)
                 {
-                        //TODO setup interrupt masking on the IO APIC
+                        IOAPIC_SetEnableMode(intrpt - 32, enabled);
                 }else{
-                        if(masked) PIC_MaskIRQ(intrpt);
+                        if(!enabled) PIC_MaskIRQ(intrpt);
+                        else PIC_UnMaskIRQ(intrpt);
                 }
         }
+}
+
+SysID Interrupts_GetSysID(){
+        return int_sys->sys_id;
+}
+
+bool Interrupts_IsAPICEnabled()
+{
+        return using_apic;
 }

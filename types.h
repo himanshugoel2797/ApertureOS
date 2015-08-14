@@ -5,6 +5,8 @@
 #include <stdint.h>
 
 typedef uint64_t UID;
+typedef UID SysID;
+
 typedef void (*Callback)(uint32_t);
 typedef uint32_t (*Initializer)();
 typedef uint8_t bool;

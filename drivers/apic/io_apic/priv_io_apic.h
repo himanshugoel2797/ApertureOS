@@ -15,4 +15,9 @@ typedef struct {
         uint32_t entry_count;
 }IOAPIC_Desc;
 
+typedef struct{
+        uint32_t ioapic_index;
+        uint32_t ioapic_pin;
+}IOAPIC_InterruptMapEntry;
+
 #endif /* end of include guard: _PRIV_IO_APIC_DRIVER_H_ */

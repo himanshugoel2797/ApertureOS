@@ -8,5 +8,6 @@
 
 uint8_t IOAPIC_Initialize(uint32_t baseAddr, uint32_t global_int_base);
 void IOAPIC_MapIRQ(uint8_t global_irq, uint8_t apic_vector, uint64_t apic_id, uint8_t trigger_mode, uint8_t polarity);
+void IOAPIC_SetEnableMode(uint8_t vector, bool active);
 
 #endif /* end of include guard: _IO_APIC_DRIVER_H_ */

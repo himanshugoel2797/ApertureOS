@@ -76,7 +76,6 @@ uint8_t PS2_Initialize()
 
 
         cfg = PS2_ReadConfig();
-        COM_WriteStr("%b,%b\r\n", cfg, port2_test_result);
         if(port1_test_result == 0)
         {
                 outb(CMD_PORT, ENABLE_PORT1_CMD);
@@ -95,7 +94,6 @@ uint8_t PS2_Initialize()
         PS2_WriteConfig(cfg);
 
         cfg = PS2_ReadConfig();
-        COM_WriteStr("%b,%b\r\n", cfg, port2_test_result);
         //Reset the keyboard
         WAIT_DATA_SENT;
         outb(DATA_PORT, 0xFF);

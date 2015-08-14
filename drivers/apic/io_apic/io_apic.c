@@ -1,17 +1,24 @@
 #include "io_apic.h"
 #include "priv_io_apic.h"
 
+#include "utils/common.h"
+
 IOAPIC_Desc ioapics[MAX_IOAPIC_COUNT];
 uint32_t curIOAPIC_index = 0;
+
+IOAPIC_InterruptMapEntry ioapic_interruptMap[256];
 
 uint8_t IOAPIC_Initialize(uint32_t baseAddr, uint32_t global_int_base)
 {
         if(curIOAPIC_index >= MAX_IOAPIC_COUNT) return -1;
         ioapics[curIOAPIC_index].baseAddr = baseAddr;
         ioapics[curIOAPIC_index].global_int_base = global_int_base;
-        ioapics[curIOAPIC_index].ID = (IOAPIC_Read((uint32_t*)baseAddr, 0x0) >> 24) && 0xF;
+        ioapics[curIOAPIC_index].ID = (IOAPIC_Read((uint32_t*)baseAddr, 0x0) >> 24) & 0xF;
         ioapics[curIOAPIC_index].entry_count = (IOAPIC_Read((uint32_t*)baseAddr, 0x01) >> 16) & 0xFF;
         curIOAPIC_index++;
+
+        memset(ioapic_interruptMap, 0xff, sizeof(ioapic_interruptMap));
+
         return 0;
 }
 
@@ -38,6 +45,9 @@ void IOAPIC_MapIRQ(uint8_t global_irq, uint8_t apic_vector, uint64_t apic_id, ui
                         //Found the IO APIC to map to
                         irq_pin = global_irq - ioapics[i].global_int_base;
                         baseAddr = (uint32_t*)ioapics[i].baseAddr;
+
+                        ioapic_interruptMap[apic_vector].ioapic_index = i;
+                        ioapic_interruptMap[apic_vector].ioapic_pin = irq_pin;
                 }
         }
         if(baseAddr == NULL) return; //No match found!
@@ -53,8 +63,7 @@ void IOAPIC_MapIRQ(uint8_t global_irq, uint8_t apic_vector, uint64_t apic_id, ui
 
         uint32_t low = IOAPIC_Read(baseAddr, low_index);
 
-        // unmask the IRQ
-        low &= ~(1<<16);
+        // set the polarity
         low &= ~(1<<13);
         low |= ((polarity & 1) << 13);
 
@@ -72,4 +81,18 @@ void IOAPIC_MapIRQ(uint8_t global_irq, uint8_t apic_vector, uint64_t apic_id, ui
         low |= apic_vector;
 
         IOAPIC_Write(baseAddr, low_index, low);
+}
+
+void IOAPIC_SetEnableMode(uint8_t vector, bool active)
+{
+        //Make sure this interrupt has even been mapped to something!
+        if(ioapic_interruptMap[vector].ioapic_index != 0xFFFFFFFF)
+        {
+                uint32_t index = 0x10 + ioapic_interruptMap[vector].ioapic_pin*2;
+                uint32_t* baseAddr = (uint32_t*)ioapics[ioapic_interruptMap[vector].ioapic_index].baseAddr;
+
+                uint32_t low = IOAPIC_Read(baseAddr, index);
+                low = SET_VAL_BIT(low, 16, (active & 1));
+                IOAPIC_Write(baseAddr, index, low);
+        }
 }

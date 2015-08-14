@@ -8,7 +8,6 @@
 #define MAX_SYSTEM_COUNT 32
 #define SYSTEM_NAME_LEN 16
 
-typedef UID SysID;
 
 typedef struct {
         char sys_name[SYSTEM_NAME_LEN];

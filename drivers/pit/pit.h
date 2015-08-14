@@ -24,8 +24,12 @@
 #define PIT_VAL_16BIT 0
 #define PIT_VAL_BCD   1
 
+#define PIT_FREQUENCY_HZ 10027
+
 void PIT_SetFrequency(uint8_t channel, uint8_t access,uint8_t mode, uint8_t valType, uint32_t frequency);
 uint32_t PIT_GetFrequency();
 void PIT_Sleep(uint32_t interval);
+
+void PIT_SetEnableMode(bool enabled);
 
 #endif /* end of include guard: _PIT_H_ */
