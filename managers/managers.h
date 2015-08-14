@@ -3,6 +3,7 @@
 
 #include "msg_manager/msg_types.h"
 
+#include "keyboard/keyboard.h"                     //Keyboard Manager
 #include "interrupt/interrupt_manager.h"           //Interrupt Manager
 #include "timer/timer_manager.h"                   //Timer Manager
 #include "phys_mem_manager/phys_mem_manager.h"     //Physical memory manager

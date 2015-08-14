@@ -6,6 +6,7 @@ SOURCES=utils/native.o utils/common.o utils/sprintf.o \
 				graphics/graphics.o	\
 				managers/system_manager/system_manager.o \
 				managers/bootstrap_mem_pool/bootstrap_mem_pool.o \
+				managers/keyboard/keyboard.o	\
 				managers/msg_manager/msg_manager.o \
 				managers/interrupt/interrupt_manager.o \
 				managers/phys_mem_manager/phys_mem_manager.o \

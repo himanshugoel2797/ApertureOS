@@ -1,26 +1,6 @@
 #include "ps2.h"
+#include "priv_ps2.h"
 #include "utils/native.h"
-
-#define CMD_PORT 0x64
-#define DATA_PORT 0x60
-
-
-#define DISABLE_PORT1_CMD 0xAD
-#define ENABLE_PORT1_CMD 0xAE
-#define DISABLE_PORT2_CMD 0xA7
-#define ENABLE_PORT2_CMD 0xA8
-#define READ_CFG_CMD 0x20
-#define WRITE_CFG_CMD 0x60
-#define PERFORM_SELFTEST 0xAA
-#define PERFORM_PORT1TEST 0xAB
-#define PERFORM_PORT2TEST 0xA9
-
-#define IS_CMD_SENT (!(PS2_ReadStatus() & 2))
-#define IS_DATA_AVL (PS2_ReadStatus() & 1)
-
-#define WAIT_CMD_SENT while(!IS_CMD_SENT)
-#define WAIT_DATA_AVL while(!IS_DATA_AVL)
-#define WAIT_DATA_SENT while(IS_DATA_AVL)
 
 uint8_t PS2_Initialize()
 {
@@ -93,15 +73,15 @@ uint8_t PS2_Initialize()
         }
         PS2_WriteConfig(cfg);
 
-        cfg = PS2_ReadConfig();
-        //Reset the keyboard
-        WAIT_DATA_SENT;
-        outb(DATA_PORT, 0xFF);
-        WAIT_DATA_AVL;
-        uint16_t reset_res = 0;
-        inb(DATA_PORT);
-        WAIT_DATA_AVL;
-        inb(DATA_PORT);
+        if(port1_test_result == 0)
+        {
+
+        }
+
+        if(port2_test_result == 0)
+        {
+
+        }
 
         return 0;
 }

@@ -40,16 +40,6 @@ size_t q = 0;
 
 void timerHandler(Registers *regs);
 
-void keyboard_test(Registers *regs)
-{
-        COM_WriteStr("Keyboard Input Recieved!\r\n");
-        temp2 = inb(0x60);
-
-        while(inb(0x64) & 1) inb(0x60);
-
-        allocLoc++;
-//temp2 = -1;
-}
 
 void timerHandler()
 {
@@ -79,15 +69,13 @@ void timerHandler()
 //extern "C"{
 void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
-        asm ("cli");
-
         GDT_Initialize();
         IDT_Initialize();
 
+        COM_Initialize();
+        ACPITables_Initialize();
+
         bootstrap_setup();
-
-
-
 
         //Backup all important information from the bootloader
         global_vbe_info = bootstrap_malloc(sizeof(VbeInfoBlock));
@@ -103,34 +91,16 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         global_memory_map = bootstrap_malloc(global_memory_map_size);
         memcpy(global_memory_map, mbd->mmap_addr, global_memory_map_size);
 
-
-        //asm ("wbinvd"); //Flush the caches so the dynamic code takes effect
-
         MemMan_Initialize();
         Paging_Initialize();
 
         graphics_Initialize();
 
-
-
-        COM_Initialize();
-        ACPITables_Initialize();
-
-
-
-
         Interrupts_Setup();
         Timers_Setup();
 
-
-        //Interrupts_RegisterHandler(IRQ(2), 0, timerHandler);
-
         CMOS_Initialize();
         FPU_Initialize();
-
-        allocLoc = MemMan_Alloc( (31 % 31) * KB(4));
-        MemMan_Free(allocLoc, (31 % 31) * KB(4));
-
 
         tmp = bootstrap_malloc(1080*1920*4);
         char pixel[4];
@@ -145,39 +115,10 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
                         tmp[q + 3] = pixel[3];
                         q+=4;
                 }
-
-
-        //PIT_SetFrequency(PIT_CH0, PIT_ACCESS_LO_BYTE | PIT_ACCESS_HI_BYTE, PIT_MODE_SQUARE_WAVE, PIT_VAL_16BIT, 1000);
-
-
-        //rval = HPET_Initialize();
-        //HPET_SetGlobalCounter(0);
-        //HPET_SetTimerConfig(0, 0, 1, 1, 1, 100);
-        //HPET_SetEnable(1);
-
-
-        IOAPIC_MapIRQ(1, IRQ(1), APIC_GetID(), 0, 0);
-        IOAPIC_SetEnableMode(IRQ(1), ENABLE);
-
-        //IOAPIC_SetEnableMode(IRQ(0), ENABLE);
-        Interrupts_RegisterHandler(IRQ(1), 0, keyboard_test);
-
-        allocLoc = PS2_Initialize();
-        //while(inb(0x64) & 1) {temp2 = inb(0x60); }
+        Keyboard_Setup();
 
         asm ("sti");
-        uint8_t c = 0;
 
-        //while(1) {
-        asm volatile ("int $33");
-        // }
-
-        //APIC_SetTimerMode(APIC_TIMER_PERIODIC);
-
-        //APIC_SetTimerValue(1 << 25);
-
-        //APIC_SetVector(APIC_TIMER, 34);
-        //APIC_SetEnableInterrupt(APIC_TIMER, 1);
         UID id = Timers_CreateNew(5, TRUE, timerHandler);
         Timers_StartTimer(id);
 

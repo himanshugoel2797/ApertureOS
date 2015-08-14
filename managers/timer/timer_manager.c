@@ -49,6 +49,14 @@ uint32_t timers_Initialize()
                 //TODO callibrate APIC timer
         }
 
+
+        //APIC_SetTimerMode(APIC_TIMER_PERIODIC);
+
+        //APIC_SetTimerValue(1 << 25);
+
+        //APIC_SetVector(APIC_TIMER, 34);
+        //APIC_SetEnableInterrupt(APIC_TIMER, 1);
+
         return 0;
 }
 
