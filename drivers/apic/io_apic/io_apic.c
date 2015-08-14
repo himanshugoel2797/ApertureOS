@@ -17,8 +17,6 @@ uint8_t IOAPIC_Initialize(uint32_t baseAddr, uint32_t global_int_base)
         ioapics[curIOAPIC_index].entry_count = (IOAPIC_Read((uint32_t*)baseAddr, 0x01) >> 16) & 0xFF;
         curIOAPIC_index++;
 
-        memset(ioapic_interruptMap, 0xff, sizeof(ioapic_interruptMap));
-
         return 0;
 }
 
@@ -41,13 +39,15 @@ void IOAPIC_MapIRQ(uint8_t global_irq, uint8_t apic_vector, uint64_t apic_id, ui
         //Determine which APIC this should map to
         for(uint32_t i = 0; i < curIOAPIC_index; i++)
         {
-                if(global_irq > ioapics[i].global_int_base && global_irq < (ioapics[i].global_int_base + ioapics[i].entry_count)) {
+                if(global_irq >= ioapics[i].global_int_base && global_irq < (ioapics[i].global_int_base + ioapics[i].entry_count)) {
                         //Found the IO APIC to map to
                         irq_pin = global_irq - ioapics[i].global_int_base;
                         baseAddr = (uint32_t*)ioapics[i].baseAddr;
 
                         ioapic_interruptMap[apic_vector].ioapic_index = i;
                         ioapic_interruptMap[apic_vector].ioapic_pin = irq_pin;
+
+                        COM_WriteStr("\r\nVector%d, i=%d, pin=%d", apic_vector, ioapic_interruptMap[apic_vector].ioapic_index, ioapic_interruptMap[apic_vector].ioapic_pin);
                 }
         }
         if(baseAddr == NULL) return; //No match found!
@@ -92,7 +92,10 @@ void IOAPIC_SetEnableMode(uint8_t vector, bool active)
                 uint32_t* baseAddr = (uint32_t*)ioapics[ioapic_interruptMap[vector].ioapic_index].baseAddr;
 
                 uint32_t low = IOAPIC_Read(baseAddr, index);
-                low = SET_VAL_BIT(low, 16, (active & 1));
+                low = SET_VAL_BIT(low, 16, (~active & 1));
                 IOAPIC_Write(baseAddr, index, low);
+
+                COM_WriteStr("\r\nVector%d, i=%d, pin=%d", vector, ioapic_interruptMap[vector].ioapic_index, ioapic_interruptMap[vector].ioapic_pin);
         }
+        else COM_WriteStr("Faild! %d", vector);
 }

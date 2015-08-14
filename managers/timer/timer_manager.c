@@ -31,7 +31,7 @@ uint32_t timers_Initialize()
         if(Interrupts_IsAPICEnabled())
         {
             //Callibrate the timer against the PIT
-            
+
         }
 }
 

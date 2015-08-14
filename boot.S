@@ -12,7 +12,7 @@
 .long CHECKSUM
 .long 0, 0, 0, 0, 0
 .long 0 # 0 = set graphics mode
-.long 640, 480, 32 # Width, height, depth
+.long 1920, 1080, 32 # Width, height, depth
 
 # Declare a header as in the Multiboot Standard. We put this into a special
 # section so we can force the header to be in the start of the final program.

@@ -154,6 +154,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
 
         IOAPIC_MapIRQ(1, IRQ(1), APIC_GetID(), 0, 0);
+        IOAPIC_SetEnableMode(IRQ(1), ENABLE);
         Interrupts_RegisterHandler(IRQ(1), 0, keyboard_test);
 
         allocLoc = PS2_Initialize();
@@ -169,7 +170,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         timer |= (1<<17);
         APIC_Write(APIC_TIMER, timer);
 
-        APIC_Write(0x380, 256);
+        APIC_Write(0x380, 1 << 23);
 
         APIC_SetVector(APIC_TIMER, 32);
         APIC_SetEnableInterrupt(APIC_TIMER, 1);

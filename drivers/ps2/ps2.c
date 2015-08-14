@@ -100,6 +100,7 @@ uint8_t PS2_Initialize()
         WAIT_DATA_AVL;
         uint16_t reset_res = 0;
         inb(DATA_PORT);
+        WAIT_DATA_AVL;
         inb(DATA_PORT);
 
         return 0;
