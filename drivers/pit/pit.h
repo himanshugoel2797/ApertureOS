@@ -26,7 +26,10 @@
 
 #define PIT_FREQUENCY_HZ 10027
 
-void PIT_SetFrequency(uint8_t channel, uint8_t access,uint8_t mode, uint8_t valType, uint32_t frequency);
+void PIT_Initialize();
+
+//Prevent public access to this function
+//void PIT_SetFrequency(uint8_t channel, uint8_t access,uint8_t mode, uint8_t valType, uint32_t frequency);
 uint32_t PIT_GetFrequency();
 void PIT_Sleep(uint32_t interval);
 

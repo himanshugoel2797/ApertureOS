@@ -52,7 +52,7 @@ uint32_t APIC_Read(uint32_t reg)
 
 void APIC_SetEnableInterrupt(uint32_t interrupt, int enableMode)
 {
-        if(interrupt < 0x320 || interrupt > 0x360) return;
+        if(interrupt < APIC_TIMER || interrupt > APIC_ERR) return;
         uint32_t val = APIC_Read(interrupt);
         val = SET_VAL_BIT(val, 16, (~enableMode & 1));
         APIC_Write(interrupt, val);
@@ -60,10 +60,62 @@ void APIC_SetEnableInterrupt(uint32_t interrupt, int enableMode)
 
 void APIC_SetVector(uint32_t interrupt, uint8_t vector)
 {
-        if(interrupt < 0x320 || interrupt > 0x360) return;
+        if(interrupt < APIC_TIMER || interrupt > APIC_ERR) return;
         uint32_t val = APIC_Read(interrupt);
         val |= vector;
         APIC_Write(interrupt, val);
+}
+
+void APIC_SetDeliveryMode(uint32_t interrupt, uint8_t vector)
+{
+        if(interrupt < APIC_TIMER || interrupt > APIC_LINT1) return;
+        uint32_t val = APIC_Read(interrupt);
+        val |= (((uint32_t)vector & 7) << 8);
+        APIC_Write(interrupt, val);
+}
+
+void APIC_SetTriggerMode(uint32_t interrupt, uint8_t vector)
+{
+        if(interrupt < APIC_LINT0 || interrupt > APIC_LINT1) return;
+        uint32_t val = APIC_Read(interrupt);
+        val |= (((uint32_t)vector & 1) << 15);
+        APIC_Write(interrupt, val);
+}
+
+void APIC_SetPolarity(uint32_t interrupt, uint8_t vector)
+{
+        if(interrupt < APIC_LINT0 || interrupt > APIC_LINT1) return;
+        uint32_t val = APIC_Read(interrupt);
+        val |= (((uint32_t)vector & 1) << 13);
+        APIC_Write(interrupt, val);
+}
+
+void APIC_SetTimerMode(uint8_t mode)
+{
+        uint32_t val = APIC_Read(APIC_TIMER);
+        val |= ((((uint32_t)mode) & 3) << 17);
+        APIC_Write(APIC_TIMER, val);
+}
+
+void APIC_SetTimerDivisor(uint8_t divisor)
+{
+        uint8_t val = 0;
+        //Convert the divisor into the code to be written
+        if(divisor > 16)
+        {
+                val |= (1<<3);
+                divisor /= 16;
+        }
+
+        if(divisor == 16) val |= 3;
+        else if(divisor == 1) val = (1<<3)|3;
+        else val |= ((divisor >> 2) & 3);
+        APIC_Write(0x3E0, val);
+}
+
+void APIC_SetTimerValue(uint32_t val)
+{
+        APIC_Write(APIC_TIMER_VAL, val);
 }
 
 void APIC_SetEnableMode(uint8_t enabled)

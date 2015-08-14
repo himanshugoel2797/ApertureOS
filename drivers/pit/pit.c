@@ -5,6 +5,7 @@
 
 //NOTE: The PIT should be set to always be running at 10027 Hz, not high enough to constantly interrupt stuff, not too low to be too slow for general use
 
+
 uint32_t curFrequency = 0;
 void PIT_SetFrequency(uint8_t channel, uint8_t access, uint8_t mode, uint8_t valType, uint32_t frequency)
 {
@@ -60,7 +61,7 @@ void PIT_Sleep(uint32_t interval)
         //Temporarily register an interrupt handler
         Interrupts_RegisterHandler(IRQ(0), 0, PIT_TempIntHandler);
 
-        pit_ticksToWait = interval/PIT_FREQUENCY_HZ;
+        pit_ticksToWait = interval/curFrequency;
 
         //Make sure the PIT is at 1KHz
         PIT_SetFrequency(PIT_CH0, PIT_ACCESS_HI_BYTE | PIT_ACCESS_LO_BYTE, PIT_MODE_RATE, PIT_VAL_16BIT, PIT_FREQUENCY_HZ);
@@ -91,4 +92,10 @@ void PIT_Sleep(uint32_t interval)
 void PIT_SetEnableMode(bool enabled)
 {
         Interrupts_SetInterruptEnableMode(IRQ(0), enabled);
+}
+
+
+void PIT_Initialize()
+{
+        PIT_Initialize(PIT_CH0, PIT_ACCESS_HI_BYTE | PIT_ACCESS_LO_BYTE, PIT_MODE_RATE, PIT_VAL_16BIT, PIT_FREQUENCY_HZ);
 }

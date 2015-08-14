@@ -11,7 +11,8 @@ void Timers_Setup()
         timer_sys = SysMan_RegisterSystem();
         strcpy(timer_sys->sys_name, "timerMan");
 
-        timer_sys->prerequisites[0] = 0;  //No prerequisites
+        timer_sys->prerequisites[0] = Interrupts_GetSysID();
+        timer_sys->prerequisites[1] = 0;
 
         timer_sys->init = timers_Initialize;
         timer_sys->init_cb = timers_callback;
@@ -22,9 +23,16 @@ void Timers_Setup()
 
 uint32_t timers_Initialize()
 {
-      //Initialize the PIT
+        //Initialize the PIT
+        PIT_Initialize();
+        PIT_SetEnableMode(DISABLE); //Disable it while we initialize everything else
 
-      //Determine if the APIC is available and initialize its timer too
+        //Determine if the APIC is available and initialize its timer too
+        if(Interrupts_IsAPICEnabled())
+        {
+            //Callibrate the timer against the PIT
+            
+        }
 }
 
 void timers_callback(uint32_t res)
