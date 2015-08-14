@@ -24,7 +24,8 @@
 #define PIT_VAL_16BIT 0
 #define PIT_VAL_BCD   1
 
-#define PIT_FREQUENCY_HZ 10027
+#define PIT_FREQUENCY_HZ 19886
+//#define PIT_FREQUENCY_HZ 50
 
 void PIT_Initialize();
 

@@ -118,6 +118,11 @@ void APIC_SetTimerValue(uint32_t val)
         APIC_Write(APIC_TIMER_VAL, val);
 }
 
+uint32_t APIC_GetTimerValue()
+{
+        return APIC_Read(APIC_TIMER_VAL);
+}
+
 void APIC_SetEnableMode(uint8_t enabled)
 {
         uint32_t svr = APIC_Read(APIC_SVR);

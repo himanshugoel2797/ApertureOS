@@ -72,7 +72,13 @@ uint32_t APIC_Initialize()
                                                 int polarity = isaovr->flags & 3;
                                                 int triggerMode = (isaovr->flags >> 2) & 3;
 
-                                                IOAPIC_MapIRQ(isaovr->global_sys_int, isaovr->irq_src, APIC_GetID(), triggerMode >> 1,polarity >> 1);
+                                                if(isaovr->irq_src == 0) {
+
+                                                        IOAPIC_MapIRQ(isaovr->global_sys_int, isaovr->irq_src + 32, APIC_GetID(), triggerMode >> 1,polarity >> 1);
+                                                }else{
+
+                                                        IOAPIC_MapIRQ(isaovr->global_sys_int, isaovr->irq_src, APIC_GetID(), triggerMode >> 1,polarity >> 1);
+                                                }
 
                                                 COM_WriteStr("\r\nISAOVR\r\n");
                                                 COM_WriteStr("\tLen: %d\r\n", isaovr->h.entry_size);

@@ -46,8 +46,6 @@ void IOAPIC_MapIRQ(uint8_t global_irq, uint8_t apic_vector, uint64_t apic_id, ui
 
                         ioapic_interruptMap[apic_vector].ioapic_index = i;
                         ioapic_interruptMap[apic_vector].ioapic_pin = irq_pin;
-
-                        COM_WriteStr("\r\nVector%d, i=%d, pin=%d", apic_vector, ioapic_interruptMap[apic_vector].ioapic_index, ioapic_interruptMap[apic_vector].ioapic_pin);
                 }
         }
         if(baseAddr == NULL) return; //No match found!
@@ -94,8 +92,5 @@ void IOAPIC_SetEnableMode(uint8_t vector, bool active)
                 uint32_t low = IOAPIC_Read(baseAddr, index);
                 low = SET_VAL_BIT(low, 16, (~active & 1));
                 IOAPIC_Write(baseAddr, index, low);
-
-                COM_WriteStr("\r\nVector%d, i=%d, pin=%d", vector, ioapic_interruptMap[vector].ioapic_index, ioapic_interruptMap[vector].ioapic_pin);
         }
-        else COM_WriteStr("Faild! %d", vector);
 }

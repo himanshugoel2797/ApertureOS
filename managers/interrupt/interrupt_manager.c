@@ -123,7 +123,7 @@ void Interrupts_SetInterruptEnableMode(uint8_t intrpt, bool enabled)
         if(intrpt >= 32) {
                 if(using_apic)
                 {
-                        IOAPIC_SetEnableMode(intrpt - 32, enabled);
+                        IOAPIC_SetEnableMode(intrpt, enabled);
                 }else{
                         if(!enabled) PIC_MaskIRQ(intrpt);
                         else PIC_UnMaskIRQ(intrpt);

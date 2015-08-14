@@ -43,7 +43,7 @@ uint32_t PIT_TempIntHandler(Registers *reg)
 {
 
         if(pit_handlerMode == 0) {
-                pit_ticksToWait--;
+                if(pit_ticksToWait != 0) pit_ticksToWait--;
         }
 
         return 1; //Always prevent any other handlers from running
@@ -61,10 +61,11 @@ void PIT_Sleep(uint32_t interval)
         //Temporarily register an interrupt handler
         Interrupts_RegisterHandler(IRQ(0), 0, PIT_TempIntHandler);
 
-        pit_ticksToWait = interval/curFrequency;
+        pit_ticksToWait = (interval * curFrequency)/1000; //Convert into ticks
+        pit_handlerMode = 0;
 
         //Make sure the PIT is at 1KHz
-        PIT_SetFrequency(PIT_CH0, PIT_ACCESS_HI_BYTE | PIT_ACCESS_LO_BYTE, PIT_MODE_RATE, PIT_VAL_16BIT, PIT_FREQUENCY_HZ);
+        PIT_SetFrequency(PIT_CH0, PIT_ACCESS_HI_BYTE | PIT_ACCESS_LO_BYTE, PIT_MODE_SQUARE_WAVE, PIT_VAL_16BIT, PIT_FREQUENCY_HZ);
 
         //Enable the PIT interrupt
         Interrupts_SetInterruptEnableMode(IRQ(0), ENABLED);
@@ -77,16 +78,19 @@ void PIT_Sleep(uint32_t interval)
                 asm volatile ("sti");
 
                 //Wait some time
-                asm volatile ("nop");
-                asm volatile ("nop");
-                asm volatile ("nop");
-                asm volatile ("nop");
-                asm volatile ("nop");
+                for(int a = 0; a < 50; a++) {
+                        asm volatile ("nop");
+                        asm volatile ("nop");
+                        asm volatile ("nop");
+                        asm volatile ("nop");
+                        asm volatile ("nop");
+                }
         }
 
         Interrupts_SetInterruptEnableMode(IRQ(0), DISABLED);
         Interrupts_RegisterHandler(IRQ(0), 0, handler);
-        Interrupts_SetInterruptEnableMode(IRQ(0), ENABLED);
+        //Interrupts_SetInterruptEnableMode(IRQ(0), ENABLED);
+        asm volatile ("sti");
 }
 
 void PIT_SetEnableMode(bool enabled)

@@ -51,7 +51,7 @@ void keyboard_test(Registers *regs)
 //temp2 = -1;
 }
 
-void timerHandler(Registers *regs)
+void timerHandler()
 {
         temp++;
         graphics_Clear();
@@ -70,6 +70,7 @@ void timerHandler(Registers *regs)
         graphics_WriteUInt32(temp2, 16, 0, 32);
         graphics_WriteUInt32(t.seconds, 10, 0, 48);
         graphics_WriteUInt32(allocLoc, 2, 0, 64);
+
 
         graphics_SwapBuffer();
 
@@ -119,9 +120,10 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
 
         Interrupts_Setup();
+        Timers_Setup();
 
 
-        Interrupts_RegisterHandler(IRQ(0), 0, timerHandler);
+        //Interrupts_RegisterHandler(IRQ(2), 0, timerHandler);
 
         CMOS_Initialize();
         FPU_Initialize();
@@ -144,17 +146,20 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
                         q+=4;
                 }
 
-        PIT_SetFrequency(PIT_CH0, PIT_ACCESS_LO_BYTE | PIT_ACCESS_HI_BYTE, PIT_MODE_ONESHOT, PIT_VAL_16BIT, 300);
+
+        //PIT_SetFrequency(PIT_CH0, PIT_ACCESS_LO_BYTE | PIT_ACCESS_HI_BYTE, PIT_MODE_SQUARE_WAVE, PIT_VAL_16BIT, 1000);
 
 
-        rval = HPET_Initialize();
-        HPET_SetGlobalCounter(0);
-        HPET_SetTimerConfig(0, 0, 1, 1, 1, 100);
-        HPET_SetEnable(1);
+        //rval = HPET_Initialize();
+        //HPET_SetGlobalCounter(0);
+        //HPET_SetTimerConfig(0, 0, 1, 1, 1, 100);
+        //HPET_SetEnable(1);
 
 
         IOAPIC_MapIRQ(1, IRQ(1), APIC_GetID(), 0, 0);
         IOAPIC_SetEnableMode(IRQ(1), ENABLE);
+
+        //IOAPIC_SetEnableMode(IRQ(0), ENABLE);
         Interrupts_RegisterHandler(IRQ(1), 0, keyboard_test);
 
         allocLoc = PS2_Initialize();
@@ -162,18 +167,19 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
         asm ("sti");
         uint8_t c = 0;
+
         //while(1) {
-          asm volatile ("int $33");
+        asm volatile ("int $33");
         // }
-        uint32_t timer = APIC_Read(APIC_TIMER);
-        timer &= ~(3<<17);
-        timer |= (1<<17);
-        APIC_Write(APIC_TIMER, timer);
 
-        APIC_Write(0x380, 1 << 23);
+        //APIC_SetTimerMode(APIC_TIMER_PERIODIC);
 
-        APIC_SetVector(APIC_TIMER, 32);
-        APIC_SetEnableInterrupt(APIC_TIMER, 1);
+        //APIC_SetTimerValue(1 << 25);
+
+        //APIC_SetVector(APIC_TIMER, 34);
+        //APIC_SetEnableInterrupt(APIC_TIMER, 1);
+        UID id = Timers_CreateNew(5, TRUE, timerHandler);
+        Timers_StartTimer(id);
 
         while(1) {
                 asm ("hlt");

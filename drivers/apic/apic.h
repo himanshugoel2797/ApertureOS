@@ -37,6 +37,7 @@ void APIC_SetDeliveryMode(uint32_t lvt_entry, uint8_t mode);
 void APIC_SetTriggerMode(uint32_t lvt_entry, uint8_t mode);
 void APIC_SetPolarity(uint32_t lvt_entry, uint8_t mode);
 void APIC_SetTimerValue(uint32_t val);
+uint32_t APIC_GetTimerValue();
 void APIC_SetTimerDivisor(uint8_t divisor);
 void APIC_SetEnableInterrupt(uint32_t interrupt, int enableMode);
 void APIC_SetVector(uint32_t interrupt, uint8_t vector);
