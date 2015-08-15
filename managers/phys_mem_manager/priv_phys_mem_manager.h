@@ -1,7 +1,22 @@
-#ifndef _PRIV_MEMORY_MANAGER_H_
-#define _PRIV_MEMORY_MANAGER_H_
+#ifndef _PRIV_PHYS_MEM_MANAGER_H_
+#define _PRIV_PHYS_MEM_MANAGER_H_
 
 #include "types.h"
+
+
+#define PAGE_SIZE (4*1024)
+#define MAX_ALLOCS_PERENTRY ((PAGE_SIZE/sizeof(PhysAllocInfoEntry)) - 1)
+uint64_t memory_size, page_count;
+
+typedef struct phys_alloc_info_entry {
+        void *physLoc;
+        uint64_t size;
+}PhysAllocInfoEntry;
+
+typedef struct phys_alloc_list {
+        PhysAllocInfoEntry allocs[MAX_ALLOCS_PERENTRY];
+        struct phys_alloc_list *next;
+}PhysAllocList;
 
 #define KB4_DIVISOR 5
 #define KB4_MAX_VAL 32
@@ -27,8 +42,13 @@ uint64_t totalPageCount;
 uint64_t lastNonFullPage;
 uint64_t lastFourthEmptyPage, lastHalfEmptyPage, lastFourthFullPage, lastEmptyPage;
 
+
+void MemMan_Initialize();
+void* MemMan_Alloc(uint64_t size);
+void MemMan_Free(void *ptr, uint64_t size);
+
 uint64_t MemMan_CalculateBitmapIndex(uint64_t addr, size_t blockSize);
 void MemMan_MarkUsed(uint64_t addr, uint64_t size);
 void MemMan_MarkKB4Used(uint64_t addr, uint64_t size);
 
-#endif /* end of include guard: _PRIV_MEMORY_MANAGER_H_ */
+#endif /* end of include guard: _PRIV_PHYS_MEM_MANAGER_H_ */

@@ -1,6 +1,5 @@
 #include "paging.h"
 #include "priv_paging.h"
-#include "memorymanager.h"
 
 #include "globals.h"
 #include "elf.h"

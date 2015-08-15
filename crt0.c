@@ -12,7 +12,6 @@
 #include "elf.h"
 #include "globals.h"
 
-#include "memorymanager/memorymanager.h"
 #include "memorymanager/pagetable.h"
 
 #include "gdt.h"
@@ -91,7 +90,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         global_memory_map = bootstrap_malloc(global_memory_map_size);
         memcpy(global_memory_map, mbd->mmap_addr, global_memory_map_size);
 
-        MemMan_Initialize();
+        physMemMan_Setup();
         Paging_Initialize();
 
         graphics_Initialize();

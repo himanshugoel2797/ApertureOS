@@ -9,6 +9,7 @@ typedef UID SysID;
 
 typedef void (*Callback)(uint32_t);
 typedef uint32_t (*Initializer)();
+typedef int(*ProcessEntryPoint)(int, char**);
 typedef uint8_t bool;
 
 #define TRUE 1
