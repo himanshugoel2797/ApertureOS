@@ -75,7 +75,7 @@ uint8_t PS2_Initialize()
 
         if(port1_test_result == 0)
         {
-
+                PS2Keyboard_Initialize();
         }
 
         if(port2_test_result == 0)

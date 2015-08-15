@@ -91,7 +91,8 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         memcpy(global_memory_map, mbd->mmap_addr, global_memory_map_size);
 
         physMemMan_Setup();
-        Paging_Initialize();
+        //Paging_Initialize();
+        virtMemMan_Setup();
 
         graphics_Initialize();
 
