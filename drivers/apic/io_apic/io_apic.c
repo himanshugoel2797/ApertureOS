@@ -1,6 +1,6 @@
 #include "io_apic.h"
 #include "priv_io_apic.h"
-
+#include "managers.h"
 #include "utils/common.h"
 
 IOAPIC_Desc ioapics[MAX_IOAPIC_COUNT];
@@ -15,6 +15,8 @@ uint8_t IOAPIC_Initialize(uint32_t baseAddr, uint32_t global_int_base)
         ioapics[curIOAPIC_index].global_int_base = global_int_base;
         ioapics[curIOAPIC_index].ID = (IOAPIC_Read((uint32_t*)baseAddr, 0x0) >> 24) & 0xF;
         ioapics[curIOAPIC_index].entry_count = (IOAPIC_Read((uint32_t*)baseAddr, 0x01) >> 16) & 0xFF;
+
+
         curIOAPIC_index++;
 
         return 0;
@@ -92,5 +94,13 @@ void IOAPIC_SetEnableMode(uint8_t vector, bool active)
                 uint32_t low = IOAPIC_Read(baseAddr, index);
                 low = SET_VAL_BIT(low, 16, (~active & 1));
                 IOAPIC_Write(baseAddr, index, low);
+        }
+}
+
+void IOAPIC_VirtualizeAll()
+{
+        for(int i = 0; i < curIOAPIC_index; i++)
+        {
+                ioapics[i].baseAddr = VIRTUALIZE_HIGHER_MEM_OFFSET(ioapics[i].baseAddr);
         }
 }

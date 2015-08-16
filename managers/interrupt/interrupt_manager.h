@@ -12,6 +12,7 @@ typedef uint32_t (*InterruptHandler)(Registers*);
 #define INTR(n) (n)
 
 void Interrupts_Setup();
+void Interrupts_Virtualize();
 void Interrupts_RegisterHandler(uint8_t intrpt, uint8_t slot, InterruptHandler handler);
 uint8_t Interrupts_GetFreeSlot(uint8_t intrpt);
 void Interrupts_EmptySlot(uint8_t intrpt, uint8_t slot);

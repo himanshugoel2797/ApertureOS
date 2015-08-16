@@ -18,6 +18,7 @@ uint32_t APIC_Initialize()
 
         //Ask ACPI for the MADT table
         MADT *madt = ACPITables_FindTable(MADT_SIG, 0);
+
         int q = 1;
 
         if(madt != NULL) {

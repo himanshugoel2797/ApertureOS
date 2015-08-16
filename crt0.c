@@ -88,17 +88,19 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         global_memory_map = bootstrap_malloc(global_memory_map_size);
         memcpy(global_memory_map, mbd->mmap_addr, global_memory_map_size);
 
-        physMemMan_Setup();
-        //Paging_Initialize();
-        virtMemMan_Setup();
-
-        graphics_Initialize();
-
+        //All these need to access ACPI tables
         Interrupts_Setup();
-        Timers_Setup();
-
         CMOS_Initialize();
         FPU_Initialize();
+
+        //Once virtual memory management is put in place, ACPI tables become inaccessible, the acpi table will need to be copied
+        physMemMan_Setup();
+        virtMemMan_Setup();
+
+        Interrupts_Virtualize();
+
+        Timers_Setup();
+
 
         tmp = bootstrap_malloc(1080*1920*4);
         char pixel[4];

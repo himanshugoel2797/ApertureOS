@@ -8,6 +8,7 @@
 
 #include "utils/common.h"
 #include "utils/native.h"
+#include "managers.h"
 
 uint32_t *apic_base_addr = 0;
 
@@ -23,6 +24,8 @@ uint8_t APIC_LocalInitialize()
 
         uint64_t apic_base_msr = rdmsr(IA32_APIC_BASE);
         apic_base_addr = (uint32_t*)((uint32_t)apic_base_msr & 0xfffff000);
+
+
         apic_base_msr |= (1 << 11); //Enable the apic
         wrmsr(IA32_APIC_BASE, apic_base_msr);
 
@@ -38,6 +41,11 @@ uint8_t APIC_LocalInitialize()
         APIC_SetEnableMode(1);
 
         return 0;
+}
+
+void  APIC_Virtualize() {
+        //Adjust the base address for virtual memory
+        apic_base_addr = VIRTUALIZE_HIGHER_MEM_OFFSET(apic_base_addr);
 }
 
 void APIC_Write(uint32_t reg, uint32_t val)

@@ -26,6 +26,15 @@ void Interrupts_Setup()
         SysMan_StartSystem(int_sys->sys_id);
 }
 
+void Interrupts_Virtualize()
+{
+        if(using_apic)
+        {
+                APIC_Virtualize();
+                IOAPIC_VirtualizeAll();
+        }
+}
+
 uint32_t interrupts_Initialize()
 {
         int32_t pic_res = PIC_Initialize(); //Initialize the PIC

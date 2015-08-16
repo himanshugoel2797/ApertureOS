@@ -42,5 +42,6 @@ void APIC_SetTimerDivisor(uint8_t divisor);
 void APIC_SetEnableInterrupt(uint32_t interrupt, int enableMode);
 void APIC_SetVector(uint32_t interrupt, uint8_t vector);
 void APIC_SendEOI(uint8_t int_num);
+void APIC_Virtualize();
 
 #endif /* end of include guard: _APIC_DRIVER_H_ */
