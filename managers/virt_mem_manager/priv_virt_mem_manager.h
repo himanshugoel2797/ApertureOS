@@ -2,6 +2,7 @@
 #define _PRIV_VIRT_MEM_MANAGER_H_
 
 #include "types.h"
+#include "virt_mem_manager.h"
 
 //Page Directory Pointer Table Entry
 typedef struct {
@@ -65,5 +66,10 @@ typedef struct {
 
 #define GET_ADDR(x) (((PDPT_Entry*)x)->addr << 12)
 #define SET_ADDR(val) (((uint64_t)(val)) >> 12)
+
+#define PDPT_STORAGE_SIZE_U64  ((PAGE_DIR_STORAGE_POOL_SIZE/KB(12)) * 4)
+
+uint64_t* virtMemMan_GetFreePDPTEntry();
+PD_Entry_PSE* virtMemMan_GetFreePageDirEntry();
 
 #endif /* end of include guard: _PRIV_VIRT_MEM_MANAGER_H_ */

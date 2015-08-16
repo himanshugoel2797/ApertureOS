@@ -10,6 +10,12 @@ uint8_t virtMemMan_messageHandler(Message *msg);
 
 VirtMemMan_Instance *curInstance_virt;
 
+//Identity mapped storage for page directories
+uint8_t page_dir_storage[PAGE_DIR_STORAGE_POOL_SIZE] __attribute__((aligned(KB(4))));
+
+//Identity mapped storage for unique pdpt entries
+uint64_t pdpt_storage[PDPT_STORAGE_SIZE_U64] __attribute__((aligned(0x20)));
+
 void virtMemMan_Setup()
 {
         vmem_sys = SysMan_RegisterSystem();
@@ -24,16 +30,19 @@ void virtMemMan_Setup()
 
 uint32_t virtMemMan_Initialize()
 {
-        curInstance_virt = physMemMan_Alloc(KB(4));
+        memset(page_dir_storage, 0xFF, PAGE_DIR_STORAGE_POOL_SIZE);
+        memset(pdpt_storage, 0xFF, PDPT_STORAGE_SIZE_U64 * sizeof(uint64_t));
+
+        curInstance_virt = virtMemMan_GetFreePDPTEntry();
         memset(curInstance_virt, 0, sizeof(VirtMemMan_Instance));
 
-        uint32_t pdpt_index = 0, pd_index = 0, pt_index = 0;
-        for(uint32_t addr = 0; addr < -1 /*0x40000000*/; addr+=MB(2))
+        uint32_t pdpt_index = 0, pd_index = 0;
+        for(uint32_t addr = 0; addr < 0x40000000; addr+=MB(2))
         {
                 //Initialize the PDPT entry if it hasn't been initialized
                 if(curInstance_virt->pdpt[pdpt_index] == 0)
                 {
-                        curInstance_virt->pdpt[pdpt_index] = (uint64_t)physMemMan_Alloc(KB(4));
+                        curInstance_virt->pdpt[pdpt_index] = (uint64_t)virtMemMan_GetFreePageDirEntry();
                         memset((void*)curInstance_virt->pdpt[pdpt_index], 0, KB(4));
 
                         curInstance_virt->pdpt[pdpt_index] |= TRUE;
@@ -90,7 +99,8 @@ VirtMemMan_Instance* virtMemMan_GetCurrent()
 void virtMemMan_CreateInstance(VirtMemMan_Instance *instance)
 {
         //Identity map up to 0x40000000 assuming virtual memory is enabled
-        PDPT_Entry *pdpt = instance->pdpt;
+        instance = virtMemMan_GetFreePDPTEntry();
+
 
 
 }
@@ -118,4 +128,22 @@ void virtMemMan_Map(void* v_address, void* phys_address, size_t size, MEM_TYPES 
 void virtMemMan_UnMap(void* v_address, size_t size)
 {
 
+}
+
+uint64_t* virtMemMan_GetFreePDPTEntry()
+{
+        for(uint32_t i = 0; i < PDPT_STORAGE_SIZE_U64; i += 4)
+        {
+                if(pdpt_storage[i] == 0xFFFFFFFFFFFFFFFF) return &pdpt_storage[i];
+        }
+        return -1;
+}
+
+PD_Entry_PSE* virtMemMan_GetFreePageDirEntry()
+{
+        for(uint32_t i = 0; i < PAGE_DIR_STORAGE_POOL_SIZE; i+=KB(4))
+        {
+                if( *(uint64_t*)&page_dir_storage[i] == 0xFFFFFFFFFFFFFFFF) return (PD_Entry_PSE*)&page_dir_storage[i];
+        }
+        return -1;
 }

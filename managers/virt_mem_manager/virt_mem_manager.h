@@ -3,6 +3,8 @@
 
 #include "types.h"
 
+#define PAGE_DIR_STORAGE_POOL_SIZE MB(18)
+
 typedef enum {
         MEM_TYPE_UC,
         MEM_TYPE_WB,
