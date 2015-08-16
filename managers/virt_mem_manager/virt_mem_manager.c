@@ -28,7 +28,7 @@ uint32_t virtMemMan_Initialize()
         memset(curInstance_virt, 0, sizeof(VirtMemMan_Instance));
 
         uint32_t pdpt_index = 0, pd_index = 0, pt_index = 0;
-        for(uint32_t addr = 0; addr < -1 /*0x40000000*/; addr+=KB(4))
+        for(uint32_t addr = 0; addr < -1 /*0x40000000*/; addr+=MB(2))
         {
                 //Initialize the PDPT entry if it hasn't been initialized
                 if(curInstance_virt->pdpt[pdpt_index] == 0)
@@ -37,28 +37,17 @@ uint32_t virtMemMan_Initialize()
                         memset((void*)curInstance_virt->pdpt[pdpt_index], 0, KB(4));
 
                         curInstance_virt->pdpt[pdpt_index] |= TRUE;
+                        COM_WriteStr("\r\nPDPT: %x", GET_ADDR(&curInstance_virt->pdpt[pdpt_index]));
                 }
 
-                PD_Entry* curPD = (PD_Entry*)GET_ADDR(curInstance_virt->pdpt[pdpt_index]);
-                if(!curPD[pd_index].present)
-                {
-                        curPD[pd_index].addr = SET_ADDR(physMemMan_Alloc(KB(4)));
-                        memset(GET_ADDR(&curPD[pd_index]), 0, KB(4));
-
-                        curPD[pd_index].present = TRUE;
-                }
-
-                PT_Entry* curPT = (PT_Entry*)GET_ADDR(&curPD[pd_index]);
-                curPT[pt_index].addr = SET_ADDR(addr);
-                curPT[pt_index].present = TRUE;
+                PD_Entry_PSE* curPD = (PD_Entry_PSE*)GET_ADDR(&curInstance_virt->pdpt[pdpt_index]);
+                curPD[pd_index].addr = addr/MB(2);
+                curPD[pd_index].present = TRUE;
+                curPD[pd_index].read_write = 1;
+                curPD[pd_index].page_size = 1;
 
                 //Increment all counters
-                pt_index++;
-                if(pt_index == 512) {
-                        pt_index = 0;
-                        pd_index++;
-                        COM_WriteStr("PDPT: %d PD Entry: %d PT Entry: %d ADDR: %x REALADDR: %x\r\n", pdpt_index, pd_index, pt_index, addr, curPT[511].addr);
-                }
+                pd_index++;
                 if(pd_index == 512)
                 {
                         pd_index = 0;
@@ -70,10 +59,12 @@ uint32_t virtMemMan_Initialize()
                 }
         }
 
-        while(1) ;
+
+        //while(1) ;
+        asm volatile ("movl %cr4, %eax; orl $0x00000010, %eax; movl %eax, %cr4;");  //Enable PSE
         asm volatile ("movl %cr4, %eax; bts $5, %eax; movl %eax, %cr4"); // set bit5 in CR4 to enable PAE
-        asm volatile ("movl %%eax, %%cr3" :: "a" (&curInstance_virt)); // load PDPT into CR3
-        asm volatile ("movl %cr0, %eax; orl $0x80000000, %eax; movl %eax, %cr0;");
+        asm volatile ("movl %%eax, %%cr3" :: "a" (&curInstance_virt->pdpt)); // load PDPT into CR3
+        asm volatile ("movl %cr0, %eax; orl $0x80000000, %eax; movl %eax, %cr0;");  //Enable Paging
 }
 
 void virtMemMan_callback(uint32_t res)

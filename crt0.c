@@ -117,6 +117,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
                 }
         Keyboard_Setup();
 
+
         asm ("sti");
 
         UID id = Timers_CreateNew(5, TRUE, timerHandler);
