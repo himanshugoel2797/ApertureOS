@@ -1,7 +1,6 @@
 #include "graphics.h"
 
 #include "managers.h"
-#include "memorymanager/paging.h"
 
 #include "utils/common.h"
 #include "globals.h"
@@ -36,9 +35,10 @@ void graphics_Initialize()
         frameBufferA = (char*)global_multiboot_info->framebuffer_addr;
         frameBufferB = bootstrap_malloc(buffer_size);
 
-        Paging_MapPage((uint64_t)frameBufferA, MB(4), 0, 1);
-        Paging_MapPage((uint64_t)frameBufferA + MB(4), MB(8), 0, 1);
-        frameBufferA = (char*)MB(4);
+        char *vPointer = virtMemMan_FindEmptyAddress(buffer_size, MEM_KERNEL);
+        int retVal = virtMemMan_Map(vPointer, frameBufferA, buffer_size, MEM_TYPE_WC, MEM_WRITE, MEM_KERNEL);
+        frameBufferA = vPointer;
+        COM_WriteStr("\r\n%x", *vPointer);
 
         //frameBufferB = bbuf;
         backBuffer = (uint32_t*)frameBufferB;
@@ -46,6 +46,7 @@ void graphics_Initialize()
         //Initialize both buffers
         memset(frameBufferA, 1, buffer_size);
         memset(frameBufferB, 1, buffer_size);
+
 }
 
 void graphics_SwapBuffer()
@@ -81,18 +82,18 @@ void graphics_WriteStr(const char *str, int yOff, int xOff)
 void graphics_WriteUInt32(uint32_t val, int base, int yOff, int xOff)
 {
         char str[128];
-        if(base == 10)sprintf(str, "%u", val);
-        else if(base == 16)sprintf(str, "%#x", val);
-        else if(base == 2)sprintf(str, "%bb", val);
+        if(base == 10) sprintf(str, "%u", val);
+        else if(base == 16) sprintf(str, "%#x", val);
+        else if(base == 2) sprintf(str, "%bb", val);
         graphics_WriteStr(str, yOff, xOff);
 }
 
 void graphics_WriteUInt64(uint64_t val, int base, int yOff, int xOff)
 {
         char str[512];
-        if(base == 10)sprintf(str, "%u", val);
-        else if(base == 16)sprintf(str, "%#x", val);
-        else if(base == 2)sprintf(str, "%bb", val);
+        if(base == 10) sprintf(str, "%u", val);
+        else if(base == 16) sprintf(str, "%#x", val);
+        else if(base == 2) sprintf(str, "%bb", val);
         graphics_WriteStr(str, yOff, xOff);
 }
 

@@ -12,8 +12,6 @@
 #include "elf.h"
 #include "globals.h"
 
-#include "memorymanager/pagetable.h"
-
 #include "gdt.h"
 #include "idt.h"
 

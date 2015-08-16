@@ -13,7 +13,6 @@ SOURCES=utils/native.o utils/common.o utils/sprintf.o \
 				managers/process/process_manager.o	\
 				managers/timer/timer_manager.o \
 				managers/virt_mem_manager/virt_mem_manager.o \
-				memorymanager/paging.o \
 				drivers/acpi_tables/acpi_tables.o \
 				drivers/apic/apic.o drivers/apic/apic_init.o drivers/apic/io_apic/io_apic.o \
 				drivers/cmos/cmos.o \

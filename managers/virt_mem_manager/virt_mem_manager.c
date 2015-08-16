@@ -2,6 +2,7 @@
 #include "priv_virt_mem_manager.h"
 #include "managers.h"
 #include "utils/common.h"
+#include "utils/native.h"
 
 SystemData *vmem_sys = NULL;
 uint32_t virtMemMan_Initialize();
@@ -32,6 +33,14 @@ void virtMemMan_Setup()
 
 uint32_t virtMemMan_Initialize()
 {
+        //Update the PAT so that PAT4 is WC type allowing us to use the 4 types for pages
+        uint64_t pat = 0;
+        pat |= 0x6;                   //PAT0 WB
+        pat |= ((uint64_t)0x4) << 8;  //PAT1 WT
+        pat |= ((uint64_t)0x0) << 16; //PAT2 UC
+        pat |= ((uint64_t)0x1) << 24;  //PAT3
+        wrmsr(PAT_MSR, pat);
+
         memset(page_dir_storage, 0xFF, PAGE_DIR_STORAGE_POOL_SIZE);
         memset(pdpt_storage, 0xFF, PDPT_STORAGE_SIZE_U64 * sizeof(uint64_t));
 
@@ -39,7 +48,7 @@ uint32_t virtMemMan_Initialize()
         memset(curInstance_virt, 0, sizeof(uint64_t) * 4);
 
         uint32_t pdpt_index = 0, pd_index = 0;
-        for(uint32_t addr = 0; addr < 0x40000000; addr+=MB(2))
+        for(uint32_t addr = 0; addr < 0x10000000; addr+=MB(2))
         {
                 //Initialize the PDPT entry if it hasn't been initialized
                 if(curInstance_virt[pdpt_index] == 0)
@@ -59,7 +68,7 @@ uint32_t virtMemMan_Initialize()
                 PD_Entry_PSE* curPD = (PD_Entry_PSE*)GET_ADDR(&curInstance_virt[pdpt_index]);
                 curPD[pd_index].addr = addr/MB(2);
                 curPD[pd_index].present = TRUE;
-                curPD[pd_index].read_write = 1;
+                curPD[pd_index].read_write = TRUE;
                 curPD[pd_index].page_size = 1;
 
                 //Increment all counters
@@ -141,7 +150,7 @@ void* virtMemMan_FindEmptyAddress(size_t size, MEM_SECURITY_PERMS privLevel)
         if(size == 0) return NULL;
 
         uint32_t seg_cnt = size/MB(2);
-        if(seg_cnt == 0) seg_cnt++;
+        if(seg_cnt == 0 || ((seg_cnt * MB(2)) < size)) seg_cnt++;
 
         if(privLevel == MEM_KERNEL)
         {
@@ -154,7 +163,6 @@ void* virtMemMan_FindEmptyAddress(size_t size, MEM_SECURITY_PERMS privLevel)
                                 for(int j = 0; j < seg_cnt; j++) {
                                         if(kernel_main_entry[i+j].present == FALSE) score++;
                                 }
-
                                 if(score >= seg_cnt) return (i * MB(2));
                         }
                 }
@@ -188,14 +196,14 @@ void* virtMemMan_FindEmptyAddress(size_t size, MEM_SECURITY_PERMS privLevel)
         return NULL;
 }
 
-void virtMemMan_Map(void* v_address, void* phys_address, size_t size, MEM_TYPES type, MEM_ACCESS_PERMS perms, MEM_SECURITY_PERMS privLevel)
+uint32_t virtMemMan_Map(void* v_address, void* phys_address, size_t size, MEM_TYPES type, MEM_ACCESS_PERMS perms, MEM_SECURITY_PERMS privLevel)
 {
-        if(size == 0) return;
+        if(size == 0) return -1;
 
         uint32_t virtAddr = (uint32_t)v_address;
         uint64_t physAddr = (uint64_t)phys_address;
         uint32_t seg_cnt = size/MB(2);
-        if(seg_cnt == 0) seg_cnt++;
+        if(seg_cnt == 0 || ((seg_cnt * MB(2)) < size)) seg_cnt++;
 
         //Align the virtAddr to 2MB
         virtAddr = (virtAddr/MB(2)) * MB(2);
@@ -205,13 +213,57 @@ void virtMemMan_Map(void* v_address, void* phys_address, size_t size, MEM_TYPES 
         uint32_t pd_i = (virtAddr - (pdpt_i * GB(1)))/MB(2);
 
         //Check requested permissions to make sure they match up with the virtual address
+        if(virtAddr < KMEM_END && privLevel != MEM_KERNEL) return -2; //Make sure permissions match
+        if(virtAddr > KMEM_END && privLevel != MEM_USER) return -2;
+
+        if(virtAddr + size > KMEM_END && virtAddr < KMEM_END) return -3; //Don't allow boundary crossing
+
+        curInstance_virt[pdpt_i] |= 1;
+
         //Now update the current page directory
-        //Setup the appropriate caching options
+        PD_Entry_PSE *pd_pse = (PD_Entry_PSE*)GET_ADDR(&curInstance_virt[pdpt_i]);
+        for(int i = 0; i < seg_cnt; i++)
+        {
+                pd_pse[pd_i + i].addr = physAddr/MB(2);
+                pd_pse[pd_i + i].present = 1;
+                pd_pse[pd_i + i].user_supervisor = privLevel;
+                pd_pse[pd_i + i].page_size = 1;
+                pd_pse[pd_i + i].read_write = (perms & MEM_READ == MEM_READ) | (perms & MEM_WRITE == MEM_WRITE);
+
+                //Setup cache controls
+                pd_pse[pd_i + i].global = 0;
+                pd_pse[pd_i + i].pat = 0;
+                pd_pse[pd_i + i].write_through = (uint32_t)type & 1;
+                pd_pse[pd_i + i].cache_disable = ((uint32_t)type >> 1) & 1;
+                physAddr += MB(2);
+
+                //Flush the TLB
+                asm volatile ("invlpg (%0)" :: "r" ( (pdpt_i * GB(1)) + (pd_i + i)*MB(2)));
+        }
+        return 0;
 }
 
 void virtMemMan_UnMap(void* v_address, size_t size)
 {
+        if(size == 0) return;
 
+        uint32_t virtAddr = (uint32_t)v_address;
+        uint32_t seg_cnt = size/MB(2);
+        if(seg_cnt == 0 || ((seg_cnt * MB(2)) < size)) seg_cnt++;
+
+        //Calculate the indices
+        uint32_t pdpt_i = virtAddr/GB(1);
+        uint32_t pd_i = (virtAddr - (pdpt_i * GB(1)))/MB(2);
+        PD_Entry_PSE *pd_pse = (PD_Entry_PSE*)GET_ADDR(curInstance_virt[pdpt_i]);
+
+        for(int i = 0; i < seg_cnt; i++)
+        {
+                pd_pse[pd_i + i].present = 0;
+                pd_pse[pd_i + i].addr = 0;
+
+                //Flush the TLB
+                asm volatile ("invlpg (%0)" :: "r" ( (pdpt_i * GB(1)) + (pd_i + i)*MB(2)));
+        }
 }
 
 uint64_t* virtMemMan_GetFreePDPTEntry()

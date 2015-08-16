@@ -4,6 +4,12 @@
 #include "types.h"
 #include "virt_mem_manager.h"
 
+#define KMEM_START 0
+#define KMEM_END 0x40000000
+#define KMEM_SIZE (KMEM_END-KMEM_START)
+
+#define PAT_MSR 0x277
+
 //Page Directory Pointer Table Entry
 typedef struct {
         uint64_t present : 1;
