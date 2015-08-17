@@ -175,7 +175,6 @@ uint32_t virtMemMan_Map(void* v_address, void* phys_address, size_t size, MEM_TY
         uint32_t pdpt_i = virtAddr/GB(1);
         uint32_t pd_i = (virtAddr - (pdpt_i * GB(1)))/MB(2);
 
-        //It's only worth mapping with large pages if the size is larger than 1MB, else we should go for 4KB pages
         //if(size >= MB(2)) {
         uint32_t seg_cnt = size/MB(2);
         if(seg_cnt == 0 || ((seg_cnt * MB(2)) < size)) seg_cnt++;
