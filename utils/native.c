@@ -12,6 +12,32 @@ uint8_t inb(const uint16_t port)
         return ret;
 }
 
+
+void outw(const uint16_t port, const uint16_t val)
+{
+        asm ("outw %1, %0" : : "dN" (port), "a" (val));
+}
+
+uint16_t inw(const uint16_t port)
+{
+        uint16_t ret;
+        asm ("inw %1, %0" : "=a" (ret) : "dN" (port));
+        return ret;
+}
+
+
+void outl(const uint16_t port, const uint32_t val)
+{
+        asm ("outl %1, %0" : : "dN" (port), "a" (val));
+}
+
+uint32_t inl(const uint16_t port)
+{
+        uint32_t ret;
+        asm ("inl %1, %0" : "=a" (ret) : "dN" (port));
+        return ret;
+}
+
 void wrmsr(uint32_t msr, uint64_t val)
 {
         uint32_t lo = val;

@@ -18,6 +18,7 @@ SOURCES=utils/native.o utils/common.o utils/sprintf.o \
 				drivers/cmos/cmos.o \
 				drivers/fpu/fpu.o \
 				drivers/hpet/hpet.o \
+				drivers/pci/pci.o	\
 				drivers/pic/pic.o \
 				drivers/pit/pit.o \
 				drivers/ps2/ps2.o drivers/ps2/ps2_keyboard.o \

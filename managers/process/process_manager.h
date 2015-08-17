@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "managers.h"
+#include "virt_mem_manager/virt_mem_manager.h"
 
 struct p_info;
 
