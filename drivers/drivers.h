@@ -8,6 +8,7 @@
 #include "hpet/hpet.h"                //HPET Driver
 #include "pic/pic.h"                  //PIC Driver
 #include "pit/pit.h"                  //PIT Driver
+#include "pci/pci.h"                  //PCI Driver
 #include "ps2/ps2.h"                  //PS/2 Controller Driver
 #include "serial/COM.h"               //Serial Port Driver
 

@@ -92,6 +92,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         Interrupts_Setup();
         CMOS_Initialize();
         FPU_Initialize();
+        pci_Initialize();
 
         //Once virtual memory management is put in place, ACPI tables become inaccessible, the acpi table will need to be copied
         physMemMan_Setup();

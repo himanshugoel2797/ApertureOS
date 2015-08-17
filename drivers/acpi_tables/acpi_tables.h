@@ -6,6 +6,7 @@
 #define MADT_SIG "APIC"
 #define FADT_SIG "FACP"
 #define HPET_SIG "HPET"
+#define MCFG_SIG "MCFG"
 
 uint8_t ACPITables_Initialize();
 void* ACPITables_FindTable(const char *table_name, int index);
