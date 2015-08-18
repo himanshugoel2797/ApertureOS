@@ -20,7 +20,7 @@ SystemData* SysMan_RegisterSystem()
         }
         else
         {
-          
+
                 return NULL;
         }
 }
@@ -48,7 +48,7 @@ void SysMan_StartSystem(SysID sys_id)
         for(; systems[sys_id].prerequisites[i] && i < (MAX_SYSTEM_COUNT - 1); i++)
         {
                 SysID s = systems[sys_id].prerequisites[i] - 1;
-                if(sys_started[s] && systems[s].init_cb == NULL) total++;
+                if(sys_started[s] && systems[s].init == NULL) total++;
                 else if(sys_started[s]) {
                         if(s == prev) break; //We're checking this for the second time, initialization for the system failed, so current system can't be initialized either
                         SysMan_StartSystem(s + 1);
@@ -60,7 +60,7 @@ void SysMan_StartSystem(SysID sys_id)
         if(total == i) {
                 uint32_t ret = systems[sys_id].init();
 
-                systems[sys_id].init_cb(ret);
-                systems[sys_id].init_cb = NULL;
+                if(systems[sys_id].init_cb != NULL) systems[sys_id].init_cb(ret);
+                systems[sys_id].init = NULL;
         }
 }

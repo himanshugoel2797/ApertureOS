@@ -256,7 +256,6 @@ uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, 
                 {
                         if(pt_i != 0 || (pt_i == 0 && size_c < MB(2)))
                         {
-                                COM_WriteStr("KB %d\r\n", size_c);
                                 virtMemMan_Map(virtAddr, physAddr, KB(4), type, perms, privLevel);
                                 size_c -= KB(4);
                                 virtAddr += (uint32_t)KB(4);
@@ -265,7 +264,6 @@ uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, 
                         }
                         else if(pt_i == 0 && size_c >= MB(2))
                         {
-                                COM_WriteStr("MB %d\r\n", size_c);
                                 virtMemMan_Map(virtAddr, physAddr, MB(2), type, perms, privLevel);
                                 size_c -= MB(2);
                                 virtAddr += (uint32_t)MB(2);
@@ -283,7 +281,6 @@ uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, 
                                 pdpt_i++;
                         }
                 }
-                COM_WriteStr("done!\r\n");
         }
         return 0;
 }
