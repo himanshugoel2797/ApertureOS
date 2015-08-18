@@ -11,6 +11,7 @@ SOURCES=utils/native.o utils/common.o utils/sprintf.o \
 				managers/interrupt/interrupt_manager.o \
 				managers/phys_mem_manager/phys_mem_manager.o \
 				managers/process/process_manager.o	\
+				managers/threads/threads.o	\
 				managers/timer/timer_manager.o \
 				managers/virt_mem_manager/virt_mem_manager.o \
 				drivers/acpi_tables/acpi_tables.o \

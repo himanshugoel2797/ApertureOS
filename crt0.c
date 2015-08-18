@@ -98,10 +98,9 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         physMemMan_Setup();
         virtMemMan_Setup();
 
-        graphics_Initialize();
-
-
         Interrupts_Virtualize();
+        ThreadMan_Setup();
+        graphics_Initialize();
 
         Timers_Setup();
 
