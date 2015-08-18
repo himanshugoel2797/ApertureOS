@@ -22,13 +22,28 @@ uint32_t pci_readDWord(
 
 void pci_Initialize()
 {
+        COM_WriteStr("\r\nEnumerating PCI devices:\r\n");
         //Enumerate PCI devices
         for(int bus = 0; bus < 256; bus++)
         {
                 for(int device = 0; device < 32; device++)
                 {
                         uint32_t vid = pci_readDWord(bus, device, 0, 0);
-                        if(vid != 0xFFFFFFFF) COM_WriteStr("\r\nVendor %x\r\n", vid);
+                        if( (vid >> 16) != 0xFFFF)
+                        {
+                                int headerType = pci_readDWord(bus, device, 0, 0x0C);
+                                int functionCount = 1;
+                                if( (headerType >> 23) & 1) functionCount = 8;
+
+                                for(int f = 0; f < functionCount; f++) {
+                                        char *base, *sub, *prog;
+
+                                        if(pci_readDWord(bus, device, f, 0) >> 16 != 0xFFFF) {
+                                                pci_GetPCIClass(pci_readDWord(bus, device, f, 8),&base, &sub, &prog);
+                                                COM_WriteStr("\tFound %s %s %s\r\n", sub, prog, base);
+                                        }
+                                }
+                        }
                 }
         }
 

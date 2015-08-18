@@ -33,3 +33,20 @@ void pci_GetPCIClass3 (
                 }
         }
 }
+
+void
+pci_GetPCIClass (
+        long classcode,
+        char ** base,
+        char ** sub,
+        char ** prog
+        )
+{
+        unsigned char baseid, subid, progid;
+
+        baseid  = ((classcode >> 24) & 0xFF);
+        subid  =  ((classcode >> 16) & 0xFF);
+        progid  = ((classcode >>  8) & 0xFF);
+
+        pci_GetPCIClass3 (baseid,subid,progid,base,sub,prog);
+}

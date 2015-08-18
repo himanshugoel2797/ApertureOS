@@ -33,7 +33,7 @@ VirtMemMan_Instance virtMemMan_CreateInstance();
 void virtMemMan_Fork(VirtMemMan_Instance dst, VirtMemMan_Instance src);
 void virtMemMan_ForkCurrent(VirtMemMan_Instance dst);
 void* virtMemMan_FindEmptyAddress(size_t size, MEM_SECURITY_PERMS privLevel);
-uint32_t virtMemMan_Map(void* v_address, void* phys_address, size_t size, MEM_TYPES type, MEM_ACCESS_PERMS perms, MEM_SECURITY_PERMS privLevel);
+uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, MEM_TYPES type, MEM_ACCESS_PERMS perms, MEM_SECURITY_PERMS privLevel);
 void virtMemMan_UnMap(void* v_address, size_t size);
 void virtMemMan_FreeInstance(VirtMemMan_Instance inst);
 

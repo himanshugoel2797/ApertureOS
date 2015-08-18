@@ -48,9 +48,9 @@ uint32_t virtMemMan_Initialize()
         memset(kernel_main_entry, 0, KB(4));
 
         curInstance_virt = virtMemMan_CreateInstance();
-        virtMemMan_Map((void*)0, (void*)0, 0x10000000, MEM_TYPE_WT, MEM_WRITE | MEM_READ | MEM_EXEC, MEM_KERNEL);
+        virtMemMan_Map(0, 0, 0x10000000, MEM_TYPE_WT, MEM_WRITE | MEM_READ | MEM_EXEC, MEM_KERNEL);
 
-        virtMemMan_Map((void*)0x10000000, (void*)0xF0000000, 0x0FFFFFFF, MEM_TYPE_WT, MEM_WRITE | MEM_READ | MEM_EXEC, MEM_KERNEL);
+        virtMemMan_Map(0x10000000, 0xF0000000, 0x10000000, MEM_TYPE_WT, MEM_WRITE | MEM_READ | MEM_EXEC, MEM_KERNEL);
 
         asm volatile ("movl %cr4, %eax; orl $0x00000010, %eax; movl %eax, %cr4;");  //Enable PSE
         asm volatile ("movl %cr4, %eax; bts $5, %eax; movl %eax, %cr4"); // set bit5 in CR4 to enable PAE
@@ -164,56 +164,127 @@ void* virtMemMan_FindEmptyAddress(size_t size, MEM_SECURITY_PERMS privLevel)
         return NULL;
 }
 
-uint32_t virtMemMan_Map(void* v_address, void* phys_address, size_t size, MEM_TYPES type, MEM_ACCESS_PERMS perms, MEM_SECURITY_PERMS privLevel)
+uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, MEM_TYPES type, MEM_ACCESS_PERMS perms, MEM_SECURITY_PERMS privLevel)
 {
         if(size == 0) return -1;
 
         uint32_t virtAddr = (uint32_t)v_address;
         uint64_t physAddr = (uint64_t)phys_address;
 
+        //Check requested permissions to make sure they match up with the virtual address
+        if(virtAddr < KMEM_END && privLevel != MEM_KERNEL) return -2;                 //Make sure permissions match
+        if(virtAddr > KMEM_END && privLevel != MEM_USER) return -2;
+        if(virtAddr + size > KMEM_END && virtAddr < KMEM_END) return -3;                 //Don't allow boundary crossing
+
         //Calculate the indices
         uint32_t pdpt_i = virtAddr/GB(1);
         uint32_t pd_i = (virtAddr - (pdpt_i * GB(1)))/MB(2);
+        uint32_t pt_i = (virtAddr - (pdpt_i * GB(1)) - (pd_i * MB(2)))/KB(4);
 
-        //if(size >= MB(2)) {
-        uint32_t seg_cnt = size/MB(2);
-        if(seg_cnt == 0 || ((seg_cnt * MB(2)) < size)) seg_cnt++;
-
-        //Align the virtAddr to 2MB
-        virtAddr = (virtAddr/MB(2)) * MB(2);
-
-
-        //Check requested permissions to make sure they match up with the virtual address
-        if(virtAddr < KMEM_END && privLevel != MEM_KERNEL) return -2;         //Make sure permissions match
-        if(virtAddr > KMEM_END && privLevel != MEM_USER) return -2;
-
-        if(virtAddr + size > KMEM_END && virtAddr < KMEM_END) return -3;         //Don't allow boundary crossing
-
-        curInstance_virt[pdpt_i] |= 1;
-
-        //Now update the current page directory
-        PD_Entry_PSE *pd_pse = (PD_Entry_PSE*)GET_ADDR(&curInstance_virt[pdpt_i]);
-        for(int i = 0; i < seg_cnt && pd_i + i < 512; i++)
+        if(size == MB(2))
         {
-                pd_pse[pd_i + i].addr = physAddr/MB(2);
-                pd_pse[pd_i + i].present = 1;
-                pd_pse[pd_i + i].user_supervisor = privLevel;
-                pd_pse[pd_i + i].page_size = 1;
-                pd_pse[pd_i + i].read_write = (perms & MEM_READ == MEM_READ) | (perms & MEM_WRITE == MEM_WRITE);
+                //Align the virtAddr to 2MB
+                //virtAddr = (virtAddr/MB(2)) * MB(2);
+
+                curInstance_virt[pdpt_i] |= 1;
+
+                //Now update the current page directory
+                PD_Entry_PSE *pd_pse = (PD_Entry_PSE*)GET_ADDR(&curInstance_virt[pdpt_i]);
+
+                pd_pse[pd_i].addr = physAddr/MB(2);
+                pd_pse[pd_i].present = 1;
+                pd_pse[pd_i].user_supervisor = privLevel;
+                pd_pse[pd_i].page_size = 1;
+                pd_pse[pd_i].read_write = (perms & MEM_WRITE == MEM_WRITE);
 
                 //Setup cache controls
-                pd_pse[pd_i + i].global = 0;
-                pd_pse[pd_i + i].pat = 0;
-                pd_pse[pd_i + i].write_through = (uint32_t)type & 1;
-                pd_pse[pd_i + i].cache_disable = ((uint32_t)type >> 1) & 1;
-                physAddr += MB(2);
+                pd_pse[pd_i].global = 0;
+                pd_pse[pd_i].pat = 0;
+                pd_pse[pd_i].write_through = (uint32_t)type & 1;
+                pd_pse[pd_i].cache_disable = ((uint32_t)type >> 1) & 1;
 
                 //Flush the TLB
-                asm volatile ("invlpg (%0)" :: "r" ( (pdpt_i * GB(1)) + (pd_i + i)*MB(2)));
+                asm volatile ("invlpg (%0)" :: "r" (virtAddr));
+
         }
-        //}else{
-        //TODO Add 4KB page support
-        //}
+        else if(size == KB(4))
+        {
+                //Align the virtAddr to 4KB
+                //virtAddr = (virtAddr/KB(4)) * KB(4);
+
+                curInstance_virt[pdpt_i] |= 1;
+
+                //Now update the current page directory
+                PD_Entry *pd = (PD_Entry*)GET_ADDR(&curInstance_virt[pdpt_i]);
+
+                if(!pd[pd_i].present)
+                {
+                        uint32_t addr = virtMemMan_GetFreePageDirEntry();
+                        memset(addr, 0, KB(4));
+                        pd[pd_i].addr = ((uint32_t)addr/KB(4));
+                        pd[pd_i].read_write = TRUE;
+                        pd[pd_i].user_supervisor = privLevel;
+                        pd[pd_i].accessed = 0;
+                        pd[pd_i].present = 1;
+                        pd[pd_i].nx = 0;
+                        pd[pd_i].res2 = 0;
+                        pd[pd_i].res1 = 0;
+                        pd[pd_i].write_through = 0;
+                        pd[pd_i].cache_disable = 0;
+                }
+
+                PT_Entry *pt = (PT_Entry*)(pd[pd_i].addr * KB(4));
+
+                pt[pt_i].addr = physAddr/KB(4);
+                pt[pt_i].present = 1;
+                pt[pt_i].user_supervisor = privLevel;
+                pt[pt_i].read_write = (perms & MEM_WRITE == MEM_WRITE);
+
+                //Setup cache controls
+                pt[pt_i].global = 0;
+                pt[pt_i].pat = 0;
+                pt[pt_i].write_through = (uint32_t)type & 1;
+                pt[pt_i].cache_disable = ((uint32_t)type >> 1) & 1;
+
+                //Flush the TLB
+                asm volatile ("invlpg (%0)" :: "r" (virtAddr));
+        }else
+        {
+                int64_t size_c = size;
+                //Break down all uneven sized allocations into page sized ones
+                while(size_c > 0)
+                {
+                        if(pt_i != 0 || (pt_i == 0 && size_c < MB(2)))
+                        {
+                                COM_WriteStr("KB %d\r\n", size_c);
+                                virtMemMan_Map(virtAddr, physAddr, KB(4), type, perms, privLevel);
+                                size_c -= KB(4);
+                                virtAddr += (uint32_t)KB(4);
+                                physAddr += (uint64_t)KB(4);
+                                pt_i++;
+                        }
+                        else if(pt_i == 0 && size_c >= MB(2))
+                        {
+                                COM_WriteStr("MB %d\r\n", size_c);
+                                virtMemMan_Map(virtAddr, physAddr, MB(2), type, perms, privLevel);
+                                size_c -= MB(2);
+                                virtAddr += (uint32_t)MB(2);
+                                physAddr += MB(2);
+                                pd_i++;
+                        }
+
+                        if(pt_i >= 512) {
+                                pt_i = 0;
+                                pd_i++;
+                        }
+                        if(pd_i >= 512)
+                        {
+                                pd_i = 0;
+                                pdpt_i++;
+                        }
+                }
+                COM_WriteStr("done!\r\n");
+        }
         return 0;
 }
 

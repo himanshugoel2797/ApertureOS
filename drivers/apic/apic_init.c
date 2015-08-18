@@ -99,11 +99,9 @@ uint32_t APIC_Initialize()
                         madt = ACPITables_FindTable(MADT_SIG, q++);
                 }
         }else{
-                COM_WriteStr("MADT not found!");
+                COM_WriteStr("MADT not found!\r\n");
                 return -1;
         }
-
-        COM_WriteStr("Done!");
 
         return 0;
 }
