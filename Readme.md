@@ -20,4 +20,18 @@ Address Range            | Use
 0xFFFFFFFF+              | Kernel Managed page heap
 
 # TODO
--Proper virtual memory manager -PCI/PCIe support -Mouse/Keyboard input -2D hardware acceleration -Audio -Networking -Elf loading -Hard disk access, ext2 support -Multicore initialization -User mode thread scheduler -ACPI support -USB support -Fix UEFI boot issues -Window Manager -User mode desktop environment
+-Proper virtual memory manager 
+-PCI/PCIe support 
+-Mouse/Keyboard input 
+-2D hardware acceleration 
+-Audio 
+-Networking 
+-Elf loading 
+-Hard disk access, ext2 support 
+-Multicore initialization 
+-User mode thread scheduler 
+-ACPI support 
+-USB support 
+-Fix UEFI boot issues 
+-Window Manager 
+-User mode desktop environment
