@@ -28,7 +28,7 @@ SOURCES=utils/native.o utils/common.o utils/sprintf.o \
 
 
 
-PLATFORM=/opt/cross/bin/i686
+PLATFORM=~/Documents/i686-elf/bin/i686
 
 SDA=sdb
 
@@ -54,7 +54,7 @@ CCADMIN=CCadmin
 GCC=clang -target i986-none-elf
 CFLAGS= -ffreestanding -O1 -Wall -Wextra -Wno-trigraphs -DDEBUG  -DCURRENT_YEAR=$(CURRENT_YEAR) -DCOM_ENABLED=$(COM_ENABLED) $(INCLUDES)
 ASM=$(PLATFORM)-elf-gcc -DDEBUG -ffreestanding -march=i686
-TEST_CMD=qemu-kvm $(QEMU_OPTS)
+TEST_CMD=qemu-system-x86_64 $(QEMU_OPTS)
 CONF=Debug
 
 .c.o:
