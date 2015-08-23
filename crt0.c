@@ -68,6 +68,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
         GDT_Initialize();
         IDT_Initialize();
+        ThreadMan_Setup();
 
         COM_Initialize();
         ACPITables_Initialize();

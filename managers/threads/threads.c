@@ -8,6 +8,7 @@ uint32_t threadMan_Initialize();
 uint8_t threadMan_messageHandler(Message *msg);
 
 Thread *threads, *curThread, *lastThread;
+Thread init_thread;
 
 void ThreadMan_Setup()
 {
@@ -72,7 +73,16 @@ uint32_t threadMan_InterruptHandler(Registers *regs)
 
 uint32_t threadMan_Initialize()
 {
+        //TODO set registers to zero, clobber all registers and raise a thread switch interrupt
+        curThread = &init_thread;
+        threads = &init_thread;
         Interrupts_RegisterHandler(48, 0, threadMan_InterruptHandler);
+
+        memset(&init_thread.regs, 0, sizeof(Registers));
+        init_thread.next = NULL;
+        asm volatile ("mov %%cr3, %0\n\tint $48" : "=r" (init_thread.cr3) :: "eax", "ebx", "ecx", "edx", "esp", "ebp");
+
+        return 0;
 }
 
 uint8_t threadMan_messageHandler(Message *msg)
