@@ -6,6 +6,7 @@
 #include "process/process_manager.h"               //Process Manager
 #include "keyboard/keyboard.h"                     //Keyboard Manager
 #include "interrupt/interrupt_manager.h"           //Interrupt Manager
+#include "threads/threads.h"
 #include "timer/timer_manager.h"                   //Timer Manager
 #include "phys_mem_manager/phys_mem_manager.h"     //Physical memory manager
 #include "virt_mem_manager/virt_mem_manager.h"     //Virtual memory manager

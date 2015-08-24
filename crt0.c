@@ -56,7 +56,7 @@ void timerHandler()
         graphics_WriteUInt64(temp, 2, 0, 16);
         graphics_WriteUInt32(temp2, 16, 0, 32);
         graphics_WriteUInt32(t.seconds, 10, 0, 48);
-        graphics_WriteUInt32(allocLoc, 2, 0, 64);
+        graphics_WriteUInt32(sizeof(Thread), 10, 0, 64);
 
 
         graphics_SwapBuffer();
@@ -68,7 +68,6 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
         GDT_Initialize();
         IDT_Initialize();
-        ThreadMan_Setup();
 
         COM_Initialize();
         ACPITables_Initialize();
@@ -135,5 +134,5 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 }
 
 //extern "C" /* Use C linkage for kernel_main. */
-void kernel_main() {
+void kernel_main(int argc, char** isKernelMode) {
 }

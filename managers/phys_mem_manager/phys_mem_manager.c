@@ -86,7 +86,7 @@ uint32_t pmem_Initialize()
                 //Mark the corresponding pages as in use
                 if(hdr->sh_size != 0)
                 {
-                        MemMan_MarkUsed(hdr->sh_addr - 0xC0000000, hdr->sh_size);
+                        MemMan_MarkUsed(hdr->sh_addr - LOAD_ADDRESS, hdr->sh_size);
                 }
 
                 hdr++;

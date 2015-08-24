@@ -10,6 +10,10 @@ uint8_t threadMan_messageHandler(Message *msg);
 Thread *threads, *curThread, *lastThread;
 Thread init_thread;
 
+Thread *curThreadPool;
+
+void kernel_main(int, char**);
+
 void ThreadMan_Setup()
 {
         thread_sys = SysMan_RegisterSystem();
@@ -78,7 +82,13 @@ uint32_t threadMan_Initialize()
         //TODO create a new thread and resume remaining work on that by calling another function, this lets us keep things clean
         curThread = NULL;
         threads = NULL;
+        //curThreadPool = physMemMan
         Interrupts_RegisterHandler(48, 0, threadMan_InterruptHandler);
+
+        //Enable the APIc timer
+
+        //Create the new thread to continue exectuon
+        UID tmp = ThreadMan_CreateThread(kernel_main, 0, NULL, TRUE);
 
         return 0;
 }
@@ -88,16 +98,16 @@ uint8_t threadMan_messageHandler(Message *msg)
 
 }
 
-void ThreadMan_CreateThread(Thread *thread, ProcessEntryPoint entry)
+UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, bool isKernelMode)
 {
-    if(threads == NULL)threads = thread;
+        //if(threads == NULL) threads = thread;
+        //else threads->next =
 
 
-
-    lastThread = thread;
+      //                  lastThread = thread;
 }
 
-UID ThreadMan_StartThread(Thread *thread)
+void ThreadMan_StartThread(UID id)
 {
 
 }

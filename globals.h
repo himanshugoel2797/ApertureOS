@@ -10,4 +10,6 @@ multiboot_info_t *global_multiboot_info;
 multiboot_memory_map_t *global_memory_map;
 size_t global_memory_map_size;
 
+#define LOAD_ADDRESS MB(16)
+
 #endif /* end of include guard: _GLOBALS_H_ */
