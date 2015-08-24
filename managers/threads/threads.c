@@ -27,60 +27,58 @@ void ThreadMan_Setup()
 
 uint32_t threadMan_InterruptHandler(Registers *regs)
 {
-        Thread *nxThread = curThread->next;
-        if(nxThread == NULL) nxThread = threads;
+        if(curThread != NULL) {
+                Thread *nxThread = curThread->next;
+                if(nxThread == NULL) nxThread = threads;
 
-        curThread->regs.ds = regs->ds;
-        curThread->regs.edi = regs->edi;
-        curThread->regs.esi = regs->esi;
-        curThread->regs.ebp = regs->ebp;
-        curThread->regs.unused = regs->unused;
-        curThread->regs.ebx = regs->ebx;
-        curThread->regs.edx = regs->edx;
-        curThread->regs.ecx = regs->ecx;
-        curThread->regs.eax = regs->eax;
-        curThread->regs.int_no = regs->int_no;
-        curThread->regs.err_code = regs->err_code;
-        curThread->regs.eip = regs->eip;
-        curThread->regs.cs = regs->cs;
-        curThread->regs.eflags = regs->eflags;
-        curThread->regs.useresp = regs->useresp;
-        curThread->regs.ss = regs->ss;
-        asm volatile ("mov %%cr3, %0" : "=r" (curThread->cr3));
+                curThread->regs.ds = regs->ds;
+                curThread->regs.edi = regs->edi;
+                curThread->regs.esi = regs->esi;
+                curThread->regs.ebp = regs->ebp;
+                curThread->regs.unused = regs->unused;
+                curThread->regs.ebx = regs->ebx;
+                curThread->regs.edx = regs->edx;
+                curThread->regs.ecx = regs->ecx;
+                curThread->regs.eax = regs->eax;
+                curThread->regs.int_no = regs->int_no;
+                curThread->regs.err_code = regs->err_code;
+                curThread->regs.eip = regs->eip;
+                curThread->regs.cs = regs->cs;
+                curThread->regs.eflags = regs->eflags;
+                curThread->regs.useresp = regs->useresp;
+                curThread->regs.ss = regs->ss;
+                asm volatile ("mov %%cr3, %0" : "=r" (curThread->cr3));
 
-        regs->ds = nxThread->regs.ds;
-        regs->edi = nxThread->regs.edi;
-        regs->esi = nxThread->regs.esi;
-        regs->ebp = nxThread->regs.ebp;
-        regs->unused = nxThread->regs.unused;
-        regs->ebx = nxThread->regs.ebx;
-        regs->edx = nxThread->regs.edx;
-        regs->ecx = nxThread->regs.ecx;
-        regs->eax = nxThread->regs.eax;
-        regs->int_no = nxThread->regs.int_no;
-        regs->err_code = nxThread->regs.err_code;
-        regs->eip = nxThread->regs.eip;
-        regs->cs = nxThread->regs.cs;
-        regs->eflags = nxThread->regs.eflags;
-        regs->useresp = nxThread->regs.useresp;
-        regs->ss = nxThread->regs.ss;
-        asm volatile ("mov %0, %%cr3" :: "r" (nxThread->cr3));
+                regs->ds = nxThread->regs.ds;
+                regs->edi = nxThread->regs.edi;
+                regs->esi = nxThread->regs.esi;
+                regs->ebp = nxThread->regs.ebp;
+                regs->unused = nxThread->regs.unused;
+                regs->ebx = nxThread->regs.ebx;
+                regs->edx = nxThread->regs.edx;
+                regs->ecx = nxThread->regs.ecx;
+                regs->eax = nxThread->regs.eax;
+                regs->int_no = nxThread->regs.int_no;
+                regs->err_code = nxThread->regs.err_code;
+                regs->eip = nxThread->regs.eip;
+                regs->cs = nxThread->regs.cs;
+                regs->eflags = nxThread->regs.eflags;
+                regs->useresp = nxThread->regs.useresp;
+                regs->ss = nxThread->regs.ss;
+                asm volatile ("mov %0, %%cr3" :: "r" (nxThread->cr3));
 
-        curThread = nxThread;
+                curThread = nxThread;
+        }
 
         return 1; //Stop any further handlers from executing
 }
 
 uint32_t threadMan_Initialize()
 {
-        //TODO set registers to zero, clobber all registers and raise a thread switch interrupt
-        curThread = &init_thread;
-        threads = &init_thread;
+        //TODO create a new thread and resume remaining work on that by calling another function, this lets us keep things clean
+        curThread = NULL;
+        threads = NULL;
         Interrupts_RegisterHandler(48, 0, threadMan_InterruptHandler);
-
-        memset(&init_thread.regs, 0, sizeof(Registers));
-        init_thread.next = NULL;
-        asm volatile ("mov %%cr3, %0\n\tint $48" : "=r" (init_thread.cr3) :: "eax", "ebx", "ecx", "edx", "esp", "ebp");
 
         return 0;
 }
@@ -92,7 +90,11 @@ uint8_t threadMan_messageHandler(Message *msg)
 
 void ThreadMan_CreateThread(Thread *thread, ProcessEntryPoint entry)
 {
+    if(threads == NULL)threads = thread;
 
+
+
+    lastThread = thread;
 }
 
 UID ThreadMan_StartThread(Thread *thread)
