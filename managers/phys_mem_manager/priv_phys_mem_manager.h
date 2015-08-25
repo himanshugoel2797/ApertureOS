@@ -3,20 +3,19 @@
 
 #include "types.h"
 
-
-#define PAGE_SIZE (4*1024)
-#define MAX_ALLOCS_PERENTRY ((PAGE_SIZE/sizeof(PhysAllocInfoEntry)) - 1)
+#define PAGE_SIZE KB(4)
+#define MAX_ALLOCS_PERENTRY ((PAGE_SIZE / sizeof(PhysAllocInfoEntry)) - 1)
 uint64_t memory_size, page_count;
 
 typedef struct phys_alloc_info_entry {
-        void *physLoc;
-        uint64_t size;
-}PhysAllocInfoEntry;
+  void *physLoc;
+  uint64_t size;
+} PhysAllocInfoEntry;
 
 typedef struct phys_alloc_list {
-        PhysAllocInfoEntry allocs[MAX_ALLOCS_PERENTRY];
-        struct phys_alloc_list *next;
-}PhysAllocList;
+  PhysAllocInfoEntry allocs[MAX_ALLOCS_PERENTRY];
+  struct phys_alloc_list *next;
+} PhysAllocList;
 
 #define KB4_DIVISOR 5
 #define KB4_MAX_VAL 32
@@ -28,8 +27,14 @@ uint64_t KB4_Blocks_Count, KB4_Blocks_FreeBitCount_EntryNum;
 
 #define I_OFF(i) ((i % KB4_DIVISOR) * KB4_MAX_VAL_L)
 
-#define SET_FREE_BITCOUNT(i, val) (KB4_Blocks_FreeBitCount[(i)/KB4_DIVISOR] = (KB4_Blocks_FreeBitCount[(i)/KB4_DIVISOR] & ~(KB4_MAX_VAL_MASK << I_OFF((i)))) | (((val) & KB4_MAX_VAL_MASK) << I_OFF((i))))
-#define GET_FREE_BITCOUNT(i) ((KB4_Blocks_FreeBitCount[(i)/KB4_DIVISOR] >> I_OFF((i))) & KB4_MAX_VAL_MASK)
+#define SET_FREE_BITCOUNT(i, val)                                              \
+  (KB4_Blocks_FreeBitCount[(i) / KB4_DIVISOR] =                                \
+       (KB4_Blocks_FreeBitCount[(i) / KB4_DIVISOR] &                           \
+        ~(KB4_MAX_VAL_MASK << I_OFF((i)))) |                                   \
+       (((val)&KB4_MAX_VAL_MASK) << I_OFF((i))))
+#define GET_FREE_BITCOUNT(i)                                                   \
+  ((KB4_Blocks_FreeBitCount[(i) / KB4_DIVISOR] >> I_OFF((i))) &                \
+   KB4_MAX_VAL_MASK)
 
 #define DEC_FREE_BITCOUNT(i) (SET_FREE_BITCOUNT(i, (GET_FREE_BITCOUNT(i) - 1)))
 #define INC_FREE_BITCOUNT(i) (SET_FREE_BITCOUNT(i, (GET_FREE_BITCOUNT(i) + 1)))
@@ -40,11 +45,11 @@ uint32_t MB2_Blocks_Count;
 uint64_t freePageCount;
 uint64_t totalPageCount;
 uint64_t lastNonFullPage;
-uint64_t lastFourthEmptyPage, lastHalfEmptyPage, lastFourthFullPage, lastEmptyPage;
-
+uint64_t lastFourthEmptyPage, lastHalfEmptyPage, lastFourthFullPage,
+    lastEmptyPage;
 
 void MemMan_Initialize();
-void* MemMan_Alloc(uint64_t size);
+void *MemMan_Alloc(uint64_t size);
 void MemMan_Free(void *ptr, uint64_t size);
 
 uint64_t MemMan_CalculateBitmapIndex(uint64_t addr, size_t blockSize);
