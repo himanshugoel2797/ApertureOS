@@ -219,8 +219,17 @@ void *MemMan_Alloc(uint64_t size) {
         if (n == 0)
           base = curBase;
 
-        if (curBase != (base + (PAGE_SIZE * n))) {
+        if (curBase != (base + (PAGE_SIZE * 32 * n))) {
           // Free all allocations, we did not find a continous block
+          // We can assume that all allocations so far were continuous since we
+          // did not stop earlier
+          for (int j = 0; j < n; j++) {
+            MemMan_Free((base + (j * 32 * PAGE_SIZE)), PAGE_SIZE * 32);
+          }
+          // Reset n to 0, set base to curBase and try again
+          n = 0;
+          base = curBase;
+          curBase = 0;
         }
       }
     }
@@ -293,6 +302,8 @@ void MemMan_Free(void *ptr, uint64_t size) {
   uint64_t base_page = n_addr / (uint64_t)KB(4);
   uint64_t page_count = size / (uint64_t)KB(4);
 
+  // TODO add support for freeing sizes larger than 32 pages
+
   for (uint64_t i = base_page; i < base_page + page_count; i++) {
     KB4_Blocks_Bitmap[i / 32] = CLEAR_BIT(KB4_Blocks_Bitmap[i / 32], (i % 32));
 
@@ -328,6 +339,7 @@ void *physMemMan_Alloc(uint64_t size) {
   if (curIndex == MAX_ALLOCS_PERENTRY - 1) {
     // TODO This actually should request the allocation to be mapped to virtual
     // memory first, this is going to crash
+    curList->next = virtMemMan_FindEmptyAddress(KB(4), MEM_KERNEL);
     curList->next = physMemMan_Alloc(sizeof(PhysAllocList));
     curIndex = 0;
     curList = curList->next;
