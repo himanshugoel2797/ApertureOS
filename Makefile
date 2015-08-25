@@ -24,6 +24,7 @@ SOURCES=utils/native.o utils/common.o utils/sprintf.o \
 				drivers/pit/pit.o \
 				drivers/ps2/ps2.o drivers/ps2/ps2_keyboard.o \
 				drivers/serial/COM.o	\
+				kmalloc.o \
 				boot.o crt0.o gdt.o idt.o cpuid.o \
 
 

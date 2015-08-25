@@ -1,8 +1,8 @@
 #include "kmalloc.h"
 #include "managers.h"
+#include "utils/common.h"
 
 typedef struct kmalloc_info {
-
         uint32_t pointer;
         size_t size;
         struct kmalloc_info *next;
@@ -12,11 +12,17 @@ typedef struct kmalloc_info {
 void* k_pages_base_addr;
 int max_allocs = 0;
 uint32_t free_space = 0;
-kmalloc_info *allocation_info;
+kmalloc_info *allocation_info, *next_free_block;
 
 //A block is free if the first bit is clear
-#define IS_FREE(x) (!((allocation_info[x].pointer & 1) == 1))
+#define IS_FREE(x) (!((x->pointer & 1) == 1))
 #define IS_USED(x) (IS_FREE(x))
+
+#define MARK_FREE(x) (x->pointer = CLEAR_BIT(x->pointer, 0))
+#define MARK_USED(x) (x->pointer = SET_BIT(x->pointer, 0))
+
+#define GET_ADDR(x) (x->pointer & ~1)
+#define SET_ADDR(x, val) (x->pointer = val | (x->pointer & 1))
 
 // Allocate a set of pages and maintain a list of them, each page contains a
 // kmalloc_page_hdr header to track how much of the page is in use, kernel
@@ -32,7 +38,7 @@ void kmalloc_init()
         uint32_t virtBaseAddr_base = virtMemMan_FindEmptyAddress(MB(256), MEM_KERNEL);
         virtMemMan_Map(virtBaseAddr_base, physBaseAddr_base, MB(256), MEM_TYPE_WC, MEM_READ | MEM_WRITE, MEM_KERNEL);
 
-        allocation_info = virtBaseAddr_base;
+        next_free_block = allocation_info = virtBaseAddr_base;
         k_pages_base_addr = virtBaseAddr_base + MB(1);
         max_allocs = MB(1)/sizeof(kmalloc_info);
         free_space = MB(256) - MB(1);
@@ -40,6 +46,8 @@ void kmalloc_init()
         memset(allocation_info, 0, MB(1));
         allocation_info->pointer = k_pages_base_addr;
         allocation_info->size = free_space;
+
+        next_free_block++;
 }
 
 void *kmalloc(size_t size)
@@ -47,12 +55,33 @@ void *kmalloc(size_t size)
         kmalloc_info *a_info = allocation_info;
         while(a_info->next != NULL)
         {
-                if(a_info->size >= size)
+                if(IS_FREE(a_info) && a_info->size >= size)
                 {
                         break;
                 }
                 a_info = a_info->next;
         }
+
+        //Allocate this block, mark this one as used, append a new block object at the end that contains the remaining free space
+        uint32_t addr = GET_ADDR(a_info);
+        uint32_t freeSize = a_info->size - size;
+
+        //We need to allocate a new info block only if there is free space
+        if(freeSize != 0)
+        {
+            next_free_block->pointer = addr + size;
+            next_free_block->size = freeSize;
+            next_free_block->next = a_info->next;
+            MARK_FREE(next_free_block);
+
+            a_info->next = next_free_block;
+            next_free_block++;
+        }
+
+        a_info->size = size;
+        MARK_USED(a_info);
+
+        return addr;
 }
 
 void kfree(void *addr)
