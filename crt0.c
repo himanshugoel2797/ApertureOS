@@ -99,7 +99,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         virtMemMan_Setup();
 
         Interrupts_Virtualize();
-        ThreadMan_Setup();
+//        ThreadMan_Setup();
         graphics_Initialize();
 
         Timers_Setup();
