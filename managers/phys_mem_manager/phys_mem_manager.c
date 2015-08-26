@@ -302,8 +302,6 @@ void MemMan_Free(void *ptr, uint64_t size) {
   uint64_t base_page = n_addr / (uint64_t)KB(4);
   uint64_t page_count = size / (uint64_t)KB(4);
 
-  // TODO add support for freeing sizes larger than 32 pages
-
   for (uint64_t i = base_page; i < base_page + page_count; i++) {
     KB4_Blocks_Bitmap[i / 32] = CLEAR_BIT(KB4_Blocks_Bitmap[i / 32], (i % 32));
 
