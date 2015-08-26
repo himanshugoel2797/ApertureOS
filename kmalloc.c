@@ -86,5 +86,15 @@ void *kmalloc(size_t size)
 
 void kfree(void *addr)
 {
+        kmalloc_info *a_info = allocation_info;
+        while(a_info->next != NULL)
+        {
+                if(IS_USED(a_info) && a_info->pointer == (uint32_t)addr)
+                {
+                        break;
+                }
+                a_info = a_info->next;
+        }
+
 
 }
