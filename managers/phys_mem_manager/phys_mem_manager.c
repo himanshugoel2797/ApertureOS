@@ -95,15 +95,13 @@ uint32_t pmem_Initialize() {
     hdr++;
   }
 
-  mmap = globals_memory_map;
+  mmap = global_memory_map;
   while (mmap < global_memory_map + global_memory_map_size) {
     // Make sure this memory is not freeable
-    if (mmap->type == MULTIBOOT_MEMORY_AVAILABLE ||
-        mmap->type == MULTIBOOT_MEMORY_ACPI_RECLAIMABLE)
-      continue;
-
-    MemMan_MarkUsed(mmap->addr, mmap->len);
-
+    if ((mmap->type != MULTIBOOT_MEMORY_AVAILABLE &&
+         mmap->type != MULTIBOOT_MEMORY_ACPI_RECLAIMABLE) |
+        mmap->len != 0)
+      MemMan_MarkUsed(mmap->addr, mmap->len);
     mmap = (multiboot_memory_map_t *)((unsigned int)mmap + mmap->size +
                                       sizeof(unsigned int));
   }

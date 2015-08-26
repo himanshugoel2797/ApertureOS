@@ -14,6 +14,7 @@
 
 #include "gdt.h"
 #include "idt.h"
+#include "kmalloc.h"
 
 #include "drivers/drivers.h"
 #include "managers/managers.h"
@@ -33,10 +34,6 @@ float r = 3.3f;
 
 uint64_t allocLoc = 0;
 size_t q = 0;
-
-
-void timerHandler(Registers *regs);
-
 
 void timerHandler()
 {
@@ -99,6 +96,8 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         virtMemMan_Setup();
 
         Interrupts_Virtualize();
+        kmalloc_init();
+
         ThreadMan_Setup();
         graphics_Initialize();
 

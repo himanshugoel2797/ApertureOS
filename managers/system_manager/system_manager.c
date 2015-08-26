@@ -62,5 +62,6 @@ void SysMan_StartSystem(SysID sys_id)
 
                 if(systems[sys_id].init_cb != NULL) systems[sys_id].init_cb(ret);
                 systems[sys_id].init = NULL;
+                COM_WriteStr("Initialized %s\r\n", systems[sys_id].sys_name);
         }
 }
