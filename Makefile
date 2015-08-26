@@ -25,7 +25,8 @@ SOURCES=utils/native.o utils/common.o utils/sprintf.o \
 				drivers/ps2/ps2.o drivers/ps2/ps2_keyboard.o \
 				drivers/serial/COM.o	\
 				kmalloc.o \
-				boot.o crt0.o gdt.o idt.o cpuid.o \
+				crt0.o gdt.o idt.o cpuid.o \
+				boot.o \
 
 
 
@@ -59,6 +60,7 @@ CFLAGS= -ffreestanding -O1 -Wall -Wextra -Wno-trigraphs -D$(CONF)  -DCURRENT_YEA
 ASM=$(PLATFORM)-elf-gcc -DDEBUG -ffreestanding -march=i686
 TEST_CMD=qemu-system-x86_64 $(QEMU_OPTS)
 
+ANALYZE=clang-check -analyze
 
 .c.o:
 	$(GCC) $(CFLAGS) -S $? -o $(?:.c=.s)
@@ -85,9 +87,12 @@ build:$(SOURCES)
 # clean
 clean:
 	rm -f $(SOURCES)
+	rm -f *.plist
 	rm -rf build/*
 	rm -rf ISO/*
 
+analyze:
+	$(ANALYZE) $(SOURCES:.o=.c) -- $(CFLAGS)
 
 # all
 all:build-tests
