@@ -96,10 +96,10 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         virtMemMan_Setup();
 
         Interrupts_Virtualize();
-        kmalloc_init();
-
-        ThreadMan_Setup();
         graphics_Initialize();
+
+        kmalloc_init();
+        ThreadMan_Setup();
 
         Timers_Setup();
 

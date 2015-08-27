@@ -34,16 +34,25 @@ kmalloc_info *allocation_info, *next_free_block;
 //Allocate a 256MB pool for the kernel and map it to a free address space
 void kmalloc_init()
 {
-        uint64_t physBaseAddr_base = physMemMan_Alloc(MB(256));
+    #define STORE_SIZE MB(128)
 
-        uint32_t virtBaseAddr_base = virtMemMan_FindEmptyAddress(MB(256), MEM_KERNEL);
-        virtMemMan_Map(virtBaseAddr_base, physBaseAddr_base, MB(256), MEM_TYPE_WC, MEM_READ | MEM_WRITE, MEM_KERNEL);
+        //Allocate blocks of 4KB and map them to a continuous address space of 256MB
+        uint32_t virtBaseAddr_base = virtMemMan_FindEmptyAddress(STORE_SIZE, MEM_KERNEL);
+        size_t size = STORE_SIZE;
+        while(size > 0) {
+                uint64_t physBaseAddr_base = physMemMan_Alloc(KB(4));
+                virtMemMan_Map(virtBaseAddr_base, physBaseAddr_base, KB(4), MEM_TYPE_WC, MEM_READ | MEM_WRITE, MEM_KERNEL);
+                virtBaseAddr_base += KB(4);
+                size -= KB(4);
+        }
+        virtBaseAddr_base -= (STORE_SIZE - KB(4));
 
         next_free_block = allocation_info = virtBaseAddr_base;
         k_pages_base_addr = virtBaseAddr_base + MB(1);
         max_allocs = MB(1)/sizeof(kmalloc_info);
-        free_space = MB(256) - MB(1);
+        free_space = STORE_SIZE - MB(1);
 
+        COM_WriteStr("Test!\r\n\r\n");
         memset(allocation_info, 0, MB(1));
         allocation_info->pointer = k_pages_base_addr;
         allocation_info->size = free_space;
