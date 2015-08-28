@@ -1,6 +1,7 @@
 #include "virt_mem_manager.h"
 #include "priv_virt_mem_manager.h"
 #include "managers.h"
+#include "globals.h"
 #include "utils/common.h"
 #include "utils/native.h"
 
@@ -48,7 +49,9 @@ uint32_t virtMemMan_Initialize()
         memset(kernel_main_entry, 0, KB(4));
 
         curInstance_virt = virtMemMan_CreateInstance();
-        virtMemMan_Map(0, 0, 0x10000000, MEM_TYPE_WT, MEM_WRITE | MEM_READ | MEM_EXEC, MEM_KERNEL);
+
+        //TODO we might want to make this more secure by parsing info from hte elf table and making sections NX appropriately
+        virtMemMan_Map(LOAD_ADDRESS, LOAD_ADDRESS, 0x10000000 - LOAD_ADDRESS, MEM_TYPE_WT, MEM_WRITE | MEM_READ | MEM_EXEC, MEM_KERNEL);
 
         virtMemMan_Map(0x10000000, 0xF0000000, 0x10000000, MEM_TYPE_WT, MEM_WRITE | MEM_READ | MEM_EXEC, MEM_KERNEL);
 

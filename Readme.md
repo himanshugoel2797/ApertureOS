@@ -6,7 +6,8 @@ A 32bit operating system aiming to be able to perform most general purpose tasks
 
 Address Range            | Use
 ------------------------ | ---------------------
-0x00000000 -> 0x10000000 | Kernel Code Memory
+0x00000000 -> 0x00100000 | VM86 mode code
+0x00100000 -> 0x10000000 | Kernel Code Memory
 0x10000000 -> 0x20000000 | MMIO
 0x10000000 -> 0x40000000 | Kernel Data Memory
 0x40000000 -> 0xFFFFBFFF | User Memory
@@ -16,13 +17,13 @@ Address Range            | Use
 
 Address Range            | Use
 ------------------------ | ------------------------
-0x00000000 -> 0x40000000 | Kernel Low Memory
+0x00000000 -> 0x00100000 | Kernel Managed page heap
+0x00100000 -> 0x40000000 | Kernel Low Memory
 0x40000000 -> 0xEFFFFFFF | User Memory
 0xF0000000 -> 0xFFFFFFFF | MMIO
 0xFFFFFFFF+              | Kernel Managed page heap
 
 # TODO
--Proper virtual memory manager
 -PCI/PCIe support
 -Mouse/Keyboard input
 -2D hardware acceleration
