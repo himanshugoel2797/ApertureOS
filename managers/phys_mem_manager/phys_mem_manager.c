@@ -130,6 +130,46 @@ void MemMan_MarkKB4Used(uint64_t addr, uint64_t size) {
                 freePageCount--;
                 n_addr += KB(4);
         }
+
+        while (GET_FREE_BITCOUNT(lastNonFullPage) == 0) {
+                lastNonFullPage = (lastNonFullPage + 1) % KB4_Blocks_Count;
+        }
+
+        if (GET_FREE_BITCOUNT(lastEmptyPage) < 32) {
+
+                while (GET_FREE_BITCOUNT(lastEmptyPage) < 32)
+                        lastEmptyPage = (lastEmptyPage + 1) % KB4_Blocks_Count;
+        }
+
+        if (GET_FREE_BITCOUNT(lastFourthFullPage) < 24 |
+            (lastFourthFullPage == lastEmptyPage) |
+            (lastFourthFullPage == lastNonFullPage)) {
+                while (GET_FREE_BITCOUNT(lastFourthFullPage) < 24 |
+                       (lastFourthFullPage == lastEmptyPage) |
+                       (lastFourthFullPage == lastNonFullPage))
+                        lastFourthFullPage = (lastFourthFullPage + 1) % KB4_Blocks_Count;
+        }
+
+        if (GET_FREE_BITCOUNT(lastHalfEmptyPage) < 16 |
+            (lastHalfEmptyPage == lastEmptyPage) |
+            (lastHalfEmptyPage == lastNonFullPage) |
+            (lastHalfEmptyPage == lastFourthFullPage)) {
+                while (GET_FREE_BITCOUNT(lastHalfEmptyPage) < 16 |
+                       (lastHalfEmptyPage == lastEmptyPage) |
+                       (lastHalfEmptyPage == lastNonFullPage) |
+                       (lastHalfEmptyPage == lastFourthFullPage))
+                        lastHalfEmptyPage = (lastHalfEmptyPage + 1) % KB4_Blocks_Count;
+        }
+
+        if (GET_FREE_BITCOUNT(lastFourthEmptyPage) < 8 |
+            (lastFourthEmptyPage == lastHalfEmptyPage) |
+            (lastFourthEmptyPage == lastNonFullPage)) {
+                while (GET_FREE_BITCOUNT(lastFourthEmptyPage) < 8 |
+                       (lastFourthEmptyPage == lastHalfEmptyPage) |
+                       (lastFourthEmptyPage == lastNonFullPage))
+                        lastFourthEmptyPage = (lastFourthEmptyPage + 1) % KB4_Blocks_Count;
+        }
+
 }
 
 void MemMan_MarkUsed(uint64_t addr, uint64_t size) {
@@ -249,17 +289,19 @@ void *MemMan_Alloc(uint64_t size) {
         if (pageCount > 1)
                 f_addr = (uint64_t)f_addr - orig_size;
 
+        COM_WriteStr("lastNonFullPage: %d\r\n", lastNonFullPage);
+
         // If the currently allocated page is full, find the next non-full page
         // if(KB4_Blocks_Bitmap[lastNonFullPage] == 0xFFFFFFFF)
         // SET_FREE_BITCOUNT(lastNonFullPage, 0);
         while (GET_FREE_BITCOUNT(lastNonFullPage) == 0) {
-                lastNonFullPage++ % KB4_Blocks_Count;
+                lastNonFullPage = (lastNonFullPage + 1) % KB4_Blocks_Count;
         }
 
         if (GET_FREE_BITCOUNT(lastEmptyPage) < 32) {
 
                 while (GET_FREE_BITCOUNT(lastEmptyPage) < 32)
-                        lastEmptyPage++ % KB4_Blocks_Count;
+                        lastEmptyPage = (lastEmptyPage + 1) % KB4_Blocks_Count;
         }
 
         if (GET_FREE_BITCOUNT(lastFourthFullPage) < 24 |
@@ -268,7 +310,7 @@ void *MemMan_Alloc(uint64_t size) {
                 while (GET_FREE_BITCOUNT(lastFourthFullPage) < 24 |
                        (lastFourthFullPage == lastEmptyPage) |
                        (lastFourthFullPage == lastNonFullPage))
-                        lastFourthFullPage++ % KB4_Blocks_Count;
+                        lastFourthFullPage = (lastFourthFullPage + 1) % KB4_Blocks_Count;
         }
 
         if (GET_FREE_BITCOUNT(lastHalfEmptyPage) < 16 |
@@ -279,7 +321,7 @@ void *MemMan_Alloc(uint64_t size) {
                        (lastHalfEmptyPage == lastEmptyPage) |
                        (lastHalfEmptyPage == lastNonFullPage) |
                        (lastHalfEmptyPage == lastFourthFullPage))
-                        lastHalfEmptyPage++ % KB4_Blocks_Count;
+                        lastHalfEmptyPage = (lastHalfEmptyPage + 1) % KB4_Blocks_Count;
         }
 
         if (GET_FREE_BITCOUNT(lastFourthEmptyPage) < 8 |
@@ -288,7 +330,7 @@ void *MemMan_Alloc(uint64_t size) {
                 while (GET_FREE_BITCOUNT(lastFourthEmptyPage) < 8 |
                        (lastFourthEmptyPage == lastHalfEmptyPage) |
                        (lastFourthEmptyPage == lastNonFullPage))
-                        lastFourthEmptyPage++ % KB4_Blocks_Count;
+                        lastFourthEmptyPage = (lastFourthEmptyPage + 1) % KB4_Blocks_Count;
         }
 
         return f_addr;

@@ -52,7 +52,7 @@ uint32_t virtMemMan_Initialize()
 
         virtMemMan_Map(0x10000000, 0xF0000000, 0x10000000, MEM_TYPE_WT, MEM_WRITE | MEM_READ | MEM_EXEC, MEM_KERNEL);
 
-        wrmsr(0xC0000080, rdmsr(0xC0000080) | (1<<11));
+        wrmsr(0xC0000080, rdmsr(0xC0000080) | (1<<11)); //Enable NXE
 
         asm volatile ("movl %cr4, %eax; orl $0x00000010, %eax; movl %eax, %cr4;");  //Enable PSE
         asm volatile ("movl %cr4, %eax; bts $5, %eax; movl %eax, %cr4"); // set bit5 in CR4 to enable PAE
