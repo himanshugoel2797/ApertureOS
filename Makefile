@@ -9,7 +9,7 @@ SOURCES=utils/native.o utils/common.o utils/sprintf.o \
 				managers/keyboard/keyboard.o	\
 				managers/msg_manager/msg_manager.o \
 				managers/interrupt/interrupt_manager.o \
-				managers/phys_mem_manager/phys_mem_manager.o \
+				managers/phys_mem_manager/phys_mem_manager.o managers/phys_mem_manager/mem_search_helpers.o \
 				managers/process/process_manager.o	\
 				managers/threads/threads.o	\
 				managers/timer/timer_manager.o \
