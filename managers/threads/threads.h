@@ -6,15 +6,24 @@
 #include "idt.h"
 
 typedef struct Thread {
+        VirtMemMan_Instance cr3;
+        char FPU_state[512];
         Registers regs;
-        uint32_t cr3;
         UID uid;
-        bool isKernelMode;
+        uint64_t flags;
         struct Thread *next;
 }Thread;
 
+typedef enum{
+	THREAD_FLAGS_NONE = 0,
+	THREAD_FLAGS_USER = 0,
+	THREAD_FLAGS_KERNEL = 1,
+	THREAD_FLAGS_FORK = 2,
+	THREAD_FLAGS_VM86 = 4
+};
+
 void ThreadMan_Setup();
-UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char** argv, bool isKernelMode);
+UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char** argv, uint64_t flags);
 void ThreadMan_StartThread(UID id);
 void ThreadMan_ExitThread(UID id);
 void ThreadMan_DeleteThread(UID id);

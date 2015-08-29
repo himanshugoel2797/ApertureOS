@@ -58,7 +58,7 @@ uint64_t physMemMan_Alloc(void) {
 }
 
 void physMemMan_Free(uint64_t ptr) {
-  //This shuold use some trick to ensure that hte free stack can't be attacked
+  //This shuold use some trick to ensure that the free stack can't be attacked
         freePageStack--;
         *freePageStack = ptr;
 }

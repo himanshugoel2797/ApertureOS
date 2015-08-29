@@ -8,9 +8,7 @@ uint32_t threadMan_Initialize();
 uint8_t threadMan_messageHandler(Message *msg);
 
 Thread *threads, *curThread, *lastThread;
-Thread init_thread;
-
-Thread *curThreadPool;
+UID uidBase = 0;
 
 void kernel_main(int, char**);
 
@@ -98,13 +96,43 @@ uint8_t threadMan_messageHandler(Message *msg)
 
 }
 
-UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, bool isKernelMode)
-{
-        //if(threads == NULL) threads = thread;
-        //else threads->next =
+UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64_t flags)
+{   
+    //Entering critical section, disable all interrupts
+    interrupts_lock();
+    Thread curthreadInfo = kmalloc(sizeof(Thread));
+
+    curThreadInfo->uid = uidBase++;
+    curThreadInfo->flags = flags;
+
+    //Setup the paging structures for the thread
+    curThreadInfo->cr3 = virtMemMan_CreateInstance();
+    if((flags & THREAD_FLAGS_FORK) == THREAD_FLAGS_FORK)
+    {
+        virtMemMan_ForkCurrent(curThreadInfo->cr3);        
+    }
+
+    //TODO setup the remaining registers to suit, set the args for the function too
+    memset(curThreadInfo->regs, 0, sizeof(Registers));
+    memset(curThreadInfo->FPU_state, 0, 512);
+
+    curThreadInfo->regs.eip = entry;
+    curThreadInfo->regs.esp = kmalloc(KB(16));    
+
+    //Store the thread in the queue
+    if(threads == NULL)
+    {
+        threads = curThreadInfo;
+        threads->next = NULL;
+    }else{
+        threads->next = curThreadInfo;
+    }
 
 
-      //                  lastThread = thread;
+    lastThread = threads;
+    interrupts_unlock();
+
+    return curThreadInfo->uid;
 }
 
 void ThreadMan_StartThread(UID id)
