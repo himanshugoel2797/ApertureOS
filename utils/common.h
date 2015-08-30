@@ -18,5 +18,7 @@ char* strcpy ( char * destination, const char * source );
 int strncmp(const char * s1, const char * s2, size_t n);
 int vsnprintf ( char * str, const char * format, va_list vl );
 int sprintf ( char * str, const char * format, ... );
+char* utoa(uint64_t val, char *ostr, int base);
+char* itoa(int64_t val, char *ostr, int base);
 
 #endif /* end of include guard: _UTILS_COMMON_H_ */

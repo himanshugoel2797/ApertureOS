@@ -86,7 +86,7 @@ uint32_t threadMan_Initialize()
         //Enable the APIc timer
 
         //Create the new thread to continue exectuon
-        UID tmp = ThreadMan_CreateThread(kernel_main, 0, NULL, TRUE);
+        UID tmp = ThreadMan_CreateThread(kernel_main, 0, NULL, THREAD_FLAGS_KERNEL);
 
         return 0;
 }
@@ -97,11 +97,11 @@ uint8_t threadMan_messageHandler(Message *msg)
 }
 
 UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64_t flags)
-{   
+{
     //Entering critical section, disable all interrupts
     interrupts_lock();
-    Thread curthreadInfo = kmalloc(sizeof(Thread));
-
+    Thread *curThreadInfo = kmalloc(sizeof(Thread));
+    COM_WriteStr("curThreadInfo %d\r\n", curThreadInfo);
     curThreadInfo->uid = uidBase++;
     curThreadInfo->flags = flags;
 
@@ -109,15 +109,14 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64
     curThreadInfo->cr3 = virtMemMan_CreateInstance();
     if((flags & THREAD_FLAGS_FORK) == THREAD_FLAGS_FORK)
     {
-        virtMemMan_ForkCurrent(curThreadInfo->cr3);        
+        virtMemMan_ForkCurrent(curThreadInfo->cr3);
     }
-
     //TODO setup the remaining registers to suit, set the args for the function too
-    memset(curThreadInfo->regs, 0, sizeof(Registers));
+    memset(&curThreadInfo->regs, 0, sizeof(Registers));
     memset(curThreadInfo->FPU_state, 0, 512);
 
     curThreadInfo->regs.eip = entry;
-    curThreadInfo->regs.esp = kmalloc(KB(16));    
+    curThreadInfo->regs.unused = kmalloc(KB(16));
 
     //Store the thread in the queue
     if(threads == NULL)

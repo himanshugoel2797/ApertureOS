@@ -6,7 +6,7 @@
 #include "idt.h"
 
 typedef struct Thread {
-        VirtMemMan_Instance cr3;
+        uint64_t* cr3;
         char FPU_state[512];
         Registers regs;
         UID uid;

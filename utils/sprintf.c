@@ -1,6 +1,6 @@
 #include "common.h"
 
-char* itoa(int64_t val, char *ostr, int base, int sign)
+char* itoa(int64_t val, char *ostr, int base)
 {
         char str[512];
         char *opts = "0123456789ABCDEF";
@@ -21,6 +21,7 @@ char* itoa(int64_t val, char *ostr, int base, int sign)
         {
                 int pos = 0;
                 int negative = 0;
+
                 if(val < 0) {
                         negative = 1;
                         val = -val;
@@ -31,7 +32,44 @@ char* itoa(int64_t val, char *ostr, int base, int sign)
                 }
                 while(val != 0);
 
-                if(sign && negative) str[pos++] = '-';
+                if(negative) str[pos++] = '-';
+                str[pos] = 0;
+                strrev(str);
+        }else{
+                str[0] = 0;
+        }
+        memcpy(ostr, str, strlen(str));
+        return ostr + strlen(str);
+}
+
+
+char* utoa(uint64_t val, char *ostr, int base)
+{
+        char str[512];
+        char *opts = "0123456789ABCDEF";
+        if(base == 16) {
+                for(int i = 0; i < 16; i++)
+                {
+                        str[15 - i] = opts[((val >> (i*4))&0x0F)];
+                }
+                str[16] = 0;
+        }else if(base == 2)
+        {
+                for(int i = 0; i < 64; i++)
+                {
+                        str[63 - i] = opts[(val >> i) & 1];
+                }
+                str[64] = 0;
+        }else if(base < 16)
+        {
+                int pos = 0;
+
+                do {
+                        str[pos++] = opts[val % base];
+                        val /= base;
+                }
+                while(val != 0);
+
                 str[pos] = 0;
                 strrev(str);
         }else{
@@ -109,7 +147,7 @@ int vsnprintf ( char * str, const char * format, va_list vl )
                                 case 'd':
                                 case 'i':
                                 {
-                                        int len = itoa(va_arg(vl, int), str++, 10, 1) - str;
+                                        int len = itoa(va_arg(vl, int32_t), str++, 10) - str;
                                         str += len;
                                         while(len < padding_size)
                                         {
@@ -120,20 +158,20 @@ int vsnprintf ( char * str, const char * format, va_list vl )
                                 }
                                 break;
                                 case 'u':
-                                        str = itoa(va_arg(vl, int), str, 10, 0);
+                                        str = utoa(va_arg(vl, uint32_t), str, 10);
                                         in_format = 0;
                                         break;
                                 case 'b':
-                                        str = itoa(va_arg(vl, int), str, 2, 0);
+                                        str = utoa(va_arg(vl, uint32_t), str, 2);
                                         in_format = 0;
                                         break;
                                 case 'o':
-                                        str = itoa(va_arg(vl, int), str, 8, 0);
+                                        str = utoa(va_arg(vl, uint32_t), str, 8);
                                         in_format = 0;
                                         break;
                                 case 'x':
                                 case 'X':
-                                        str = itoa(va_arg(vl, int), str, 16, 0);
+                                        str = utoa(va_arg(vl, uint32_t), str, 16);
                                         str++;
                                         in_format = 0;
                                         break;

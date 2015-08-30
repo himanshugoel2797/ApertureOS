@@ -16,8 +16,8 @@ uint32_t free_space = 0;
 kmalloc_info *allocation_info, *next_free_block;
 
 //A block is free if the first bit is clear
-#define IS_FREE(x) (!((x->pointer & 1) == 1))
-#define IS_USED(x) (IS_FREE(x))
+#define IS_FREE(x) ((x->pointer & 1) == 0)
+#define IS_USED(x) ((x->pointer & 1) == 1)
 
 #define MARK_FREE(x) (x->pointer = CLEAR_BIT(x->pointer, 0))
 #define MARK_USED(x) (x->pointer = SET_BIT(x->pointer, 0))
@@ -45,17 +45,17 @@ void kmalloc_init()
                 virtBaseAddr_base += KB(4);
                 size -= KB(4);
         }
-        virtBaseAddr_base -= (STORE_SIZE - KB(4));
+        virtBaseAddr_base -= (STORE_SIZE + KB(4));
 
         next_free_block = allocation_info = virtBaseAddr_base;
         k_pages_base_addr = virtBaseAddr_base + MB(1);
         max_allocs = MB(1)/sizeof(kmalloc_info);
         free_space = STORE_SIZE - MB(1);
 
-        COM_WriteStr("Test!\r\n\r\n");
         memset(allocation_info, 0, MB(1));
         allocation_info->pointer = k_pages_base_addr;
         allocation_info->size = free_space;
+        MARK_FREE(allocation_info);
 
         next_free_block++;
 }
@@ -98,7 +98,8 @@ void *kmalloc(size_t size)
                 a_info = a_info->next;
         }
 
-        if(IS_USED(a_info) | a_info->size < size) {
+
+        if(IS_USED(a_info) | (a_info->size < size)) {
                 //Compact the allocation info and try again, if failed, return NULL
                 if(!retry)
                 {
@@ -112,7 +113,8 @@ void *kmalloc(size_t size)
 
         //Allocate this block, mark this one as used, append a new block object at the end that contains the remaining free space
         uint32_t addr = GET_ADDR(a_info);
-        uint32_t freeSize = a_info->size - size;
+        size_t freeSize = a_info->size - size;
+        COM_WriteStr("Test! FreeSize: %u\r\nSize: %u\r\n ReqSize: %u\r\n", freeSize, a_info->size, size);
 
         //We need to allocate a new info block only if there is free space
         if(freeSize != 0)
@@ -129,6 +131,7 @@ void *kmalloc(size_t size)
         a_info->size = size;
         MARK_USED(a_info);
 
+        COM_WriteStr("Test! FreeSize: %u\r\nSize: %u\r\n ReqSize: %u\r\n", freeSize, a_info->size, size);
         return addr;
 }
 
