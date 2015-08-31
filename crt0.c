@@ -28,10 +28,6 @@
 
 int temp = 0, temp2 = 0, y, yOff, x, xOff, rval = 0;
 char *tmp;
-
-
-float r = 3.3f;
-
 uint64_t allocLoc = 0;
 size_t q = 0;
 
