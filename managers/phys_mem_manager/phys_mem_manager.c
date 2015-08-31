@@ -2,15 +2,21 @@
 #include "priv_phys_mem_manager.h"
 #include "managers.h"
 
+#include "elf.h"
 #include "globals.h"
+#include "utils/common.h"
 
 SystemData *pmem_sys = NULL;
 uint32_t pmem_Initialize();
 void pmem_callback(uint32_t res);
 uint8_t pmem_messageHandler(Message *msg);
 
+uint64_t memory_size = 0;
+PhysAllocList allocations;
+PhysAllocList *curList;
+uint16_t curIndex = 0;
 
-void physMemMan_Setup(void) {
+void physMemMan_Setup() {
         pmem_sys = SysMan_RegisterSystem();
         strcpy(pmem_sys->sys_name, "physMemoryMan");
 
@@ -25,43 +31,243 @@ void physMemMan_Setup(void) {
 
 uint32_t pmem_Initialize() {
 
-        memory_size = global_multiboot_info->mem_lower + global_multiboot_info->mem_upper;
-        memory_size = KB(memory_size);
+        // Determine which parts of memory are already in use by the kernel by reading
+        // the symbol table
+        memory_size = 0;
 
+        memset(&allocations, 0, sizeof(allocations));
+        curList = &allocations;
+
+        multiboot_memory_map_t *mmap = global_memory_map;
+        while (mmap < global_memory_map + global_memory_map_size) {
+
+                // Determine memory size
+                // if (mmap->type == MULTIBOOT_MEMORY_AVAILABLE)
+                memory_size += (uint64_t)mmap->len;
+
+                mmap = (multiboot_memory_map_t *)((unsigned int)mmap + mmap->size +
+                                                  sizeof(unsigned int));
+        }
         // Determine the total number of pages
-        freePageCount = totalPageCount = memory_size / (uint64_t)PAGE_SIZE;
+        freePageCount = totalPageCount = page_count =
+                                                 memory_size / (uint64_t)PAGE_SIZE;
+        lastNonFullPage = 0;
+        lastFourthEmptyPage = 0;
+        lastFourthFullPage = 0;
+        lastHalfEmptyPage = 0;
+        lastEmptyPage = 0;
+        /*Allocate multiple page tables, of blocks of
 
-        //Populate the free stack
-        freePageStackBase = bootstrap_malloc(PAGE_STACK_SIZE);
-        freePageStackBase += totalPageCount;
-        freePageStack = freePageStackBase;
+           4KB, 8KB, 16KB, 32KB, 64KB, 128KB, 256KB, 512KB, 1MB
 
-        for(uint64_t paddr = 0; paddr < memory_size; paddr+=PAGE_SIZE)
-        {
-                //Push vaddr onto the stack if the region is free acc to the mmap and elf table
-                if(memSearch_isFree(paddr))
-                {
-                        *--freePageStack = paddr; //TODO theer's a problem in this line that causes a crash
+           How this works is each page table is divided into 1MB blocks
+           Each 1MB block is divided into 8x128KB blocks
+           Each 128KB block is divided into 32x4KB pages
+         */
+
+        KB4_Blocks_Count = memory_size / ((uint64_t)KB(4) * 32);
+        KB4_Blocks_Bitmap = bootstrap_malloc(KB4_Blocks_Count * sizeof(uint32_t));
+
+        KB4_Blocks_FreeBitCount_EntryNum = KB4_Blocks_Count / KB4_DIVISOR;
+        KB4_Blocks_FreeBitCount = bootstrap_malloc(KB4_Blocks_FreeBitCount_EntryNum * sizeof(uint32_t));
+
+        if (KB4_Blocks_Bitmap == NULL)
+                asm volatile ("int $0x9");
+        memset(KB4_Blocks_Bitmap, 0, KB4_Blocks_Count * sizeof(uint32_t));
+
+        for (int i = 0; i < KB4_Blocks_Count; i++) {
+                SET_FREE_BITCOUNT(i, 32);
+        }
+
+        multiboot_elf_section_header_table_t *tmpHDR =
+                &global_multiboot_info->u.elf_sec;
+
+        Elf32_Shdr *hdr = (Elf32_Shdr *)tmpHDR->addr;
+        for (int i = 0; i < tmpHDR->num; i++) {
+
+                // Mark the corresponding pages as in use
+                if (hdr->sh_size != 0) {
+                        MemMan_MarkUsed(hdr->sh_addr, hdr->sh_size);
                 }
+
+                hdr++;
+        }
+
+        mmap = global_memory_map;
+        while (mmap < global_memory_map + global_memory_map_size) {
+                // Make sure this memory is not freeable
+                if ((mmap->type != MULTIBOOT_MEMORY_AVAILABLE &&
+                     mmap->type != MULTIBOOT_MEMORY_ACPI_RECLAIMABLE) | mmap->len != 0)
+                        MemMan_MarkUsed(mmap->addr, mmap->len);
+                mmap = (multiboot_memory_map_t *)((unsigned int)mmap + mmap->size +
+                                                  sizeof(unsigned int));
         }
 
         return 0;
 }
 
-uint64_t physMemMan_Alloc(void) {
+uint64_t MemMan_CalculateBitmapIndex(uint64_t addr, size_t blockSize) {
+        addr /= blockSize;
+        return addr;
+}
 
-        if(freePageStack != freePageStackBase)
-        {
-                return *freePageStack++;
+void MemMan_MarkKB4Used(uint64_t addr, uint64_t size) {
+        uint64_t n_addr = KB(4) * (addr / KB(4)); // Make addr page aligned
+        size += (addr - n_addr);
+
+        uint64_t base_page = n_addr / (uint64_t)KB(4);
+        uint64_t page_count = size / (uint64_t)KB(4);
+
+        for (uint64_t i = base_page; i < page_count; i++) {
+                KB4_Blocks_Bitmap[i / 32] = SET_BIT(KB4_Blocks_Bitmap[i / 32], (i % 32));
+
+                COM_WriteStr("TEST!!!");
+                DEC_FREE_BITCOUNT(i / 32);
+                freePageCount--;
+                n_addr += KB(4);
         }
-        COM_WriteStr("Failed!");
-        return NULL;
+}
+
+void MemMan_MarkUsed(uint64_t addr, uint64_t size) {
+        MemMan_MarkKB4Used(addr, size);
+}
+
+uint64_t physMemMan_Alloc() {
+        uint64_t size = KB(4);
+        if (size == 0)
+                return NULL;
+
+        uint64_t orig_size = size;
+        uint64_t pageCount = size / KB(4);
+        if (pageCount * KB(4) < size)
+                pageCount++;
+
+        int b = 0;
+
+        uint64_t i = lastNonFullPage;
+
+        if (pageCount <= GET_FREE_BITCOUNT(lastEmptyPage))
+                i = lastEmptyPage;
+        if (pageCount <= GET_FREE_BITCOUNT(lastFourthFullPage))
+                i = lastFourthFullPage;
+        if (pageCount <= GET_FREE_BITCOUNT(lastHalfEmptyPage))
+                i = lastHalfEmptyPage;
+        if (pageCount <= GET_FREE_BITCOUNT(lastFourthEmptyPage))
+                i = lastFourthEmptyPage;
+
+        // TODO For further optimization, determine fragmentation based on difference
+        // from nearest power of 2 from GET_FREE_BITCOUNT(i) + 1, if multiple choices
+        // are likely to work, pick the one which has the lowest fragmentation
+
+        // If only one page is necessary, this one's a guaranteed solution
+        if (pageCount == 1)
+                i = lastNonFullPage;
+
+        for (; i < KB4_Blocks_Count; i++) {
+                if (pageCount == 1) {
+                        if (KB4_Blocks_Bitmap[i] < 0xFFFFFFFF) {
+                                for (; b < 32; b++) {
+                                        if (!CHECK_BIT(KB4_Blocks_Bitmap[i], b)) {
+                                                break;
+                                        }
+                                }
+
+                                KB4_Blocks_Bitmap[i] = SET_BIT(KB4_Blocks_Bitmap[i], b);
+                                break;
+                        }
+                }
+        }
+
+        if (i >= KB4_Blocks_Count) {
+                asm ("int $0x1");
+                return NULL;
+        }
+
+        SET_FREE_BITCOUNT(i, GET_FREE_BITCOUNT(i) - pageCount);
+        freePageCount -= pageCount;
+
+        uint64_t f_addr = (((i * 32) + b) * KB(4));
+        if (pageCount > 1)
+                f_addr = (uint64_t)f_addr - orig_size;
+
+        // If the currently allocated page is full, find the next non-full page
+        // if(KB4_Blocks_Bitmap[lastNonFullPage] == 0xFFFFFFFF)
+        // SET_FREE_BITCOUNT(lastNonFullPage, 0);
+        while (GET_FREE_BITCOUNT(lastNonFullPage) == 0) {
+                lastNonFullPage++ % KB4_Blocks_Count;
+        }
+
+        if (GET_FREE_BITCOUNT(lastEmptyPage) < 32) {
+
+                while (GET_FREE_BITCOUNT(lastEmptyPage) < 32)
+                        lastEmptyPage++ % KB4_Blocks_Count;
+        }
+
+        if (GET_FREE_BITCOUNT(lastFourthFullPage) < 24 |
+            (lastFourthFullPage == lastEmptyPage) |
+            (lastFourthFullPage == lastNonFullPage)) {
+                while (GET_FREE_BITCOUNT(lastFourthFullPage) < 24 |
+                       (lastFourthFullPage == lastEmptyPage) |
+                       (lastFourthFullPage == lastNonFullPage))
+                        lastFourthFullPage++ % KB4_Blocks_Count;
+        }
+
+        if (GET_FREE_BITCOUNT(lastHalfEmptyPage) < 16 |
+            (lastHalfEmptyPage == lastEmptyPage) |
+            (lastHalfEmptyPage == lastNonFullPage) |
+            (lastHalfEmptyPage == lastFourthFullPage)) {
+                while (GET_FREE_BITCOUNT(lastHalfEmptyPage) < 16 |
+                       (lastHalfEmptyPage == lastEmptyPage) |
+                       (lastHalfEmptyPage == lastNonFullPage) |
+                       (lastHalfEmptyPage == lastFourthFullPage))
+                        lastHalfEmptyPage++ % KB4_Blocks_Count;
+        }
+
+        if (GET_FREE_BITCOUNT(lastFourthEmptyPage) < 8 |
+            (lastFourthEmptyPage == lastHalfEmptyPage) |
+            (lastFourthEmptyPage == lastNonFullPage)) {
+                while (GET_FREE_BITCOUNT(lastFourthEmptyPage) < 8 |
+                       (lastFourthEmptyPage == lastHalfEmptyPage) |
+                       (lastFourthEmptyPage == lastNonFullPage))
+                        lastFourthEmptyPage++ % KB4_Blocks_Count;
+        }
+
+        return f_addr;
 }
 
 void physMemMan_Free(uint64_t ptr) {
-        //This shuold use some trick to ensure that the free stack can't be attacked
-        freePageStack--;
-        *freePageStack = ptr;
+        uint64_t size = KB(4);
+        if (size == 0)
+                return;
+        uint64_t addr = (uint64_t)ptr;
+        uint64_t n_addr = KB(4) * (addr / KB(4)); // Make addr page aligned
+        size += (addr - n_addr);
+
+        uint64_t base_page = n_addr / (uint64_t)KB(4);
+        uint64_t page_count = size / (uint64_t)KB(4);
+
+        // TODO add support for freeing sizes larger than 32 pages
+
+        for (uint64_t i = base_page; i < base_page + page_count; i++) {
+                KB4_Blocks_Bitmap[i / 32] = CLEAR_BIT(KB4_Blocks_Bitmap[i / 32], (i % 32));
+
+                INC_FREE_BITCOUNT(i / 32);
+                freePageCount++;
+
+                uint64_t i0 = i / 32;
+                int bitCount = GET_FREE_BITCOUNT(i0);
+
+                if (lastNonFullPage > i0)
+                        lastNonFullPage = i0;
+                if (lastFourthEmptyPage > i0 && bitCount >= 8)
+                        lastHalfEmptyPage = i0;
+                if (lastHalfEmptyPage > i0 && bitCount >= 16)
+                        lastHalfEmptyPage = i0;
+                if (lastFourthFullPage > i0 && bitCount >= 24)
+                        lastHalfEmptyPage = i0;
+                if (lastEmptyPage > i0 && bitCount == 32)
+                        lastHalfEmptyPage = i0;
+        }
 }
 
 void pmem_callback(uint32_t res) {
