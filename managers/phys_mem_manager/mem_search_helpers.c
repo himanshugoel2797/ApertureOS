@@ -14,12 +14,13 @@ bool memSearch_isFree(uint64_t addr)
 
         for (int i = 0; i < tmpHDR->num; i++) {
 
-                uint64_t sh_addr = hdr->sh_addr - LOAD_ADDRESS;
-
-                // Mark the corresponding pages as in use
-                if (hdr->sh_size != 0 && sh_addr <= addr && sh_addr + hdr->sh_size >= addr)
-                {
-                        return FALSE;
+                if(hdr->sh_size > 0) {
+                        uint64_t sh_addr = hdr->sh_addr;
+                        // Mark the corresponding pages as in use
+                        if (sh_addr <= addr && sh_addr + hdr->sh_size >= addr)
+                        {
+                                return FALSE;
+                        }
                 }
 
                 hdr++;
@@ -28,10 +29,12 @@ bool memSearch_isFree(uint64_t addr)
         while (mmap < global_memory_map + global_memory_map_size) {
                 // Make sure this memory is not freeable
                 if ((mmap->type != MULTIBOOT_MEMORY_AVAILABLE &&
-                     mmap->type != MULTIBOOT_MEMORY_ACPI_RECLAIMABLE) |
+                     mmap->type != MULTIBOOT_MEMORY_ACPI_RECLAIMABLE) &&
                     mmap->len != 0)
                 {
-                        if(mmap->addr <= addr && mmap->addr + mmap->len >= addr) return FALSE;
+                        if(mmap->addr <= addr && mmap->addr + mmap->len >= addr) {
+                                return FALSE;
+                        }
                 }
                 mmap = (multiboot_memory_map_t *)((unsigned int)mmap + mmap->size +
                                                   sizeof(unsigned int));

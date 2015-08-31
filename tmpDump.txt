@@ -1,0 +1,287 @@
+
+kmalloc.o:     file format elf32-i386
+
+
+Disassembly of section .text:
+
+00000000 <kmalloc_init>:
+   0:	55                   	push   %ebp
+   1:	89 e5                	mov    %esp,%ebp
+   3:	56                   	push   %esi
+   4:	83 e4 f8             	and    $0xfffffff8,%esp
+   7:	83 ec 50             	sub    $0x50,%esp
+   a:	b8 00 00 00 08       	mov    $0x8000000,%eax
+   f:	b9 00 00 00 00       	mov    $0x0,%ecx
+  14:	c7 04 24 00 00 00 08 	movl   $0x8000000,(%esp)
+  1b:	c7 44 24 04 00 00 00 	movl   $0x0,0x4(%esp)
+  22:	00 
+  23:	89 44 24 34          	mov    %eax,0x34(%esp)
+  27:	89 4c 24 30          	mov    %ecx,0x30(%esp)
+  2b:	e8 fc ff ff ff       	call   2c <kmalloc_init+0x2c>
+  30:	89 44 24 48          	mov    %eax,0x48(%esp)
+  34:	c7 44 24 44 00 00 00 	movl   $0x8000000,0x44(%esp)
+  3b:	08 
+  3c:	83 7c 24 44 00       	cmpl   $0x0,0x44(%esp)
+  41:	76 5e                	jbe    a1 <kmalloc_init+0xa1>
+  43:	e8 fc ff ff ff       	call   44 <kmalloc_init+0x44>
+  48:	89 54 24 3c          	mov    %edx,0x3c(%esp)
+  4c:	89 44 24 38          	mov    %eax,0x38(%esp)
+  50:	8b 4c 24 48          	mov    0x48(%esp),%ecx
+  54:	89 e6                	mov    %esp,%esi
+  56:	89 56 08             	mov    %edx,0x8(%esi)
+  59:	89 46 04             	mov    %eax,0x4(%esi)
+  5c:	89 0e                	mov    %ecx,(%esi)
+  5e:	c7 46 18 00 00 00 00 	movl   $0x0,0x18(%esi)
+  65:	c7 46 14 03 00 00 00 	movl   $0x3,0x14(%esi)
+  6c:	c7 46 10 03 00 00 00 	movl   $0x3,0x10(%esi)
+  73:	c7 46 0c 00 10 00 00 	movl   $0x1000,0xc(%esi)
+  7a:	e8 fc ff ff ff       	call   7b <kmalloc_init+0x7b>
+  7f:	8b 4c 24 48          	mov    0x48(%esp),%ecx
+  83:	81 c1 00 10 00 00    	add    $0x1000,%ecx
+  89:	89 4c 24 48          	mov    %ecx,0x48(%esp)
+  8d:	8b 4c 24 44          	mov    0x44(%esp),%ecx
+  91:	81 e9 00 10 00 00    	sub    $0x1000,%ecx
+  97:	89 4c 24 44          	mov    %ecx,0x44(%esp)
+  9b:	89 44 24 2c          	mov    %eax,0x2c(%esp)
+  9f:	eb 9b                	jmp    3c <kmalloc_init+0x3c>
+  a1:	b8 00 00 00 00       	mov    $0x0,%eax
+  a6:	b9 00 00 10 00       	mov    $0x100000,%ecx
+  ab:	8b 54 24 48          	mov    0x48(%esp),%edx
+  af:	81 ea 00 10 00 08    	sub    $0x8001000,%edx
+  b5:	89 54 24 48          	mov    %edx,0x48(%esp)
+  b9:	8b 54 24 48          	mov    0x48(%esp),%edx
+  bd:	89 15 00 00 00 00    	mov    %edx,0x0
+  c3:	89 15 00 00 00 00    	mov    %edx,0x0
+  c9:	8b 54 24 48          	mov    0x48(%esp),%edx
+  cd:	81 c2 00 00 10 00    	add    $0x100000,%edx
+  d3:	89 15 00 00 00 00    	mov    %edx,0x0
+  d9:	c7 05 00 00 00 00 55 	movl   $0x15555,0x0
+  e0:	55 01 00 
+  e3:	c7 05 00 00 00 00 00 	movl   $0x7f00000,0x0
+  ea:	00 f0 07 
+  ed:	8b 15 00 00 00 00    	mov    0x0,%edx
+  f3:	89 14 24             	mov    %edx,(%esp)
+  f6:	c7 44 24 04 00 00 00 	movl   $0x0,0x4(%esp)
+  fd:	00 
+  fe:	c7 44 24 08 00 00 10 	movl   $0x100000,0x8(%esp)
+ 105:	00 
+ 106:	89 44 24 28          	mov    %eax,0x28(%esp)
+ 10a:	89 4c 24 24          	mov    %ecx,0x24(%esp)
+ 10e:	e8 fc ff ff ff       	call   10f <kmalloc_init+0x10f>
+ 113:	8b 0d 00 00 00 00    	mov    0x0,%ecx
+ 119:	8b 15 00 00 00 00    	mov    0x0,%edx
+ 11f:	89 0a                	mov    %ecx,(%edx)
+ 121:	8b 0d 00 00 00 00    	mov    0x0,%ecx
+ 127:	8b 15 00 00 00 00    	mov    0x0,%edx
+ 12d:	89 4a 04             	mov    %ecx,0x4(%edx)
+ 130:	8b 0d 00 00 00 00    	mov    0x0,%ecx
+ 136:	8b 09                	mov    (%ecx),%ecx
+ 138:	83 e1 fe             	and    $0xfffffffe,%ecx
+ 13b:	8b 15 00 00 00 00    	mov    0x0,%edx
+ 141:	89 0a                	mov    %ecx,(%edx)
+ 143:	8b 0d 00 00 00 00    	mov    0x0,%ecx
+ 149:	83 c1 0c             	add    $0xc,%ecx
+ 14c:	89 0d 00 00 00 00    	mov    %ecx,0x0
+ 152:	89 44 24 20          	mov    %eax,0x20(%esp)
+ 156:	8d 65 fc             	lea    -0x4(%ebp),%esp
+ 159:	5e                   	pop    %esi
+ 15a:	5d                   	pop    %ebp
+ 15b:	c3                   	ret    
+ 15c:	8d 74 26 00          	lea    0x0(%esi,%eiz,1),%esi
+
+00000160 <kcompact>:
+ 160:	55                   	push   %ebp
+ 161:	89 e5                	mov    %esp,%ebp
+ 163:	50                   	push   %eax
+ 164:	e8 fc ff ff ff       	call   165 <kcompact+0x5>
+ 169:	a1 00 00 00 00       	mov    0x0,%eax
+ 16e:	89 45 fc             	mov    %eax,-0x4(%ebp)
+ 171:	8b 45 fc             	mov    -0x4(%ebp),%eax
+ 174:	83 78 08 00          	cmpl   $0x0,0x8(%eax)
+ 178:	74 5c                	je     1d6 <kcompact+0x76>
+ 17a:	eb 00                	jmp    17c <kcompact+0x1c>
+ 17c:	8b 45 fc             	mov    -0x4(%ebp),%eax
+ 17f:	83 78 08 00          	cmpl   $0x0,0x8(%eax)
+ 183:	74 1a                	je     19f <kcompact+0x3f>
+ 185:	8b 45 fc             	mov    -0x4(%ebp),%eax
+ 188:	8b 00                	mov    (%eax),%eax
+ 18a:	83 e0 01             	and    $0x1,%eax
+ 18d:	83 f8 00             	cmp    $0x0,%eax
+ 190:	75 02                	jne    194 <kcompact+0x34>
+ 192:	eb 0b                	jmp    19f <kcompact+0x3f>
+ 194:	8b 45 fc             	mov    -0x4(%ebp),%eax
+ 197:	8b 40 08             	mov    0x8(%eax),%eax
+ 19a:	89 45 fc             	mov    %eax,-0x4(%ebp)
+ 19d:	eb dd                	jmp    17c <kcompact+0x1c>
+ 19f:	8b 45 fc             	mov    -0x4(%ebp),%eax
+ 1a2:	83 78 08 00          	cmpl   $0x0,0x8(%eax)
+ 1a6:	74 2c                	je     1d4 <kcompact+0x74>
+ 1a8:	8b 45 fc             	mov    -0x4(%ebp),%eax
+ 1ab:	8b 40 08             	mov    0x8(%eax),%eax
+ 1ae:	8b 40 04             	mov    0x4(%eax),%eax
+ 1b1:	8b 4d fc             	mov    -0x4(%ebp),%ecx
+ 1b4:	8b 51 04             	mov    0x4(%ecx),%edx
+ 1b7:	01 c2                	add    %eax,%edx
+ 1b9:	89 51 04             	mov    %edx,0x4(%ecx)
+ 1bc:	8b 45 fc             	mov    -0x4(%ebp),%eax
+ 1bf:	8b 40 08             	mov    0x8(%eax),%eax
+ 1c2:	8b 40 08             	mov    0x8(%eax),%eax
+ 1c5:	8b 4d fc             	mov    -0x4(%ebp),%ecx
+ 1c8:	89 41 08             	mov    %eax,0x8(%ecx)
+ 1cb:	8b 45 fc             	mov    -0x4(%ebp),%eax
+ 1ce:	8b 40 08             	mov    0x8(%eax),%eax
+ 1d1:	89 45 fc             	mov    %eax,-0x4(%ebp)
+ 1d4:	eb 9b                	jmp    171 <kcompact+0x11>
+ 1d6:	e8 fc ff ff ff       	call   1d7 <kcompact+0x77>
+ 1db:	83 c4 04             	add    $0x4,%esp
+ 1de:	5d                   	pop    %ebp
+ 1df:	c3                   	ret    
+
+000001e0 <kmalloc>:
+ 1e0:	55                   	push   %ebp
+ 1e1:	89 e5                	mov    %esp,%ebp
+ 1e3:	56                   	push   %esi
+ 1e4:	83 ec 28             	sub    $0x28,%esp
+ 1e7:	8b 45 08             	mov    0x8(%ebp),%eax
+ 1ea:	89 45 f4             	mov    %eax,-0xc(%ebp)
+ 1ed:	a1 00 00 00 00       	mov    0x0,%eax
+ 1f2:	89 45 f0             	mov    %eax,-0x10(%ebp)
+ 1f5:	8b 45 f0             	mov    -0x10(%ebp),%eax
+ 1f8:	83 78 08 00          	cmpl   $0x0,0x8(%eax)
+ 1fc:	74 25                	je     223 <kmalloc+0x43>
+ 1fe:	8b 45 f0             	mov    -0x10(%ebp),%eax
+ 201:	8b 00                	mov    (%eax),%eax
+ 203:	83 e0 01             	and    $0x1,%eax
+ 206:	83 f8 00             	cmp    $0x0,%eax
+ 209:	75 0d                	jne    218 <kmalloc+0x38>
+ 20b:	8b 45 f0             	mov    -0x10(%ebp),%eax
+ 20e:	8b 40 04             	mov    0x4(%eax),%eax
+ 211:	3b 45 f4             	cmp    -0xc(%ebp),%eax
+ 214:	72 02                	jb     218 <kmalloc+0x38>
+ 216:	eb 0b                	jmp    223 <kmalloc+0x43>
+ 218:	8b 45 f0             	mov    -0x10(%ebp),%eax
+ 21b:	8b 40 08             	mov    0x8(%eax),%eax
+ 21e:	89 45 f0             	mov    %eax,-0x10(%ebp)
+ 221:	eb d2                	jmp    1f5 <kmalloc+0x15>
+ 223:	8b 45 f0             	mov    -0x10(%ebp),%eax
+ 226:	8b 00                	mov    (%eax),%eax
+ 228:	83 e0 01             	and    $0x1,%eax
+ 22b:	83 f8 01             	cmp    $0x1,%eax
+ 22e:	0f 94 c1             	sete   %cl
+ 231:	80 e1 01             	and    $0x1,%cl
+ 234:	0f b6 c1             	movzbl %cl,%eax
+ 237:	8b 55 f0             	mov    -0x10(%ebp),%edx
+ 23a:	8b 52 04             	mov    0x4(%edx),%edx
+ 23d:	3b 55 f4             	cmp    -0xc(%ebp),%edx
+ 240:	0f 92 c1             	setb   %cl
+ 243:	80 e1 01             	and    $0x1,%cl
+ 246:	0f b6 d1             	movzbl %cl,%edx
+ 249:	09 d0                	or     %edx,%eax
+ 24b:	83 f8 00             	cmp    $0x0,%eax
+ 24e:	74 34                	je     284 <kmalloc+0xa4>
+ 250:	80 3d 00 00 00 00 00 	cmpb   $0x0,0x0
+ 257:	75 1f                	jne    278 <kmalloc+0x98>
+ 259:	c6 05 00 00 00 00 01 	movb   $0x1,0x0
+ 260:	e8 fc ff ff ff       	call   261 <kmalloc+0x81>
+ 265:	8b 45 f4             	mov    -0xc(%ebp),%eax
+ 268:	89 04 24             	mov    %eax,(%esp)
+ 26b:	e8 fc ff ff ff       	call   26c <kmalloc+0x8c>
+ 270:	89 45 f8             	mov    %eax,-0x8(%ebp)
+ 273:	e9 c1 00 00 00       	jmp    339 <kmalloc+0x159>
+ 278:	c7 45 f8 00 00 00 00 	movl   $0x0,-0x8(%ebp)
+ 27f:	e9 b5 00 00 00       	jmp    339 <kmalloc+0x159>
+ 284:	8b 45 f0             	mov    -0x10(%ebp),%eax
+ 287:	8b 00                	mov    (%eax),%eax
+ 289:	83 e0 fe             	and    $0xfffffffe,%eax
+ 28c:	89 45 ec             	mov    %eax,-0x14(%ebp)
+ 28f:	8b 45 f0             	mov    -0x10(%ebp),%eax
+ 292:	8b 40 04             	mov    0x4(%eax),%eax
+ 295:	2b 45 f4             	sub    -0xc(%ebp),%eax
+ 298:	89 45 e8             	mov    %eax,-0x18(%ebp)
+ 29b:	83 7d e8 00          	cmpl   $0x0,-0x18(%ebp)
+ 29f:	74 53                	je     2f4 <kmalloc+0x114>
+ 2a1:	8b 45 ec             	mov    -0x14(%ebp),%eax
+ 2a4:	03 45 f4             	add    -0xc(%ebp),%eax
+ 2a7:	8b 0d 00 00 00 00    	mov    0x0,%ecx
+ 2ad:	89 01                	mov    %eax,(%ecx)
+ 2af:	8b 45 e8             	mov    -0x18(%ebp),%eax
+ 2b2:	8b 0d 00 00 00 00    	mov    0x0,%ecx
+ 2b8:	89 41 04             	mov    %eax,0x4(%ecx)
+ 2bb:	8b 45 f0             	mov    -0x10(%ebp),%eax
+ 2be:	8b 40 08             	mov    0x8(%eax),%eax
+ 2c1:	8b 0d 00 00 00 00    	mov    0x0,%ecx
+ 2c7:	89 41 08             	mov    %eax,0x8(%ecx)
+ 2ca:	a1 00 00 00 00       	mov    0x0,%eax
+ 2cf:	8b 00                	mov    (%eax),%eax
+ 2d1:	83 e0 fe             	and    $0xfffffffe,%eax
+ 2d4:	8b 0d 00 00 00 00    	mov    0x0,%ecx
+ 2da:	89 01                	mov    %eax,(%ecx)
+ 2dc:	a1 00 00 00 00       	mov    0x0,%eax
+ 2e1:	8b 4d f0             	mov    -0x10(%ebp),%ecx
+ 2e4:	89 41 08             	mov    %eax,0x8(%ecx)
+ 2e7:	a1 00 00 00 00       	mov    0x0,%eax
+ 2ec:	83 c0 0c             	add    $0xc,%eax
+ 2ef:	a3 00 00 00 00       	mov    %eax,0x0
+ 2f4:	8d 05 00 00 00 00    	lea    0x0,%eax
+ 2fa:	8b 4d f0             	mov    -0x10(%ebp),%ecx
+ 2fd:	8b 09                	mov    (%ecx),%ecx
+ 2ff:	83 c9 01             	or     $0x1,%ecx
+ 302:	8b 55 f0             	mov    -0x10(%ebp),%edx
+ 305:	89 0a                	mov    %ecx,(%edx)
+ 307:	8b 4d f4             	mov    -0xc(%ebp),%ecx
+ 30a:	8b 55 f0             	mov    -0x10(%ebp),%edx
+ 30d:	89 4a 04             	mov    %ecx,0x4(%edx)
+ 310:	8b 4d e8             	mov    -0x18(%ebp),%ecx
+ 313:	8b 55 f0             	mov    -0x10(%ebp),%edx
+ 316:	8b 52 04             	mov    0x4(%edx),%edx
+ 319:	8b 75 f4             	mov    -0xc(%ebp),%esi
+ 31c:	89 04 24             	mov    %eax,(%esp)
+ 31f:	89 4c 24 04          	mov    %ecx,0x4(%esp)
+ 323:	89 54 24 08          	mov    %edx,0x8(%esp)
+ 327:	89 74 24 0c          	mov    %esi,0xc(%esp)
+ 32b:	e8 fc ff ff ff       	call   32c <kmalloc+0x14c>
+ 330:	8b 4d ec             	mov    -0x14(%ebp),%ecx
+ 333:	89 4d f8             	mov    %ecx,-0x8(%ebp)
+ 336:	89 45 e4             	mov    %eax,-0x1c(%ebp)
+ 339:	8b 45 f8             	mov    -0x8(%ebp),%eax
+ 33c:	83 c4 28             	add    $0x28,%esp
+ 33f:	5e                   	pop    %esi
+ 340:	5d                   	pop    %ebp
+ 341:	c3                   	ret    
+ 342:	8d b4 26 00 00 00 00 	lea    0x0(%esi,%eiz,1),%esi
+ 349:	8d bc 27 00 00 00 00 	lea    0x0(%edi,%eiz,1),%edi
+
+00000350 <kfree>:
+ 350:	55                   	push   %ebp
+ 351:	89 e5                	mov    %esp,%ebp
+ 353:	83 ec 08             	sub    $0x8,%esp
+ 356:	8b 45 08             	mov    0x8(%ebp),%eax
+ 359:	89 45 fc             	mov    %eax,-0x4(%ebp)
+ 35c:	a1 00 00 00 00       	mov    0x0,%eax
+ 361:	89 45 f8             	mov    %eax,-0x8(%ebp)
+ 364:	8b 45 f8             	mov    -0x8(%ebp),%eax
+ 367:	83 78 08 00          	cmpl   $0x0,0x8(%eax)
+ 36b:	74 26                	je     393 <kfree+0x43>
+ 36d:	8b 45 f8             	mov    -0x8(%ebp),%eax
+ 370:	8b 00                	mov    (%eax),%eax
+ 372:	83 e0 01             	and    $0x1,%eax
+ 375:	83 f8 01             	cmp    $0x1,%eax
+ 378:	75 0e                	jne    388 <kfree+0x38>
+ 37a:	8b 45 f8             	mov    -0x8(%ebp),%eax
+ 37d:	8b 00                	mov    (%eax),%eax
+ 37f:	8b 4d fc             	mov    -0x4(%ebp),%ecx
+ 382:	39 c8                	cmp    %ecx,%eax
+ 384:	75 02                	jne    388 <kfree+0x38>
+ 386:	eb 0b                	jmp    393 <kfree+0x43>
+ 388:	8b 45 f8             	mov    -0x8(%ebp),%eax
+ 38b:	8b 40 08             	mov    0x8(%eax),%eax
+ 38e:	89 45 f8             	mov    %eax,-0x8(%ebp)
+ 391:	eb d1                	jmp    364 <kfree+0x14>
+ 393:	8b 45 f8             	mov    -0x8(%ebp),%eax
+ 396:	8b 00                	mov    (%eax),%eax
+ 398:	83 e0 fe             	and    $0xfffffffe,%eax
+ 39b:	8b 4d f8             	mov    -0x8(%ebp),%ecx
+ 39e:	89 01                	mov    %eax,(%ecx)
+ 3a0:	83 c4 08             	add    $0x8,%esp
+ 3a3:	5d                   	pop    %ebp
+ 3a4:	c3                   	ret    

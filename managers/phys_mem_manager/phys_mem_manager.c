@@ -26,13 +26,14 @@ void physMemMan_Setup(void) {
 uint32_t pmem_Initialize() {
 
         memory_size = global_multiboot_info->mem_lower + global_multiboot_info->mem_upper;
+        memory_size = KB(memory_size);
 
         // Determine the total number of pages
         freePageCount = totalPageCount = memory_size / (uint64_t)PAGE_SIZE;
 
         //Populate the free stack
         freePageStackBase = bootstrap_malloc(PAGE_STACK_SIZE);
-        freePageStackBase += PAGE_STACK_SIZE;
+        freePageStackBase += totalPageCount;
         freePageStack = freePageStackBase;
 
         for(uint64_t paddr = 0; paddr < memory_size; paddr+=PAGE_SIZE)
@@ -40,8 +41,7 @@ uint32_t pmem_Initialize() {
                 //Push vaddr onto the stack if the region is free acc to the mmap and elf table
                 if(memSearch_isFree(paddr))
                 {
-                        freePageStack--;
-                        *freePageStack = paddr;
+                        *--freePageStack = paddr; //TODO theer's a problem in this line that causes a crash
                 }
         }
 
@@ -54,11 +54,12 @@ uint64_t physMemMan_Alloc(void) {
         {
                 return *freePageStack++;
         }
+        COM_WriteStr("Failed!");
         return NULL;
 }
 
 void physMemMan_Free(uint64_t ptr) {
-  //This shuold use some trick to ensure that the free stack can't be attacked
+        //This shuold use some trick to ensure that the free stack can't be attacked
         freePageStack--;
         *freePageStack = ptr;
 }

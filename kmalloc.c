@@ -5,7 +5,7 @@
 
 typedef struct kmalloc_info {
         uint32_t pointer;
-        size_t size;
+        uint32_t size;
         struct kmalloc_info *next;
 } kmalloc_info;
 
@@ -13,7 +13,7 @@ typedef struct kmalloc_info {
 void* k_pages_base_addr;
 int max_allocs = 0;
 uint32_t free_space = 0;
-kmalloc_info *allocation_info, *next_free_block;
+kmalloc_info *allocation_info = NULL, *next_free_block = NULL;
 
 //A block is free if the first bit is clear
 #define IS_FREE(x) ((x->pointer & 1) == 0)
@@ -41,6 +41,7 @@ void kmalloc_init()
         size_t size = STORE_SIZE;
         while(size > 0) {
                 uint64_t physBaseAddr_base = physMemMan_Alloc();
+                COM_WriteStr("base: %x\r\n", physBaseAddr_base);
                 virtMemMan_Map(virtBaseAddr_base, physBaseAddr_base, KB(4), MEM_TYPE_WC, MEM_READ | MEM_WRITE, MEM_KERNEL);
                 virtBaseAddr_base += KB(4);
                 size -= KB(4);
@@ -114,7 +115,7 @@ void *kmalloc(size_t size)
         //Allocate this block, mark this one as used, append a new block object at the end that contains the remaining free space
         uint32_t addr = GET_ADDR(a_info);
         size_t freeSize = a_info->size - size;
-        COM_WriteStr("Test! FreeSize: %u\r\nSize: %u\r\n ReqSize: %u\r\n", freeSize, a_info->size, size);
+        //COM_WriteStr("Test! FreeSize: %u\r\nSize: %u\r\n ReqSize: %u\r\n", freeSize, a_info->size, size);
 
         //We need to allocate a new info block only if there is free space
         if(freeSize != 0)
@@ -128,10 +129,10 @@ void *kmalloc(size_t size)
                 next_free_block++;
         }
 
-        a_info->size = size;
         MARK_USED(a_info);
+        a_info->size = size;
 
-        COM_WriteStr("Test! FreeSize: %u\r\nSize: %u\r\n ReqSize: %u\r\n", freeSize, a_info->size, size);
+        COM_WriteStr("Test! FreeSize: %u\r\nSize: %u\r\n ReqSize: %u\r\n", a_info->next->size, a_info->size, size);
         return addr;
 }
 

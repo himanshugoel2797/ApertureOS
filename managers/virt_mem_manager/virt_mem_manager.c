@@ -50,6 +50,7 @@ uint32_t virtMemMan_Initialize()
 
         curInstance_virt = virtMemMan_CreateInstance();
 
+  COM_WriteStr("Initializing pvmemman");
         //TODO we might want to make this more secure by parsing info from hte elf table and making sections NX appropriately
         virtMemMan_Map(LOAD_ADDRESS, LOAD_ADDRESS, 0x10000000 - LOAD_ADDRESS, MEM_TYPE_WT, MEM_WRITE | MEM_READ | MEM_EXEC, MEM_KERNEL);
 
@@ -61,6 +62,7 @@ uint32_t virtMemMan_Initialize()
         asm volatile ("movl %cr4, %eax; bts $5, %eax; movl %eax, %cr4"); // set bit5 in CR4 to enable PAE
         asm volatile ("movl %%eax, %%cr3" :: "a" (curInstance_virt)); // load PDPT into CR3
         asm volatile ("movl %cr0, %eax; orl $0x80000000, %eax; movl %eax, %cr0;");  //Enable Paging
+        return 0;
 }
 
 void virtMemMan_callback(uint32_t res)
