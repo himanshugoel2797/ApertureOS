@@ -9,7 +9,7 @@ SOURCES=utils/native.o utils/common.o utils/sprintf.o \
 				managers/keyboard/keyboard.o	\
 				managers/msg_manager/msg_manager.o \
 				managers/interrupt/interrupt_manager.o \
-				managers/phys_mem_manager/phys_mem_manager.o managers/phys_mem_manager/mem_search_helpers.o \
+				managers/phys_mem_manager/phys_mem_manager.o \
 				managers/process/process_manager.o	\
 				managers/threads/threads.o	\
 				managers/timer/timer_manager.o \
@@ -56,7 +56,7 @@ MKDIR=mkdir
 CP=cp
 CCADMIN=CCadmin
 GCC=clang -target i986-none-elf
-CFLAGS= -ffreestanding -O3 -Wall -Wextra -Wno-trigraphs -D$(CONF)  -DCURRENT_YEAR=$(CURRENT_YEAR) -DCOM_ENABLED=$(COM_ENABLED) $(INCLUDES)
+CFLAGS= -mno-sse -ffreestanding -O0 -Wall -Wextra -Wno-trigraphs -D$(CONF)  -DCURRENT_YEAR=$(CURRENT_YEAR) -DCOM_ENABLED=$(COM_ENABLED) $(INCLUDES)
 ASM=$(PLATFORM)-elf-gcc -DDEBUG -ffreestanding -march=i686
 TEST_CMD=qemu-system-x86_64 $(QEMU_OPTS)
 

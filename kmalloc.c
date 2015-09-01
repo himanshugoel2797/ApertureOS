@@ -41,11 +41,11 @@ void kmalloc_init()
         size_t size = STORE_SIZE;
         while(size > 0) {
                 uint64_t physBaseAddr_base = physMemMan_Alloc();
-                virtMemMan_Map(virtBaseAddr_base, physBaseAddr_base, KB(4), MEM_TYPE_WC, MEM_READ | MEM_WRITE, MEM_KERNEL);
+                virtMemMan_Map(virtBaseAddr_base, physBaseAddr_base, KB(4), MEM_TYPE_WT, MEM_READ | MEM_WRITE, MEM_KERNEL);
                 virtBaseAddr_base += KB(4);
                 size -= KB(4);
         }
-        virtBaseAddr_base -= (STORE_SIZE + KB(4));
+        virtBaseAddr_base -= STORE_SIZE;
 
         next_free_block = allocation_info = virtBaseAddr_base;
         k_pages_base_addr = virtBaseAddr_base + MB(1);
@@ -55,6 +55,7 @@ void kmalloc_init()
         memset(allocation_info, 0, MB(1));
         allocation_info->pointer = k_pages_base_addr;
         allocation_info->size = free_space;
+        allocation_info->next = NULL;
         MARK_FREE(allocation_info);
 
         next_free_block++;
@@ -89,7 +90,7 @@ bool retry = FALSE;
 void *kmalloc(size_t size)
 {
         kmalloc_info *a_info = allocation_info;
-        while(a_info->next != NULL)
+        while(a_info != NULL && a_info->next != NULL)
         {
                 if(IS_FREE(a_info) && a_info->size >= size)
                 {
@@ -98,15 +99,15 @@ void *kmalloc(size_t size)
                 a_info = a_info->next;
         }
 
-
         if(IS_USED(a_info) | (a_info->size < size)) {
                 //Compact the allocation info and try again, if failed, return NULL
                 if(!retry)
                 {
                         retry = TRUE;
-                        kcompact();
-                        return kmalloc(size);
+                        //kcompact();
+                        uint32_t res = kmalloc(size);
                         retry = FALSE;
+                        return res;
                 }
                 return NULL;
         }
@@ -114,7 +115,6 @@ void *kmalloc(size_t size)
         //Allocate this block, mark this one as used, append a new block object at the end that contains the remaining free space
         uint32_t addr = GET_ADDR(a_info);
         size_t freeSize = a_info->size - size;
-        //COM_WriteStr("Test! FreeSize: %u\r\nSize: %u\r\n ReqSize: %u\r\n", freeSize, a_info->size, size);
 
         //We need to allocate a new info block only if there is free space
         if(freeSize != 0)
@@ -131,7 +131,6 @@ void *kmalloc(size_t size)
         MARK_USED(a_info);
         a_info->size = size;
 
-        COM_WriteStr("Test! FreeSize: %u\r\nSize: %u\r\n ReqSize: %u\r\n", a_info->next->size, a_info->size, size);
         return addr;
 }
 
@@ -151,7 +150,4 @@ void kfree(void *addr)
 
         //Mark this block as free
         MARK_FREE(a_info);
-
-
-
 }

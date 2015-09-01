@@ -116,7 +116,13 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64
     memset(curThreadInfo->FPU_state, 0, 512);
 
     curThreadInfo->regs.eip = entry;
-    curThreadInfo->regs.unused = kmalloc(KB(16));
+    curThreadInfo->regs.unused = kmalloc(KB(16)) + KB(16); //Stack ptr
+
+    //Push args onto the stack
+    curThreadInfo->regs.unused -= sizeof(uint32_t*);
+    *((uint32_t*)curThreadInfo->regs.unused) = (uint32_t)argv;
+    curThreadInfo->regs.unused -= sizeof(uint32_t*);
+    *((uint32_t*)curThreadInfo->regs.unused) = (uint32_t)argc;
 
     //Store the thread in the queue
     if(threads == NULL)

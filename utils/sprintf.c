@@ -68,7 +68,7 @@ char* utoa(uint64_t val, char *ostr, int base)
                         str[pos++] = opts[val % base];
                         val /= base;
                 }
-                while(val != 0);
+                while(val != 0 && pos < 511);
 
                 str[pos] = 0;
                 strrev(str);

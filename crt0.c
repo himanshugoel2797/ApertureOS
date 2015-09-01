@@ -81,6 +81,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         global_memory_map = bootstrap_malloc(global_memory_map_size);
         memcpy(global_memory_map, mbd->mmap_addr, global_memory_map_size);
 
+
         //All these need to access ACPI tables
         Interrupts_Setup();
         CMOS_Initialize();
@@ -94,17 +95,18 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         Interrupts_Virtualize();
         graphics_Initialize();
 
+        graphics_WriteStr("const char *str", 0, 0);
+        graphics_SwapBuffer();
+
         kmalloc_init();
         //ThreadMan_Setup();
-        COM_WriteStr("TEST!!!\r\n");
 
         Timers_Setup();
 
-        COM_WriteStr("TEST!!!\r\n");
-
-        tmp = bootstrap_malloc(1080*1920*4);
+        COM_WriteStr("TEST!!!!\r\n");
+        tmp = kmalloc(1080*1920*4);
         char pixel[4];
-        COM_WriteStr("TEST!!!\r\n");
+        COM_WriteStr("TEST!!! %x\r\n", tmp);
 
         for(y = 0; y < height; y++)
                 for(x = 0; x < width; x++)
