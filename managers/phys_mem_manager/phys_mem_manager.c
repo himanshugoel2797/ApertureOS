@@ -46,7 +46,6 @@ uint32_t pmem_Initialize() {
         KB4_Blocks_FreeBitCount = bootstrap_malloc(KB4_Blocks_FreeBitCount_EntryNum * sizeof(uint32_t));
 
         memset(KB4_Blocks_Bitmap, 0, KB4_Blocks_Count * sizeof(uint32_t));
-        COM_WriteStr("BlockSCuont %d", KB4_Blocks_FreeBitCount);
 
         for (int i = 0; i < KB4_Blocks_Count; i++) {
                 SET_FREE_BITCOUNT(i, 32);
@@ -69,12 +68,12 @@ uint32_t pmem_Initialize() {
         multiboot_memory_map_t *mmap = global_memory_map;
         while (mmap < global_memory_map + global_memory_map_size) {
                 // Make sure this memory is not freeable
-                if ((mmap->type != MULTIBOOT_MEMORY_AVAILABLE &&
-                     mmap->type != MULTIBOOT_MEMORY_ACPI_RECLAIMABLE) | mmap->len != 0)
+                if (mmap->type != MULTIBOOT_MEMORY_AVAILABLE &&
+                    mmap->type != MULTIBOOT_MEMORY_ACPI_RECLAIMABLE)
                         MemMan_MarkUsed(mmap->addr, mmap->len);
-                mmap = (multiboot_memory_map_t *)((unsigned int)mmap + mmap->size +
-                                                  sizeof(unsigned int));
+                mmap = (multiboot_memory_map_t *)((unsigned int)mmap + mmap->size + sizeof(unsigned int));
         }
+        COM_WriteStr("Done!");
 
         return 0;
 }
@@ -85,20 +84,27 @@ uint64_t MemMan_CalculateBitmapIndex(uint64_t addr, size_t blockSize) {
 }
 
 void MemMan_MarkKB4Used(uint64_t addr, uint64_t size) {
+        if(size == 0)return;
         uint64_t n_addr = KB(4) * (addr / KB(4)); // Make addr page aligned
         size += (addr - n_addr);
 
         uint64_t base_page = n_addr / (uint64_t)KB(4);
         uint64_t page_count = size / (uint64_t)KB(4);
 
-                COM_WriteStr("TEST!!! %d", page_count);
-        for (uint64_t i = base_page; i < base_page + page_count; i++) {
-                //KB4_Blocks_Bitmap[i / 32] = SET_BIT(KB4_Blocks_Bitmap[i / 32], (i % 32));
-
-                //DEC_FREE_BITCOUNT(i / 32);
-                //freePageCount--;
-                //n_addr += KB(4);
+        for (uint64_t i = base_page; i < base_page+page_count; i++) {
+                if(i%32 == 0 && (i+32) < base_page+page_count) {
+                        KB4_Blocks_Bitmap[i/32] = -1;
+                        SET_FREE_BITCOUNT(i/32, 0);
+                        freePageCount -= 32;
+                        i+=31;
+                }else{
+                        KB4_Blocks_Bitmap[i / 32] = SET_BIT(KB4_Blocks_Bitmap[i / 32], (i % 32));
+                        DEC_FREE_BITCOUNT(i / 32);
+                        freePageCount--;
+                        n_addr += KB(4);
+                }
         }
+        COM_WriteStr("TEST");
 }
 
 void MemMan_MarkUsed(uint64_t addr, uint64_t size) {
@@ -107,17 +113,17 @@ void MemMan_MarkUsed(uint64_t addr, uint64_t size) {
 
 uint32_t find_first_zero(uint32_t bit_array)
 {
-    uint32_t pos = 0;
-    if(bit_array == 0)return 0;
+        uint32_t pos = 0;
+        if(bit_array == 0) return 0;
 
-    __asm__("bsfl %1,%0\n\t"
-        "jne 1f\n\t"
-        "movl $32, %0\n"
-        "1:"
-        : "=r" (pos)
-        : "r" (~(bit_array)));
+        __asm__("bsfl %1,%0\n\t"
+                "jne 1f\n\t"
+                "movl $32, %0\n"
+                "1:"
+                : "=r" (pos)
+                : "r" (~(bit_array)));
 
-    return (unsigned short) pos;
+        return (unsigned short) pos;
 }
 
 uint64_t physMemMan_Alloc() {
@@ -126,12 +132,12 @@ uint64_t physMemMan_Alloc() {
         uint64_t i = lastNonFullPage;
 
         for (; i < KB4_Blocks_Count; i++) {
-                        if (KB4_Blocks_Bitmap[i] < 0xFFFFFFFF) {
+                if (KB4_Blocks_Bitmap[i] < 0xFFFFFFFF) {
 
-                                b = find_first_zero(KB4_Blocks_Bitmap[i]);
-                                KB4_Blocks_Bitmap[i] = SET_BIT(KB4_Blocks_Bitmap[i], b);
-                                break;
-                        }
+                        b = find_first_zero(KB4_Blocks_Bitmap[i]);
+                        KB4_Blocks_Bitmap[i] = SET_BIT(KB4_Blocks_Bitmap[i], b);
+                        break;
+                }
         }
 
         if (i >= KB4_Blocks_Count) {

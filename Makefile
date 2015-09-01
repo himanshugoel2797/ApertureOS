@@ -34,7 +34,7 @@ PLATFORM=~/Documents/i686-elf/bin/i686
 
 OUTDISK=sdb
 
-QEMU_OPTS=-m 1024 -cpu SandyBridge -d cpu_reset,guest_errors,int #-serial file:log.txt
+QEMU_OPTS=-m 1024 -cpu SandyBridge,+xsave,level=13 -d cpu_reset,guest_errors,int #-serial file:log.txt
 
 CURRENT_YEAR=$(shell date +"%Y")
 COM_ENABLED=1
@@ -56,7 +56,7 @@ MKDIR=mkdir
 CP=cp
 CCADMIN=CCadmin
 GCC=clang -target i986-none-elf
-CFLAGS= -ffreestanding -O0 -Wall -Wextra -Wno-trigraphs -D$(CONF)  -DCURRENT_YEAR=$(CURRENT_YEAR) -DCOM_ENABLED=$(COM_ENABLED) $(INCLUDES)
+CFLAGS= -ffreestanding -O3 -Wall -Wextra -Wno-trigraphs -D$(CONF)  -DCURRENT_YEAR=$(CURRENT_YEAR) -DCOM_ENABLED=$(COM_ENABLED) $(INCLUDES)
 ASM=$(PLATFORM)-elf-gcc -DDEBUG -ffreestanding -march=i686
 TEST_CMD=qemu-system-x86_64 $(QEMU_OPTS)
 
