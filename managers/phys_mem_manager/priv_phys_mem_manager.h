@@ -45,8 +45,6 @@ uint32_t MB2_Blocks_Count;
 uint64_t freePageCount;
 uint64_t totalPageCount;
 uint64_t lastNonFullPage;
-uint64_t lastFourthEmptyPage, lastHalfEmptyPage, lastFourthFullPage,
-    lastEmptyPage;
 
 void MemMan_Initialize();
 void *MemMan_Alloc(uint64_t size);
