@@ -36,12 +36,12 @@ void Timers_Setup()
 
 uint32_t timers_Initialize()
 {
-        //Initialize the PIT
-        PIT_Initialize();
-        PIT_SetEnableMode(DISABLE); //Disable it while we initialize everything else
 
         Interrupts_RegisterHandler(IRQ(0), 0, timer_handler);
         memset(timer_entries, 0, sizeof(timer_entries));
+        //Initialize the PIT
+        PIT_Initialize();
+        PIT_SetEnableMode(DISABLE); //Disable it while we initialize everything else
 
         //Determine if the APIC is available and initialize its timer too
         if(Interrupts_IsAPICEnabled())

@@ -41,7 +41,6 @@ void kmalloc_init()
         size_t size = STORE_SIZE;
         while(size > 0) {
                 uint64_t physBaseAddr_base = physMemMan_Alloc();
-                COM_WriteStr("base: %x\r\n", physBaseAddr_base);
                 virtMemMan_Map(virtBaseAddr_base, physBaseAddr_base, KB(4), MEM_TYPE_WC, MEM_READ | MEM_WRITE, MEM_KERNEL);
                 virtBaseAddr_base += KB(4);
                 size -= KB(4);

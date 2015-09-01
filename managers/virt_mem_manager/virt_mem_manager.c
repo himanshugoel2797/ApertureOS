@@ -50,7 +50,6 @@ uint32_t virtMemMan_Initialize()
 
         curInstance_virt = virtMemMan_CreateInstance();
 
-  COM_WriteStr("Initializing pvmemman");
         //TODO we might want to make this more secure by parsing info from hte elf table and making sections NX appropriately
         virtMemMan_Map(LOAD_ADDRESS, LOAD_ADDRESS, 0x10000000 - LOAD_ADDRESS, MEM_TYPE_WT, MEM_WRITE | MEM_READ | MEM_EXEC, MEM_KERNEL);
 
@@ -203,6 +202,7 @@ uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, 
                 pd_pse[pd_i].user_supervisor = privLevel;
                 pd_pse[pd_i].page_size = 1;
                 pd_pse[pd_i].read_write = (perms & MEM_WRITE == MEM_WRITE);
+                pd_pse[pd_i].nx = (perms & MEM_EXEC != MEM_EXEC);
 
                 //Setup cache controls
                 pd_pse[pd_i].global = 0;
@@ -238,6 +238,7 @@ uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, 
                         pd[pd_i].res1 = 0;
                         pd[pd_i].write_through = 0;
                         pd[pd_i].cache_disable = 0;
+
                 }
 
                 PT_Entry *pt = (PT_Entry*)(pd[pd_i].addr * KB(4));
@@ -246,7 +247,7 @@ uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, 
                 pt[pt_i].present = 1;
                 pt[pt_i].user_supervisor = privLevel;
                 pt[pt_i].read_write = (perms & MEM_WRITE == MEM_WRITE);
-                pt[pt_i].nx = (perms & MEM_EXEC  == MEM_EXEC);
+                pt[pt_i].nx = (perms & MEM_EXEC  != MEM_EXEC);
 
                 //Setup cache controls
                 pt[pt_i].global = 0;

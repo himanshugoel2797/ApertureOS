@@ -66,14 +66,13 @@ uint32_t pmem_Initialize() {
 
 
         multiboot_memory_map_t *mmap = global_memory_map;
-        while (mmap < global_memory_map + global_memory_map_size) {
+        while ( (uint32_t)mmap < (uint32_t)global_memory_map + global_memory_map_size) {
                 // Make sure this memory is not freeable
                 if (mmap->type != MULTIBOOT_MEMORY_AVAILABLE &&
                     mmap->type != MULTIBOOT_MEMORY_ACPI_RECLAIMABLE)
                         MemMan_MarkUsed(mmap->addr, mmap->len);
                 mmap = (multiboot_memory_map_t *)((unsigned int)mmap + mmap->size + sizeof(unsigned int));
         }
-        COM_WriteStr("Done!");
 
         return 0;
 }
@@ -104,7 +103,6 @@ void MemMan_MarkKB4Used(uint64_t addr, uint64_t size) {
                         n_addr += KB(4);
                 }
         }
-        COM_WriteStr("TEST");
 }
 
 void MemMan_MarkUsed(uint64_t addr, uint64_t size) {

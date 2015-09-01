@@ -95,13 +95,16 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         graphics_Initialize();
 
         kmalloc_init();
-        ThreadMan_Setup();
+        //ThreadMan_Setup();
+        COM_WriteStr("TEST!!!\r\n");
 
         Timers_Setup();
 
+        COM_WriteStr("TEST!!!\r\n");
 
         tmp = bootstrap_malloc(1080*1920*4);
         char pixel[4];
+        COM_WriteStr("TEST!!!\r\n");
 
         for(y = 0; y < height; y++)
                 for(x = 0; x < width; x++)
@@ -114,7 +117,6 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
                         q+=4;
                 }
         Keyboard_Setup();
-
 
         asm ("sti");
 
