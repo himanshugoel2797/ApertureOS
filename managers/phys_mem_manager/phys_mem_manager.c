@@ -12,8 +12,6 @@ void pmem_callback(uint32_t res);
 uint8_t pmem_messageHandler(Message *msg);
 
 uint64_t memory_size = 0;
-PhysAllocList allocations;
-PhysAllocList *curList;
 uint16_t curIndex = 0;
 
 void physMemMan_Setup() {
@@ -35,10 +33,8 @@ uint32_t pmem_Initialize() {
         // the symbol table
         memory_size = KB((global_multiboot_info->mem_lower + global_multiboot_info->mem_upper));
 
-        memset(&allocations, 0, sizeof(allocations));
-        curList = &allocations;
 
-        
+
         // Determine the total number of pages
         freePageCount = totalPageCount = page_count = memory_size / (uint64_t)PAGE_SIZE;
         lastNonFullPage = 0;
@@ -50,6 +46,7 @@ uint32_t pmem_Initialize() {
         KB4_Blocks_FreeBitCount = bootstrap_malloc(KB4_Blocks_FreeBitCount_EntryNum * sizeof(uint32_t));
 
         memset(KB4_Blocks_Bitmap, 0, KB4_Blocks_Count * sizeof(uint32_t));
+        COM_WriteStr("BlockSCuont %d", KB4_Blocks_FreeBitCount);
 
         for (int i = 0; i < KB4_Blocks_Count; i++) {
                 SET_FREE_BITCOUNT(i, 32);
@@ -94,13 +91,13 @@ void MemMan_MarkKB4Used(uint64_t addr, uint64_t size) {
         uint64_t base_page = n_addr / (uint64_t)KB(4);
         uint64_t page_count = size / (uint64_t)KB(4);
 
-        for (uint64_t i = base_page; i < page_count; i++) {
-                KB4_Blocks_Bitmap[i / 32] = SET_BIT(KB4_Blocks_Bitmap[i / 32], (i % 32));
+                COM_WriteStr("TEST!!! %d", page_count);
+        for (uint64_t i = base_page; i < base_page + page_count; i++) {
+                //KB4_Blocks_Bitmap[i / 32] = SET_BIT(KB4_Blocks_Bitmap[i / 32], (i % 32));
 
-                COM_WriteStr("TEST!!!");
-                DEC_FREE_BITCOUNT(i / 32);
-                freePageCount--;
-                n_addr += KB(4);
+                //DEC_FREE_BITCOUNT(i / 32);
+                //freePageCount--;
+                //n_addr += KB(4);
         }
 }
 
@@ -108,7 +105,7 @@ void MemMan_MarkUsed(uint64_t addr, uint64_t size) {
         MemMan_MarkKB4Used(addr, size);
 }
 
-inline uint32_t find_first_zero(uint32_t bit_array)
+uint32_t find_first_zero(uint32_t bit_array)
 {
     uint32_t pos = 0;
     if(bit_array == 0)return 0;
@@ -130,7 +127,7 @@ uint64_t physMemMan_Alloc() {
 
         for (; i < KB4_Blocks_Count; i++) {
                         if (KB4_Blocks_Bitmap[i] < 0xFFFFFFFF) {
-                                
+
                                 b = find_first_zero(KB4_Blocks_Bitmap[i]);
                                 KB4_Blocks_Bitmap[i] = SET_BIT(KB4_Blocks_Bitmap[i], b);
                                 break;

@@ -7,16 +7,6 @@
 #define MAX_ALLOCS_PERENTRY ((PAGE_SIZE / sizeof(PhysAllocInfoEntry)) - 1)
 uint64_t memory_size, page_count;
 
-typedef struct phys_alloc_info_entry {
-  void *physLoc;
-  uint64_t size;
-} PhysAllocInfoEntry;
-
-typedef struct phys_alloc_list {
-  PhysAllocInfoEntry allocs[MAX_ALLOCS_PERENTRY];
-  struct phys_alloc_list *next;
-} PhysAllocList;
-
 #define KB4_DIVISOR 5
 #define KB4_MAX_VAL 32
 #define KB4_MAX_VAL_L 6
