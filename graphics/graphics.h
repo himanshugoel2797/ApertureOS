@@ -16,5 +16,6 @@ void graphics_WriteUInt32(uint32_t val, int base, int yOff, int xOff);
 void graphics_WriteUInt64(uint64_t val, int base, int yOff, int xOff);
 void graphics_WriteStr(const char *str, int yOff, int xOff);
 void graphics_WriteFloat(float val, uint32_t decimalCount, int xOff, int yOff);
+void graphics_DrawBuffer(void* buffer, uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 
 #endif /* end of include guard: _GRAPHICS_MAIN_H_ */

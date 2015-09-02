@@ -61,7 +61,7 @@ uint32_t APIC_Initialize()
                                                 IOAPIC_Initialize(ioapic->io_apic_base_addr, ioapic->global_sys_int_base);
 
                                                 for(int j = 0; j < 16; j++) {
-                                                        IOAPIC_MapIRQ(j, j + 32, APIC_GetID(), 0, 0);
+                                                        IOAPIC_MapIRQ(j, j + 32, APIC_GetID(), 0, 0, APIC_DELIVERY_MODE_FIXED);
                                                 }
                                         }
                                         break;
@@ -75,10 +75,10 @@ uint32_t APIC_Initialize()
 
                                                 if(isaovr->irq_src == 0) {
 
-                                                        IOAPIC_MapIRQ(isaovr->global_sys_int, isaovr->irq_src + 32, APIC_GetID(), triggerMode >> 1,polarity >> 1);
+                                                        IOAPIC_MapIRQ(isaovr->global_sys_int, isaovr->irq_src + 32, APIC_GetID(), triggerMode >> 1,polarity >> 1, APIC_DELIVERY_MODE_FIXED);
                                                 }else{
 
-                                                        IOAPIC_MapIRQ(isaovr->global_sys_int, isaovr->irq_src, APIC_GetID(), triggerMode >> 1,polarity >> 1);
+                                                        IOAPIC_MapIRQ(isaovr->global_sys_int, isaovr->irq_src, APIC_GetID(), triggerMode >> 1,polarity >> 1, APIC_DELIVERY_MODE_FIXED);
                                                 }
 
                                                 COM_WriteStr("\r\nISAOVR\r\n");
@@ -86,6 +86,14 @@ uint32_t APIC_Initialize()
                                                 COM_WriteStr("\tIRQ: %d\r\n", isaovr->irq_src);
                                                 COM_WriteStr("\tBus: %d\r\n", isaovr->bus_src);
                                                 COM_WriteStr("\tGlobal Interrupt: %d\r\n", isaovr->global_sys_int);
+                                        }
+                                        break;
+                                        case MADT_IOAPIC_NMI_ENTRY_TYPE:
+                                        {
+                                                if(passNum == 0)break;
+                                                MADT_EntryIOAPIC_NMI *nmi = hdr;
+
+
                                         }
                                         break;
                                         default:

@@ -35,7 +35,7 @@ void keyboard_test(Registers *regs)
 
 uint32_t kbd_Initialize()
 {
-        IOAPIC_MapIRQ(1, IRQ(1), APIC_GetID(), 0, 0);
+        IOAPIC_MapIRQ(1, IRQ(1), APIC_GetID(), 0, 0, APIC_DELIVERY_MODE_FIXED);
         IOAPIC_SetEnableMode(IRQ(1), ENABLE);
         Interrupts_RegisterHandler(IRQ(1), 0, keyboard_test);
         PS2_Initialize();

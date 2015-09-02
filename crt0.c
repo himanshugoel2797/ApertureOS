@@ -34,15 +34,11 @@ size_t q = 0;
 void timerHandler()
 {
         temp++;
-        graphics_Clear();
+        //graphics_Clear();
 
-        q = 0;
-        for(y = 0; y < global_multiboot_info->framebuffer_height; y++)
-                for(x = 0; x < global_multiboot_info->framebuffer_width; x++)
-                {
-                        graphics_SetPixel(x,y, *(int*)&tmp[q]);
-                        q+=4;
-                }
+
+        graphics_DrawBuffer(tmp, 0, 0, 1920, 1080);
+
         RTC_Time t;
         CMOS_GetRTCTime(&t);
 
@@ -103,10 +99,9 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
         Timers_Setup();
 
-        COM_WriteStr("TEST!!!!\r\n");
-        tmp = kmalloc(1080*1920*4);
+        tmp = kmalloc(1080*1920*4 + 14);
+        tmp += (uint32_t)tmp % 16;
         char pixel[4];
-        COM_WriteStr("TEST!!! %x\r\n", tmp);
 
         for(y = 0; y < height; y++)
                 for(x = 0; x < width; x++)

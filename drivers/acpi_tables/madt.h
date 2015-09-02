@@ -42,4 +42,19 @@ typedef struct {
 }MADT_EntryISAOVR;
 #define MADT_ISAOVER_ENTRY_TYPE 2
 
+typedef struct{
+        MADT_EntryHeader h;
+        uint16_t flags;
+        uint32_t global_sys_int;
+}MADT_EntryIOAPIC_NMI;
+#define MADT_IOAPIC_NMI_ENTRY_TYPE 3
+
+typedef struct{
+    MADT_EntryHeader h;
+    uint8_t apic_id;
+    uint16_t flags;
+    uint8_t lapic_lint;
+}MADT_EntryAPIC_NMI;
+#define MADT_APIC_NMI_ENTRY_TYPE 4
+
 #endif /* end of include guard: _MADT_ACPI_TABLE_H_ */

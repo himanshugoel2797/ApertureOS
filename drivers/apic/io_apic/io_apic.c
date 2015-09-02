@@ -34,7 +34,29 @@ void IOAPIC_Write(uint32_t* io_apic_baseAddr, uint32_t index, uint32_t val)
         io_apic_baseAddr[4] = val;
 }
 
-void IOAPIC_MapIRQ(uint8_t global_irq, uint8_t apic_vector, uint64_t apic_id, uint8_t trigger_mode, uint8_t polarity)
+uint8_t IOAPIC_GetVector(uint8_t global_irq, uint8_t *vec)
+{
+        uint32_t irq_pin = 0;
+        uint32_t *baseAddr = NULL;
+        //Determine which APIC this should map to
+        for(uint32_t i = 0; i < curIOAPIC_index; i++)
+        {
+                if(global_irq >= ioapics[i].global_int_base && global_irq < (ioapics[i].global_int_base + ioapics[i].entry_count)) {
+                        //Found the IO APIC to map to
+                        irq_pin = global_irq - ioapics[i].global_int_base;
+                        baseAddr = (uint32_t*)ioapics[i].baseAddr;
+                }
+        }
+        if(baseAddr == NULL) return -1; //No match found!
+
+        const uint32_t low_index = 0x10 + irq_pin*2;
+
+        uint32_t low = IOAPIC_Read(baseAddr, low_index);
+        *vec = (low & 0xFF);
+        return low & 0xff;
+}
+
+void IOAPIC_MapIRQ(uint8_t global_irq, uint8_t apic_vector, uint64_t apic_id, uint8_t trigger_mode, uint8_t polarity, uint8_t delivery_mode)
 {
         uint32_t irq_pin = 0;
         uint32_t *baseAddr = NULL;
@@ -79,6 +101,8 @@ void IOAPIC_MapIRQ(uint8_t global_irq, uint8_t apic_vector, uint64_t apic_id, ui
         // set delivery vector
         low &= ~0xff;
         low |= apic_vector;
+
+        low |= (((uint32_t)delivery_mode & 7) << 8);
 
         IOAPIC_Write(baseAddr, low_index, low);
 }

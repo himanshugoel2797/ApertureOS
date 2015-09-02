@@ -1,0 +1,713 @@
+
+graphics/graphics.o:     file format elf32-i386
+
+
+Disassembly of section .text:
+
+00000000 <graphics_Initialize>:
+   0:	55                   	push   %ebp
+   1:	89 e5                	mov    %esp,%ebp
+   3:	53                   	push   %ebx
+   4:	57                   	push   %edi
+   5:	56                   	push   %esi
+   6:	83 ec 38             	sub    $0x38,%esp
+   9:	a1 00 00 00 00       	mov    0x0,%eax
+   e:	8b 40 60             	mov    0x60(%eax),%eax
+  11:	c1 e8 02             	shr    $0x2,%eax
+  14:	a3 00 00 00 00       	mov    %eax,0x0
+  19:	a1 00 00 00 00       	mov    0x0,%eax
+  1e:	8b 40 64             	mov    0x64(%eax),%eax
+  21:	a3 00 00 00 00       	mov    %eax,0x0
+  26:	a1 00 00 00 00       	mov    0x0,%eax
+  2b:	8b 40 68             	mov    0x68(%eax),%eax
+  2e:	a3 00 00 00 00       	mov    %eax,0x0
+  33:	a1 00 00 00 00       	mov    0x0,%eax
+  38:	8a 48 6c             	mov    0x6c(%eax),%cl
+  3b:	88 0d 00 00 00 00    	mov    %cl,0x0
+  41:	a1 00 00 00 00       	mov    0x0,%eax
+  46:	ba cd cc cc cc       	mov    $0xcccccccd,%edx
+  4b:	89 55 e8             	mov    %edx,-0x18(%ebp)
+  4e:	f7 e2                	mul    %edx
+  50:	c1 ea 03             	shr    $0x3,%edx
+  53:	89 15 00 00 00 00    	mov    %edx,0x0
+  59:	a1 00 00 00 00       	mov    0x0,%eax
+  5e:	8b 55 e8             	mov    -0x18(%ebp),%edx
+  61:	f7 e2                	mul    %edx
+  63:	c1 ea 04             	shr    $0x4,%edx
+  66:	89 15 00 00 00 00    	mov    %edx,0x0
+  6c:	a1 00 00 00 00       	mov    0x0,%eax
+  71:	8b 15 00 00 00 00    	mov    0x0,%edx
+  77:	0f af c2             	imul   %edx,%eax
+  7a:	c1 e0 02             	shl    $0x2,%eax
+  7d:	a3 00 00 00 00       	mov    %eax,0x0
+  82:	a1 00 00 00 00       	mov    0x0,%eax
+  87:	8b 40 58             	mov    0x58(%eax),%eax
+  8a:	a3 00 00 00 00       	mov    %eax,0x0
+  8f:	a1 00 00 00 00       	mov    0x0,%eax
+  94:	83 e8 80             	sub    $0xffffff80,%eax
+  97:	89 e2                	mov    %esp,%edx
+  99:	89 02                	mov    %eax,(%edx)
+  9b:	e8 fc ff ff ff       	call   9c <graphics_Initialize+0x9c>
+  a0:	a3 00 00 00 00       	mov    %eax,0x0
+  a5:	89 c2                	mov    %eax,%edx
+  a7:	83 e2 0f             	and    $0xf,%edx
+  aa:	01 d0                	add    %edx,%eax
+  ac:	a3 00 00 00 00       	mov    %eax,0x0
+  b1:	a1 00 00 00 00       	mov    0x0,%eax
+  b6:	89 e2                	mov    %esp,%edx
+  b8:	89 02                	mov    %eax,(%edx)
+  ba:	c7 42 04 00 00 00 00 	movl   $0x0,0x4(%edx)
+  c1:	e8 fc ff ff ff       	call   c2 <graphics_Initialize+0xc2>
+  c6:	89 45 f0             	mov    %eax,-0x10(%ebp)
+  c9:	31 d2                	xor    %edx,%edx
+  cb:	8b 35 00 00 00 00    	mov    0x0,%esi
+  d1:	8b 3d 00 00 00 00    	mov    0x0,%edi
+  d7:	83 c7 70             	add    $0x70,%edi
+  da:	89 e3                	mov    %esp,%ebx
+  dc:	89 7b 0c             	mov    %edi,0xc(%ebx)
+  df:	89 53 08             	mov    %edx,0x8(%ebx)
+  e2:	89 73 04             	mov    %esi,0x4(%ebx)
+  e5:	89 03                	mov    %eax,(%ebx)
+  e7:	c7 43 18 00 00 00 00 	movl   $0x0,0x18(%ebx)
+  ee:	c7 43 14 03 00 00 00 	movl   $0x3,0x14(%ebx)
+  f5:	c7 43 10 03 00 00 00 	movl   $0x3,0x10(%ebx)
+  fc:	e8 fc ff ff ff       	call   fd <graphics_Initialize+0xfd>
+ 101:	ba 00 00 00 00       	mov    $0x0,%edx
+ 106:	89 45 ec             	mov    %eax,-0x14(%ebp)
+ 109:	8b 45 f0             	mov    -0x10(%ebp),%eax
+ 10c:	a3 00 00 00 00       	mov    %eax,0x0
+ 111:	a1 00 00 00 00       	mov    0x0,%eax
+ 116:	a3 00 00 00 00       	mov    %eax,0x0
+ 11b:	a1 00 00 00 00       	mov    0x0,%eax
+ 120:	8b 35 00 00 00 00    	mov    0x0,%esi
+ 126:	89 04 24             	mov    %eax,(%esp)
+ 129:	c7 44 24 04 00 00 00 	movl   $0x0,0x4(%esp)
+ 130:	00 
+ 131:	89 74 24 08          	mov    %esi,0x8(%esp)
+ 135:	89 55 e4             	mov    %edx,-0x1c(%ebp)
+ 138:	e8 fc ff ff ff       	call   139 <graphics_Initialize+0x139>
+ 13d:	ba 00 00 00 00       	mov    $0x0,%edx
+ 142:	8b 35 00 00 00 00    	mov    0x0,%esi
+ 148:	8b 3d 00 00 00 00    	mov    0x0,%edi
+ 14e:	89 34 24             	mov    %esi,(%esp)
+ 151:	c7 44 24 04 00 00 00 	movl   $0x0,0x4(%esp)
+ 158:	00 
+ 159:	89 7c 24 08          	mov    %edi,0x8(%esp)
+ 15d:	89 45 e0             	mov    %eax,-0x20(%ebp)
+ 160:	89 55 dc             	mov    %edx,-0x24(%ebp)
+ 163:	e8 fc ff ff ff       	call   164 <graphics_Initialize+0x164>
+ 168:	89 45 d8             	mov    %eax,-0x28(%ebp)
+ 16b:	83 c4 38             	add    $0x38,%esp
+ 16e:	5e                   	pop    %esi
+ 16f:	5f                   	pop    %edi
+ 170:	5b                   	pop    %ebx
+ 171:	5d                   	pop    %ebp
+ 172:	c3                   	ret    
+ 173:	8d b6 00 00 00 00    	lea    0x0(%esi),%esi
+ 179:	8d bc 27 00 00 00 00 	lea    0x0(%edi,%eiz,1),%edi
+
+00000180 <graphics_SwapBuffer>:
+ 180:	55                   	push   %ebp
+ 181:	89 e5                	mov    %esp,%ebp
+ 183:	53                   	push   %ebx
+ 184:	83 ec 0c             	sub    $0xc,%esp
+ 187:	a1 00 00 00 00       	mov    0x0,%eax
+ 18c:	89 45 f8             	mov    %eax,-0x8(%ebp)
+ 18f:	a1 00 00 00 00       	mov    0x0,%eax
+ 194:	89 45 f4             	mov    %eax,-0xc(%ebp)
+ 197:	c7 45 f0 00 00 00 00 	movl   $0x0,-0x10(%ebp)
+ 19e:	8b 45 f0             	mov    -0x10(%ebp),%eax
+ 1a1:	3b 05 00 00 00 00    	cmp    0x0,%eax
+ 1a7:	73 67                	jae    210 <graphics_SwapBuffer+0x90>
+ 1a9:	8b 5d f4             	mov    -0xc(%ebp),%ebx
+ 1ac:	0f 28 0b             	movaps (%ebx),%xmm1
+ 1af:	0f 28 53 10          	movaps 0x10(%ebx),%xmm2
+ 1b3:	0f 28 5b 20          	movaps 0x20(%ebx),%xmm3
+ 1b7:	0f 28 63 30          	movaps 0x30(%ebx),%xmm4
+ 1bb:	0f 28 6b 40          	movaps 0x40(%ebx),%xmm5
+ 1bf:	0f 28 73 50          	movaps 0x50(%ebx),%xmm6
+ 1c3:	0f 28 43 70          	movaps 0x70(%ebx),%xmm0
+ 1c7:	0f 28 7b 60          	movaps 0x60(%ebx),%xmm7
+ 1cb:	0f 29 40 70          	movaps %xmm0,0x70(%eax)
+ 1cf:	0f 29 08             	movaps %xmm1,(%eax)
+ 1d2:	0f 29 50 10          	movaps %xmm2,0x10(%eax)
+ 1d6:	0f 29 58 20          	movaps %xmm3,0x20(%eax)
+ 1da:	0f 29 60 30          	movaps %xmm4,0x30(%eax)
+ 1de:	0f 29 68 40          	movaps %xmm5,0x40(%eax)
+ 1e2:	0f 29 70 50          	movaps %xmm6,0x50(%eax)
+ 1e6:	0f 29 78 60          	movaps %xmm7,0x60(%eax)
+ 1ea:	89 45 f8             	mov    %eax,-0x8(%ebp)
+ 1ed:	8b 45 f4             	mov    -0xc(%ebp),%eax
+ 1f0:	05 00 04 00 00       	add    $0x400,%eax
+ 1f5:	89 45 f4             	mov    %eax,-0xc(%ebp)
+ 1f8:	8b 45 f8             	mov    -0x8(%ebp),%eax
+ 1fb:	05 00 04 00 00       	add    $0x400,%eax
+ 200:	89 45 f8             	mov    %eax,-0x8(%ebp)
+ 203:	8b 45 f0             	mov    -0x10(%ebp),%eax
+ 206:	05 80 00 00 00       	add    $0x80,%eax
+ 20b:	89 45 f0             	mov    %eax,-0x10(%ebp)
+ 20e:	eb 8e                	jmp    19e <graphics_SwapBuffer+0x1e>
+ 210:	83 c4 0c             	add    $0xc,%esp
+ 213:	5b                   	pop    %ebx
+ 214:	5d                   	pop    %ebp
+ 215:	c3                   	ret    
+ 216:	8d 76 00             	lea    0x0(%esi),%esi
+ 219:	8d bc 27 00 00 00 00 	lea    0x0(%edi,%eiz,1),%edi
+
+00000220 <graphics_Clear>:
+ 220:	55                   	push   %ebp
+ 221:	89 e5                	mov    %esp,%ebp
+ 223:	56                   	push   %esi
+ 224:	83 ec 20             	sub    $0x20,%esp
+ 227:	8d 05 00 00 00 00    	lea    0x0,%eax
+ 22d:	b9 ff 00 00 00       	mov    $0xff,%ecx
+ 232:	ba 10 00 00 00       	mov    $0x10,%edx
+ 237:	8b 35 00 00 00 00    	mov    0x0,%esi
+ 23d:	89 75 f8             	mov    %esi,-0x8(%ebp)
+ 240:	89 04 24             	mov    %eax,(%esp)
+ 243:	c7 44 24 04 ff 00 00 	movl   $0xff,0x4(%esp)
+ 24a:	00 
+ 24b:	c7 44 24 08 10 00 00 	movl   $0x10,0x8(%esp)
+ 252:	00 
+ 253:	89 55 f0             	mov    %edx,-0x10(%ebp)
+ 256:	89 4d ec             	mov    %ecx,-0x14(%ebp)
+ 259:	e8 fc ff ff ff       	call   25a <graphics_Clear+0x3a>
+ 25e:	b9 00 00 00 00       	mov    $0x0,%ecx
+ 263:	0f 28 09             	movaps (%ecx),%xmm1
+ 266:	c7 45 f4 00 00 00 00 	movl   $0x0,-0xc(%ebp)
+ 26d:	89 45 e8             	mov    %eax,-0x18(%ebp)
+ 270:	8b 45 f4             	mov    -0xc(%ebp),%eax
+ 273:	3b 05 00 00 00 00    	cmp    0x0,%eax
+ 279:	73 1a                	jae    295 <graphics_Clear+0x75>
+ 27b:	0f 29 08             	movaps %xmm1,(%eax)
+ 27e:	89 45 f8             	mov    %eax,-0x8(%ebp)
+ 281:	8b 45 f8             	mov    -0x8(%ebp),%eax
+ 284:	83 c0 10             	add    $0x10,%eax
+ 287:	89 45 f8             	mov    %eax,-0x8(%ebp)
+ 28a:	8b 45 f4             	mov    -0xc(%ebp),%eax
+ 28d:	83 c0 10             	add    $0x10,%eax
+ 290:	89 45 f4             	mov    %eax,-0xc(%ebp)
+ 293:	eb db                	jmp    270 <graphics_Clear+0x50>
+ 295:	83 c4 20             	add    $0x20,%esp
+ 298:	5e                   	pop    %esi
+ 299:	5d                   	pop    %ebp
+ 29a:	c3                   	ret    
+ 29b:	90                   	nop
+ 29c:	8d 74 26 00          	lea    0x0(%esi,%eiz,1),%esi
+
+000002a0 <graphics_WriteStr>:
+ 2a0:	55                   	push   %ebp
+ 2a1:	89 e5                	mov    %esp,%ebp
+ 2a3:	53                   	push   %ebx
+ 2a4:	57                   	push   %edi
+ 2a5:	56                   	push   %esi
+ 2a6:	83 ec 20             	sub    $0x20,%esp
+ 2a9:	8b 45 10             	mov    0x10(%ebp),%eax
+ 2ac:	8b 4d 0c             	mov    0xc(%ebp),%ecx
+ 2af:	8b 55 08             	mov    0x8(%ebp),%edx
+ 2b2:	89 55 f0             	mov    %edx,-0x10(%ebp)
+ 2b5:	89 4d ec             	mov    %ecx,-0x14(%ebp)
+ 2b8:	89 45 e8             	mov    %eax,-0x18(%ebp)
+ 2bb:	c7 45 e4 00 00 00 00 	movl   $0x0,-0x1c(%ebp)
+ 2c2:	c7 45 e0 00 00 00 00 	movl   $0x0,-0x20(%ebp)
+ 2c9:	8b 45 e0             	mov    -0x20(%ebp),%eax
+ 2cc:	8b 4d f0             	mov    -0x10(%ebp),%ecx
+ 2cf:	0f be 04 01          	movsbl (%ecx,%eax,1),%eax
+ 2d3:	83 f8 00             	cmp    $0x0,%eax
+ 2d6:	0f 84 e4 00 00 00    	je     3c0 <graphics_WriteStr+0x120>
+ 2dc:	c7 45 dc 00 00 00 00 	movl   $0x0,-0x24(%ebp)
+ 2e3:	83 7d dc 08          	cmpl   $0x8,-0x24(%ebp)
+ 2e7:	0f 8d bc 00 00 00    	jge    3a9 <graphics_WriteStr+0x109>
+ 2ed:	8b 45 e8             	mov    -0x18(%ebp),%eax
+ 2f0:	89 45 d8             	mov    %eax,-0x28(%ebp)
+ 2f3:	8b 45 d8             	mov    -0x28(%ebp),%eax
+ 2f6:	8b 4d e8             	mov    -0x18(%ebp),%ecx
+ 2f9:	83 c1 0d             	add    $0xd,%ecx
+ 2fc:	39 c8                	cmp    %ecx,%eax
+ 2fe:	0f 8d 95 00 00 00    	jge    399 <graphics_WriteStr+0xf9>
+ 304:	b8 08 00 00 00       	mov    $0x8,%eax
+ 309:	b9 01 00 00 00       	mov    $0x1,%ecx
+ 30e:	8d 15 00 00 00 00    	lea    0x0,%edx
+ 314:	be 0d 00 00 00       	mov    $0xd,%esi
+ 319:	8b 7d ec             	mov    -0x14(%ebp),%edi
+ 31c:	89 c3                	mov    %eax,%ebx
+ 31e:	2b 5d dc             	sub    -0x24(%ebp),%ebx
+ 321:	01 df                	add    %ebx,%edi
+ 323:	8b 5d d8             	mov    -0x28(%ebp),%ebx
+ 326:	0f af 1d 00 00 00 00 	imul   0x0,%ebx
+ 32d:	01 df                	add    %ebx,%edi
+ 32f:	8b 1d 00 00 00 00    	mov    0x0,%ebx
+ 335:	8b 3c bb             	mov    (%ebx,%edi,4),%edi
+ 338:	89 7d e4             	mov    %edi,-0x1c(%ebp)
+ 33b:	8b 7d d8             	mov    -0x28(%ebp),%edi
+ 33e:	2b 7d e8             	sub    -0x18(%ebp),%edi
+ 341:	29 fe                	sub    %edi,%esi
+ 343:	8b 7d e0             	mov    -0x20(%ebp),%edi
+ 346:	8b 5d f0             	mov    -0x10(%ebp),%ebx
+ 349:	0f be 3c 3b          	movsbl (%ebx,%edi,1),%edi
+ 34d:	83 ef 20             	sub    $0x20,%edi
+ 350:	6b ff 0d             	imul   $0xd,%edi,%edi
+ 353:	01 fa                	add    %edi,%edx
+ 355:	0f b6 14 32          	movzbl (%edx,%esi,1),%edx
+ 359:	8b 75 dc             	mov    -0x24(%ebp),%esi
+ 35c:	89 4d d4             	mov    %ecx,-0x2c(%ebp)
+ 35f:	89 f1                	mov    %esi,%ecx
+ 361:	d3 fa                	sar    %cl,%edx
+ 363:	83 e2 01             	and    $0x1,%edx
+ 366:	8b 75 d4             	mov    -0x2c(%ebp),%esi
+ 369:	29 d6                	sub    %edx,%esi
+ 36b:	0f af 75 e4          	imul   -0x1c(%ebp),%esi
+ 36f:	8b 55 ec             	mov    -0x14(%ebp),%edx
+ 372:	2b 45 dc             	sub    -0x24(%ebp),%eax
+ 375:	01 c2                	add    %eax,%edx
+ 377:	8b 45 d8             	mov    -0x28(%ebp),%eax
+ 37a:	0f af 05 00 00 00 00 	imul   0x0,%eax
+ 381:	01 c2                	add    %eax,%edx
+ 383:	a1 00 00 00 00       	mov    0x0,%eax
+ 388:	89 34 90             	mov    %esi,(%eax,%edx,4)
+ 38b:	8b 45 d8             	mov    -0x28(%ebp),%eax
+ 38e:	83 c0 01             	add    $0x1,%eax
+ 391:	89 45 d8             	mov    %eax,-0x28(%ebp)
+ 394:	e9 5a ff ff ff       	jmp    2f3 <graphics_WriteStr+0x53>
+ 399:	eb 00                	jmp    39b <graphics_WriteStr+0xfb>
+ 39b:	8b 45 dc             	mov    -0x24(%ebp),%eax
+ 39e:	83 c0 01             	add    $0x1,%eax
+ 3a1:	89 45 dc             	mov    %eax,-0x24(%ebp)
+ 3a4:	e9 3a ff ff ff       	jmp    2e3 <graphics_WriteStr+0x43>
+ 3a9:	8b 45 ec             	mov    -0x14(%ebp),%eax
+ 3ac:	83 c0 08             	add    $0x8,%eax
+ 3af:	89 45 ec             	mov    %eax,-0x14(%ebp)
+ 3b2:	8b 45 e0             	mov    -0x20(%ebp),%eax
+ 3b5:	83 c0 01             	add    $0x1,%eax
+ 3b8:	89 45 e0             	mov    %eax,-0x20(%ebp)
+ 3bb:	e9 09 ff ff ff       	jmp    2c9 <graphics_WriteStr+0x29>
+ 3c0:	83 c4 20             	add    $0x20,%esp
+ 3c3:	5e                   	pop    %esi
+ 3c4:	5f                   	pop    %edi
+ 3c5:	5b                   	pop    %ebx
+ 3c6:	5d                   	pop    %ebp
+ 3c7:	c3                   	ret    
+ 3c8:	90                   	nop
+ 3c9:	8d b4 26 00 00 00 00 	lea    0x0(%esi,%eiz,1),%esi
+
+000003d0 <graphics_WriteUInt32>:
+ 3d0:	55                   	push   %ebp
+ 3d1:	89 e5                	mov    %esp,%ebp
+ 3d3:	56                   	push   %esi
+ 3d4:	81 ec a8 00 00 00    	sub    $0xa8,%esp
+ 3da:	8b 45 14             	mov    0x14(%ebp),%eax
+ 3dd:	8b 4d 10             	mov    0x10(%ebp),%ecx
+ 3e0:	8b 55 0c             	mov    0xc(%ebp),%edx
+ 3e3:	8b 75 08             	mov    0x8(%ebp),%esi
+ 3e6:	89 75 f8             	mov    %esi,-0x8(%ebp)
+ 3e9:	89 55 f4             	mov    %edx,-0xc(%ebp)
+ 3ec:	89 4d f0             	mov    %ecx,-0x10(%ebp)
+ 3ef:	89 45 ec             	mov    %eax,-0x14(%ebp)
+ 3f2:	83 7d f4 0a          	cmpl   $0xa,-0xc(%ebp)
+ 3f6:	75 27                	jne    41f <graphics_WriteUInt32+0x4f>
+ 3f8:	8d 05 00 00 00 00    	lea    0x0,%eax
+ 3fe:	8d 8d 6c ff ff ff    	lea    -0x94(%ebp),%ecx
+ 404:	8b 55 f8             	mov    -0x8(%ebp),%edx
+ 407:	89 0c 24             	mov    %ecx,(%esp)
+ 40a:	89 44 24 04          	mov    %eax,0x4(%esp)
+ 40e:	89 54 24 08          	mov    %edx,0x8(%esp)
+ 412:	e8 fc ff ff ff       	call   413 <graphics_WriteUInt32+0x43>
+ 417:	89 85 68 ff ff ff    	mov    %eax,-0x98(%ebp)
+ 41d:	eb 5c                	jmp    47b <graphics_WriteUInt32+0xab>
+ 41f:	83 7d f4 10          	cmpl   $0x10,-0xc(%ebp)
+ 423:	75 27                	jne    44c <graphics_WriteUInt32+0x7c>
+ 425:	8d 05 03 00 00 00    	lea    0x3,%eax
+ 42b:	8d 8d 6c ff ff ff    	lea    -0x94(%ebp),%ecx
+ 431:	8b 55 f8             	mov    -0x8(%ebp),%edx
+ 434:	89 0c 24             	mov    %ecx,(%esp)
+ 437:	89 44 24 04          	mov    %eax,0x4(%esp)
+ 43b:	89 54 24 08          	mov    %edx,0x8(%esp)
+ 43f:	e8 fc ff ff ff       	call   440 <graphics_WriteUInt32+0x70>
+ 444:	89 85 64 ff ff ff    	mov    %eax,-0x9c(%ebp)
+ 44a:	eb 2d                	jmp    479 <graphics_WriteUInt32+0xa9>
+ 44c:	83 7d f4 02          	cmpl   $0x2,-0xc(%ebp)
+ 450:	75 25                	jne    477 <graphics_WriteUInt32+0xa7>
+ 452:	8d 05 07 00 00 00    	lea    0x7,%eax
+ 458:	8d 8d 6c ff ff ff    	lea    -0x94(%ebp),%ecx
+ 45e:	8b 55 f8             	mov    -0x8(%ebp),%edx
+ 461:	89 0c 24             	mov    %ecx,(%esp)
+ 464:	89 44 24 04          	mov    %eax,0x4(%esp)
+ 468:	89 54 24 08          	mov    %edx,0x8(%esp)
+ 46c:	e8 fc ff ff ff       	call   46d <graphics_WriteUInt32+0x9d>
+ 471:	89 85 60 ff ff ff    	mov    %eax,-0xa0(%ebp)
+ 477:	eb 00                	jmp    479 <graphics_WriteUInt32+0xa9>
+ 479:	eb 00                	jmp    47b <graphics_WriteUInt32+0xab>
+ 47b:	8d 85 6c ff ff ff    	lea    -0x94(%ebp),%eax
+ 481:	8b 4d f0             	mov    -0x10(%ebp),%ecx
+ 484:	8b 55 ec             	mov    -0x14(%ebp),%edx
+ 487:	89 04 24             	mov    %eax,(%esp)
+ 48a:	89 4c 24 04          	mov    %ecx,0x4(%esp)
+ 48e:	89 54 24 08          	mov    %edx,0x8(%esp)
+ 492:	e8 fc ff ff ff       	call   493 <graphics_WriteUInt32+0xc3>
+ 497:	81 c4 a8 00 00 00    	add    $0xa8,%esp
+ 49d:	5e                   	pop    %esi
+ 49e:	5d                   	pop    %ebp
+ 49f:	c3                   	ret    
+
+000004a0 <graphics_WriteUInt64>:
+ 4a0:	55                   	push   %ebp
+ 4a1:	89 e5                	mov    %esp,%ebp
+ 4a3:	57                   	push   %edi
+ 4a4:	56                   	push   %esi
+ 4a5:	83 e4 f8             	and    $0xfffffff8,%esp
+ 4a8:	81 ec 30 02 00 00    	sub    $0x230,%esp
+ 4ae:	8b 45 0c             	mov    0xc(%ebp),%eax
+ 4b1:	8b 4d 08             	mov    0x8(%ebp),%ecx
+ 4b4:	8b 55 18             	mov    0x18(%ebp),%edx
+ 4b7:	8b 75 14             	mov    0x14(%ebp),%esi
+ 4ba:	8b 7d 10             	mov    0x10(%ebp),%edi
+ 4bd:	89 8c 24 28 02 00 00 	mov    %ecx,0x228(%esp)
+ 4c4:	89 84 24 2c 02 00 00 	mov    %eax,0x22c(%esp)
+ 4cb:	89 bc 24 24 02 00 00 	mov    %edi,0x224(%esp)
+ 4d2:	89 b4 24 20 02 00 00 	mov    %esi,0x220(%esp)
+ 4d9:	89 94 24 1c 02 00 00 	mov    %edx,0x21c(%esp)
+ 4e0:	83 bc 24 24 02 00 00 	cmpl   $0xa,0x224(%esp)
+ 4e7:	0a 
+ 4e8:	75 2e                	jne    518 <graphics_WriteUInt64+0x78>
+ 4ea:	8d 44 24 1c          	lea    0x1c(%esp),%eax
+ 4ee:	8b 8c 24 28 02 00 00 	mov    0x228(%esp),%ecx
+ 4f5:	8b 94 24 2c 02 00 00 	mov    0x22c(%esp),%edx
+ 4fc:	89 e6                	mov    %esp,%esi
+ 4fe:	89 56 0c             	mov    %edx,0xc(%esi)
+ 501:	89 4e 08             	mov    %ecx,0x8(%esi)
+ 504:	89 06                	mov    %eax,(%esi)
+ 506:	c7 46 04 00 00 00 00 	movl   $0x0,0x4(%esi)
+ 50d:	e8 fc ff ff ff       	call   50e <graphics_WriteUInt64+0x6e>
+ 512:	89 44 24 18          	mov    %eax,0x18(%esp)
+ 516:	eb 72                	jmp    58a <graphics_WriteUInt64+0xea>
+ 518:	83 bc 24 24 02 00 00 	cmpl   $0x10,0x224(%esp)
+ 51f:	10 
+ 520:	75 2e                	jne    550 <graphics_WriteUInt64+0xb0>
+ 522:	8d 44 24 1c          	lea    0x1c(%esp),%eax
+ 526:	8b 8c 24 28 02 00 00 	mov    0x228(%esp),%ecx
+ 52d:	8b 94 24 2c 02 00 00 	mov    0x22c(%esp),%edx
+ 534:	89 e6                	mov    %esp,%esi
+ 536:	89 56 0c             	mov    %edx,0xc(%esi)
+ 539:	89 4e 08             	mov    %ecx,0x8(%esi)
+ 53c:	89 06                	mov    %eax,(%esi)
+ 53e:	c7 46 04 03 00 00 00 	movl   $0x3,0x4(%esi)
+ 545:	e8 fc ff ff ff       	call   546 <graphics_WriteUInt64+0xa6>
+ 54a:	89 44 24 14          	mov    %eax,0x14(%esp)
+ 54e:	eb 38                	jmp    588 <graphics_WriteUInt64+0xe8>
+ 550:	83 bc 24 24 02 00 00 	cmpl   $0x2,0x224(%esp)
+ 557:	02 
+ 558:	75 2c                	jne    586 <graphics_WriteUInt64+0xe6>
+ 55a:	8d 44 24 1c          	lea    0x1c(%esp),%eax
+ 55e:	8b 8c 24 28 02 00 00 	mov    0x228(%esp),%ecx
+ 565:	8b 94 24 2c 02 00 00 	mov    0x22c(%esp),%edx
+ 56c:	89 e6                	mov    %esp,%esi
+ 56e:	89 56 0c             	mov    %edx,0xc(%esi)
+ 571:	89 4e 08             	mov    %ecx,0x8(%esi)
+ 574:	89 06                	mov    %eax,(%esi)
+ 576:	c7 46 04 07 00 00 00 	movl   $0x7,0x4(%esi)
+ 57d:	e8 fc ff ff ff       	call   57e <graphics_WriteUInt64+0xde>
+ 582:	89 44 24 10          	mov    %eax,0x10(%esp)
+ 586:	eb 00                	jmp    588 <graphics_WriteUInt64+0xe8>
+ 588:	eb 00                	jmp    58a <graphics_WriteUInt64+0xea>
+ 58a:	8d 44 24 1c          	lea    0x1c(%esp),%eax
+ 58e:	8b 8c 24 20 02 00 00 	mov    0x220(%esp),%ecx
+ 595:	8b 94 24 1c 02 00 00 	mov    0x21c(%esp),%edx
+ 59c:	89 04 24             	mov    %eax,(%esp)
+ 59f:	89 4c 24 04          	mov    %ecx,0x4(%esp)
+ 5a3:	89 54 24 08          	mov    %edx,0x8(%esp)
+ 5a7:	e8 fc ff ff ff       	call   5a8 <graphics_WriteUInt64+0x108>
+ 5ac:	8d 65 f8             	lea    -0x8(%ebp),%esp
+ 5af:	5e                   	pop    %esi
+ 5b0:	5f                   	pop    %edi
+ 5b1:	5d                   	pop    %ebp
+ 5b2:	c3                   	ret    
+ 5b3:	8d b6 00 00 00 00    	lea    0x0(%esi),%esi
+ 5b9:	8d bc 27 00 00 00 00 	lea    0x0(%edi,%eiz,1),%edi
+
+000005c0 <graphics_WriteFloat>:
+ 5c0:	55                   	push   %ebp
+ 5c1:	89 e5                	mov    %esp,%ebp
+ 5c3:	53                   	push   %ebx
+ 5c4:	56                   	push   %esi
+ 5c5:	83 e4 f8             	and    $0xfffffff8,%esp
+ 5c8:	81 ec 70 01 00 00    	sub    $0x170,%esp
+ 5ce:	8b 45 14             	mov    0x14(%ebp),%eax
+ 5d1:	8b 4d 10             	mov    0x10(%ebp),%ecx
+ 5d4:	8b 55 0c             	mov    0xc(%ebp),%edx
+ 5d7:	d9 45 08             	flds   0x8(%ebp)
+ 5da:	d9 9c 24 6c 01 00 00 	fstps  0x16c(%esp)
+ 5e1:	89 94 24 68 01 00 00 	mov    %edx,0x168(%esp)
+ 5e8:	89 8c 24 64 01 00 00 	mov    %ecx,0x164(%esp)
+ 5ef:	89 84 24 60 01 00 00 	mov    %eax,0x160(%esp)
+ 5f6:	c6 44 24 5e 00       	movb   $0x0,0x5e(%esp)
+ 5fb:	66 c7 44 24 5c 38 39 	movw   $0x3938,0x5c(%esp)
+ 602:	c7 44 24 58 34 35 36 	movl   $0x37363534,0x58(%esp)
+ 609:	37 
+ 60a:	c7 44 24 54 30 31 32 	movl   $0x33323130,0x54(%esp)
+ 611:	33 
+ 612:	d9 84 24 6c 01 00 00 	flds   0x16c(%esp)
+ 619:	d9 7c 24 1e          	fnstcw 0x1e(%esp)
+ 61d:	66 8b 74 24 1e       	mov    0x1e(%esp),%si
+ 622:	66 c7 44 24 1e 7f 0c 	movw   $0xc7f,0x1e(%esp)
+ 629:	d9 6c 24 1e          	fldcw  0x1e(%esp)
+ 62d:	66 89 74 24 1e       	mov    %si,0x1e(%esp)
+ 632:	df 7c 24 30          	fistpll 0x30(%esp)
+ 636:	d9 6c 24 1e          	fldcw  0x1e(%esp)
+ 63a:	8b 44 24 30          	mov    0x30(%esp),%eax
+ 63e:	8b 4c 24 34          	mov    0x34(%esp),%ecx
+ 642:	89 4c 24 4c          	mov    %ecx,0x4c(%esp)
+ 646:	89 44 24 48          	mov    %eax,0x48(%esp)
+ 64a:	d9 84 24 6c 01 00 00 	flds   0x16c(%esp)
+ 651:	8b 84 24 68 01 00 00 	mov    0x168(%esp),%eax
+ 658:	89 44 24 20          	mov    %eax,0x20(%esp)
+ 65c:	c7 44 24 24 00 00 00 	movl   $0x0,0x24(%esp)
+ 663:	00 
+ 664:	df 6c 24 20          	fildll 0x20(%esp)
+ 668:	de c9                	fmulp  %st,%st(1)
+ 66a:	df 6c 24 48          	fildll 0x48(%esp)
+ 66e:	de e9                	fsubrp %st,%st(1)
+ 670:	d9 7c 24 1c          	fnstcw 0x1c(%esp)
+ 674:	66 8b 74 24 1c       	mov    0x1c(%esp),%si
+ 679:	66 c7 44 24 1c 7f 0c 	movw   $0xc7f,0x1c(%esp)
+ 680:	d9 6c 24 1c          	fldcw  0x1c(%esp)
+ 684:	66 89 74 24 1c       	mov    %si,0x1c(%esp)
+ 689:	df 7c 24 28          	fistpll 0x28(%esp)
+ 68d:	d9 6c 24 1c          	fldcw  0x1c(%esp)
+ 691:	8b 44 24 28          	mov    0x28(%esp),%eax
+ 695:	8b 4c 24 2c          	mov    0x2c(%esp),%ecx
+ 699:	89 4c 24 44          	mov    %ecx,0x44(%esp)
+ 69d:	89 44 24 40          	mov    %eax,0x40(%esp)
+ 6a1:	c7 44 24 3c 00 00 00 	movl   $0x0,0x3c(%esp)
+ 6a8:	00 
+ 6a9:	8b 44 24 48          	mov    0x48(%esp),%eax
+ 6ad:	8b 4c 24 4c          	mov    0x4c(%esp),%ecx
+ 6b1:	89 e2                	mov    %esp,%edx
+ 6b3:	89 4a 04             	mov    %ecx,0x4(%edx)
+ 6b6:	89 02                	mov    %eax,(%edx)
+ 6b8:	c7 42 0c 00 00 00 00 	movl   $0x0,0xc(%edx)
+ 6bf:	c7 42 08 0a 00 00 00 	movl   $0xa,0x8(%edx)
+ 6c6:	e8 fc ff ff ff       	call   6c7 <graphics_WriteFloat+0x107>
+ 6cb:	8a 5c 04 54          	mov    0x54(%esp,%eax,1),%bl
+ 6cf:	8b 44 24 3c          	mov    0x3c(%esp),%eax
+ 6d3:	89 c1                	mov    %eax,%ecx
+ 6d5:	41                   	inc    %ecx
+ 6d6:	89 4c 24 3c          	mov    %ecx,0x3c(%esp)
+ 6da:	88 5c 04 60          	mov    %bl,0x60(%esp,%eax,1)
+ 6de:	8b 44 24 48          	mov    0x48(%esp),%eax
+ 6e2:	8b 4c 24 4c          	mov    0x4c(%esp),%ecx
+ 6e6:	89 e2                	mov    %esp,%edx
+ 6e8:	89 4a 04             	mov    %ecx,0x4(%edx)
+ 6eb:	89 02                	mov    %eax,(%edx)
+ 6ed:	c7 42 0c 00 00 00 00 	movl   $0x0,0xc(%edx)
+ 6f4:	c7 42 08 0a 00 00 00 	movl   $0xa,0x8(%edx)
+ 6fb:	e8 fc ff ff ff       	call   6fc <graphics_WriteFloat+0x13c>
+ 700:	89 54 24 4c          	mov    %edx,0x4c(%esp)
+ 704:	89 44 24 48          	mov    %eax,0x48(%esp)
+ 708:	8b 44 24 48          	mov    0x48(%esp),%eax
+ 70c:	8b 4c 24 4c          	mov    0x4c(%esp),%ecx
+ 710:	09 c8                	or     %ecx,%eax
+ 712:	89 44 24 18          	mov    %eax,0x18(%esp)
+ 716:	75 91                	jne    6a9 <graphics_WriteFloat+0xe9>
+ 718:	eb 00                	jmp    71a <graphics_WriteFloat+0x15a>
+ 71a:	8d 44 24 60          	lea    0x60(%esp),%eax
+ 71e:	8b 4c 24 3c          	mov    0x3c(%esp),%ecx
+ 722:	c6 44 0c 60 00       	movb   $0x0,0x60(%esp,%ecx,1)
+ 727:	89 04 24             	mov    %eax,(%esp)
+ 72a:	e8 fc ff ff ff       	call   72b <graphics_WriteFloat+0x16b>
+ 72f:	8b 44 24 3c          	mov    0x3c(%esp),%eax
+ 733:	89 c1                	mov    %eax,%ecx
+ 735:	83 c1 01             	add    $0x1,%ecx
+ 738:	89 4c 24 3c          	mov    %ecx,0x3c(%esp)
+ 73c:	c6 44 04 60 2e       	movb   $0x2e,0x60(%esp,%eax,1)
+ 741:	8b 44 24 40          	mov    0x40(%esp),%eax
+ 745:	8b 4c 24 44          	mov    0x44(%esp),%ecx
+ 749:	89 e2                	mov    %esp,%edx
+ 74b:	89 4a 04             	mov    %ecx,0x4(%edx)
+ 74e:	89 02                	mov    %eax,(%edx)
+ 750:	c7 42 0c 00 00 00 00 	movl   $0x0,0xc(%edx)
+ 757:	c7 42 08 0a 00 00 00 	movl   $0xa,0x8(%edx)
+ 75e:	e8 fc ff ff ff       	call   75f <graphics_WriteFloat+0x19f>
+ 763:	8a 5c 04 54          	mov    0x54(%esp,%eax,1),%bl
+ 767:	8b 44 24 3c          	mov    0x3c(%esp),%eax
+ 76b:	89 c1                	mov    %eax,%ecx
+ 76d:	41                   	inc    %ecx
+ 76e:	89 4c 24 3c          	mov    %ecx,0x3c(%esp)
+ 772:	88 5c 04 60          	mov    %bl,0x60(%esp,%eax,1)
+ 776:	8b 44 24 40          	mov    0x40(%esp),%eax
+ 77a:	8b 4c 24 44          	mov    0x44(%esp),%ecx
+ 77e:	89 e2                	mov    %esp,%edx
+ 780:	89 4a 04             	mov    %ecx,0x4(%edx)
+ 783:	89 02                	mov    %eax,(%edx)
+ 785:	c7 42 0c 00 00 00 00 	movl   $0x0,0xc(%edx)
+ 78c:	c7 42 08 0a 00 00 00 	movl   $0xa,0x8(%edx)
+ 793:	e8 fc ff ff ff       	call   794 <graphics_WriteFloat+0x1d4>
+ 798:	89 54 24 44          	mov    %edx,0x44(%esp)
+ 79c:	89 44 24 40          	mov    %eax,0x40(%esp)
+ 7a0:	8b 44 24 40          	mov    0x40(%esp),%eax
+ 7a4:	8b 4c 24 44          	mov    0x44(%esp),%ecx
+ 7a8:	09 c8                	or     %ecx,%eax
+ 7aa:	89 44 24 14          	mov    %eax,0x14(%esp)
+ 7ae:	75 91                	jne    741 <graphics_WriteFloat+0x181>
+ 7b0:	eb 00                	jmp    7b2 <graphics_WriteFloat+0x1f2>
+ 7b2:	8d 44 24 60          	lea    0x60(%esp),%eax
+ 7b6:	8b 4c 24 3c          	mov    0x3c(%esp),%ecx
+ 7ba:	c6 44 0c 60 00       	movb   $0x0,0x60(%esp,%ecx,1)
+ 7bf:	8b 8c 24 64 01 00 00 	mov    0x164(%esp),%ecx
+ 7c6:	8b 94 24 60 01 00 00 	mov    0x160(%esp),%edx
+ 7cd:	89 04 24             	mov    %eax,(%esp)
+ 7d0:	89 4c 24 04          	mov    %ecx,0x4(%esp)
+ 7d4:	89 54 24 08          	mov    %edx,0x8(%esp)
+ 7d8:	e8 fc ff ff ff       	call   7d9 <graphics_WriteFloat+0x219>
+ 7dd:	8d 65 f8             	lea    -0x8(%ebp),%esp
+ 7e0:	5e                   	pop    %esi
+ 7e1:	5b                   	pop    %ebx
+ 7e2:	5d                   	pop    %ebp
+ 7e3:	c3                   	ret    
+ 7e4:	8d b6 00 00 00 00    	lea    0x0(%esi),%esi
+ 7ea:	8d bf 00 00 00 00    	lea    0x0(%edi),%edi
+
+000007f0 <graphics_SetPixel>:
+ 7f0:	55                   	push   %ebp
+ 7f1:	89 e5                	mov    %esp,%ebp
+ 7f3:	83 ec 0c             	sub    $0xc,%esp
+ 7f6:	8b 45 10             	mov    0x10(%ebp),%eax
+ 7f9:	8b 4d 0c             	mov    0xc(%ebp),%ecx
+ 7fc:	8b 55 08             	mov    0x8(%ebp),%edx
+ 7ff:	89 55 fc             	mov    %edx,-0x4(%ebp)
+ 802:	89 4d f8             	mov    %ecx,-0x8(%ebp)
+ 805:	89 45 f4             	mov    %eax,-0xc(%ebp)
+ 808:	8b 45 f4             	mov    -0xc(%ebp),%eax
+ 80b:	8b 4d fc             	mov    -0x4(%ebp),%ecx
+ 80e:	8b 55 f8             	mov    -0x8(%ebp),%edx
+ 811:	0f af 15 00 00 00 00 	imul   0x0,%edx
+ 818:	01 d1                	add    %edx,%ecx
+ 81a:	8b 15 00 00 00 00    	mov    0x0,%edx
+ 820:	89 04 8a             	mov    %eax,(%edx,%ecx,4)
+ 823:	83 c4 0c             	add    $0xc,%esp
+ 826:	5d                   	pop    %ebp
+ 827:	c3                   	ret    
+ 828:	90                   	nop
+ 829:	8d b4 26 00 00 00 00 	lea    0x0(%esi,%eiz,1),%esi
+
+00000830 <graphics_DrawBuffer>:
+ 830:	55                   	push   %ebp
+ 831:	89 e5                	mov    %esp,%ebp
+ 833:	53                   	push   %ebx
+ 834:	57                   	push   %edi
+ 835:	56                   	push   %esi
+ 836:	83 e4 f8             	and    $0xfffffff8,%esp
+ 839:	83 ec 40             	sub    $0x40,%esp
+ 83c:	8b 45 18             	mov    0x18(%ebp),%eax
+ 83f:	8b 4d 14             	mov    0x14(%ebp),%ecx
+ 842:	8b 55 10             	mov    0x10(%ebp),%edx
+ 845:	8b 75 0c             	mov    0xc(%ebp),%esi
+ 848:	8b 7d 08             	mov    0x8(%ebp),%edi
+ 84b:	89 7c 24 38          	mov    %edi,0x38(%esp)
+ 84f:	89 74 24 34          	mov    %esi,0x34(%esp)
+ 853:	89 54 24 30          	mov    %edx,0x30(%esp)
+ 857:	89 4c 24 2c          	mov    %ecx,0x2c(%esp)
+ 85b:	89 44 24 28          	mov    %eax,0x28(%esp)
+ 85f:	8b 44 24 34          	mov    0x34(%esp),%eax
+ 863:	8b 4c 24 30          	mov    0x30(%esp),%ecx
+ 867:	8b 15 00 00 00 00    	mov    0x0,%edx
+ 86d:	0f af ca             	imul   %edx,%ecx
+ 870:	01 c8                	add    %ecx,%eax
+ 872:	8b 0d 00 00 00 00    	mov    0x0,%ecx
+ 878:	8d 04 81             	lea    (%ecx,%eax,4),%eax
+ 87b:	89 44 24 24          	mov    %eax,0x24(%esp)
+ 87f:	8b 44 24 38          	mov    0x38(%esp),%eax
+ 883:	89 44 24 20          	mov    %eax,0x20(%esp)
+ 887:	c7 44 24 1c 00 00 00 	movl   $0x0,0x1c(%esp)
+ 88e:	00 
+ 88f:	c7 44 24 18 00 00 00 	movl   $0x0,0x18(%esp)
+ 896:	00 
+ 897:	c7 44 24 14 00 00 00 	movl   $0x0,0x14(%esp)
+ 89e:	00 
+ 89f:	c7 44 24 10 00 00 00 	movl   $0x0,0x10(%esp)
+ 8a6:	00 
+ 8a7:	8b 44 24 10          	mov    0x10(%esp),%eax
+ 8ab:	8b 4c 24 14          	mov    0x14(%esp),%ecx
+ 8af:	8b 54 24 28          	mov    0x28(%esp),%edx
+ 8b3:	29 d0                	sub    %edx,%eax
+ 8b5:	0f 93 c3             	setae  %bl
+ 8b8:	85 c9                	test   %ecx,%ecx
+ 8ba:	b7 01                	mov    $0x1,%bh
+ 8bc:	89 44 24 0c          	mov    %eax,0xc(%esp)
+ 8c0:	88 7c 24 0b          	mov    %bh,0xb(%esp)
+ 8c4:	88 5c 24 0a          	mov    %bl,0xa(%esp)
+ 8c8:	74 08                	je     8d2 <graphics_DrawBuffer+0xa2>
+ 8ca:	8a 44 24 0b          	mov    0xb(%esp),%al
+ 8ce:	88 44 24 0a          	mov    %al,0xa(%esp)
+ 8d2:	8a 44 24 0a          	mov    0xa(%esp),%al
+ 8d6:	84 c0                	test   %al,%al
+ 8d8:	0f 85 d8 00 00 00    	jne    9b6 <graphics_DrawBuffer+0x186>
+ 8de:	eb 00                	jmp    8e0 <graphics_DrawBuffer+0xb0>
+ 8e0:	8b 44 24 20          	mov    0x20(%esp),%eax
+ 8e4:	8b 08                	mov    (%eax),%ecx
+ 8e6:	8b 40 04             	mov    0x4(%eax),%eax
+ 8e9:	8b 54 24 24          	mov    0x24(%esp),%edx
+ 8ed:	89 42 04             	mov    %eax,0x4(%edx)
+ 8f0:	89 0a                	mov    %ecx,(%edx)
+ 8f2:	8b 44 24 20          	mov    0x20(%esp),%eax
+ 8f6:	8b 48 08             	mov    0x8(%eax),%ecx
+ 8f9:	8b 40 0c             	mov    0xc(%eax),%eax
+ 8fc:	8b 54 24 24          	mov    0x24(%esp),%edx
+ 900:	89 42 0c             	mov    %eax,0xc(%edx)
+ 903:	89 4a 08             	mov    %ecx,0x8(%edx)
+ 906:	8b 44 24 24          	mov    0x24(%esp),%eax
+ 90a:	83 c0 10             	add    $0x10,%eax
+ 90d:	89 44 24 24          	mov    %eax,0x24(%esp)
+ 911:	8b 44 24 18          	mov    0x18(%esp),%eax
+ 915:	8b 4c 24 1c          	mov    0x1c(%esp),%ecx
+ 919:	83 c0 04             	add    $0x4,%eax
+ 91c:	83 d1 00             	adc    $0x0,%ecx
+ 91f:	89 44 24 18          	mov    %eax,0x18(%esp)
+ 923:	89 4c 24 1c          	mov    %ecx,0x1c(%esp)
+ 927:	8b 44 24 20          	mov    0x20(%esp),%eax
+ 92b:	83 c0 10             	add    $0x10,%eax
+ 92e:	89 44 24 20          	mov    %eax,0x20(%esp)
+ 932:	8b 44 24 18          	mov    0x18(%esp),%eax
+ 936:	8b 4c 24 1c          	mov    0x1c(%esp),%ecx
+ 93a:	8b 54 24 2c          	mov    0x2c(%esp),%edx
+ 93e:	29 d0                	sub    %edx,%eax
+ 940:	0f 92 c3             	setb   %bl
+ 943:	31 d2                	xor    %edx,%edx
+ 945:	85 c9                	test   %ecx,%ecx
+ 947:	88 d7                	mov    %dl,%bh
+ 949:	89 44 24 04          	mov    %eax,0x4(%esp)
+ 94d:	88 7c 24 03          	mov    %bh,0x3(%esp)
+ 951:	88 5c 24 02          	mov    %bl,0x2(%esp)
+ 955:	74 08                	je     95f <graphics_DrawBuffer+0x12f>
+ 957:	8a 44 24 03          	mov    0x3(%esp),%al
+ 95b:	88 44 24 02          	mov    %al,0x2(%esp)
+ 95f:	8a 44 24 02          	mov    0x2(%esp),%al
+ 963:	84 c0                	test   %al,%al
+ 965:	75 4a                	jne    9b1 <graphics_DrawBuffer+0x181>
+ 967:	eb 00                	jmp    969 <graphics_DrawBuffer+0x139>
+ 969:	c7 44 24 1c 00 00 00 	movl   $0x0,0x1c(%esp)
+ 970:	00 
+ 971:	c7 44 24 18 00 00 00 	movl   $0x0,0x18(%esp)
+ 978:	00 
+ 979:	8b 44 24 10          	mov    0x10(%esp),%eax
+ 97d:	8b 4c 24 14          	mov    0x14(%esp),%ecx
+ 981:	83 c0 01             	add    $0x1,%eax
+ 984:	83 d1 00             	adc    $0x0,%ecx
+ 987:	89 44 24 10          	mov    %eax,0x10(%esp)
+ 98b:	89 4c 24 14          	mov    %ecx,0x14(%esp)
+ 98f:	8b 4c 24 34          	mov    0x34(%esp),%ecx
+ 993:	8b 54 24 30          	mov    0x30(%esp),%edx
+ 997:	01 c2                	add    %eax,%edx
+ 999:	a1 00 00 00 00       	mov    0x0,%eax
+ 99e:	0f af d0             	imul   %eax,%edx
+ 9a1:	01 d1                	add    %edx,%ecx
+ 9a3:	a1 00 00 00 00       	mov    0x0,%eax
+ 9a8:	c1 e1 02             	shl    $0x2,%ecx
+ 9ab:	01 c8                	add    %ecx,%eax
+ 9ad:	89 44 24 24          	mov    %eax,0x24(%esp)
+ 9b1:	e9 f1 fe ff ff       	jmp    8a7 <graphics_DrawBuffer+0x77>
+ 9b6:	8d 65 f4             	lea    -0xc(%ebp),%esp
+ 9b9:	5e                   	pop    %esi
+ 9ba:	5f                   	pop    %edi
+ 9bb:	5b                   	pop    %ebx
+ 9bc:	5d                   	pop    %ebp
+ 9bd:	c3                   	ret    
