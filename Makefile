@@ -2,31 +2,32 @@
 
 INCLUDES=-I. -Idrivers -Imanagers
 
-SOURCES=utils/native.o utils/common.o utils/sprintf.o \
-				graphics/graphics.o	\
-				managers/system_manager/system_manager.o \
+PRE_FPU_BOOT=crt0.o gdt.o idt.o cpuid.o \
+				boot.o \
+				drivers/serial/COM.o	\
+				drivers/acpi_tables/acpi_tables.o \
+				drivers/apic/apic.o drivers/apic/apic_init.o drivers/apic/io_apic/io_apic.o \
 				managers/bootstrap_mem_pool/bootstrap_mem_pool.o \
-				managers/keyboard/keyboard.o	\
-				managers/msg_manager/msg_manager.o \
 				managers/interrupt/interrupt_manager.o \
+				drivers/cmos/cmos.o \
+				drivers/fpu/fpu.o \
+				managers/msg_manager/msg_manager.o \
+				utils/native.o utils/common.o utils/sprintf.o \
+				managers/system_manager/system_manager.o \
+				drivers/pic/pic.o \
+
+SOURCES=graphics/graphics.o	\
+				managers/keyboard/keyboard.o	\
 				managers/phys_mem_manager/phys_mem_manager.o \
 				managers/process/process_manager.o	\
 				managers/threads/threads.o	\
 				managers/timer/timer_manager.o \
 				managers/virt_mem_manager/virt_mem_manager.o \
-				drivers/acpi_tables/acpi_tables.o \
-				drivers/apic/apic.o drivers/apic/apic_init.o drivers/apic/io_apic/io_apic.o \
-				drivers/cmos/cmos.o \
-				drivers/fpu/fpu.o \
 				drivers/hpet/hpet.o \
 				drivers/pci/pci.o	drivers/pci/pci_devices.o \
-				drivers/pic/pic.o \
 				drivers/pit/pit.o \
 				drivers/ps2/ps2.o drivers/ps2/ps2_keyboard.o \
-				drivers/serial/COM.o	\
 				kmalloc.o \
-				crt0.o gdt.o idt.o cpuid.o \
-				boot.o \
 
 
 
@@ -56,7 +57,9 @@ MKDIR=mkdir
 CP=cp
 CCADMIN=CCadmin
 GCC=clang -target i986-none-elf
-CFLAGS= -mno-sse -ffreestanding -O0 -Wall -Wextra -Wno-trigraphs -D$(CONF)  -DCURRENT_YEAR=$(CURRENT_YEAR) -DCOM_ENABLED=$(COM_ENABLED) $(INCLUDES)
+CFLAGS_A= -ffreestanding -O0 -Wall -Wextra -Wno-trigraphs -D$(CONF)  -DCURRENT_YEAR=$(CURRENT_YEAR) -DCOM_ENABLED=$(COM_ENABLED) $(INCLUDES)
+CFLAGS=$(CFLAGS_A)
+stageA:CFLAGS=-mno-sse $(CFLAGS_A)
 ASM=$(PLATFORM)-elf-gcc -DDEBUG -ffreestanding -march=i686
 TEST_CMD=qemu-system-x86_64 $(QEMU_OPTS)
 
@@ -80,13 +83,16 @@ run: all
 debug: build build-tests
 
 # build
-build:$(SOURCES)
+build:stageA $(SOURCES)
 	mkdir -p build/$(CONF)
-	$(PLATFORM)-elf-gcc -T linker.ld -o "build/$(CONF)/kernel.bin" -ffreestanding -O2 -nostdlib $(SOURCES) -lgcc
+	$(PLATFORM)-elf-gcc -T linker.ld -o "build/$(CONF)/kernel.bin" -ffreestanding -O2 -nostdlib $(PRE_FPU_BOOT) $(SOURCES) -lgcc
+
+stageA:$(PRE_FPU_BOOT)
 
 # clean
 clean:
 	rm -f $(SOURCES)
+	rm -f $(PRE_FPU_BOOT)
 	rm -f *.plist
 	rm -rf build/*
 	rm -rf ISO/*
