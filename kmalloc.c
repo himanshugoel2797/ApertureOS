@@ -41,7 +41,7 @@ void kmalloc_init()
         size_t size = STORE_SIZE;
         while(size > 0) {
                 uint64_t physBaseAddr_base = physMemMan_Alloc();
-                virtMemMan_Map(virtBaseAddr_base, physBaseAddr_base, KB(4), MEM_TYPE_WT, MEM_READ | MEM_WRITE, MEM_KERNEL);
+                virtMemMan_Map(virtBaseAddr_base, physBaseAddr_base, KB(4), MEM_TYPE_WB, MEM_READ | MEM_WRITE, MEM_KERNEL);
                 virtBaseAddr_base += KB(4);
                 size -= KB(4);
         }
@@ -130,7 +130,7 @@ void *kmalloc(size_t size)
 
         MARK_USED(a_info);
         a_info->size = size;
-
+        //TODO redesign this to automatically request more space when necessary
         return addr;
 }
 

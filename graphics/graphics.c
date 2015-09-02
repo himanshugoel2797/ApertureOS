@@ -36,7 +36,7 @@ void graphics_Initialize() {
 
   char *vPointer = virtMemMan_FindEmptyAddress(buffer_size, MEM_KERNEL);
   int retVal = virtMemMan_Map((uint32_t)vPointer, (uint64_t)frameBufferA,
-                              buffer_size, MEM_TYPE_WC, MEM_WRITE, MEM_KERNEL);
+                              buffer_size, MEM_TYPE_WT, MEM_WRITE, MEM_KERNEL);
   frameBufferA = vPointer;
 
   // frameBufferB = bbuf;

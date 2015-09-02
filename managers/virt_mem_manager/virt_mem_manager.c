@@ -51,9 +51,9 @@ uint32_t virtMemMan_Initialize()
         curInstance_virt = virtMemMan_CreateInstance();
 
         //TODO we might want to make this more secure by parsing info from hte elf table and making sections NX appropriately
-        virtMemMan_Map(LOAD_ADDRESS, LOAD_ADDRESS, 0x10000000 - LOAD_ADDRESS, MEM_TYPE_WT, MEM_WRITE | MEM_READ | MEM_EXEC, MEM_KERNEL);
+        virtMemMan_Map(LOAD_ADDRESS, LOAD_ADDRESS, 0x10000000 - LOAD_ADDRESS, MEM_TYPE_WB, MEM_WRITE | MEM_READ | MEM_EXEC, MEM_KERNEL);
 
-        virtMemMan_Map(0x10000000, 0xF0000000, 0x10000000, MEM_TYPE_WT, MEM_WRITE | MEM_READ | MEM_EXEC, MEM_KERNEL);
+        virtMemMan_Map(0x10000000, 0xF0000000, 0x10000000, MEM_TYPE_WC, MEM_WRITE | MEM_READ | MEM_EXEC, MEM_KERNEL);
 
         wrmsr(0xC0000080, rdmsr(0xC0000080) | (1<<11)); //Enable NXE
 
