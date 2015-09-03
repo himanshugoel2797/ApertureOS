@@ -95,8 +95,6 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         kmalloc_init();
         Timers_Setup();
         ThreadMan_Setup();
-
-
         tmp = kmalloc(1080*1920*4 + 16);
         tmp += 16;
         tmp = ((uint32_t)tmp) & ~0xf;
@@ -115,12 +113,13 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         Keyboard_Setup();
 
         Interrupts_Unlock();
+        //kernel_main
 
-        UID id = Timers_CreateNew(319, TRUE, timerHandler);
-        Timers_StartTimer(id);
+        //UID id = Timers_CreateNew(319, TRUE, timerHandler);
+        //Timers_StartTimer(id);
 
         while(1) {
-                asm ("hlt");
+                //asm ("hlt");
         }
 
 
@@ -128,4 +127,9 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
 //extern "C" /* Use C linkage for kernel_main. */
 void kernel_main(int argc, char** isKernelMode) {
+        while(1) {
+                COM_WriteStr("SUCCESS!!");
+                timerHandler();
+                //Interrupts_Unlock();
+        }
 }

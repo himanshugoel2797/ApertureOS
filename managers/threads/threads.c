@@ -29,8 +29,10 @@ void ThreadMan_Setup()
 
 uint32_t threadMan_InterruptHandler(Registers *regs)
 {
-        COM_WriteStr("RECIEVED THREAD PREEMPT!\r\n");
         if(curThread != NULL) {
+
+                COM_WriteStr("RECIEVED THREAD PREEMPT!\r\n");
+
                 Thread *nxThread = curThread->next;
                 if(nxThread == NULL) nxThread = threads;
 
@@ -85,9 +87,22 @@ uint32_t threadMan_Initialize()
         Interrupts_RegisterHandler(48, 0, threadMan_InterruptHandler);
 
         //Enable the APIc timer
+        APIC_SetTimerMode(APIC_TIMER_PERIODIC);
+
+        APIC_SetTimerValue(1 << 20);
+
+        threads = kmalloc(sizeof(Thread));
+        threads->uid = uidBase++;
+        threads->flags = THREAD_FLAGS_KERNEL;
+        threads->next = NULL;
+        lastThread = curThread = threads;
+
+        UID tmp = ThreadMan_CreateThread(kernel_main, 0, NULL, THREAD_FLAGS_KERNEL);
+
+        APIC_SetVector(APIC_TIMER, 48);
+        APIC_SetEnableInterrupt(APIC_TIMER, 1);
 
         //Create the new thread to continue exectuon
-        UID tmp = ThreadMan_CreateThread(kernel_main, 0, NULL, THREAD_FLAGS_KERNEL);
 
         return 0;
 }
@@ -126,13 +141,8 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64
         *((uint32_t*)curThreadInfo->regs.unused) = (uint32_t)argc;
 
         //Store the thread in the queue
-        if(threads == NULL)
-        {
-                threads = curThreadInfo;
-                threads->next = NULL;
-        }else{
-                threads->next = curThreadInfo;
-        }
+        lastThread->next = curThreadInfo;
+        lastThread = lastThread->next;
 
 
         lastThread = threads;
