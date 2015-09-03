@@ -33,7 +33,8 @@ void graphics_Initialize() {
         // Specify the pointers for both framebuffers
         frameBufferA = (char *)global_multiboot_info->framebuffer_addr;
         frameBufferB = bootstrap_malloc(buffer_size + 16 + 0x70);
-        frameBufferB += ((uint32_t)frameBufferB % 16);
+        frameBufferB = frameBufferB + 16;
+        frameBufferB = ((uint32_t)frameBufferB) & ~0xf;
 
         char *vPointer = virtMemMan_FindEmptyAddress(buffer_size, MEM_KERNEL);
         int retVal = virtMemMan_Map((uint32_t)vPointer, (uint64_t)frameBufferA,
@@ -50,7 +51,8 @@ void graphics_Initialize() {
 
 void graphics_SwapBuffer() {
         uint64_t *fbufA = (uint64_t*)frameBufferA, *fbufB = (uint64_t*)frameBufferB;
-
+        COM_WriteStr("fbufA: %d\r\n", frameBufferA);
+        COM_WriteStr("fbufB: %d\r\n", frameBufferB);
         for(uint32_t a = 0; a < buffer_size; a+=0x80)
         {
                 //asm volatile ("movaps (%%ebx), %%xmm1\n\t"
@@ -84,7 +86,7 @@ void graphics_Clear()
 {
         uint64_t *bbuffer = (uint64_t*)backBuffer;
         memset(tmpBuf, 0xff, 16);
-
+        COM_WriteStr("CLEAR!");
         asm volatile ("movaps (%0), %%xmm1" :: "r" (tmpBuf) : "%xmm1");
         //while(1);
         for(uint32_t a = 0; a < buffer_size; a+=16)
