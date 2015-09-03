@@ -22,4 +22,7 @@ void Interrupts_SetInterruptEnableMode(uint8_t intrpt, bool masked);
 SysID Interrupts_GetSysID();
 bool Interrupts_IsAPICEnabled();
 
+void Interrupts_Lock();
+void Interrupts_Unlock();
+
 #endif /* end of include guard: _INTERRUPT_MANAGER_H_ */

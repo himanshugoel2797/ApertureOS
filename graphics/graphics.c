@@ -41,7 +41,6 @@ void graphics_Initialize() {
                                     buffer_size + 0x70, MEM_TYPE_WC, MEM_WRITE, MEM_KERNEL);
         frameBufferA = vPointer;
 
-        // frameBufferB = bbuf;
         backBuffer = (uint32_t *)frameBufferB;
 
         // Initialize both buffers
@@ -51,13 +50,8 @@ void graphics_Initialize() {
 
 void graphics_SwapBuffer() {
         uint64_t *fbufA = (uint64_t*)frameBufferA, *fbufB = (uint64_t*)frameBufferB;
-        COM_WriteStr("fbufA: %d\r\n", frameBufferA);
-        COM_WriteStr("fbufB: %d\r\n", frameBufferB);
         for(uint32_t a = 0; a < buffer_size; a+=0x80)
         {
-                //asm volatile ("movaps (%%ebx), %%xmm1\n\t"
-                //              "movaps %%xmm1, (%%eax)" : "=a" (fbufA) : "b" (fbufB) : "%xmm1", "%eax","%ebx" );
-
                 asm volatile ("movaps (%%ebx), %%xmm1\n\t"
                               "movaps +0x10(%%ebx), %%xmm2\n\t"
                               "movaps +0x20(%%ebx), %%xmm3\n\t"
@@ -74,21 +68,19 @@ void graphics_SwapBuffer() {
                               "movaps %%xmm5, +0x40(%%eax)\n\t"
                               "movaps %%xmm6, +0x50(%%eax)\n\t"
                               "movaps %%xmm7, +0x60(%%eax)\n\t"
-                               : "=a" (fbufA) : "b" (fbufB) : "%xmm0","%xmm1","%xmm2","%xmm3","%xmm4","%xmm5","%xmm6","%xmm7", "%eax","%ebx");
+                              : "=a" (fbufA) : "b" (fbufB) : "%xmm0","%xmm1","%xmm2","%xmm3","%xmm4","%xmm5","%xmm6","%xmm7", "%eax","%ebx");
 
-                fbufB+=0x80/8;
-                fbufA+=0x80/8;
+                fbufB+=0x80/sizeof(uint64_t);
+                fbufA+=0x80/sizeof(uint64_t);
         }
 
 }
 
 void graphics_Clear()
 {
-        uint64_t *bbuffer = (uint64_t*)backBuffer;
+        uint64_t *bbuffer = (uint64_t*)frameBufferB;
         memset(tmpBuf, 0xff, 16);
-        COM_WriteStr("CLEAR!");
         asm volatile ("movaps (%0), %%xmm1" :: "r" (tmpBuf) : "%xmm1");
-        //while(1);
         for(uint32_t a = 0; a < buffer_size; a+=16)
         {
                 asm volatile ("movaps %%xmm1, (%0)" : "=r" (bbuffer));
@@ -172,15 +164,13 @@ void graphics_SetPixel(uint32_t x, uint32_t y, uint32_t val) {
 
 void graphics_DrawBuffer(void* buffer, uint32_t x, uint32_t y, uint32_t w, uint32_t h)
 {
-        if(x == 0 && y == 0 && w == width && h == height){
-          memcpy(backBuffer, buffer, buffer_size);
-          return;
-        }
-
         uint64_t *offset = (uint64_t*)&backBuffer[x+(y*pitch)];
         uint64_t* src = (uint64_t*)buffer;
 
         uint64_t x0 = 0, y0= 0;
+
+        if(x+w > width) w = width - x;
+        if(y+h > height) h = height - y;
 
         while(y0 < h)
         {

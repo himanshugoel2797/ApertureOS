@@ -29,6 +29,7 @@ void ThreadMan_Setup()
 
 uint32_t threadMan_InterruptHandler(Registers *regs)
 {
+        COM_WriteStr("RECIEVED THREAD PREEMPT!\r\n");
         if(curThread != NULL) {
                 Thread *nxThread = curThread->next;
                 if(nxThread == NULL) nxThread = threads;
@@ -98,46 +99,46 @@ uint8_t threadMan_messageHandler(Message *msg)
 
 UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64_t flags)
 {
-    //Entering critical section, disable all interrupts
-    interrupts_lock();
-    Thread *curThreadInfo = kmalloc(sizeof(Thread));
-    COM_WriteStr("curThreadInfo %d\r\n", curThreadInfo);
-    curThreadInfo->uid = uidBase++;
-    curThreadInfo->flags = flags;
+        //Entering critical section, disable all interrupts
+        Interrupts_Lock();
+        Thread *curThreadInfo = kmalloc(sizeof(Thread));
+        COM_WriteStr("curThreadInfo %d\r\n", curThreadInfo);
+        curThreadInfo->uid = uidBase++;
+        curThreadInfo->flags = flags;
 
-    //Setup the paging structures for the thread
-    curThreadInfo->cr3 = virtMemMan_CreateInstance();
-    if((flags & THREAD_FLAGS_FORK) == THREAD_FLAGS_FORK)
-    {
-        virtMemMan_ForkCurrent(curThreadInfo->cr3);
-    }
-    //TODO setup the remaining registers to suit, set the args for the function too
-    memset(&curThreadInfo->regs, 0, sizeof(Registers));
-    memset(curThreadInfo->FPU_state, 0, 512);
+        //Setup the paging structures for the thread
+        curThreadInfo->cr3 = virtMemMan_CreateInstance();
+        if((flags & THREAD_FLAGS_FORK) == THREAD_FLAGS_FORK)
+        {
+                virtMemMan_ForkCurrent(curThreadInfo->cr3);
+        }
+        //TODO setup the remaining registers to suit, set the args for the function too
+        memset(&curThreadInfo->regs, 0, sizeof(Registers));
+        memset(curThreadInfo->FPU_state, 0, 512);
 
-    curThreadInfo->regs.eip = entry;
-    curThreadInfo->regs.unused = kmalloc(KB(16)) + KB(16); //Stack ptr
+        curThreadInfo->regs.eip = entry;
+        curThreadInfo->regs.unused = kmalloc(KB(16)) + KB(16); //Stack ptr
 
-    //Push args onto the stack
-    curThreadInfo->regs.unused -= sizeof(uint32_t*);
-    *((uint32_t*)curThreadInfo->regs.unused) = (uint32_t)argv;
-    curThreadInfo->regs.unused -= sizeof(uint32_t*);
-    *((uint32_t*)curThreadInfo->regs.unused) = (uint32_t)argc;
+        //Push args onto the stack
+        curThreadInfo->regs.unused -= sizeof(uint32_t*);
+        *((uint32_t*)curThreadInfo->regs.unused) = (uint32_t)argv;
+        curThreadInfo->regs.unused -= sizeof(uint32_t*);
+        *((uint32_t*)curThreadInfo->regs.unused) = (uint32_t)argc;
 
-    //Store the thread in the queue
-    if(threads == NULL)
-    {
-        threads = curThreadInfo;
-        threads->next = NULL;
-    }else{
-        threads->next = curThreadInfo;
-    }
+        //Store the thread in the queue
+        if(threads == NULL)
+        {
+                threads = curThreadInfo;
+                threads->next = NULL;
+        }else{
+                threads->next = curThreadInfo;
+        }
 
 
-    lastThread = threads;
-    interrupts_unlock();
+        lastThread = threads;
+        Interrupts_Unlock();
 
-    return curThreadInfo->uid;
+        return curThreadInfo->uid;
 }
 
 void ThreadMan_StartThread(UID id)

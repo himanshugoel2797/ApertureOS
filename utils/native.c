@@ -52,13 +52,3 @@ uint64_t rdmsr(uint32_t msr)
         asm volatile ("rdmsr" : "=a" (lo), "=d" (hi) : "c" (msr));
         return ((uint64_t)hi << 32) | lo;
 }
-
-void interrupts_lock()
-{
-        asm volatile ("cli");
-}
-
-void interrupts_unlock()
-{
-        asm volatile ("sti");
-}

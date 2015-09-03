@@ -15,7 +15,4 @@ uint32_t inl(const uint16_t port);
 void wrmsr(uint32_t msr, uint64_t val);
 uint64_t rdmsr(uint32_t msr);
 
-void interrupts_lock();
-void interrupts_unlock();
-
 #endif /* end of include guard: _UTILS_NATIVE_H_ */

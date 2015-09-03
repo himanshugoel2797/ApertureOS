@@ -150,3 +150,27 @@ bool Interrupts_IsAPICEnabled()
 {
         return using_apic;
 }
+
+uint32_t curCallNum = 0;
+uint32_t callNumWhereIntsEnabled = 0;
+void Interrupts_Lock()
+{
+        uint16_t flags = 0;
+        curCallNum++;
+
+        asm volatile ("pushf\n\tpop %%eax" : "=a" (flags));
+        if((flags & (1<<9)) == (1<<9))  //Check if interrupts are enabled
+        {
+                callNumWhereIntsEnabled = curCallNum;
+        }
+
+        asm volatile ("cli");
+}
+
+void Interrupts_Unlock()
+{
+        if(callNumWhereIntsEnabled == curCallNum--)
+        {
+                asm volatile ("sti");
+        }
+}

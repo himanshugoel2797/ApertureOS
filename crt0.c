@@ -34,9 +34,7 @@ size_t q = 0;
 void timerHandler()
 {
         temp++;
-        //graphics_Clear();
-
-
+        graphics_Clear();
         graphics_DrawBuffer(tmp, 0, 0, 1920, 1080);
 
         RTC_Time t;
@@ -95,12 +93,13 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         graphics_SwapBuffer();
 
         kmalloc_init();
-        //ThreadMan_Setup();
-
         Timers_Setup();
+        ThreadMan_Setup();
 
-        tmp = kmalloc(1080*1920*4 + 14);
-        tmp += (uint32_t)tmp % 16;
+
+        tmp = kmalloc(1080*1920*4 + 16);
+        tmp += 16;
+        tmp = ((uint32_t)tmp) & ~0xf;
         char pixel[4];
 
         for(y = 0; y < height; y++)
@@ -115,9 +114,9 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
                 }
         Keyboard_Setup();
 
-        asm ("sti");
+        Interrupts_Unlock();
 
-        UID id = Timers_CreateNew(5, TRUE, timerHandler);
+        UID id = Timers_CreateNew(319, TRUE, timerHandler);
         Timers_StartTimer(id);
 
         while(1) {

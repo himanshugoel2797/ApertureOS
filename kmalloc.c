@@ -63,7 +63,7 @@ void kmalloc_init()
 
 void kcompact()
 {
-        interrupts_lock();
+        Interrupts_Lock();
         kmalloc_info *a_info = allocation_info;
 
         while(a_info->next != NULL) {
@@ -83,7 +83,7 @@ void kcompact()
                         a_info = a_info->next;
                 }
         }
-        interrupts_unlock();
+        Interrupts_Unlock();
 }
 
 bool retry = FALSE;
