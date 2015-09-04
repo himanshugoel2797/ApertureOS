@@ -48,18 +48,18 @@ void threadMan_IDTHandler()
                 "call threadMan_InterruptHandler"
                 );
         asm volatile(
-                "pop %ebx\n\t"
-                "pop %ebx\n\t"
-                "mov %bx, %ds\n\t"
-                "mov %bx, %es\n\t"
-                "mov %bx, %fs\n\t"
-                "mov %bx, %gs\n\t"
+                "pop %eax\n\t"
+                "pop %eax\n\t"
+                "mov %ax, %ds\n\t"
+                "mov %ax, %es\n\t"
+                "mov %ax, %fs\n\t"
+                "mov %ax, %gs\n\t"
                 //"hlt\n\t"
-                "popa\n\t"
-                "add $8, %esp\n\t"
                 "push $48\n\t"
                 "call APIC_SendEOI\n\t"
                 "pop %eax\n\t"
+                "popa\n\t"
+                "add $8, %esp\n\t"
                 "iret\n\t"
                 );
 }
@@ -82,8 +82,9 @@ void threadMan_InterruptHandler(Registers *regs)
                 (
                         "add $0xc, %%esp\n\t"
                         "pop %%eax\n\t"
-                        "pop %%eax\n\t"
+                        "add $4, %%esp\n\t"
                         "mov %%ebx, %%esp\n\t"
+                        "mov %%eax, %%ebx\n\t"
                         "push 4(%%ebp)\n\t"    //Push the return address for this function
                         "ret\n\t"
                         :: "b"(nxThread->regs.unused) : "%eax"

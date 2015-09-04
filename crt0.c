@@ -116,7 +116,8 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         //Timers_StartTimer(id);
 
         while(1) {
-                asm ("hlt");
+                //timerHandler();
+                //asm volatile("int $48");
         }
 
 
@@ -124,7 +125,5 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
 //extern "C" /* Use C linkage for kernel_main. */
 void kernel_main(int argc, char** isKernelMode) {
-        while(1) {
-                timerHandler();
-        }
+                while(1){timerHandler();}
 }
