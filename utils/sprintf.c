@@ -48,18 +48,18 @@ char* utoa(uint64_t val, char *ostr, int base)
         char str[512];
         char *opts = "0123456789ABCDEF";
         if(base == 16) {
-                for(int i = 0; i < 16; i++)
+                for(int i = 0; i < 8; i++)
                 {
-                        str[15 - i] = opts[((val >> (i*4))&0x0F)];
+                        str[7 - i] = opts[((val >> (i*4))&0x0F)];
                 }
-                str[16] = 0;
+                str[8] = 0;
         }else if(base == 2)
         {
-                for(int i = 0; i < 64; i++)
+                for(int i = 0; i < 32; i++)
                 {
-                        str[63 - i] = opts[(val >> i) & 1];
+                        str[31 - i] = opts[(val >> i) & 1];
                 }
-                str[64] = 0;
+                str[32] = 0;
         }else if(base < 16)
         {
                 int pos = 0;
@@ -172,7 +172,7 @@ int vsnprintf ( char * str, const char * format, va_list vl )
                                 case 'x':
                                 case 'X':
                                         str = utoa(va_arg(vl, uint32_t), str, 16);
-                                        str++;
+                                        //str++;
                                         in_format = 0;
                                         break;
                                 case 'f':

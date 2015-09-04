@@ -31,6 +31,8 @@ __attribute__((naked, noreturn))
 void threadMan_IDTHandler()
 {
         asm volatile(
+                "push $0x00\n\t"
+                "push $0x00\n\t"
                 "pusha\n\t"
                 "mov %ds, %ax\n\t"
                 "push %eax\n\t"
@@ -55,6 +57,9 @@ void threadMan_IDTHandler()
                 //"hlt\n\t"
                 "popa\n\t"
                 "add $8, %esp\n\t"
+                "push $48\n\t"
+                "call APIC_SendEOI\n\t"
+                "pop %eax\n\t"
                 "iret\n\t"
                 );
 }
@@ -68,11 +73,12 @@ void threadMan_InterruptHandler(Registers *regs)
                 Thread *nxThread = curThread->next;
                 if(nxThread == NULL) nxThread = threads;
 
+                /*
                 curThread->regs.ds = regs->ds;
                 curThread->regs.edi = regs->edi;
                 curThread->regs.esi = regs->esi;
                 curThread->regs.ebp = regs->ebp;
-                curThread->regs.unused = regs->unused;
+                curThread->regs.unused = regs;
                 curThread->regs.ebx = regs->ebx;
                 curThread->regs.edx = regs->edx;
                 curThread->regs.ecx = regs->ecx;
@@ -86,6 +92,24 @@ void threadMan_InterruptHandler(Registers *regs)
                 curThread->regs.ss = regs->ss;
 
                 asm volatile ("mov %%cr3, %0" : "=r" (curThread->cr3));
+                */
+                curThread->regs.unused = regs;
+                curThread->regs.unused -= 4;
+
+                /*COM_WriteStr("Register Dump\r\n");
+                COM_WriteStr("EAX: %x\t", regs->eax);
+                COM_WriteStr("EBX: %x\t", regs->ebx);
+                COM_WriteStr("ECX: %x\t", regs->ecx);
+                COM_WriteStr("EDX: %x\r\n", regs->edx);
+                COM_WriteStr("EIP: %x\t", regs->eip);
+                COM_WriteStr("ESI: %x\t", regs->esi);
+                COM_WriteStr("EDI: %x\t\r\n", regs->edi);
+                COM_WriteStr("CS: %x\t", regs->cs);
+                COM_WriteStr("SS: %x\t", regs->ss);
+                COM_WriteStr("DS: %x\t\r\n", regs->ds);
+                COM_WriteStr("EFLAGS: %b\t\r\n", regs->eflags);
+                COM_WriteStr("USERESP: %x\t", regs->useresp);
+                COM_WriteStr("EBP: %x\t\r\n", regs->ebp);*/
 
                 /*regs->ds = nxThread->regs.ds;
                 regs->edi = nxThread->regs.edi;
@@ -122,11 +146,9 @@ void threadMan_InterruptHandler(Registers *regs)
                         "pop %%eax\n\t"
                         "pop %%eax\n\t"
                         "mov %%ebx, %%esp\n\t"
-                        "mov (%%ebp), %%ebx\n\t"
-                        "mov %%ebx, -16(%%esp)\n\t"
                         "push 4(%%ebp)\n\t"    //Push the return address for this function
                         "ret\n\t"
-                        :: "b"(curThread->regs.unused) : "%eax"
+                        :: "b"(nxThread->regs.unused) : "%eax"
                 );
         }
         //return 1; //Stop any further handlers from executing
@@ -203,7 +225,9 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64
                 "push %%ecx\n\t"
                 
                 //Push iret stuff
+                "sti \n\t"
                 "pushf\n\t"
+                "cli \n\t"
                 "push $0x08\n\t"
                 "push %%edx\n\t"
                 
@@ -222,7 +246,7 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64
                 "push $0x00\n\t"
 
                 //Push filler
-                "push $0x00\n\t"
+                "push $0x10\n\t"
                 "push $0x00\n\t"
 
                 //Backup and reset

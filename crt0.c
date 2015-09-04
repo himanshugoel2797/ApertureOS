@@ -117,21 +117,29 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         //Timers_StartTimer(id);
 
         while(1) {
-                asm ("hlt");
+                COM_WriteStr("TEST!");
+                //asm ("hlt");
         }
 
 
 }
 
+uint32_t v = 0;
+
+void test()
+{
+                asm volatile("mov $0xDEADBEEF, %eax");
+                v++;
+                asm volatile("sti");
+                
+}
+
 //extern "C" /* Use C linkage for kernel_main. */
 void kernel_main(int argc, char** isKernelMode) {
-        asm volatile("mov $0, %ebx");
         while(1) {
-                COM_WriteStr("SUCCESS!!");
-                asm volatile("mov $0xDEADBEEF, %eax");
-                asm volatile("inc %ebx");
-                asm volatile("sti");
-                //timerHandler();
-                //Interrupts_Unlock();
+                //test();
+                //COM_WriteStr("SUCCESS!!");
+                timerHandler();
+                Interrupts_Unlock();
         }
 }
