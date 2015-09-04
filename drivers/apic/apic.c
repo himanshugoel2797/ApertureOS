@@ -174,7 +174,7 @@ void APIC_MainHandler(Registers *regs);
 __attribute__((naked, noreturn))
 void APIC_DefaultHandler()
 {
-        asm (
+        asm volatile(
                 "pusha\n\t"
                 "mov %ds, %ax\n\t"
                 "push %eax\n\t"
@@ -186,10 +186,10 @@ void APIC_DefaultHandler()
                 "push %esp\n\t"
                 );
 
-        asm (
+        asm volatile(
                 "call APIC_MainHandler"
                 );
-        asm (
+        asm volatile(
                 "pop %ebx\n\t"
                 "pop %ebx\n\t"
                 "mov %bx, %ds\n\t"

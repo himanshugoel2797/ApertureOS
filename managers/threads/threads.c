@@ -27,11 +27,43 @@ void ThreadMan_Setup()
         SysMan_StartSystem(thread_sys->sys_id);
 }
 
-uint32_t threadMan_InterruptHandler(Registers *regs)
+__attribute__((naked, noreturn))
+void threadMan_IDTHandler()
 {
+        asm volatile(
+                "pusha\n\t"
+                "mov %ds, %ax\n\t"
+                "push %eax\n\t"
+                "mov $0x10, %ax\n\t"
+                "mov %ax, %ds\n\t"
+                "mov %ax, %es\n\t"
+                "mov %ax, %fs\n\t"
+                "mov %ax, %gs\n\t"
+                "push %esp\n\t"
+                );
+
+        asm volatile(
+                "call threadMan_InterruptHandler"
+                );
+        asm volatile(
+                "pop %ebx\n\t"
+                "pop %ebx\n\t"
+                "mov %bx, %ds\n\t"
+                "mov %bx, %es\n\t"
+                "mov %bx, %fs\n\t"
+                "mov %bx, %gs\n\t"
+                //"hlt\n\t"
+                "popa\n\t"
+                "add $8, %esp\n\t"
+                "iret\n\t"
+                );
+}
+
+void threadMan_InterruptHandler(Registers *regs)
+{       
+        COM_WriteStr("RECIEVED THREAD PREEMPT!\r\n");
         if(curThread != NULL) {
 
-                COM_WriteStr("RECIEVED THREAD PREEMPT!\r\n");
 
                 Thread *nxThread = curThread->next;
                 if(nxThread == NULL) nxThread = threads;
@@ -52,9 +84,10 @@ uint32_t threadMan_InterruptHandler(Registers *regs)
                 curThread->regs.eflags = regs->eflags;
                 curThread->regs.useresp = regs->useresp;
                 curThread->regs.ss = regs->ss;
+
                 asm volatile ("mov %%cr3, %0" : "=r" (curThread->cr3));
 
-                regs->ds = nxThread->regs.ds;
+                /*regs->ds = nxThread->regs.ds;
                 regs->edi = nxThread->regs.edi;
                 regs->esi = nxThread->regs.esi;
                 regs->ebp = nxThread->regs.ebp;
@@ -70,12 +103,33 @@ uint32_t threadMan_InterruptHandler(Registers *regs)
                 regs->eflags = nxThread->regs.eflags;
                 regs->useresp = nxThread->regs.useresp;
                 regs->ss = nxThread->regs.ss;
-                asm volatile ("mov %0, %%cr3" :: "r" (nxThread->cr3));
+                */
+
+
+                //memcpy(regs->unused, nxThread->regs, sizeof(Registers));
+                //regs->unused -= sizeof(Registers);
+
+                //asm volatile ("mov %0, %%cr3" :: "r" (nxThread->cr3));
 
                 curThread = nxThread;
-        }
 
-        return 1; //Stop any further handlers from executing
+                //Switch stacks
+                asm volatile
+                (
+                        "mov %%ebx, %%eax\n\t"
+                        "add $0x4, %%eax\n\t"   //Calculate the ebp for this function
+                        "add $0xc, %%esp\n\t"
+                        "pop %%eax\n\t"
+                        "pop %%eax\n\t"
+                        "mov %%ebx, %%esp\n\t"
+                        "mov (%%ebp), %%ebx\n\t"
+                        "mov %%ebx, -16(%%esp)\n\t"
+                        "push 4(%%ebp)\n\t"    //Push the return address for this function
+                        "ret\n\t"
+                        :: "b"(curThread->regs.unused) : "%eax"
+                );
+        }
+        //return 1; //Stop any further handlers from executing
 }
 
 uint32_t threadMan_Initialize()
@@ -83,13 +137,15 @@ uint32_t threadMan_Initialize()
         //TODO create a new thread and resume remaining work on that by calling another function, this lets us keep things clean
         curThread = NULL;
         threads = NULL;
-        //curThreadPool = physMemMan
-        Interrupts_RegisterHandler(48, 0, threadMan_InterruptHandler);
+
+        //Force override the IDT entry for this!
+        IDT_SetEntry(48, (uint32_t)threadMan_IDTHandler, 0x08, 0x8E);
 
         //Enable the APIc timer
         APIC_SetTimerMode(APIC_TIMER_PERIODIC);
 
-        APIC_SetTimerValue(1 << 20);
+        APIC_SetTimerValue(1 << 10);
+
 
         threads = kmalloc(sizeof(Thread));
         threads->uid = uidBase++;
@@ -133,19 +189,60 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64
 
         curThreadInfo->regs.eip = entry;
         curThreadInfo->regs.unused = kmalloc(KB(16)) + KB(16); //Stack ptr
+        curThreadInfo->regs.ebp = curThreadInfo->regs.unused;
 
-        //Push args onto the stack
-        curThreadInfo->regs.unused -= sizeof(uint32_t*);
-        *((uint32_t*)curThreadInfo->regs.unused) = (uint32_t)argv;
-        curThreadInfo->regs.unused -= sizeof(uint32_t*);
-        *((uint32_t*)curThreadInfo->regs.unused) = (uint32_t)argc;
+        //Somehow deal with globals here
+
+        //Push args onto the stack by temporarily switching stacks and pushing the stuff
+        asm volatile(
+                "mov %%esp, %%edi\n\t"
+                "mov %%ebx, %%esp\n\t"
+                
+                //Push parameters
+                "push %%eax\n\t"
+                "push %%ecx\n\t"
+                
+                //Push iret stuff
+                "pushf\n\t"
+                "push $0x08\n\t"
+                "push %%edx\n\t"
+                
+                //Push filler
+                "push $0x00\n\t"
+                "push $0x00\n\t"
+
+                //Push popa
+                "push $0x00\n\t"
+                "push $0x00\n\t"
+                "push $0x00\n\t"
+                "push $0x00\n\t"
+                "push $0x00\n\t"
+                "push %%ebx\n\t"
+                "push $0x00\n\t"
+                "push $0x00\n\t"
+
+                //Push filler
+                "push $0x00\n\t"
+                "push $0x00\n\t"
+
+                //Backup and reset
+                "mov %%esp, %%ebx\n\t"
+                "mov %%edi, %%esp\n\t"
+                :: "a"(argv), "b"(curThreadInfo->regs.unused), "c"(argc), "d"(curThreadInfo->regs.eip)
+                );
+        asm volatile("mov %%ebx, %0" : "=r"(curThreadInfo->regs.unused));
+        COM_WriteStr("\r\nSTACK: %x", curThreadInfo->regs.unused);
+        //curThreadInfo->regs.unused -= sizeof(uint32_t*);
+        //*((uint32_t*)curThreadInfo->regs.unused) = (uint32_t)argv;
+        //curThreadInfo->regs.unused -= sizeof(uint32_t*);
+        //*((uint32_t*)curThreadInfo->regs.unused) = (uint32_t)argc;
+
+//0x8 + 0x8 + 0xc
 
         //Store the thread in the queue
         lastThread->next = curThreadInfo;
         lastThread = lastThread->next;
 
-
-        lastThread = threads;
         Interrupts_Unlock();
 
         return curThreadInfo->uid;

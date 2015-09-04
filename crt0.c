@@ -89,12 +89,10 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         Interrupts_Virtualize();
         graphics_Initialize();
 
-        graphics_WriteStr("const char *str", 0, 0);
-        graphics_SwapBuffer();
-
         kmalloc_init();
         Timers_Setup();
         ThreadMan_Setup();
+
         tmp = kmalloc(1080*1920*4 + 16);
         tmp += 16;
         tmp = ((uint32_t)tmp) & ~0xf;
@@ -119,7 +117,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         //Timers_StartTimer(id);
 
         while(1) {
-                //asm ("hlt");
+                asm ("hlt");
         }
 
 
@@ -127,9 +125,13 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
 //extern "C" /* Use C linkage for kernel_main. */
 void kernel_main(int argc, char** isKernelMode) {
+        asm volatile("mov $0, %ebx");
         while(1) {
                 COM_WriteStr("SUCCESS!!");
-                timerHandler();
+                asm volatile("mov $0xDEADBEEF, %eax");
+                asm volatile("inc %ebx");
+                asm volatile("sti");
+                //timerHandler();
                 //Interrupts_Unlock();
         }
 }

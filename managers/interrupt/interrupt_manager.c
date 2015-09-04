@@ -10,6 +10,7 @@ void interrupts_callback(uint32_t res);
 uint8_t interrupts_messageHandler(Message *msg);
 
 void interrupts_IDTHandler(Registers *Regs);
+void Interrupts_GPF_Handler(Registers *regs);
 
 uint8_t using_apic = 0;
 InterruptHandler int_handlers[INTERRUPT_COUNT][INTERRUPT_HANDLER_SLOTS + 1];
@@ -52,12 +53,14 @@ uint32_t interrupts_Initialize()
         }
 
 
+        //Register custom handler for GPF
+        IDT_RegisterHandler(13, Interrupts_GPF_Handler);
+
         return 0;
 }
 
 void interrupts_IDTHandler(Registers *Regs)
 {
-        COM_WriteStr("Int#%d ErrorCode:%b\r\n", Regs->int_no, Regs->err_code);
         for(int i = 0; i < INTERRUPT_HANDLER_SLOTS + 1; i++)
         {
                 if(int_handlers[Regs->int_no][i] != NULL)
@@ -173,4 +176,23 @@ void Interrupts_Unlock()
         {
                 asm volatile ("sti");
         }
+}
+
+void Interrupts_GPF_Handler(Registers *regs)
+{
+        COM_WriteStr("General Protection Fault: Register Dump\r\n");
+        COM_WriteStr("EAX: %x\t", regs->eax);
+        COM_WriteStr("EBX: %x\t", regs->ebx);
+        COM_WriteStr("ECX: %x\t", regs->ecx);
+        COM_WriteStr("EDX: %x\r\n", regs->edx);
+        COM_WriteStr("EIP: %x\t", regs->eip);
+        COM_WriteStr("ESI: %x\t", regs->esi);
+        COM_WriteStr("EDI: %x\t\r\n", regs->edi);
+        COM_WriteStr("CS: %x\t", regs->cs);
+        COM_WriteStr("SS: %x\t", regs->ss);
+        COM_WriteStr("DS: %x\t\r\n", regs->ds);
+        COM_WriteStr("EFLAGS: %b\t\r\n", regs->eflags);
+        COM_WriteStr("USERESP: %x\t", regs->useresp);
+        COM_WriteStr("EBP: %x\t", regs->ebp);
+        asm volatile("hlt");
 }

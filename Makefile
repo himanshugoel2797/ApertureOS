@@ -31,11 +31,11 @@ SOURCES=graphics/graphics.o	\
 
 
 
-PLATFORM=~/Documents/i686-elf/bin/i686
+PLATFORM=~/opt/cross/bin/i686
 
 OUTDISK=sdb
 
-QEMU_OPTS=-m 1024 -cpu SandyBridge,+xsave,level=13 -d cpu_reset,guest_errors,int #-serial file:log.txt
+QEMU_OPTS=-enable-kvm -m 1024 -cpu SandyBridge,+xsave,level=13 -d cpu_reset,guest_errors,int #-serial file:log.txt
 
 CURRENT_YEAR=$(shell date +"%Y")
 COM_ENABLED=1
