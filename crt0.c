@@ -33,6 +33,7 @@ size_t q = 0;
 
 void timerHandler()
 {
+        //asm volatile("cli");
         temp++;
         graphics_Clear();
         graphics_DrawBuffer(tmp, 0, 0, 1920, 1080);
@@ -47,7 +48,7 @@ void timerHandler()
 
 
         graphics_SwapBuffer();
-
+        //asm volatile("sti");
 }
 
 //extern "C"{
@@ -70,11 +71,9 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
         global_multiboot_info = bootstrap_malloc(sizeof(multiboot_info_t));
         memcpy(global_multiboot_info, mbd, sizeof(multiboot_info_t));
-
         global_memory_map_size = mbd->mmap_length;
         global_memory_map = bootstrap_malloc(global_memory_map_size);
         memcpy(global_memory_map, mbd->mmap_addr, global_memory_map_size);
-
 
         //All these need to access ACPI tables
         Interrupts_Setup();
@@ -98,6 +97,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         tmp = ((uint32_t)tmp) & ~0xf;
         char pixel[4];
 
+
         for(y = 0; y < height; y++)
                 for(x = 0; x < width; x++)
                 {
@@ -111,35 +111,20 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         Keyboard_Setup();
 
         Interrupts_Unlock();
-        //kernel_main
 
-        //UID id = Timers_CreateNew(319, TRUE, timerHandler);
+        //UID id = Timers_CreateNew(5, TRUE, timerHandler);
         //Timers_StartTimer(id);
 
         while(1) {
-                COM_WriteStr("TEST!");
-                //asm ("hlt");
+                asm ("hlt");
         }
 
 
 }
 
-uint32_t v = 0;
-
-void test()
-{
-                asm volatile("mov $0xDEADBEEF, %eax");
-                v++;
-                asm volatile("sti");
-                
-}
-
 //extern "C" /* Use C linkage for kernel_main. */
 void kernel_main(int argc, char** isKernelMode) {
         while(1) {
-                //test();
-                //COM_WriteStr("SUCCESS!!");
                 timerHandler();
-                Interrupts_Unlock();
         }
 }

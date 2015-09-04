@@ -17,7 +17,6 @@ void Interrupts_RegisterHandler(uint8_t intrpt, uint8_t slot, InterruptHandler h
 uint8_t Interrupts_GetFreeSlot(uint8_t intrpt);
 void Interrupts_EmptySlot(uint8_t intrpt, uint8_t slot);
 void Interrupts_GetHandler(uint8_t intrpt, uint8_t slot, InterruptHandler* o_handler);
-void Interrupts_SetEnableMode(bool enabled);
 void Interrupts_SetInterruptEnableMode(uint8_t intrpt, bool masked);
 SysID Interrupts_GetSysID();
 bool Interrupts_IsAPICEnabled();

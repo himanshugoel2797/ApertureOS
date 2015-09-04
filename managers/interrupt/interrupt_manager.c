@@ -123,15 +123,6 @@ void Interrupts_GetHandler(uint8_t intrpt, uint8_t slot, InterruptHandler* o_han
         }
 }
 
-void Interrupts_SetEnableMode(bool enabled)
-{
-        if(enabled) {
-                asm volatile ("sti");
-        }else{
-                asm volatile ("cli");
-        }
-}
-
 void Interrupts_SetInterruptEnableMode(uint8_t intrpt, bool enabled)
 {
         if(intrpt >= 32) {

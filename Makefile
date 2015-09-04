@@ -35,7 +35,7 @@ PLATFORM=~/opt/cross/bin/i686
 
 OUTDISK=sdb
 
-QEMU_OPTS=-enable-kvm -m 1024 -cpu SandyBridge,+xsave,level=13 -d cpu_reset,guest_errors,int #-serial file:log.txt
+QEMU_OPTS=-enable-kvm -m 1024 -cpu host -d cpu_reset,guest_errors #-serial file:log.txt
 
 CURRENT_YEAR=$(shell date +"%Y")
 COM_ENABLED=1
@@ -58,7 +58,7 @@ CP=cp
 CCADMIN=CCadmin
 GCC=clang -target i986-none-elf
 CFLAGS_A= -ffreestanding -O0 -Wall -Wextra -Wno-trigraphs -D$(CONF)  -DCURRENT_YEAR=$(CURRENT_YEAR) -DCOM_ENABLED=$(COM_ENABLED) $(INCLUDES)
-CFLAGS=$(CFLAGS_A)
+CFLAGS=-mno-sse $(CFLAGS_A)
 stageA:CFLAGS=-mno-sse $(CFLAGS_A)
 ASM=$(PLATFORM)-elf-gcc -DDEBUG -ffreestanding -march=i686
 TEST_CMD=qemu-system-x86_64 $(QEMU_OPTS)

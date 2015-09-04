@@ -49,6 +49,10 @@ void graphics_Initialize() {
 }
 
 void graphics_SwapBuffer() {
+
+        memcpy(frameBufferA, frameBufferB, buffer_size);
+        return;
+
         uint64_t *fbufA = (uint64_t*)frameBufferA, *fbufB = (uint64_t*)frameBufferB;
         for(uint32_t a = 0; a < buffer_size; a+=0x80)
         {
@@ -78,6 +82,9 @@ void graphics_SwapBuffer() {
 
 void graphics_Clear()
 {
+        memset(frameBufferB, 0xff, buffer_size);
+        return;
+        
         uint64_t *bbuffer = (uint64_t*)frameBufferB;
         memset(tmpBuf, 0xff, 16);
         asm volatile ("movaps (%0), %%xmm1" :: "r" (tmpBuf) : "%xmm1");
