@@ -35,7 +35,7 @@ PLATFORM=~/opt/cross/bin/i686
 
 OUTDISK=sdb
 
-QEMU_OPTS=-enable-kvm -m 1024 -cpu host -d cpu_reset,guest_errors #-serial file:log.txt
+QEMU_OPTS=-enable-kvm -m 1024 -cpu host -d cpu_reset,guest_errors -hda flash.img #-serial file:log.txt
 
 CURRENT_YEAR=$(shell date +"%Y")
 COM_ENABLED=1
@@ -79,6 +79,10 @@ ANALYZE=clang-check -analyze
 .PHONY:debug
 
 run: all
+
+makefs:
+	qemu-img create flash.img 512M
+	mke2fs -L "HDD0" flash.img
 
 debug: build build-tests
 

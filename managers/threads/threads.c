@@ -76,6 +76,8 @@ void threadMan_InterruptHandler(Registers *regs)
                 curThread->regs.unused -= 4;
                 curThread = nxThread;
 
+                //asm volatile("xsave ")
+
                 //if((curThread->flags & 1) == THREAD_FLAGS_USER)
                 {
                         /*asm volatile(
@@ -174,10 +176,11 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64
                 "mov %%ebx, %%esp\n\t"
                 
                 //Push parameters
-                "push %%eax\n\t"
                 "push %%ecx\n\t"
+                "push %%eax\n\t"
                 
                 //Push iret stuff
+                //"push $0xAAAAAAAA\n\t"
                 "pushf\n\t"
                 "pop %%eax\n\t"
                 "or $512, %%eax\n\t"

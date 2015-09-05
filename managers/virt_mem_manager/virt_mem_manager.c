@@ -199,7 +199,7 @@ uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, 
 
                 pd_pse[pd_i].addr = physAddr/MB(2);
                 pd_pse[pd_i].present = 1;
-                pd_pse[pd_i].user_supervisor = privLevel;
+                pd_pse[pd_i].user_supervisor = 1;//privLevel;
                 pd_pse[pd_i].page_size = 1;
                 pd_pse[pd_i].read_write = (perms & MEM_WRITE == MEM_WRITE);
                 pd_pse[pd_i].nx = (perms & MEM_EXEC != MEM_EXEC);
@@ -230,7 +230,7 @@ uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, 
                         memset(addr, 0, KB(4));
                         pd[pd_i].addr = ((uint32_t)addr/KB(4));
                         pd[pd_i].read_write = TRUE;
-                        pd[pd_i].user_supervisor = privLevel;
+                        pd[pd_i].user_supervisor = 1;
                         pd[pd_i].accessed = 0;
                         pd[pd_i].present = 1;
                         pd[pd_i].nx = 0;
@@ -245,7 +245,7 @@ uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, 
 
                 pt[pt_i].addr = physAddr/KB(4);
                 pt[pt_i].present = 1;
-                pt[pt_i].user_supervisor = privLevel;
+                pt[pt_i].user_supervisor = 1;//privLevel;
                 pt[pt_i].read_write = (perms & MEM_WRITE == MEM_WRITE);
                 pt[pt_i].nx = (perms & MEM_EXEC  != MEM_EXEC);
 

@@ -36,6 +36,7 @@ void GDT_Initialize()
 
         memset(sys_tss, 0, sizeof(tss_struct));
         sys_tss.ss0 = 0x10;
+        //sys_tss.esp0 = 0x20000000;
         sys_tss.iomap = sizeof(tss_struct);
         sys_tss.cs   = 0x0b;
         sys_tss.ss = sys_tss.ds = sys_tss.es = sys_tss.fs = sys_tss.gs = 0x13;

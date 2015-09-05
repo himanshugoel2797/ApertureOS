@@ -92,7 +92,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
         Keyboard_Setup();
 
-        UID tid = ThreadMan_CreateThread( t_main, 0, NULL, THREAD_FLAGS_USER);
+        UID tid = ThreadMan_CreateThread( t_main, 50, 51, THREAD_FLAGS_USER);
         ThreadMan_StartThread(tid);
 
         Interrupts_Unlock();
@@ -100,9 +100,33 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
 void t_main(int argc, char **argv)
 {
+        sys_tss.esp0 = kmalloc(KB(16));
+        asm volatile(
+                "cli \n\t"
+                "mov $0x23, %ax\n\t"
+                "mov %ax, %ds\n\t"
+                "mov %ax, %es\n\t"
+                "mov %ax, %fs\n\t"
+                "mov %ax, %gs\n\t"
+                "mov %esp, %eax\n\t"
+                "pushl $0x23\n\t"
+                "pushl %eax\n\t"
+                "pushf\n\t"
+                "pop %eax\n\t"
+                "or $512, %eax\n\t"
+                "push %eax\n\t"
+                "pushl $0x1B\n\t"
+                "push $t_main_user\n\t"
+                "iret\n\t"
+                "t_main_user: \n\t"
+     );
+
+        //asm volatile("cli");
+
         while(1){
-                temp++; 
-                temp2 = 0xDEADBEEF;
+                //temp++; 
+                //temp2 = 0xDEADBEEF;
+                asm volatile("mov $0xDEADBEEF, %eax");
         }
 }
 
