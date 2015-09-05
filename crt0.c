@@ -35,19 +35,6 @@ void timerHandler()
 {
         //asm volatile("cli");
         temp++;
-        graphics_Clear();
-        graphics_DrawBuffer(tmp, 0, 0, 1920, 1080);
-
-        RTC_Time t;
-        CMOS_GetRTCTime(&t);
-
-        graphics_WriteUInt64(temp, 2, 0, 16);
-        graphics_WriteUInt32(temp2, 16, 0, 32);
-        graphics_WriteUInt32(t.seconds, 10, 0, 48);
-        graphics_WriteUInt32(sizeof(Thread), 10, 0, 64);
-
-
-        graphics_SwapBuffer();
         //asm volatile("sti");
 }
 
@@ -115,9 +102,12 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         //UID id = Timers_CreateNew(5, TRUE, timerHandler);
         //Timers_StartTimer(id);
 
+
         while(1) {
                 //timerHandler();
                 //asm volatile("int $48");
+                COM_WriteStr("Hello World!");
+        temp2++;
         }
 
 
@@ -125,5 +115,21 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
 
 //extern "C" /* Use C linkage for kernel_main. */
 void kernel_main(int argc, char** isKernelMode) {
-                while(1){timerHandler();}
+                while(1){
+
+        graphics_Clear();
+        graphics_DrawBuffer(tmp, 0, 0, 1920, 1080);
+
+        RTC_Time t;
+        CMOS_GetRTCTime(&t);
+
+        graphics_WriteUInt64(temp, 2, 0, 16);
+        graphics_WriteUInt32(temp2, 16, 0, 32);
+        graphics_WriteUInt32(t.seconds, 10, 0, 48);
+        graphics_WriteUInt32(sizeof(Thread), 10, 0, 64);
+
+
+        graphics_SwapBuffer();
+                        timerHandler();
+                }
 }

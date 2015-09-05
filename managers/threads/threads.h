@@ -10,6 +10,7 @@ typedef struct Thread {
         char FPU_state[512 + 16]; //Allocate extra space for alignment
         Registers regs;
         UID uid;
+        uint32_t status;
         uint64_t flags;
         struct Thread *next;
 }Thread;

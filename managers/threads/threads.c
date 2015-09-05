@@ -31,8 +31,6 @@ __attribute__((naked, noreturn))
 void threadMan_IDTHandler()
 {
         asm volatile(
-                "push $0x00\n\t"
-                "push $0x00\n\t"
                 "pusha\n\t"
                 "mov %ds, %ax\n\t"
                 "push %eax\n\t"
@@ -55,41 +53,37 @@ void threadMan_IDTHandler()
                 "mov %ax, %fs\n\t"
                 "mov %ax, %gs\n\t"
                 //"hlt\n\t"
+                "popa\n\t"
+                "sub $0x20, %esp\n\t"
                 "push $48\n\t"
                 "call APIC_SendEOI\n\t"
                 "pop %eax\n\t"
                 "popa\n\t"
-                "add $8, %esp\n\t"
                 "iret\n\t"
                 );
 }
 
 void threadMan_InterruptHandler(Registers *regs)
 {       
-        if(curThread != NULL) {
-
-
                 Thread *nxThread = curThread->next;
-                if(nxThread == NULL) nxThread = threads;
+
+                while( (nxThread->status & 1) == 0)
+                {
+                        nxThread = nxThread->next;
+                }
 
                 curThread->regs.unused = regs;
                 curThread->regs.unused -= 4;
-
                 curThread = nxThread;
 
                 //Switch stacks
                 asm volatile
                 (
-                        "add $0xc, %%esp\n\t"
-                        "pop %%eax\n\t"
-                        "add $4, %%esp\n\t"
-                        "mov %%ebx, %%esp\n\t"
-                        "mov %%eax, %%ebx\n\t"
+                        "mov %%eax, %%esp\n\t"
                         "push 4(%%ebp)\n\t"    //Push the return address for this function
                         "ret\n\t"
-                        :: "b"(nxThread->regs.unused) : "%eax"
+                        :: "a"(nxThread->regs.unused)
                 );
-        }
 }
 
 uint32_t threadMan_Initialize()
@@ -110,10 +104,12 @@ uint32_t threadMan_Initialize()
         threads = kmalloc(sizeof(Thread));
         threads->uid = uidBase++;
         threads->flags = THREAD_FLAGS_KERNEL;
-        threads->next = NULL;
+        threads->status = 0;
+        threads->next = threads;
         lastThread = curThread = threads;
 
         UID tmp = ThreadMan_CreateThread(kernel_main, 0, NULL, THREAD_FLAGS_KERNEL);
+        ThreadMan_StartThread(tmp);
 
         APIC_SetVector(APIC_TIMER, 48);
         APIC_SetEnableInterrupt(APIC_TIMER, 1);
@@ -136,6 +132,7 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64
         COM_WriteStr("curThreadInfo %d\r\n", curThreadInfo);
         curThreadInfo->uid = uidBase++;
         curThreadInfo->flags = flags;
+        curThreadInfo->status = 0;
 
         //Setup the paging structures for the thread
         curThreadInfo->cr3 = virtMemMan_CreateInstance();
@@ -163,15 +160,12 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64
                 "push %%ecx\n\t"
                 
                 //Push iret stuff
-                "sti \n\t"
                 "pushf\n\t"
-                "cli \n\t"
+                "pop %%eax\n\t"
+                "or $512, %%eax\n\t"
+                "push %%eax\n\t"
                 "push $0x08\n\t"
                 "push %%edx\n\t"
-                
-                //Push filler (interrupt info)
-                "push $0x00\n\t"
-                "push $0x00\n\t"
 
                 //Push popa
                 "push $0x00\n\t"
@@ -196,8 +190,9 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64
         asm volatile("mov %%ebx, %0" : "=r"(curThreadInfo->regs.unused));
         
         //Store the thread in the queue
+        curThreadInfo->next = threads;
         lastThread->next = curThreadInfo;
-        lastThread = lastThread->next;
+        lastThread = curThreadInfo;
 
         Interrupts_Unlock();
 
@@ -206,7 +201,14 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64
 
 void ThreadMan_StartThread(UID id)
 {
+        Thread *thd = threads;
+        while(thd->next != NULL)
+        {
+                if(thd->uid == id)break;
+                thd = thd->next;
+        }
 
+        thd->status |= 1;
 }
 
 void ThreadMan_ExitThread(UID id)
