@@ -34,6 +34,12 @@ void GDT_Initialize()
         //Make sure interrupts are disabled
         asm ("cli");
 
+        memset(sys_tss, 0, sizeof(tss_struct));
+        sys_tss.ss0 = 0x10;
+        sys_tss.iomap = sizeof(tss_struct);
+        sys_tss.cs   = 0x0b;
+        sys_tss.ss = sys_tss.ds = sys_tss.es = sys_tss.fs = sys_tss.gs = 0x13;
+
         gdt_table.limit = (sizeof(GDTEntry) * GDT_ENTRY_COUNT) - 1;
         gdt_table.base = (uint32_t)&gdt_entries;
 
@@ -42,6 +48,7 @@ void GDT_Initialize()
         GDT_SetEntry(2, 0, 0xFFFFFFFF, 0x92, 0xCF); // Data segment
         GDT_SetEntry(3, 0, 0xFFFFFFFF, 0xFA, 0xCF); // User mode code segment
         GDT_SetEntry(4, 0, 0xFFFFFFFF, 0xF2, 0xCF); // User mode data segment
+        GDT_SetEntry(5, &sys_tss, ((uint32_t)&sys_tss) + sizeof(tss_struct), 0xE9, 0x00);
 
         asm ("lgdt (%0)" :: "r" (&gdt_table));
 
@@ -54,6 +61,10 @@ void GDT_Initialize()
                 "mov %ax, %fs\n\t"
                 "mov %ax, %gs\n\t"
                 "mov %ax, %ss\n\t"
+
+                //Set the TSS
+                "mov $0x2B, %ax\n\t"
+                "ltr %ax"
                 );
         return; //Don't enable interrupts yet
 }

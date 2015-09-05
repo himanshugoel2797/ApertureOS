@@ -178,9 +178,9 @@ uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, 
         uint64_t physAddr = (uint64_t)phys_address;
 
         //Check requested permissions to make sure they match up with the virtual address
-        if(virtAddr < KMEM_END && privLevel != MEM_KERNEL) return -2;                 //Make sure permissions match
-        if(virtAddr > KMEM_END && privLevel != MEM_USER) return -2;
-        if(virtAddr + size > KMEM_END && virtAddr < KMEM_END) return -3;                 //Don't allow boundary crossing
+        //if(virtAddr < KMEM_END && privLevel != MEM_KERNEL) return -2;                 //Make sure permissions match
+        //if(virtAddr >= KMEM_END && privLevel != MEM_USER) return -2;
+        //if(virtAddr + size > KMEM_END && virtAddr < KMEM_END) return -3;                 //Don't allow boundary crossing
 
         //Calculate the indices
         uint32_t pdpt_i = virtAddr/GB(1);

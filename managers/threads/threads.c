@@ -76,6 +76,24 @@ void threadMan_InterruptHandler(Registers *regs)
                 curThread->regs.unused -= 4;
                 curThread = nxThread;
 
+                //if((curThread->flags & 1) == THREAD_FLAGS_USER)
+                {
+                        /*asm volatile(
+                                "push %%ebx\n\t"
+                                "push %%eax\n\t"
+                                "add $4, %%eax\n\t"
+                                "movl $0x23, (%%eax)\n\t"
+                                "add $40, %%eax\n\t"
+                                "movl $0x23, (%%eax)\n\t"
+                                "sub $4, %%eax\n\t"
+                                "pop %%ebx\n\t"
+                                "add $48, %%ebx\n\t"
+                                "movl %%ebx, (%%eax)\n\t"
+                                "pop %%ebx\n\t"
+                                 :: "a"(nxThread->regs.unused)
+                                );*/
+                }
+
                 //Switch stacks
                 asm volatile
                 (
@@ -188,7 +206,7 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64
                 );
 
         asm volatile("mov %%ebx, %0" : "=r"(curThreadInfo->regs.unused));
-        
+
         //Store the thread in the queue
         curThreadInfo->next = threads;
         lastThread->next = curThreadInfo;

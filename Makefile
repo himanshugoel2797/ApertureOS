@@ -58,7 +58,7 @@ CP=cp
 CCADMIN=CCadmin
 GCC=clang -target i986-none-elf
 CFLAGS_A= -ffreestanding -O0 -Wall -Wextra -Wno-trigraphs -D$(CONF)  -DCURRENT_YEAR=$(CURRENT_YEAR) -DCOM_ENABLED=$(COM_ENABLED) $(INCLUDES)
-CFLAGS=-mno-sse $(CFLAGS_A)
+CFLAGS=$(CFLAGS_A) -ftree-vectorize
 stageA:CFLAGS=-mno-sse $(CFLAGS_A)
 ASM=$(PLATFORM)-elf-gcc -DDEBUG -ffreestanding -march=i686
 TEST_CMD=qemu-system-x86_64 $(QEMU_OPTS)

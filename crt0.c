@@ -26,17 +26,11 @@
 #include "graphics/graphics.h"
 
 
-int temp = 0, temp2 = 0, y, yOff, x, xOff, rval = 0;
+int temp = 0, temp2 = 0;
 char *tmp;
-uint64_t allocLoc = 0;
-size_t q = 0;
 
-void timerHandler()
-{
-        //asm volatile("cli");
-        temp++;
-        //asm volatile("sti");
-}
+
+void t_main(int argc, char **argv);
 
 //extern "C"{
 void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
@@ -84,9 +78,9 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
         tmp = ((uint32_t)tmp) & ~0xf;
         char pixel[4];
 
-
-        for(y = 0; y < height; y++)
-                for(x = 0; x < width; x++)
+        uint32_t q = 0;
+        for(int y = 0; y < height; y++)
+                for(int x = 0; x < width; x++)
                 {
                         HEADER_PIXEL(header_data, pixel);
                         tmp[q] = pixel[2];
@@ -95,22 +89,21 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic) {
                         tmp[q + 3] = pixel[3];
                         q+=4;
                 }
+
         Keyboard_Setup();
 
+        UID tid = ThreadMan_CreateThread( t_main, 0, NULL, THREAD_FLAGS_USER);
+        ThreadMan_StartThread(tid);
+
         Interrupts_Unlock();
+}
 
-        //UID id = Timers_CreateNew(5, TRUE, timerHandler);
-        //Timers_StartTimer(id);
-
-
-        while(1) {
-                //timerHandler();
-                //asm volatile("int $48");
-                COM_WriteStr("Hello World!");
-        temp2++;
+void t_main(int argc, char **argv)
+{
+        while(1){
+                temp++; 
+                temp2 = 0xDEADBEEF;
         }
-
-
 }
 
 //extern "C" /* Use C linkage for kernel_main. */
@@ -128,8 +121,6 @@ void kernel_main(int argc, char** isKernelMode) {
         graphics_WriteUInt32(t.seconds, 10, 0, 48);
         graphics_WriteUInt32(sizeof(Thread), 10, 0, 64);
 
-
         graphics_SwapBuffer();
-                        timerHandler();
                 }
 }

@@ -50,28 +50,28 @@ void graphics_Initialize() {
 
 void graphics_SwapBuffer() {
 
-        memcpy(frameBufferA, frameBufferB, buffer_size);
-        return;
+        //memcpy(frameBufferA, frameBufferB, buffer_size);
+        //return;
 
         uint64_t *fbufA = (uint64_t*)frameBufferA, *fbufB = (uint64_t*)frameBufferB;
         for(uint32_t a = 0; a < buffer_size; a+=0x80)
         {
-                asm volatile ("movaps (%%ebx), %%xmm1\n\t"
-                              "movaps +0x10(%%ebx), %%xmm2\n\t"
-                              "movaps +0x20(%%ebx), %%xmm3\n\t"
-                              "movaps +0x30(%%ebx), %%xmm4\n\t"
-                              "movaps +0x40(%%ebx), %%xmm5\n\t"
-                              "movaps +0x50(%%ebx), %%xmm6\n\t"
-                              "movaps +0x70(%%ebx), %%xmm0\n\t"
-                              "movaps +0x60(%%ebx), %%xmm7\n\t"
-                              "movaps %%xmm0, +0x70(%%eax)\n\t"
-                              "movaps %%xmm1, (%%eax)\n\t"
-                              "movaps %%xmm2, +0x10(%%eax)\n\t"
-                              "movaps %%xmm3, +0x20(%%eax)\n\t"
-                              "movaps %%xmm4, +0x30(%%eax)\n\t"
-                              "movaps %%xmm5, +0x40(%%eax)\n\t"
-                              "movaps %%xmm6, +0x50(%%eax)\n\t"
-                              "movaps %%xmm7, +0x60(%%eax)\n\t"
+                asm volatile ("movdqa (%%ebx), %%xmm1\n\t"
+                              "movdqa +0x10(%%ebx), %%xmm2\n\t"
+                              "movdqa +0x20(%%ebx), %%xmm3\n\t"
+                              "movdqa +0x30(%%ebx), %%xmm4\n\t"
+                              "movdqa +0x40(%%ebx), %%xmm5\n\t"
+                              "movdqa +0x50(%%ebx), %%xmm6\n\t"
+                              "movdqa +0x70(%%ebx), %%xmm0\n\t"
+                              "movdqa +0x60(%%ebx), %%xmm7\n\t"
+                              "movntdq %%xmm0, +0x70(%%eax)\n\t"
+                              "movntdq %%xmm1, (%%eax)\n\t"
+                              "movntdq %%xmm2, +0x10(%%eax)\n\t"
+                              "movntdq %%xmm3, +0x20(%%eax)\n\t"
+                              "movntdq %%xmm4, +0x30(%%eax)\n\t"
+                              "movntdq %%xmm5, +0x40(%%eax)\n\t"
+                              "movntdq %%xmm6, +0x50(%%eax)\n\t"
+                              "movntdq %%xmm7, +0x60(%%eax)\n\t"
                               : "=a" (fbufA) : "b" (fbufB) : "%xmm0","%xmm1","%xmm2","%xmm3","%xmm4","%xmm5","%xmm6","%xmm7", "%eax","%ebx");
 
                 fbufB+=0x80/sizeof(uint64_t);
@@ -81,16 +81,14 @@ void graphics_SwapBuffer() {
 }
 
 void graphics_Clear()
-{
-        memset(frameBufferB, 0xff, buffer_size);
-        return;
-        
+{       
         uint64_t *bbuffer = (uint64_t*)frameBufferB;
         memset(tmpBuf, 0xff, 16);
-        asm volatile ("movaps (%0), %%xmm1" :: "r" (tmpBuf) : "%xmm1");
+
         for(uint32_t a = 0; a < buffer_size; a+=16)
         {
-                asm volatile ("movaps %%xmm1, (%0)" : "=r" (bbuffer));
+                asm volatile ("movdqa (%0), %%xmm1" :: "a" (tmpBuf));
+                asm volatile ("movntdq %%xmm1, (%0)" : "=b" (bbuffer));
                 bbuffer+=2;
         }
 }
@@ -171,7 +169,7 @@ void graphics_SetPixel(uint32_t x, uint32_t y, uint32_t val) {
 
 void graphics_DrawBuffer(void* buffer, uint32_t x, uint32_t y, uint32_t w, uint32_t h)
 {
-        uint64_t *offset = (uint64_t*)&backBuffer[x+(y*pitch)];
+        uint64_t* offset = (uint64_t*)&backBuffer[x+(y*pitch)];
         uint64_t* src = (uint64_t*)buffer;
 
         uint64_t x0 = 0, y0= 0;
@@ -183,8 +181,8 @@ void graphics_DrawBuffer(void* buffer, uint32_t x, uint32_t y, uint32_t w, uint3
         {
                 offset[0] = src[0];
                 offset[1] = src[1];
-                //asm volatile ("movaps (%%ebx), %%xmm1\n\t"
-                //              "movaps %%xmm1, (%%eax)" : "=a" (offset): "b" (src) : "%xmm1", "%eax","%ebx" );
+                //asm volatile ("movaps (%%ebx), %%xmm0\n\t"
+                //              "movaps %%xmm0, (%%eax)" : "=a" (offset): "b" (src));
 
                 offset+=2;
                 x0+=4;
