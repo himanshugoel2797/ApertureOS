@@ -4,12 +4,12 @@
 
 uint8_t PS2Keyboard_Initialize()
 {
-          //Reset the keyboard
-          WAIT_DATA_SENT;
-          outb(DATA_PORT, 0xFF);
-          WAIT_DATA_AVL;
-          uint16_t reset_res = 0;
-          inb(DATA_PORT);
-          WAIT_DATA_AVL;
-          inb(DATA_PORT);
+    //Reset the keyboard
+    WAIT_DATA_SENT;
+    outb(DATA_PORT, 0xFF);
+    WAIT_DATA_AVL;
+    uint16_t reset_res = 0;
+    inb(DATA_PORT);
+    WAIT_DATA_AVL;
+    inb(DATA_PORT);
 }

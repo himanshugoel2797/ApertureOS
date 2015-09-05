@@ -4,6 +4,7 @@
 #include "types.h"
 
 #define PAGE_DIR_STORAGE_POOL_SIZE MB(18)
+#define MEMIO_TOP_BASE 0xF0000000
 #define VIRTUALIZE_HIGHER_MEM_OFFSET(a) (((uint32_t)a - 0xF0000000) + 0x10000000)
 
 typedef enum {

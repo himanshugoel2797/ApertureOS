@@ -27,6 +27,7 @@ SOURCES=graphics/graphics.o	\
 				drivers/pci/pci.o	drivers/pci/pci_devices.o \
 				drivers/pit/pit.o \
 				drivers/ps2/ps2.o drivers/ps2/ps2_keyboard.o \
+				drivers/ahci/ahci.o \
 				kmalloc.o \
 
 
@@ -35,7 +36,7 @@ PLATFORM=~/opt/cross/bin/i686
 
 OUTDISK=sdb
 
-QEMU_OPTS=-enable-kvm -m 1024 -cpu host -d cpu_reset,guest_errors -hda flash.img #-serial file:log.txt
+QEMU_OPTS=-enable-kvm -m 1024 -cpu host -d cpu_reset,guest_errors -drive id=disk,file=flash.img,if=none -device ahci,id=ahci -device ide-drive,drive=disk,bus=ahci.0 #-serial file:log.txt
 
 CURRENT_YEAR=$(shell date +"%Y")
 COM_ENABLED=1
