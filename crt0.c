@@ -101,6 +101,18 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
 
 void t_main(int argc, char **argv)
 {
+
+    uint16_t *hdd_buf = kmalloc(KB(8));
+    temp2 = AHCI_Initialize();
+
+    while(1)
+    {
+        if(AHCI_Read(temp++, 0, KB(8), hdd_buf))
+        {
+            temp2 = ((uint32_t*)hdd_buf)[0];
+        }
+    }
+
     sys_tss.esp0 = kmalloc(KB(16));
     asm volatile(
         "cli \n\t"
@@ -135,7 +147,6 @@ void t_main(int argc, char **argv)
 //extern "C" /* Use C linkage for kernel_main. */
 void kernel_main(int argc, char** isKernelMode)
 {
-    temp2 = AHCI_Initialize();
     while(1)
     {
 
@@ -148,7 +159,7 @@ void kernel_main(int argc, char** isKernelMode)
         graphics_WriteUInt64(temp, 2, 0, 16);
         graphics_WriteUInt32(temp2, 16, 0, 32);
         graphics_WriteUInt32(t.seconds, 10, 0, 48);
-        graphics_WriteUInt32(sizeof(Thread), 10, 0, 64);
+        graphics_WriteUInt32(sizeof(HBA_FIS), 16, 0, 64);
 
         graphics_SwapBuffer();
     }

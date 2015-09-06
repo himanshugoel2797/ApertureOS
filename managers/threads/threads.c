@@ -241,3 +241,8 @@ void ThreadMan_DeleteThread(UID id)
 {
 
 }
+
+void ThreadMan_Yield()
+{
+    asm volatile("int $48");
+}

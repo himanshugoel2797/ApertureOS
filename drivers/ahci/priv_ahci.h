@@ -308,4 +308,9 @@ typedef struct tagHBA_CMD_TBL
 #define AHCI_DEV_PM 0x04
 #define AHCI_DEV_SEMB 0x08
 
+#define ATA_DEV_BUSY 0x80
+#define ATA_DEV_DRQ 0x08
+
+int find_cmdslot(HBA_PORT *port);
+
 #endif

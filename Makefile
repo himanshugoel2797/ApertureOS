@@ -28,6 +28,7 @@ SOURCES=graphics/graphics.o	\
 				drivers/pit/pit.o \
 				drivers/ps2/ps2.o drivers/ps2/ps2_keyboard.o \
 				drivers/ahci/ahci.o \
+				drivers/ata_pio/ata_pio.o \
 				kmalloc.o \
 
 

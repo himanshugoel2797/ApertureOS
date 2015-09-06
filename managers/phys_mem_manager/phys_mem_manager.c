@@ -74,9 +74,11 @@ uint32_t pmem_Initialize()
     while ( (uint32_t)mmap < (uint32_t)global_memory_map + global_memory_map_size)
     {
         // Make sure this memory is not freeable
-        if (mmap->type != MULTIBOOT_MEMORY_AVAILABLE &&
-                mmap->type != MULTIBOOT_MEMORY_ACPI_RECLAIMABLE)
-            MemMan_MarkUsed(mmap->addr, mmap->len);
+        COM_WriteStr("MMAP ADDR: %x LEN: %x TYPE: %x\r\n", (uint32_t)mmap->addr, (uint32_t)mmap->len, (uint32_t)mmap->type);
+        
+        if (mmap->type != 1){
+            MemMan_MarkUsed((uint32_t)mmap->addr, (uint32_t)mmap->len);
+        }
         mmap = (multiboot_memory_map_t *)((unsigned int)mmap + mmap->size + sizeof(unsigned int));
     }
 

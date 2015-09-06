@@ -29,5 +29,6 @@ void ThreadMan_StartThread(UID id);
 void ThreadMan_ExitThread(UID id);
 void ThreadMan_DeleteThread(UID id);
 UID ThreadMan_GetCurThreadID();
+void ThreadMan_Yield();
 
 #endif /* end of include guard: _THREAD_MANAGER_H_ */
