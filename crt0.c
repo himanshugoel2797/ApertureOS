@@ -102,15 +102,17 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
 void t_main(int argc, char **argv)
 {
 
-    uint16_t *hdd_buf = kmalloc(KB(8));
+    uint16_t *hdd_buf = kmalloc(KB(16));
     temp2 = AHCI_Initialize();
 
+    if(temp2 == 0){
     while(1)
     {
-        if(AHCI_Read(temp++, 0, KB(8), hdd_buf))
+        if(AHCI_Read(temp++, 0, KB(16), hdd_buf))
         {
             temp2 = ((uint32_t*)hdd_buf)[0];
         }
+    }
     }
 
     sys_tss.esp0 = kmalloc(KB(16));

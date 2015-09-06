@@ -1,12 +1,19 @@
 #include "ahci.h"
 #include "priv_ahci.h"
 #include "managers.h"
+#include "kmalloc.h"
 
 uint32_t ahci_memory_base = 0;
 HBA_MEM *hba_mem;
 HBA_FIS *hba_fis;
 HBA_CMD_HEADER *hba_cmd_header;
 HBA_PORT *port;
+
+uint32_t AHCI_BASE;
+
+void port_rebase(HBA_PORT *port, int portno);
+void stop_cmd(HBA_PORT *port);
+void start_cmd(HBA_PORT *port);
 
 
 uint8_t AHCI_Initialize()
@@ -34,8 +41,24 @@ uint8_t AHCI_Initialize()
                 ahci_memory_base = VIRTUALIZE_HIGHER_MEM_OFFSET(devices[i].bars[5]);
             }
 
+            //Enable PCI busmastering for this device
+            pci_setCommand(i, PCI_BUS_MASTER_CMD);
+
             hba_mem = (HBA_MEM*)ahci_memory_base;
 
+            //Obtain ownership of the controller if ownershp handoff is supported
+            if(hba_mem->cap2 & 1){
+                hba_mem->bohc |= 2;
+                while((hba_mem->bohc & 1) || !(hba_mem->bohc & 2))ThreadMan_Yield();
+            }
+
+            //Software Reset the controller
+            hba_mem->ghc |= (1 << 31);  //Enable AHCI
+            hba_mem->ghc |= 1;  //Reset
+            while(hba_mem->ghc & 1)ThreadMan_Yield();
+            hba_mem->ghc |= (1 << 31);  //Re-enable AHCI
+
+            COM_WriteStr("AHCI Version: %d%d.%d%d\r\n", (hba_mem->vs >> 24) & 0xFF, (hba_mem->vs >> 16) & 0xFF, (hba_mem->vs >> 8) & 0xFF, hba_mem->vs & 0xFF);
             COM_WriteStr("Ports: %b\r\n", hba_mem->pi);
 
             //Find the index of the first port that is an ATA Disk
@@ -48,32 +71,10 @@ uint8_t AHCI_Initialize()
                         port = &hba_mem->ports[i];
                         COM_WriteStr("Using port #%d\r\n", i);
 
-                        if( hba_mem->ports[i].clbu == hba_mem->ports[i].fbu &&
-                                hba_mem->ports[i].clb - hba_mem->ports[i].fb > 0xFFFFFF)
-                        {
+                        AHCI_BASE = kmalloc(KB(512));
+                        AHCI_BASE += (AHCI_BASE % KB(1));
 
-                            //setup the FIS and CMD LIST tables and map them into kernel memory
-                            hba_fis = virtMemMan_FindEmptyAddress(KB(8), MEM_KERNEL);
-                            if(hba_fis == NULL)break;
-                            if(virtMemMan_Map(hba_fis, hba_mem->ports[i].fb | ((uint64_t)hba_mem->ports[i].fbu) << 32, KB(4), MEM_TYPE_WB, MEM_READ | MEM_WRITE, MEM_KERNEL) < 0)break;
-
-                            hba_fis = (uint32_t)hba_fis + (hba_mem->ports[i].fb % KB(4));
-                            hba_cmd_header = ((uint32_t)hba_fis + (hba_mem->ports[i].clb - hba_mem->ports[i].fb));
-
-                        }
-                        else
-                        {
-                            //setup the FIS and CMD LIST tables and map them into kernel memory
-                            hba_fis = virtMemMan_FindEmptyAddress(KB(4), MEM_KERNEL);
-                            if(hba_fis == NULL)break;
-                            if(virtMemMan_Map(hba_fis, hba_mem->ports[i].fb | ((uint64_t)hba_mem->ports[i].fbu) << 32, KB(4), MEM_TYPE_WB, MEM_READ | MEM_WRITE, MEM_KERNEL) < 0)break;
-
-                            hba_cmd_header = virtMemMan_FindEmptyAddress(KB(8), MEM_KERNEL);
-                            if(hba_cmd_header == NULL)break;
-                            if(virtMemMan_Map(hba_cmd_header, hba_mem->ports[i].clb | ((uint64_t)hba_mem->ports[i].clbu) << 32, KB(8), MEM_TYPE_WB, MEM_READ | MEM_WRITE, MEM_KERNEL) < 0)break;
-                            hba_cmd_header = (uint32_t)hba_cmd_header + (hba_mem->ports[i].clb % KB(4));
-                            hba_fis = (uint32_t)hba_fis + (hba_mem->ports[i].fb % KB(4));
-                        }
+                        port_rebase(port, i);
 
                         //Adjust both addresses so they compensate for alignment changes
 
@@ -121,13 +122,13 @@ bool AHCI_Read(uint32_t startl, uint32_t starth, uint32_t count, uint16_t *buf)
     if (slot == -1)
         return FALSE;
 
-    HBA_CMD_HEADER *cmdheader = hba_cmd_header;//[slot];
+    HBA_CMD_HEADER *cmdheader = (HBA_CMD_HEADER*)port->clb;//[slot];
     cmdheader += slot;
     cmdheader->cfl = sizeof(FIS_REG_H2D)/sizeof(uint32_t); // Command FIS size
     cmdheader->w = 0;       // Read from device
     cmdheader->prdtl = (uint16_t)((count-1)>>4) + 1;    // PRDT entries count
 
-    COM_WriteStr("CTBA %x\r\n", cmdheader->ctba);
+    COM_WriteStr("CTBA %x\r\n", port->serr);
     HBA_CMD_TBL *cmdtbl = (HBA_CMD_TBL*)(cmdheader->ctba);
     memset(cmdtbl, 0, sizeof(HBA_CMD_TBL) +
            (cmdheader->prdtl-1)*sizeof(HBA_PRDT_ENTRY));
@@ -189,22 +190,21 @@ bool AHCI_Read(uint32_t startl, uint32_t starth, uint32_t count, uint16_t *buf)
         // in the PxIS port field as well (1 << 5)
         if ((port->ci & (1<<slot)) == 0)
             break;
-        /*
-        if (port->is & HBA_PxIS_TFES)   // Task file error
+
+        if (port->is & (1<<30))   // Task file error
         {
             COM_WriteStr("Read disk error\r\n");
             return FALSE;
-        }*/
+        }
     }
 
     //COM_WriteStr("TESt %x\r\n", cmdheader);
-    /*
     // Check again
-    if (port->is & HBA_PxIS_TFES)
+    if (port->is & (1<<30))
     {
         COM_WriteStr("Read disk error\r\n");
         return FALSE;
-    }*/
+    }
 
     return TRUE;
 }
@@ -222,4 +222,73 @@ int find_cmdslot(HBA_PORT *port)
     }
     COM_WriteStr("Cannot find free command list entry\r\n");
     return -1;
+}
+
+void port_rebase(HBA_PORT *port, int portno)
+{
+    stop_cmd(port); // Stop command engine
+ 
+    // Command list offset: 1K*portno
+    // Command list entry size = 32
+    // Command list entry maxim count = 32
+    // Command list maxim size = 32*32 = 1K per port
+    port->clb = AHCI_BASE + (portno<<10);
+    port->clbu = 0;
+    memset((void*)(port->clb), 0, 1024);
+ 
+
+    // FIS offset: 32K+256*portno
+    // FIS entry size = 256 bytes per port
+    port->fb = AHCI_BASE + (32<<10) + (portno<<8);
+    port->fbu = 0;
+    memset((void*)(port->fb), 0, 256);
+ 
+    // Command table offset: 40K + 8K*portno
+    // Command table size = 256*32 = 8K per port
+    HBA_CMD_HEADER *cmdheader = (HBA_CMD_HEADER*)(port->clb);
+    for (int i=0; i<32; i++)
+    {
+        cmdheader[i].prdtl = 8; // 8 prdt entries per command table
+                    // 256 bytes per command table, 64+16+48+16*8
+        // Command table offset: 40K + 8K*portno + cmdheader_index*256
+        cmdheader[i].ctba = AHCI_BASE + (40<<10) + (portno<<13) + (i<<8);
+        cmdheader[i].ctbau = 0;
+        memset((void*)cmdheader[i].ctba, 0, 256);
+    }
+ 
+    start_cmd(port);    // Start command engine
+    uint32_t c = port->cmd; //Flush the cmd buffer
+    c = c;
+}
+ 
+// Start command engine
+void start_cmd(HBA_PORT *port)
+{
+    // Wait until CR (bit15) is cleared
+    while (port->cmd & (1<<15));
+ 
+    // Set FRE (bit4) and ST (bit0)
+    port->cmd |= 1<<4;
+    port->cmd |= 1;
+    //COM_WriteStr("%b\r\n", port->cmd);
+}
+ 
+// Stop command engine
+void stop_cmd(HBA_PORT *port)
+{
+    // Clear ST (bit0)
+    port->cmd &= ~1;
+
+    // Clear FRE (bit4);
+    port->cmd &= ~(1<<4);
+ 
+    // Wait until FR (bit14), CR (bit15) are cleared
+    while(1)
+    {
+        if (port->cmd & (1<<14))
+            continue;
+        if (port->cmd & (1<<15))
+            continue;
+        break;
+    }
 }

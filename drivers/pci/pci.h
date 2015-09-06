@@ -8,6 +8,7 @@
 
 #define PCI_MASS_STORAGE_DEVICE_CLASS 0x1
 
+#define PCI_BUS_MASTER_CMD (1<<2)
 
 typedef struct{
 	uint8_t classCode;
@@ -24,6 +25,23 @@ typedef struct{
 PCI_DeviceFuncs devices[MAX_DEVICE_COUNT];
 uint32_t pci_deviceCount;
 
+
+void pci_writeDWord(
+    uint32_t bus,
+    uint32_t device,
+    uint32_t function,
+    uint32_t offset,
+    uint32_t val
+);
+
+
+uint32_t pci_readDWord(
+    uint32_t bus,
+    uint32_t device,
+    uint32_t function,
+    uint32_t offset
+);
+
 void pci_GetPCIClass (
         long classcode,
         char ** base,
@@ -32,5 +50,6 @@ void pci_GetPCIClass (
         );
 
 void pci_Initialize();
+void pci_setCommand(uint32_t device_index, uint16_t value);
 
 #endif /* end of include guard: _PCI_DRIVER_H_ */

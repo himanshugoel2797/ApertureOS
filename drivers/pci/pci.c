@@ -20,6 +20,18 @@ uint32_t pci_readDWord(
     return inl(PCI_DATA);
 }
 
+void pci_writeDWord(
+    uint32_t bus,
+    uint32_t device,
+    uint32_t function,
+    uint32_t offset,
+    uint32_t val
+)
+{
+    outl(PCI_ADDR, 0x80000000 | bus << 16 | device << 11 | function <<  8 | (offset & 0xfc));
+    outl(PCI_DATA, val);
+}
+
 void pci_Initialize()
 {
     COM_WriteStr("\r\nEnumerating PCI devices:\r\n");
@@ -72,7 +84,7 @@ void pci_Initialize()
 
                         pci_deviceCount++;
 
-                        COM_WriteStr("\tFound %s %s %s\r\n", sub, prog, base);
+                        COM_WriteStr("\tFound %s %s %s(%d.%d.%d) at %d:%d:%d\r\n", sub, prog, base, devices[pci_deviceCount - 1].classCode, devices[pci_deviceCount - 1].subClassCode, devices[pci_deviceCount - 1].progIf, bus, device, f);
                     }
                 }
             }
@@ -96,4 +108,23 @@ void pci_Initialize()
     {
         COM_WriteStr("%x\r\n", mcfg_tables[i].baseAddr);
     }
+}
+
+void pci_setCommand(uint32_t device_index, uint16_t value)
+{
+    uint32_t reg = pci_readDWord(
+        devices[device_index].bus,
+        devices[device_index].device, 
+        devices[device_index].function, 
+        0x04);
+
+    //reg &= 0xFFFF0000;
+    COM_WriteStr("%b\r\n", reg);
+    reg |= value;
+        pci_writeDWord(
+            devices[device_index].bus, 
+            devices[device_index].device, 
+            devices[device_index].function,
+            0x04, 
+            reg);
 }
