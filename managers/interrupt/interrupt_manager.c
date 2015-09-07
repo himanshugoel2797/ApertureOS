@@ -61,15 +61,18 @@ uint32_t interrupts_Initialize()
 
 void interrupts_IDTHandler(Registers *Regs)
 {
+    bool handled = FALSE;
     for(int i = 0; i < INTERRUPT_HANDLER_SLOTS + 1; i++)
     {
         if(int_handlers[Regs->int_no][i] != NULL)
         {
+            handled = TRUE;
             uint32_t res = int_handlers[Regs->int_no][i](Regs);
             if(res) break;
         }
     }
 
+    if(!handled)COM_WriteStr("Unhandled Int#%x\r\n", Regs->int_no);
 
     if(using_apic) APIC_SendEOI(Regs->int_no);
     else PIC_SendEOI(Regs->int_no);

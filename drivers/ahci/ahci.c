@@ -5,8 +5,6 @@
 
 uint32_t ahci_memory_base = 0;
 HBA_MEM *hba_mem;
-HBA_FIS *hba_fis;
-HBA_CMD_HEADER *hba_cmd_header;
 HBA_PORT *port;
 
 uint32_t AHCI_BASE;
@@ -76,10 +74,6 @@ uint8_t AHCI_Initialize()
 
                         port_rebase(port, i);
 
-                        //Adjust both addresses so they compensate for alignment changes
-
-                        COM_WriteStr("hba %x\r\n", hba_fis);
-
                         return 0;
                     }
                 }
@@ -116,9 +110,10 @@ uint8_t AHCI_CheckDeviceType(HBA_PORT *port)
 
 bool AHCI_Read(uint32_t startl, uint32_t starth, uint32_t count, uint16_t *buf)
 {
-    port->is = (uint32_t)-1;       // Clear pending interrupt bits
+    port->is = (uint32_t)0;       // Clear pending interrupt bits
     int spin = 0; // Spin lock timeout counter
     int slot = find_cmdslot(port);
+
     if (slot == -1)
         return FALSE;
 
@@ -128,46 +123,37 @@ bool AHCI_Read(uint32_t startl, uint32_t starth, uint32_t count, uint16_t *buf)
     cmdheader->w = 0;       // Read from device
     cmdheader->prdtl = (uint16_t)((count-1)>>4) + 1;    // PRDT entries count
 
-    COM_WriteStr("CTBA %x\r\n", port->serr);
-    HBA_CMD_TBL *cmdtbl = (HBA_CMD_TBL*)(cmdheader->ctba);
-    memset(cmdtbl, 0, sizeof(HBA_CMD_TBL) +
-           (cmdheader->prdtl-1)*sizeof(HBA_PRDT_ENTRY));
+    HBA_CMD_TBL *cmd_tbl = (HBA_CMD_TBL*)cmdheader->ctba;
+    memset(cmd_tbl, 0, sizeof(HBA_CMD_TBL) + sizeof(HBA_PRDT_ENTRY) * (count - 1));
 
-    int i = 0;
+    FIS_REG_H2D *fis = (FIS_REG_H2D*)cmd_tbl->cfis;
 
+    fis->fis_type = FIS_TYPE_REG_H2D;
+    fis->pmport = 0;
+    fis->rsv0 = 0;
+    fis->c = 1;
+    fis->command = 0x25;
 
-    // 8K bytes (16 sectors) per PRDT
-    for (; i<cmdheader->prdtl-1; i++)
+    fis->lba0 = startl;
+    fis->lba1 = startl >> 8;
+    fis->lba2 = startl >> 16;
+    fis->lba3 = startl >> 24;
+    fis->lba4 = starth;
+    fis->lba5 = starth >> 8;
+
+    fis->device = 1 << 6;
+    fis->countl = count;
+    fis->counth = count >> 8;
+
+    for(int i = 0; i < cmdheader->prdtl; i++)
     {
-        cmdtbl->prdt_entry[i].dba = (uint32_t)buf;
-        cmdtbl->prdt_entry[i].dbc = 8*1024; // 8K bytes
-        cmdtbl->prdt_entry[i].i = 1;
-        buf += 4*1024;  // 4K words
-        count -= 16;    // 16 sectors
+        cmd_tbl->prdt_entry[i].dba = (uint32_t)buf;
+        cmd_tbl->prdt_entry[i].dbau = 0;
+        cmd_tbl->prdt_entry[i].rsv0 = 0;
+        cmd_tbl->prdt_entry[i].dbc = KB(8) - 1;
+        cmd_tbl->prdt_entry[i].rsv1 = 0;
+        cmd_tbl->prdt_entry[i].i = 0;
     }
-    // Last entry
-    cmdtbl->prdt_entry[i].dba = (uint32_t)buf;
-    cmdtbl->prdt_entry[i].dbc = count<<9;   // 512 bytes per sector
-    cmdtbl->prdt_entry[i].i = 1;
-
-    // Setup command
-    FIS_REG_H2D *cmdfis = (FIS_REG_H2D*)(&cmdtbl->cfis);
-
-    cmdfis->fis_type = FIS_TYPE_REG_H2D;
-    cmdfis->c = 1;  // Command
-    cmdfis->command = 0x25;
-
-    cmdfis->lba0 = (uint8_t)startl;
-    cmdfis->lba1 = (uint8_t)(startl>>8);
-    cmdfis->lba2 = (uint8_t)(startl>>16);
-    cmdfis->device = 1<<6;  // LBA mode
-
-    cmdfis->lba3 = (uint8_t)(startl>>24);
-    cmdfis->lba4 = (uint8_t)starth;
-    cmdfis->lba5 = (uint8_t)(starth>>8);
-
-    cmdfis->countl = count & 0xFF;
-    cmdfis->counth = (count >> 8) & 0xFF;
 
     // The below loop waits until the port is no longer busy before issuing a new command
     while ((port->tfd & (ATA_DEV_BUSY | ATA_DEV_DRQ)) && spin < 1000000)
