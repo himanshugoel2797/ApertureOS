@@ -69,8 +69,8 @@ uint8_t AHCI_Initialize()
                         port = &hba_mem->ports[i];
                         COM_WriteStr("Using port #%d\r\n", i);
 
-                        AHCI_BASE = kmalloc(KB(512));
-                        AHCI_BASE += (AHCI_BASE % KB(1));
+                        AHCI_BASE = bootstrap_malloc(KB(512));
+                        AHCI_BASE += (AHCI_BASE % 1000);
 
                         port_rebase(port, i);
 
@@ -110,7 +110,7 @@ uint8_t AHCI_CheckDeviceType(HBA_PORT *port)
 
 bool AHCI_Read(uint32_t startl, uint32_t starth, uint32_t count, uint16_t *buf)
 {
-    port->is = (uint32_t)0;       // Clear pending interrupt bits
+    port->is = ~0;       // Clear pending interrupt bits
     int spin = 0; // Spin lock timeout counter
     int slot = find_cmdslot(port);
 
@@ -118,7 +118,8 @@ bool AHCI_Read(uint32_t startl, uint32_t starth, uint32_t count, uint16_t *buf)
         return FALSE;
 
     HBA_CMD_HEADER *cmdheader = (HBA_CMD_HEADER*)port->clb;//[slot];
-    cmdheader += slot;
+    cmdheader = &cmdheader[slot];
+
     cmdheader->cfl = sizeof(FIS_REG_H2D)/sizeof(uint32_t); // Command FIS size
     cmdheader->w = 0;       // Read from device
     cmdheader->prdtl = (uint16_t)((count-1)>>4) + 1;    // PRDT entries count
@@ -127,12 +128,13 @@ bool AHCI_Read(uint32_t startl, uint32_t starth, uint32_t count, uint16_t *buf)
     memset(cmd_tbl, 0, sizeof(HBA_CMD_TBL) + sizeof(HBA_PRDT_ENTRY) * (count - 1));
 
     FIS_REG_H2D *fis = (FIS_REG_H2D*)cmd_tbl->cfis;
+    COM_WriteStr("Addr: %x\r\n", fis);
 
     fis->fis_type = FIS_TYPE_REG_H2D;
     fis->pmport = 0;
     fis->rsv0 = 0;
     fis->c = 1;
-    fis->command = 0x25;
+    fis->command = 0x24;
 
     fis->lba0 = startl;
     fis->lba1 = startl >> 8;
@@ -153,6 +155,8 @@ bool AHCI_Read(uint32_t startl, uint32_t starth, uint32_t count, uint16_t *buf)
         cmd_tbl->prdt_entry[i].dbc = KB(8) - 1;
         cmd_tbl->prdt_entry[i].rsv1 = 0;
         cmd_tbl->prdt_entry[i].i = 0;
+
+        buf = ((uint32_t)buf) + KB(8);
     }
 
     // The below loop waits until the port is no longer busy before issuing a new command
@@ -238,6 +242,7 @@ void port_rebase(HBA_PORT *port, int portno)
                     // 256 bytes per command table, 64+16+48+16*8
         // Command table offset: 40K + 8K*portno + cmdheader_index*256
         cmdheader[i].ctba = AHCI_BASE + (40<<10) + (portno<<13) + (i<<8);
+        COM_WriteStr("%d:%x\r\n", i, cmdheader[i].ctba);
         cmdheader[i].ctbau = 0;
         memset((void*)cmdheader[i].ctba, 0, 256);
     }
