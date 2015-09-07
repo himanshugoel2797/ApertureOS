@@ -7,6 +7,6 @@
 
 uint8_t AHCI_Initialize();
 uint8_t AHCI_CheckDeviceType(HBA_PORT *port);
-bool AHCI_Read(uint32_t startl, uint32_t starth, uint32_t count, uint16_t *buf);
+bool AHCI_Read(uint64_t start, uint32_t count, uint16_t *buf);
 
 #endif

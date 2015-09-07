@@ -108,7 +108,7 @@ void t_main(int argc, char **argv)
     if(temp2 == 0){
     while(1)
     {
-        if(AHCI_Read(temp++, 0, 16, hdd_buf))
+        if(AHCI_Read(temp++, KB(8), hdd_buf))
         {
             temp2 = ((uint32_t*)hdd_buf)[0x40c/4];
             if(temp2 != 0)break;

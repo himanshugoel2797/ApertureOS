@@ -17,6 +17,8 @@ PRE_FPU_BOOT=crt0.o gdt.o idt.o cpuid.o \
 				drivers/pic/pic.o \
 
 SOURCES=graphics/graphics.o	\
+				managers/filesystem/filesystem.o \
+				managers/filesystem/ext2/ext2.o \
 				managers/keyboard/keyboard.o	\
 				managers/phys_mem_manager/phys_mem_manager.o \
 				managers/process/process_manager.o	\
@@ -39,6 +41,8 @@ OUTDISK=sdb
 
 QEMU_OPTS=-enable-kvm -m 1024 -cpu host -d cpu_reset,guest_errors -drive id=disk,file=flash.img,if=none -device ahci,id=ahci -device ide-drive,drive=disk,bus=ahci.0 #-serial file:log.txt
 
+BOOT_FS=EXT2
+
 CURRENT_YEAR=$(shell date +"%Y")
 COM_ENABLED=1
 install:COM_ENABLED=0
@@ -59,7 +63,7 @@ MKDIR=mkdir
 CP=cp
 CCADMIN=CCadmin
 GCC=clang -target i986-none-elf
-CFLAGS_A= -ffreestanding -O0 -Wall -Wextra -Wno-trigraphs -D$(CONF)  -DCURRENT_YEAR=$(CURRENT_YEAR) -DCOM_ENABLED=$(COM_ENABLED) $(INCLUDES)
+CFLAGS_A= -ffreestanding -O0 -Wall -Wextra -Wno-trigraphs -D$(CONF) -DBOOT_FS=$(BOOT_FS)  -DCURRENT_YEAR=$(CURRENT_YEAR) -DCOM_ENABLED=$(COM_ENABLED) $(INCLUDES)
 CFLAGS=$(CFLAGS_A) -ftree-vectorize
 stageA:CFLAGS=-mno-sse $(CFLAGS_A)
 ASM=$(PLATFORM)-elf-gcc -DDEBUG -ffreestanding -march=i686

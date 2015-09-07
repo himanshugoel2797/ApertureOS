@@ -108,8 +108,11 @@ uint8_t AHCI_CheckDeviceType(HBA_PORT *port)
 
 }
 
-bool AHCI_Read(uint32_t startl, uint32_t starth, uint32_t count, uint16_t *buf)
+bool AHCI_Read(uint64_t start, uint32_t count, uint16_t *buf)
 {
+
+    count = ((count - 1) >> 9) + 1;   //Convert value into sector count
+
     port->is = ~0;       // Clear pending interrupt bits
     int spin = 0; // Spin lock timeout counter
     int slot = find_cmdslot(port);
@@ -128,7 +131,6 @@ bool AHCI_Read(uint32_t startl, uint32_t starth, uint32_t count, uint16_t *buf)
     memset(cmd_tbl, 0, sizeof(HBA_CMD_TBL) + sizeof(HBA_PRDT_ENTRY) * (count - 1));
 
     FIS_REG_H2D *fis = (FIS_REG_H2D*)cmd_tbl->cfis;
-    COM_WriteStr("Addr: %x\r\n", fis);
 
     fis->fis_type = FIS_TYPE_REG_H2D;
     fis->pmport = 0;
@@ -136,12 +138,12 @@ bool AHCI_Read(uint32_t startl, uint32_t starth, uint32_t count, uint16_t *buf)
     fis->c = 1;
     fis->command = 0x24;
 
-    fis->lba0 = startl;
-    fis->lba1 = startl >> 8;
-    fis->lba2 = startl >> 16;
-    fis->lba3 = startl >> 24;
-    fis->lba4 = starth;
-    fis->lba5 = starth >> 8;
+    fis->lba0 = start;
+    fis->lba1 = start >> 8;
+    fis->lba2 = start >> 16;
+    fis->lba3 = start >> 24;
+    fis->lba4 = start >> 32;
+    fis->lba5 = start >> 40;
 
     fis->device = 1 << 6;
     fis->countl = count;
