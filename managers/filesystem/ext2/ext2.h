@@ -4,7 +4,9 @@
 #include "types.h"
 #include "managers.h"
 #include "../priv_filesystem.h"
+#include "ext2_structs.h"
 
+uint32_t _EXT2_Initialize(FileDescriptor *desc);
 uint32_t _EXT2_Filesystem_OpenFile(FileDescriptor *desc, const char *filename, int flags, int perms);
 uint8_t _EXT2_Filesystem_SeekFile(FileDescriptor *desc, uint32_t fd, uint32_t offset, int whence);
 uint8_t _EXT2_Filesystem_CloseFile(FileDescriptor *desc, uint32_t fd);
@@ -16,5 +18,9 @@ uint8_t _EXT2_Filesystem_ReadDir(FileDescriptor *desc, uint32_t dd, Filesystem_D
 uint8_t _EXT2_Filesystem_CloseDir(FileDescriptor *desc, uint32_t fd);
 uint8_t _EXT2_Filesystem_MakeDir(FileDescriptor *desc, const char *path);
 uint8_t _EXT2_Filesystem_DeleteDir(FileDescriptor *desc, const char *path);
+
+typedef struct{
+	
+}EXT2_DIR;
 
 #endif

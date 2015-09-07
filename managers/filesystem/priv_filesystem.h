@@ -13,6 +13,7 @@
 typedef struct FileDescriptor_T FileDescriptor; 
 
 typedef struct Filesystem_Driver_T{
+	uint32_t(*_H_Initialize)(FileDescriptor *desc);
 uint32_t(*_H_Filesystem_OpenFile)(FileDescriptor *desc, const char *filename, int flags, int perms);
 uint8_t(*_H_Filesystem_SeekFile)(FileDescriptor *desc, uint32_t fd, uint32_t offset, int whence);
 uint8_t(*_H_Filesystem_CloseFile)(FileDescriptor *desc, uint32_t fd);
@@ -35,10 +36,11 @@ struct FileDescriptor_T
 	ReadFunc read;
 	WriteFunc write;
 	Filesystem_Driver *driver;
-	FileDescriptor *next;
 	UID fd_base;
 	UID dir_base;
 	UID id;
+	void *data;
+	FileDescriptor *next;
 };
 
 #endif
