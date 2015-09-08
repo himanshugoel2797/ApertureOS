@@ -1,8 +1,12 @@
 #include "ext2.h"
+#include "utils/common.h"
 #include "kmalloc.h"
 
 uint8_t *memory_pool = NULL;
 int index = 0;
+int base_id = 0;
+
+EXT2_FD *fd, *last_fd;
 
 uint8_t* _EXT2_ReadAddr(FileDescriptor *desc, uint64_t addr, uint32_t len)
 {
@@ -20,6 +24,16 @@ uint8_t* _EXT2_ReadAddr(FileDescriptor *desc, uint64_t addr, uint32_t len)
 	return mem_pool;
 }
 
+EXT2_BlockGroupDescriptor * _EXT2_GetBlockGroup(FileDescriptor *desc, uint32_t block_index)
+{
+	EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
+
+	uint32_t read_address = data->block_size;
+	if(data->block_size == 1024)read_address += data->block_size;
+
+	EXT2_BlockGroupDescriptor *bgdt = (EXT2_BlockGroupDescriptor*)_EXT2_ReadAddr(desc, read_address, KB(16));
+	return &bgdt[block_index];
+}
 
 uint32_t _EXT2_Initialize(FileDescriptor *desc)
 {
@@ -45,8 +59,15 @@ uint32_t _EXT2_Initialize(FileDescriptor *desc)
 	data->block_count = s_blk->block_count;
 	data->group_count = s_blk->block_count/s_blk->blocks_per_group + 1;
 
-	memcpy(data->vol_name, data->major_version?s_blk->ext.vol_name:sprintf("EXT2_%d", index++), 16);
+	strcpy(data->vol_name, data->major_version?s_blk->ext.vol_name:sprintf("EXT2_%d", index++));
 	data->last_read_addr = 0;
+
+	if(fd == NULL)fd = kmalloc(sizeof(EXT2_FD));
+	last_fd = fd;
+
+	fd->inode = 2;
+	fd->is_directory = TRUE;
+	fd->id = base_id++;
 }
 
 
@@ -77,7 +98,53 @@ uint8_t _EXT2_Filesystem_RenameFile(FileDescriptor *desc, const char *orig_name,
 
 uint32_t _EXT2_Filesystem_OpenDir(FileDescriptor *desc, const char *filename)
 {
+	EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
+	char *fname = filename + strlen(desc->path) - 1;
 
+	uint32_t inode = ROOT_INODE_INDEX;
+
+	while(fname != NULL)
+	{
+		//Find the directory by traversing the tree
+		uint32_t block_index = (inode - 1)/data->inodes_per_group;
+
+		EXT2_BlockGroupDescriptor bgd;
+		memcpy(&bgd, _EXT2_GetBlockGroup(desc, block_index), sizeof(EXT2_BlockGroupDescriptor));
+
+		uint32_t block_index_base = (inode - 1) % data->inodes_per_group;
+		uint64_t address = (bgd.inode_table_start_addr * data->block_size) + (block_index_base * data->inode_size);
+
+		COM_WriteStr("TEST\r\n");
+		//TODO figure out why interrupt 0xE is being raised here
+
+		EXT2_Inode inode;
+		memcpy(&inode, _EXT2_ReadAddr(desc, address, data->inode_size), data->inode_size);
+
+		for(int i = 0; i < 12; i++)
+		{
+			if(inode.direct_block[i] == 0)break;
+
+			//Check the block entries
+			address = inode.direct_block[i] * data->block_size;
+
+			if(inode.type_perm >> 12 == EXT2_DIR)
+			{
+				EXT2_DirectoryEntry *dir = 	_EXT2_ReadAddr(desc, address, 512);
+				char entry_name[256];
+
+				while(dir->entry_size != 0)
+				{
+					memset(entry_name, 0, 256);
+					memcpy(entry_name, dir->name, 256);
+
+					COM_WriteStr("%s\r\n", entry_name);
+					dir = (uint32_t)dir + dir->entry_size;
+				}
+			}
+		}
+
+		fname = strchr(fname + 1, '/');
+	}
 }
 
 uint8_t _EXT2_Filesystem_ReadDir(FileDescriptor *desc, uint32_t dd, Filesystem_DirEntry *dir)

@@ -9,6 +9,10 @@
 #define GET_BLOCK_INDEX_FROM_INODE(inode_index, inodes_per_group) ( (inode_index - 1)/inodes_per_group )
 #define GET_BLOCK_INODE_INDEX_FROM_INODE(inode_index, inodes_per_group) ( (inode_index - 1)%inodes_per_group )
 
+typedef enum{
+	EXT2_DIR = 4
+}EXT2_EntryTypes;
+
 typedef struct{
 	uint32_t first_non_reserved_inode;
 	uint16_t sizeof_inode;
@@ -94,7 +98,6 @@ typedef struct{
 }EXT2_Inode;
 
 typedef struct EXT2_DriverData_T{
-	UID descriptorID;
 	uint32_t base_block_num;
 	uint32_t block_size;
 	uint32_t inode_size;
@@ -115,6 +118,6 @@ typedef struct
 	uint8_t name_len;
 	uint8_t type;
 	uint8_t name[1];
-}EXT2_FileSystemEntry;
+}EXT2_DirectoryEntry;
 
 #endif

@@ -19,8 +19,11 @@ uint8_t _EXT2_Filesystem_CloseDir(FileDescriptor *desc, uint32_t fd);
 uint8_t _EXT2_Filesystem_MakeDir(FileDescriptor *desc, const char *path);
 uint8_t _EXT2_Filesystem_DeleteDir(FileDescriptor *desc, const char *path);
 
-typedef struct{
-	
-}EXT2_DIR;
+typedef struct EXT2_FD_T{
+	uint32_t id;
+	bool is_directory;
+	uint32_t inode;
+	struct EXT2_FD_T *next;
+}EXT2_FD;
 
 #endif

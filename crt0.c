@@ -102,19 +102,9 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
 void t_main(int argc, char **argv)
 {
 
-    uint16_t *hdd_buf = bootstrap_malloc(KB(16));
-    temp2 = AHCI_Initialize();
-
-    if(temp2 == 0){
-    while(1)
-    {
-        if(AHCI_Read(temp++, KB(8), hdd_buf))
-        {
-            temp2 = ((uint32_t*)hdd_buf)[0x40c/4];
-            if(temp2 != 0)break;
-        }
-    }
-    }
+    AHCI_Initialize();
+    Filesystem_Setup();
+    Filesystem_OpenDir("/");
 
     sys_tss.esp0 = kmalloc(KB(16));
     asm volatile(

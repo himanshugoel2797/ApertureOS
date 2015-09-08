@@ -20,5 +20,6 @@ int vsnprintf ( char * str, const char * format, va_list vl );
 int sprintf ( char * str, const char * format, ... );
 char* utoa(uint64_t val, char *ostr, int base);
 char* itoa(int64_t val, char *ostr, int base);
+char* strchr(const char *s, int c);
 
 #endif /* end of include guard: _UTILS_COMMON_H_ */
