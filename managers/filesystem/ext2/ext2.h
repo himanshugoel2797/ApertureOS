@@ -23,6 +23,7 @@ typedef struct EXT2_FD_T{
 	uint32_t id;
 	bool is_directory;
 	uint32_t inode;
+	uint32_t extra_info;
 	struct EXT2_FD_T *next;
 }EXT2_FD;
 

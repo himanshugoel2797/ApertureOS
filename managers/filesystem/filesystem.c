@@ -116,7 +116,7 @@ UID Filesystem_OpenDir(const char *dirname)
 uint8_t Filesystem_ReadDir(UID dd, Filesystem_DirEntry *dir)
 {
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromUID(dd);
-    uint8_t result = desc->driver->_H_Filesystem_ReadDir(desc, dd, dir);
+    uint8_t result = desc->driver->_H_Filesystem_ReadDir(desc, dd - desc->dir_base, dir);
     return result;
 }
 
@@ -255,6 +255,10 @@ void* Filesystem_FindDescriptorFromUID(const UID id)
             return descriptor;	//This path has already been hooked
         }
         descriptor = descriptor->next;
+    }
+    
+    if( descriptor->fd_base <= id && (descriptor->dir_base + MAX_OPEN_DIRS) >= id) {
+        return descriptor;  //This path has already been hooked
     }
     return NULL;
 }

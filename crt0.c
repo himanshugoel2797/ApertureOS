@@ -105,7 +105,17 @@ void t_main(int argc, char **argv)
 
     AHCI_Initialize();
     Filesystem_Setup();
-    Filesystem_OpenDir("/root/");
+
+    Filesystem_OpenFile("/inori-yuzuriha-guilty-crown-14361.jpg", 0, 0);
+
+
+    UID id = Filesystem_OpenDir("/root/");
+    Filesystem_DirEntry entry;
+    while(!Filesystem_ReadDir(id, &entry))
+    {
+        COM_WriteStr("%s\r\n", entry.dir_name);
+    }
+
     while(1);
 
     sys_tss.esp0 = kmalloc(KB(16));

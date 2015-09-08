@@ -18,7 +18,9 @@ typedef enum{
 }SupportedFilesystems;
 
 typedef struct{
-
+	char dir_name[256];
+	uint8_t name_len;
+	uint8_t type;
 }Filesystem_DirEntry;
 
 void Filesystem_Setup();

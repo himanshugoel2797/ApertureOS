@@ -116,6 +116,7 @@ typedef struct EXT2_DriverData_T{
 	uint32_t major_version;
 	uint8_t vol_name[16];
 	uint64_t last_read_addr;
+	uint8_t *memory_pool;
 }EXT2_DriverData;
 
 typedef struct
