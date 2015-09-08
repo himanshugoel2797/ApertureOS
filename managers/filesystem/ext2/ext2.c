@@ -63,12 +63,13 @@ uint32_t _EXT2_Initialize(FileDescriptor *desc)
 		sprintf(data->vol_name, "EXT2_%d", index++);
 	}
 	data->last_read_addr = 0;
-	//if(fd == NULL)fd = kmalloc(sizeof(EXT2_FD));
-	//last_fd = fd;
+	
+	if(fd == NULL)fd = kmalloc(sizeof(EXT2_FD));
+	last_fd = fd;
 
-	//fd->inode = 2;
-	//fd->is_directory = TRUE;
-	//fd->id = base_id++;
+	fd->inode = 2;
+	fd->is_directory = TRUE;
+	fd->id = base_id++;
 
 	return 0;
 }
@@ -76,17 +77,18 @@ uint32_t _EXT2_Initialize(FileDescriptor *desc)
 
 uint32_t _EXT2_Filesystem_OpenFile(FileDescriptor *desc, const char *filename, int flags, int perms)
 {
-
+	//Navigate the tree to find the inode for the file
+	//Read the inode for the file to retrive its contents
 }
 
 uint8_t _EXT2_Filesystem_SeekFile(FileDescriptor *desc, uint32_t fd, uint32_t offset, int whence)
 {
-
+	//Seek for a part of the file
 }
 
 uint8_t _EXT2_Filesystem_CloseFile(FileDescriptor *desc, uint32_t fd)
 {
-
+	//Remove the entry for the file
 }
 
 uint8_t _EXT2_Filesystem_DeleteFile(FileDescriptor *desc, const char *file)
@@ -103,18 +105,28 @@ uint32_t _EXT2_Filesystem_OpenDir(FileDescriptor *desc, const char *filename)
 {
 	EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
 	char *fname = filename + strlen(desc->path) - 1;
+	char dir_name[256];
 
-	uint32_t inode = ROOT_INODE_INDEX;
+	uint32_t inode_i = ROOT_INODE_INDEX;
 	
+	if(filename[strlen(filename) - 1] != '/')return -1;	//Make sure this is  directory path
+
+	//Maake sure the path is a directory
 	while(fname != NULL)
 	{
+		memset(dir_name, 0, 256);
+		uint32_t index = (uint32_t)strchr(fname + 1, '/') - (uint32_t)fname - 1;
+		if(index == 0)break;
+		if(index > strlen(fname))break;
+		memcpy(dir_name, fname + 1, index);
+
 		//Find the directory by traversing the tree
-		uint32_t block_index = (inode - 1)/data->inodes_per_group;
+		uint32_t block_index = (inode_i - 1)/data->inodes_per_group;
 
 		EXT2_BlockGroupDescriptor bgd;
 		memcpy(&bgd, _EXT2_GetBlockGroup(desc, block_index), sizeof(EXT2_BlockGroupDescriptor));
 
-		uint32_t block_index_base = (inode - 1) % data->inodes_per_group;
+		uint32_t block_index_base = (inode_i - 1) % data->inodes_per_group;
 		uint64_t address = (bgd.inode_table_start_addr * data->block_size) + (block_index_base * data->inode_size);
 
 		EXT2_Inode inode;
@@ -127,8 +139,7 @@ uint32_t _EXT2_Filesystem_OpenDir(FileDescriptor *desc, const char *filename)
 			//Check the block entries
 			address = inode.direct_block[i] * data->block_size;
 
-
-			if(inode.type_perm >> 12 == EXT2_DIR)
+			if(inode.type_perm >> 12 == EXT2_INODE_DIR)
 			{
 				EXT2_DirectoryEntry *dir = 	_EXT2_ReadAddr(desc, address, 512);
 				char entry_name[256];
@@ -137,25 +148,45 @@ uint32_t _EXT2_Filesystem_OpenDir(FileDescriptor *desc, const char *filename)
 				{
 					memset(entry_name, 0, 256);
 					memcpy(entry_name, dir->name, 256);
-
+					if(dir->type == EXT2_DIRT_DIR && strncmp(entry_name, dir_name, strlen(dir_name)) == 0){
+						inode_i = dir->inode_index;
+						i = 13;
+						fname = NULL;
+						break;
+					}
 					COM_WriteStr("%s\r\n", entry_name);
 					dir = (uint32_t)dir + dir->entry_size;
 				}
 			}	
 		}
 
-		fname = strchr(fname + 1, '/');
+		if(fname != NULL)fname = strchr(fname + 1, '/');
 	}
+
+	EXT2_FD* fd_n = kmalloc(sizeof(EXT2_FD));
+	fd_n->id = base_id++;
+	fd_n->is_directory = TRUE;
+	fd_n->inode = inode_i;
+	fd_n->next = NULL;
+
+	COM_WriteStr("%d\r\n", inode_i);
+
+	last_fd->next = fd_n;
+	last_fd = last_fd->next;
+
+	return fd_n->id;
 }
 
 uint8_t _EXT2_Filesystem_ReadDir(FileDescriptor *desc, uint32_t dd, Filesystem_DirEntry *dir)
 {
+	//provide the next entry in the directory
 
+	//Determine the address of the inode
 }
 
 uint8_t _EXT2_Filesystem_CloseDir(FileDescriptor *desc, uint32_t fd)
 {
-
+	//Find and remove the associated entry
 }
 
 uint8_t _EXT2_Filesystem_MakeDir(FileDescriptor *desc, const char *path)

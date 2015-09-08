@@ -9,9 +9,16 @@
 #define GET_BLOCK_INDEX_FROM_INODE(inode_index, inodes_per_group) ( (inode_index - 1)/inodes_per_group )
 #define GET_BLOCK_INODE_INDEX_FROM_INODE(inode_index, inodes_per_group) ( (inode_index - 1)%inodes_per_group )
 
+
 typedef enum{
-	EXT2_DIR = 4
-}EXT2_EntryTypes;
+	EXT2_INODE_FILE = 0x8,
+	EXT2_INODE_DIR = 0x4
+}EXT2_INODE_EntryTypes;
+
+typedef enum{
+	EXT2_DIRT_FILE = 1,
+	EXT2_DIRT_DIR = 2
+}EXT2_DIR_TABLE_EntryTypes;
 
 typedef struct{
 	uint32_t first_non_reserved_inode;

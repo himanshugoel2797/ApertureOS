@@ -105,7 +105,7 @@ void t_main(int argc, char **argv)
 
     AHCI_Initialize();
     Filesystem_Setup();
-    Filesystem_OpenDir("/");
+    Filesystem_OpenDir("/root/");
     while(1);
 
     sys_tss.esp0 = kmalloc(KB(16));
