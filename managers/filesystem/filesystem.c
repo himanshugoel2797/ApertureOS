@@ -107,7 +107,6 @@ UID Filesystem_OpenDir(const char *dirname)
 {
     //Determine the descriptor based on the filename, call the appropriate function and convert it's returned ID into a UID
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromPath(dirname);
-    COM_WriteStr("%x\r\n", desc);
     uint32_t result = desc->driver->_H_Filesystem_OpenDir(desc, dirname);
 
     if(result != 0)return result + desc->dir_base;
@@ -179,7 +178,7 @@ UID Filesystem_RegisterDescriptor(
     if(lastDescriptor != NULL)lastDescriptor->next = desc;
     lastDescriptor = desc;
 
-    desc->path = kmalloc(strlen(target));
+    desc->path = kmalloc(strlen(target) + 1);
     strcpy(desc->path, target);
 
     desc->read = read;

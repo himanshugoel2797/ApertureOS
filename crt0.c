@@ -97,6 +97,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     ThreadMan_StartThread(tid);
 
     Interrupts_Unlock();
+    while(1);
 }
 
 void t_main(int argc, char **argv)
@@ -105,6 +106,7 @@ void t_main(int argc, char **argv)
     AHCI_Initialize();
     Filesystem_Setup();
     Filesystem_OpenDir("/");
+    while(1);
 
     sys_tss.esp0 = kmalloc(KB(16));
     asm volatile(

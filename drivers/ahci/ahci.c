@@ -165,7 +165,6 @@ bool AHCI_Read(uint64_t start, uint32_t count, uint16_t *buf)
     while ((port->tfd & (ATA_DEV_BUSY | ATA_DEV_DRQ)) && spin < 1000000)
     {
         spin++;
-        COM_WriteStr("%d\r\n", spin);
     }
     if (spin == 1000000)
     {
@@ -244,7 +243,6 @@ void port_rebase(HBA_PORT *port, int portno)
                     // 256 bytes per command table, 64+16+48+16*8
         // Command table offset: 40K + 8K*portno + cmdheader_index*256
         cmdheader[i].ctba = AHCI_BASE + (40<<10) + (portno<<13) + (i<<8);
-        COM_WriteStr("%d:%x\r\n", i, cmdheader[i].ctba);
         cmdheader[i].ctbau = 0;
         memset((void*)cmdheader[i].ctba, 0, 256);
     }
