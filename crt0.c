@@ -73,9 +73,9 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     Timers_Setup();
     ThreadMan_Setup();
 
-    tmp = kmalloc(1080*1920*4 + 16);
-    tmp += 16;
-    tmp = ((uint32_t)tmp) & ~0xf;
+    tmp = kmalloc(1080*1920*4 + KB(4));
+    tmp += KB(4);
+    tmp -= ((uint32_t)tmp) % KB(4);
 
     COM_WriteStr("Kernel Size: %x MiB\r\n", ((uint32_t)&_region_kernel_end_ - LOAD_ADDRESS)/(1024 * 1204));
 
@@ -95,9 +95,9 @@ void t_main(int argc, char **argv)
     Filesystem_Setup();
 
     UID fd = Filesystem_OpenFile("/inori-yuzuriha-guilty-crown-14361.data", 0, 0);
-    uint8_t *buf = kmalloc(1920*1080*4 + 16);
-    buf += 16;
-    buf = ((uint32_t)buf) & ~0xf;
+    uint8_t *buf = kmalloc(1920*1080*4 + KB(4));
+    buf += KB(4);
+    buf -= ((uint32_t)buf) % KB(4);
     //COM_WriteStr("%x\r\n", buf);
 
     Interrupts_Lock();

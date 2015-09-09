@@ -310,7 +310,7 @@ void virtMemMan_UnMap(void* v_address, size_t size)
     //Calculate the indices
     uint32_t pdpt_i = virtAddr/GB(1);
     uint32_t pd_i = (virtAddr - (pdpt_i * GB(1)))/MB(2);
-    uint32_t pt_i = (virtAddr & 0x00000fff);
+    uint32_t pt_i = (virtAddr & 0x000ff000) >> 12;
 
     //TODO this needs a clean rewrite
 
@@ -337,11 +337,11 @@ void virtMemMan_UnMap(void* v_address, size_t size)
             if(seg_cnt == 0 || ((seg_cnt * KB(4)) < size)) seg_cnt++;
 
             PD_Entry_PSE *pd_pse = (PD_Entry_PSE*)GET_ADDR(&curInstance_virt[pdpt_i]);
-            uint64_t *pd_u64 = (uint64_t*)GET_ADDR(&curInstance_virt[pdpt_i]);
+            PD_Entry *pd_u64 = (PD_Entry*)GET_ADDR(&curInstance_virt[pdpt_i]);
 
             if(pd_pse[pd_i].page_size == 0)
                 {
-                    PT_Entry *pt = (PT_Entry*)(pd_u64[pd_i] & 0xfffff000);
+                    PT_Entry *pt = (PT_Entry*)(pd_u64[pd_i].addr * MB(2));
 
                     for(int i = 0; i < seg_cnt && pt_i + i < 512; i++)
                         {
@@ -365,17 +365,18 @@ uint64_t virtMemMan_GetPhysAddress(void *virt_addr)
     //Check the page table entry for this
     uint32_t pdpt_i = v_addr/GB(1);
     uint32_t pd_i = (v_addr - (pdpt_i * GB(1)))/MB(2);
-    uint32_t pt_i = (v_addr & 0x00000fff);
+    uint32_t pt_i = (v_addr & 0x000ff000) >> 12;
 
 
     PD_Entry_PSE *pd_pse = (PD_Entry_PSE*)GET_ADDR(&curInstance_virt[pdpt_i]);
     uint64_t *pd_u64 = (uint64_t*)GET_ADDR(&curInstance_virt[pdpt_i]);
+    if(pd_pse[pd_i].present == 0)return -1;
 
     if(pd_pse[pd_i].page_size == 0) //If this is a 4KB page
-    {
-    
+    {    
         PT_Entry *pt = (PT_Entry*)(pd_u64[pd_i] & 0xfffff000);
-        return (pt[pt_i].addr * KB(4)) + ( (uint32_t)virt_addr - (pdpt_i * GB(1) + pd_i * MB(2) + pt_i * KB(4)) );   
+        COM_WriteStr("%x\r\n", pt[pt_i].addr);
+        return (pt[pt_i].addr * KB(4)) + ((uint32_t)virt_addr - v_addr);   
 
     }else   //If this is a 2MB page
     {

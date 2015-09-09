@@ -150,7 +150,8 @@ bool AHCI_Read(uint64_t start, uint32_t count, uint16_t *buf)
     fis->countl = count;
     fis->counth = count >> 8;
 
-    for(int i = 0; i < cmdheader->prdtl; i++)
+    int i = 0;
+    for(; i < cmdheader->prdtl - 1; i++)
         {
             cmd_tbl->prdt_entry[i].dba = (uint32_t)virtMemMan_GetPhysAddress(buf);
             cmd_tbl->prdt_entry[i].dbau = 0;
@@ -160,7 +161,15 @@ bool AHCI_Read(uint64_t start, uint32_t count, uint16_t *buf)
             cmd_tbl->prdt_entry[i].i = 0;
 
             buf = ((uint32_t)buf) + KB(4);
+            count -= 8;
         }
+        
+        cmd_tbl->prdt_entry[i].dba = (uint32_t)virtMemMan_GetPhysAddress(buf);
+        cmd_tbl->prdt_entry[i].dbau = 0;
+        cmd_tbl->prdt_entry[i].rsv0 = 0;
+        cmd_tbl->prdt_entry[i].dbc = (count * 512) - 1;
+        cmd_tbl->prdt_entry[i].rsv1 = 0;
+        cmd_tbl->prdt_entry[i].i = 0;
 
     // The below loop waits until the port is no longer busy before issuing a new command
     while ((port->tfd & (ATA_DEV_BUSY | ATA_DEV_DRQ)) && spin < 1000000)

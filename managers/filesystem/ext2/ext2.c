@@ -9,6 +9,11 @@ EXT2_FD *fd, *last_fd;
 
 #define POOL_SIZE MB(2)
 
+uint32_t _EXT2_ReadToAddr(FileDescriptor *desc, uint64_t addr, uint32_t len, uint8_t *target)
+{
+    return desc->read(addr/512, len, target) - 1;
+}
+
 uint8_t* _EXT2_ReadAddr(FileDescriptor *desc, uint64_t addr, uint32_t len)
 {
     EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
@@ -258,6 +263,8 @@ uint8_t _EXT2_Filesystem_ReadFile(FileDescriptor *desc, UID id, uint8_t *buffer,
                 }
             else if(block_index < data->first_indirection_entry_count + 12)
                 {
+                    if(i1_table[block_index - 12] == 0)break;
+
                     //one indirection
                     uint32_t read_size =
                         ((size >= data->block_size)?data->block_size:size) - block_offset;
@@ -312,7 +319,7 @@ uint8_t _EXT2_Filesystem_ReadFile(FileDescriptor *desc, UID id, uint8_t *buffer,
 
                     buffer += read_size;
                     size -= read_size;
-                    
+
                     cur_fd->extra_info += read_size;
                     block_index++;
 
@@ -321,7 +328,7 @@ uint8_t _EXT2_Filesystem_ReadFile(FileDescriptor *desc, UID id, uint8_t *buffer,
                 {
                     COM_WriteStr("TEST!!!\r\n");
                 }
-            //COM_WriteStr("buffer: %x\r\n", buffer);
+            COM_WriteStr("buffer: %x\r\n", buffer);
         }
     kfree(i1_table);
     kfree(i2_table);
