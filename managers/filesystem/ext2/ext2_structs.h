@@ -93,10 +93,7 @@ typedef struct{
 	uint32_t disk_sector_count;
 	uint32_t flags;
 	uint32_t os_specific;
-	uint32_t direct_block[12];
-	uint32_t s_indirect_block_pointer;
-	uint32_t d_indirect_block_pointer;
-	uint32_t t_indirect_block_pointer;
+	uint32_t direct_block[15];
 	uint32_t generation_num;
 	uint32_t extended_attr_block;
 	uint32_t size_hi;

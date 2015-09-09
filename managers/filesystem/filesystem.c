@@ -37,6 +37,7 @@ uint32_t filesystem_Initialize()
     drivers->next = NULL;
     drivers->_H_Initialize = _EXT2_Initialize;
     drivers->_H_Filesystem_OpenFile = _EXT2_Filesystem_OpenFile;
+    drivers->_H_Filesystem_ReadFile = _EXT2_Filesystem_ReadFile;
     drivers->_H_Filesystem_SeekFile = _EXT2_Filesystem_SeekFile;
     drivers->_H_Filesystem_CloseFile = _EXT2_Filesystem_CloseFile;
     drivers->_H_Filesystem_DeleteFile = _EXT2_Filesystem_DeleteFile;
@@ -71,6 +72,13 @@ UID Filesystem_OpenFile(const char *filename, int flags, int perms)
 
     if(result != 0)return result + desc->fd_base;
     return -1;
+}
+
+uint8_t Filesystem_ReadFile(UID id, uint8_t *buffer, size_t size)
+{
+    FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromUID(id);
+    uint8_t result = desc->driver->_H_Filesystem_ReadFile(desc, id - desc->fd_base, buffer, size);
+    return result;
 }
 
 uint8_t Filesystem_CloseFile(UID fd)
@@ -112,6 +120,7 @@ UID Filesystem_OpenDir(const char *dirname)
     if(result != 0)return result + desc->dir_base;
     return -1;
 }
+
 
 uint8_t Filesystem_ReadDir(UID dd, Filesystem_DirEntry *dir)
 {

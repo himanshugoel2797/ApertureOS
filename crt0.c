@@ -106,8 +106,11 @@ void t_main(int argc, char **argv)
     AHCI_Initialize();
     Filesystem_Setup();
 
-    Filesystem_OpenFile("/inori-yuzuriha-guilty-crown-14361.jpg", 0, 0);
+    UID fd = Filesystem_OpenFile("/inori-yuzuriha-guilty-crown-14361.jpg", 0, 0);
+    uint32_t *buf = kmalloc(MB(1));
 
+    Filesystem_ReadFile(fd, buf, MB(1));
+    COM_WriteStr("%x\r\n", buf[0]);
 
     UID id = Filesystem_OpenDir("/root/");
     Filesystem_DirEntry entry;

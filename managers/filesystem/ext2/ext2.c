@@ -47,7 +47,6 @@ EXT2_Inode * _EXT2_GetInode(FileDescriptor *desc, uint32_t inode_i)
 
 	uint32_t block_index_base = (inode_i - 1) % data->inodes_per_group;
 	uint64_t address = (bgd.inode_table_start_addr * data->block_size) + (block_index_base * data->inode_size);
-
 	return _EXT2_ReadAddr(desc, address, data->inode_size);
 }
 
@@ -87,6 +86,11 @@ uint32_t _EXT2_Initialize(FileDescriptor *desc)
 	data->block_count = s_blk->block_count;
 	data->group_count = s_blk->block_count/s_blk->blocks_per_group + 1;
 
+	//Calculate the numbers of entries in each level of the indirection list
+	data->first_indirection_entry_count = data->block_size/sizeof(uint32_t);
+	data->second_indirection_entry_count = data->block_size/sizeof(uint32_t) * data->block_size/sizeof(uint32_t);
+	data->third_indirection_entry_count = data->block_size/sizeof(uint32_t) * data->block_size/sizeof(uint32_t) * data->block_size/sizeof(uint32_t);
+
 	if(data->major_version)strcpy(data->vol_name, s_blk->ext.vol_name);
 	else{
 		sprintf(data->vol_name, "EXT2_%d", index++);
@@ -114,6 +118,7 @@ uint32_t _EXT2_Filesystem_OpenFile(FileDescriptor *desc, const char *filename, i
 	char dir_name[256];
 
 	uint32_t inode_i = ROOT_INODE_INDEX;
+	uint64_t size = 0;
 
 	//Maake sure the path is a directory
 	while(fname != NULL)
@@ -154,6 +159,7 @@ uint32_t _EXT2_Filesystem_OpenFile(FileDescriptor *desc, const char *filename, i
 						inode_i = dir->inode_index;
 						i = 13;
 						fname = NULL;
+						size = (((uint64_t)inode.size_hi) << 32 | inode.size_lo); 
 						break;
 					}
 					dir = (uint32_t)dir + dir->entry_size;
@@ -170,6 +176,7 @@ uint32_t _EXT2_Filesystem_OpenFile(FileDescriptor *desc, const char *filename, i
 	fd_n->inode = inode_i;
 	fd_n->next = NULL;
 	fd_n->extra_info = 0;
+	fd_n->more_extra_info = size;
 
 	COM_WriteStr("inode: %d\r\n", inode_i);
 
@@ -178,6 +185,58 @@ uint32_t _EXT2_Filesystem_OpenFile(FileDescriptor *desc, const char *filename, i
 
 	return fd_n->id;
 
+}
+
+uint32_t _EXT2_ReadBlockData(FileDescriptor *desc, uint32_t block_index, uint32_t offset, uint8_t *dest, size_t size)
+{
+	EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
+	uint32_t block_address = block_index * data->block_size;
+	memcpy(dest, _EXT2_ReadAddr(desc, block_address, size) + offset, size + offset);
+	return size;
+}
+
+uint8_t _EXT2_Filesystem_ReadFile(FileDescriptor *desc, UID id, uint8_t *buffer, size_t size)
+{
+	EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
+	EXT2_FD *cur_fd = _EXT2_FindFDFromID(id);
+
+	//Determine the address of the inode
+	EXT2_Inode inode;
+	memcpy(&inode, _EXT2_GetInode(desc, cur_fd->inode), sizeof(EXT2_Inode));
+	uint32_t cur_index = 0;
+	
+	cur_fd->more_extra_info = (((uint64_t)inode.size_hi) << 32 | inode.size_lo);
+
+	//Calculate the block index given the file offset
+	uint32_t block_index = cur_fd->extra_info / data->block_size;
+	uint32_t block_offset = cur_fd->extra_info % data->block_size;
+
+	if(cur_fd->extra_info + size > cur_fd->more_extra_info)size = cur_fd->more_extra_info - cur_fd->extra_info;
+
+	while(size > 0){
+		COM_WriteStr("%d\r\n", size);
+	if(block_index < 12)
+	{
+		//Read from the data blocks
+		uint32_t read_size = _EXT2_ReadBlockData(
+			desc,
+		 	inode.direct_block[block_index],
+		 	block_offset,
+		 	buffer,
+		 		((size > data->block_size)?data->block_size:size) - block_offset);
+
+		buffer += read_size;
+		size -= read_size;
+		cur_fd->extra_info += read_size;
+		block_index++;
+	}else{
+		//Read from the indirection lists
+		COM_WriteStr("ERROR!!!");
+		//Determine which indirection list this belongs to
+	}
+}
+
+	return -1;
 }
 
 uint8_t _EXT2_Filesystem_SeekFile(FileDescriptor *desc, uint32_t fd, uint32_t offset, int whence)
@@ -230,7 +289,7 @@ uint32_t _EXT2_Filesystem_OpenDir(FileDescriptor *desc, const char *filename)
 			//Check the block entries
 			uint64_t address = inode.direct_block[i] * data->block_size;
 
-			if(inode.type_perm >> 12 == EXT2_INODE_DIR)
+			if(inode.hard_link_count != 0 && inode.type_perm >> 12 == EXT2_INODE_DIR)
 			{
 				EXT2_DirectoryEntry *dir = 	_EXT2_ReadAddr(desc, address, 512);
 				char entry_name[256];
