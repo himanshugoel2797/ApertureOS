@@ -7,18 +7,18 @@
 
 typedef struct
 {
-        ACPISDTHeader h;
-        uint8_t hardware_rev_id;
-        uint8_t comparator_count : 5;
-        uint8_t counter_size : 1;
-        uint8_t reserved : 1;
-        uint8_t legacy_replacement : 1;
-        pci_vendor_t pci_vendor_id;
-        GenericAddressStructure address;
-        uint8_t hpet_number;
-        uint16_t minimum_tick;
-        uint8_t page_protection;
-}HPET;
+    ACPISDTHeader h;
+    uint8_t hardware_rev_id;
+    uint8_t comparator_count : 5;
+    uint8_t counter_size : 1;
+    uint8_t reserved : 1;
+    uint8_t legacy_replacement : 1;
+    pci_vendor_t pci_vendor_id;
+    GenericAddressStructure address;
+    uint8_t hpet_number;
+    uint16_t minimum_tick;
+    uint8_t page_protection;
+} HPET;
 
 HPET *hpet;
 uint64_t frequency;

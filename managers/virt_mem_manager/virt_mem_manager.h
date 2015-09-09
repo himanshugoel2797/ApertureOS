@@ -7,23 +7,26 @@
 #define MEMIO_TOP_BASE 0xF0000000
 #define VIRTUALIZE_HIGHER_MEM_OFFSET(a) (((uint32_t)a - 0xF0000000) + 0x10000000)
 
-typedef enum {
-        MEM_TYPE_UC = 2,
-        MEM_TYPE_WB = 0,
-        MEM_TYPE_WT = 1,
-        MEM_TYPE_WC = 3
-}MEM_TYPES;
+typedef enum
+{
+    MEM_TYPE_UC = 2,
+    MEM_TYPE_WB = 0,
+    MEM_TYPE_WT = 1,
+    MEM_TYPE_WC = 3
+} MEM_TYPES;
 
-typedef enum {
-        MEM_WRITE = 1,
-        MEM_READ = 2,
-        MEM_EXEC = 4
-}MEM_ACCESS_PERMS;
+typedef enum
+{
+    MEM_WRITE = 1,
+    MEM_READ = 2,
+    MEM_EXEC = 4
+} MEM_ACCESS_PERMS;
 
-typedef enum {
-        MEM_KERNEL = 0,
-        MEM_USER = 1
-}MEM_SECURITY_PERMS;
+typedef enum
+{
+    MEM_KERNEL = 0,
+    MEM_USER = 1
+} MEM_SECURITY_PERMS;
 
 typedef uint64_t* VirtMemMan_Instance;
 

@@ -41,12 +41,12 @@ void kmalloc_init()
     uint32_t virtBaseAddr_base = virtMemMan_FindEmptyAddress(STORE_SIZE, MEM_KERNEL);
     size_t size = STORE_SIZE;
     while(size > 0)
-    {
-        uint64_t physBaseAddr_base = physMemMan_Alloc();
-        virtMemMan_Map(virtBaseAddr_base, physBaseAddr_base, KB(4), MEM_TYPE_WB, MEM_READ | MEM_WRITE, MEM_KERNEL);
-        virtBaseAddr_base += KB(4);
-        size -= KB(4);
-    }
+        {
+            uint64_t physBaseAddr_base = physMemMan_Alloc();
+            virtMemMan_Map(virtBaseAddr_base, physBaseAddr_base, KB(4), MEM_TYPE_WB, MEM_READ | MEM_WRITE, MEM_KERNEL);
+            virtBaseAddr_base += KB(4);
+            size -= KB(4);
+        }
     virtBaseAddr_base -= STORE_SIZE;
 
     next_free_block = allocation_info = virtBaseAddr_base;
@@ -69,23 +69,23 @@ void kcompact()
     kmalloc_info *a_info = allocation_info;
 
     while(a_info->next != NULL)
-    {
-        while(a_info->next != NULL)
         {
-            if(IS_FREE(a_info))
-            {
-                break;
-            }
-            a_info = a_info->next;
+            while(a_info->next != NULL)
+                {
+                    if(IS_FREE(a_info))
+                        {
+                            break;
+                        }
+                    a_info = a_info->next;
+                }
+            if(a_info->next != NULL)
+                {
+                    //TODO this is a memory leak, need some way to reclaim this memory
+                    a_info->size += a_info->next->size;
+                    a_info->next = a_info->next->next;
+                    a_info = a_info->next;
+                }
         }
-        if(a_info->next != NULL)
-        {
-            //TODO this is a memory leak, need some way to reclaim this memory
-            a_info->size += a_info->next->size;
-            a_info->next = a_info->next->next;
-            a_info = a_info->next;
-        }
-    }
     Interrupts_Unlock();
 }
 
@@ -94,27 +94,27 @@ void *kmalloc(size_t size)
 {
     kmalloc_info *a_info = allocation_info;
     while(a_info != NULL && a_info->next != NULL)
-    {
-        if(IS_FREE(a_info) && a_info->size >= size)
         {
-            break;
+            if(IS_FREE(a_info) && a_info->size >= size)
+                {
+                    break;
+                }
+            a_info = a_info->next;
         }
-        a_info = a_info->next;
-    }
 
     if(IS_USED(a_info) | (a_info->size < size))
-    {
-        //Compact the allocation info and try again, if failed, return NULL
-        if(!retry)
         {
-            retry = TRUE;
-            //kcompact();
-            uint32_t res = kmalloc(size);
-            retry = FALSE;
-            return res;
+            //Compact the allocation info and try again, if failed, return NULL
+            if(!retry)
+                {
+                    retry = TRUE;
+                    //kcompact();
+                    uint32_t res = kmalloc(size);
+                    retry = FALSE;
+                    return res;
+                }
+            return NULL;
         }
-        return NULL;
-    }
 
     //Allocate this block, mark this one as used, append a new block object at the end that contains the remaining free space
     uint32_t addr = GET_ADDR(a_info);
@@ -122,15 +122,15 @@ void *kmalloc(size_t size)
 
     //We need to allocate a new info block only if there is free space
     if(freeSize != 0)
-    {
-        next_free_block->pointer = addr + size;
-        next_free_block->size = freeSize;
-        next_free_block->next = a_info->next;
-        MARK_FREE(next_free_block);
+        {
+            next_free_block->pointer = addr + size;
+            next_free_block->size = freeSize;
+            next_free_block->next = a_info->next;
+            MARK_FREE(next_free_block);
 
-        a_info->next = next_free_block;
-        next_free_block++;
-    }
+            a_info->next = next_free_block;
+            next_free_block++;
+        }
 
     MARK_USED(a_info);
     a_info->size = size;
@@ -143,14 +143,14 @@ void kfree(void *addr)
     //Find the block that matches the address specified
     kmalloc_info *a_info = allocation_info;
     while(a_info->next != NULL)
-    {
-        if(IS_USED(a_info) && a_info->pointer == (uint32_t)addr)
         {
-            break;
-        }
+            if(IS_USED(a_info) && a_info->pointer == (uint32_t)addr)
+                {
+                    break;
+                }
 
-        a_info = a_info->next;
-    }
+            a_info = a_info->next;
+        }
 
     //Mark this block as free
     MARK_FREE(a_info);

@@ -30,14 +30,14 @@ uint8_t PS2_Initialize()
     //If test didn't pass, return -1
     if(test_result != 0x55) return -1;
 
-    if(isDualChannel) //If test showed it was dual channel first, check properly
-    {
-        outb(CMD_PORT, ENABLE_PORT2_CMD);
-        cfg = PS2_ReadConfig();
-        if(cfg & (1<<5)) isDualChannel = 0; //If bit is still set, not dual channel
+    if(isDualChannel)   //If test showed it was dual channel first, check properly
+        {
+            outb(CMD_PORT, ENABLE_PORT2_CMD);
+            cfg = PS2_ReadConfig();
+            if(cfg & (1<<5)) isDualChannel = 0; //If bit is still set, not dual channel
 
-        if(isDualChannel) outb(CMD_PORT, DISABLE_PORT2_CMD);
-    }
+            if(isDualChannel) outb(CMD_PORT, DISABLE_PORT2_CMD);
+        }
 
     outb(CMD_PORT, PERFORM_PORT1TEST);
     WAIT_DATA_AVL;
@@ -45,11 +45,11 @@ uint8_t PS2_Initialize()
     uint8_t port2_test_result = 1;
 
     if(isDualChannel)
-    {
-        outb(CMD_PORT, PERFORM_PORT2TEST);
-        WAIT_DATA_AVL;
-        port2_test_result = inb(DATA_PORT);
-    }
+        {
+            outb(CMD_PORT, PERFORM_PORT2TEST);
+            WAIT_DATA_AVL;
+            port2_test_result = inb(DATA_PORT);
+        }
 
     //If both tests failed, return -1
     if(port1_test_result != 0 && port2_test_result != 0) return -1;
@@ -57,31 +57,31 @@ uint8_t PS2_Initialize()
 
     cfg = PS2_ReadConfig();
     if(port1_test_result == 0)
-    {
-        outb(CMD_PORT, ENABLE_PORT1_CMD);
-        cfg |= 1;
-        cfg &= ~(1 << 4);
-        WAIT_CMD_SENT;
-    }
+        {
+            outb(CMD_PORT, ENABLE_PORT1_CMD);
+            cfg |= 1;
+            cfg &= ~(1 << 4);
+            WAIT_CMD_SENT;
+        }
 
     if(port2_test_result == 0)
-    {
-        outb(CMD_PORT, ENABLE_PORT2_CMD);
-        cfg |= 2;
-        cfg &= ~(1 << 5);
-        WAIT_CMD_SENT;
-    }
+        {
+            outb(CMD_PORT, ENABLE_PORT2_CMD);
+            cfg |= 2;
+            cfg &= ~(1 << 5);
+            WAIT_CMD_SENT;
+        }
     PS2_WriteConfig(cfg);
 
     if(port1_test_result == 0)
-    {
-        PS2Keyboard_Initialize();
-    }
+        {
+            PS2Keyboard_Initialize();
+        }
 
     if(port2_test_result == 0)
-    {
+        {
 
-    }
+        }
 
     return 0;
 }

@@ -9,6 +9,7 @@ ModeInfoBlock *global_mode_info;
 multiboot_info_t *global_multiboot_info;
 multiboot_memory_map_t *global_memory_map;
 size_t global_memory_map_size;
+extern void _region_kernel_end_;
 
 #define LOAD_ADDRESS MB(16)
 

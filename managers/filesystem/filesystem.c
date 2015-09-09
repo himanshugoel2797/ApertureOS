@@ -166,20 +166,21 @@ UID Filesystem_RegisterDescriptor(
 {
     FileDescriptor *descriptor = descriptors;
     while(descriptor != NULL && descriptor->next != NULL)
-    {
-        if(strncmp(descriptor->path, target, strlen(target)) == 0) {
-            return -1;	//This path has already been hooked
+        {
+            if(strncmp(descriptor->path, target, strlen(target)) == 0)
+                {
+                    return -1;	//This path has already been hooked
+                }
+            descriptor = descriptor->next;
         }
-        descriptor = descriptor->next;
-    }
 
     //Find the filesystem driver
     Filesystem_Driver *driver = drivers;
     while(driver != NULL && driver->next != NULL)
-    {
-        if(driver->filesystem == fs)break;
-        driver = driver->next;
-    }
+        {
+            if(driver->filesystem == fs)break;
+            driver = driver->next;
+        }
     if(driver->next == NULL && driver->filesystem != fs)return -2;	//Invalid FS
 
     //Add this entry to the last descriptor
@@ -213,20 +214,21 @@ uint8_t Filesystem_UnregisterDescriptor(UID id)
 {
     FileDescriptor *driver = descriptors, *prev_driver = NULL;
     while(driver != NULL && driver->next != NULL)
-    {
-        if(driver->id == id)break;
-        prev_driver = driver;
-        driver = driver->next;
-    }
+        {
+            if(driver->id == id)break;
+            prev_driver = driver;
+            driver = driver->next;
+        }
     if(driver->next == NULL && driver->id != id)return -2;	//Invalid FS
 
     if(prev_driver == NULL)
-    {
-        descriptors = driver->next;
-    } else
-    {
-        prev_driver->next = driver->next;
-    }
+        {
+            descriptors = driver->next;
+        }
+    else
+        {
+            prev_driver->next = driver->next;
+        }
 
     if(driver->next == NULL)lastDriver = prev_driver;
 
@@ -240,16 +242,18 @@ void* Filesystem_FindDescriptorFromPath(const char *path)
 
     FileDescriptor *descriptor = descriptors;
     while(descriptor != NULL && descriptor->next != NULL)
-    {
-        if(strncmp(descriptor->path, path, strlen(descriptor->path)) == 0) {
+        {
+            if(strncmp(descriptor->path, path, strlen(descriptor->path)) == 0)
+                {
+                    return descriptor;	//This path has already been hooked
+                }
+            descriptor = descriptor->next;
+        }
+
+    if(descriptor != NULL && strncmp(descriptor->path, path, strlen(descriptor->path)) == 0)
+        {
             return descriptor;	//This path has already been hooked
         }
-        descriptor = descriptor->next;
-    }
-
-    if(descriptor != NULL && strncmp(descriptor->path, path, strlen(descriptor->path)) == 0) {
-        return descriptor;	//This path has already been hooked
-    }
 
     return NULL;
 }
@@ -259,16 +263,18 @@ void* Filesystem_FindDescriptorFromUID(const UID id)
 
     FileDescriptor *descriptor = descriptors;
     while(descriptor != NULL && descriptor->next != NULL)
-    {
-        if( descriptor->fd_base <= id && (descriptor->dir_base + MAX_OPEN_DIRS) >= id) {
-            return descriptor;	//This path has already been hooked
+        {
+            if( descriptor->fd_base <= id && (descriptor->dir_base + MAX_OPEN_DIRS) >= id)
+                {
+                    return descriptor;	//This path has already been hooked
+                }
+            descriptor = descriptor->next;
         }
-        descriptor = descriptor->next;
-    }
-    
-    if( descriptor->fd_base <= id && (descriptor->dir_base + MAX_OPEN_DIRS) >= id) {
-        return descriptor;  //This path has already been hooked
-    }
+
+    if( descriptor->fd_base <= id && (descriptor->dir_base + MAX_OPEN_DIRS) >= id)
+        {
+            return descriptor;  //This path has already been hooked
+        }
     return NULL;
 }
 

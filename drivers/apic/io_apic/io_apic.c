@@ -40,14 +40,14 @@ uint8_t IOAPIC_GetVector(uint8_t global_irq, uint8_t *vec)
     uint32_t *baseAddr = NULL;
     //Determine which APIC this should map to
     for(uint32_t i = 0; i < curIOAPIC_index; i++)
-    {
-        if(global_irq >= ioapics[i].global_int_base && global_irq < (ioapics[i].global_int_base + ioapics[i].entry_count))
         {
-            //Found the IO APIC to map to
-            irq_pin = global_irq - ioapics[i].global_int_base;
-            baseAddr = (uint32_t*)ioapics[i].baseAddr;
+            if(global_irq >= ioapics[i].global_int_base && global_irq < (ioapics[i].global_int_base + ioapics[i].entry_count))
+                {
+                    //Found the IO APIC to map to
+                    irq_pin = global_irq - ioapics[i].global_int_base;
+                    baseAddr = (uint32_t*)ioapics[i].baseAddr;
+                }
         }
-    }
     if(baseAddr == NULL) return -1; //No match found!
 
     const uint32_t low_index = 0x10 + irq_pin*2;
@@ -63,17 +63,17 @@ void IOAPIC_MapIRQ(uint8_t global_irq, uint8_t apic_vector, uint64_t apic_id, ui
     uint32_t *baseAddr = NULL;
     //Determine which APIC this should map to
     for(uint32_t i = 0; i < curIOAPIC_index; i++)
-    {
-        if(global_irq >= ioapics[i].global_int_base && global_irq < (ioapics[i].global_int_base + ioapics[i].entry_count))
         {
-            //Found the IO APIC to map to
-            irq_pin = global_irq - ioapics[i].global_int_base;
-            baseAddr = (uint32_t*)ioapics[i].baseAddr;
+            if(global_irq >= ioapics[i].global_int_base && global_irq < (ioapics[i].global_int_base + ioapics[i].entry_count))
+                {
+                    //Found the IO APIC to map to
+                    irq_pin = global_irq - ioapics[i].global_int_base;
+                    baseAddr = (uint32_t*)ioapics[i].baseAddr;
 
-            ioapic_interruptMap[apic_vector].ioapic_index = i;
-            ioapic_interruptMap[apic_vector].ioapic_pin = irq_pin;
+                    ioapic_interruptMap[apic_vector].ioapic_index = i;
+                    ioapic_interruptMap[apic_vector].ioapic_pin = irq_pin;
+                }
         }
-    }
     if(baseAddr == NULL) return; //No match found!
 
     const uint32_t low_index = 0x10 + irq_pin*2;
@@ -113,20 +113,20 @@ void IOAPIC_SetEnableMode(uint8_t vector, bool active)
 {
     //Make sure this interrupt has even been mapped to something!
     if(ioapic_interruptMap[vector].ioapic_index != 0xFFFFFFFF)
-    {
-        uint32_t index = 0x10 + ioapic_interruptMap[vector].ioapic_pin*2;
-        uint32_t* baseAddr = (uint32_t*)ioapics[ioapic_interruptMap[vector].ioapic_index].baseAddr;
+        {
+            uint32_t index = 0x10 + ioapic_interruptMap[vector].ioapic_pin*2;
+            uint32_t* baseAddr = (uint32_t*)ioapics[ioapic_interruptMap[vector].ioapic_index].baseAddr;
 
-        uint32_t low = IOAPIC_Read(baseAddr, index);
-        low = SET_VAL_BIT(low, 16, (~active & 1));
-        IOAPIC_Write(baseAddr, index, low);
-    }
+            uint32_t low = IOAPIC_Read(baseAddr, index);
+            low = SET_VAL_BIT(low, 16, (~active & 1));
+            IOAPIC_Write(baseAddr, index, low);
+        }
 }
 
 void IOAPIC_VirtualizeAll()
 {
     for(int i = 0; i < curIOAPIC_index; i++)
-    {
-        ioapics[i].baseAddr = VIRTUALIZE_HIGHER_MEM_OFFSET(ioapics[i].baseAddr);
-    }
+        {
+            ioapics[i].baseAddr = VIRTUALIZE_HIGHER_MEM_OFFSET(ioapics[i].baseAddr);
+        }
 }

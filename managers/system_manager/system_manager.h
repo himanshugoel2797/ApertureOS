@@ -9,14 +9,15 @@
 #define SYSTEM_NAME_LEN 16
 
 
-typedef struct {
-        char sys_name[SYSTEM_NAME_LEN];
-        SysID prerequisites[MAX_SYSTEM_COUNT - 1];
-        Initializer init;
-        Callback init_cb;
-        uint8_t(*msg_cb)(Message*);
-        SysID sys_id;
-}SystemData;
+typedef struct
+{
+    char sys_name[SYSTEM_NAME_LEN];
+    SysID prerequisites[MAX_SYSTEM_COUNT - 1];
+    Initializer init;
+    Callback init_cb;
+    uint8_t(*msg_cb)(Message*);
+    SysID sys_id;
+} SystemData;
 
 //Register a new system and assign it a UID
 SystemData* SysMan_RegisterSystem();

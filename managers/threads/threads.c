@@ -68,9 +68,9 @@ void threadMan_InterruptHandler(Registers *regs)
     Thread *nxThread = curThread->next;
 
     while( (nxThread->status & 1) == 0)
-    {
-        nxThread = nxThread->next;
-    }
+        {
+            nxThread = nxThread->next;
+        }
 
     curThread->regs.unused = regs;
     curThread->regs.unused -= 4;
@@ -157,9 +157,9 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64
     //Setup the paging structures for the thread
     curThreadInfo->cr3 = virtMemMan_CreateInstance();
     if((flags & THREAD_FLAGS_FORK) == THREAD_FLAGS_FORK)
-    {
-        virtMemMan_ForkCurrent(curThreadInfo->cr3);
-    }
+        {
+            virtMemMan_ForkCurrent(curThreadInfo->cr3);
+        }
     //TODO setup the remaining registers to suit, set the args for the function too
     memset(&curThreadInfo->regs, 0, sizeof(Registers));
     memset(curThreadInfo->FPU_state, 0, 512);
@@ -224,10 +224,10 @@ void ThreadMan_StartThread(UID id)
 {
     Thread *thd = threads;
     while(thd->next != NULL)
-    {
-        if(thd->uid == id)break;
-        thd = thd->next;
-    }
+        {
+            if(thd->uid == id)break;
+            thd = thd->next;
+        }
 
     thd->status |= 1;
 }

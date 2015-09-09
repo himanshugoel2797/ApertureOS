@@ -12,16 +12,18 @@ typedef uint8_t(*ReadFunc)(uint64_t, uint32_t, uint16_t*);
 //Pointer to function to write to the hard drive
 typedef uint8_t(*WriteFunc)(uint64_t, uint32_t, uint16_t*);
 
-typedef enum{
-	NONE = 0,
-	EXT2 = 1
-}SupportedFilesystems;
+typedef enum
+{
+    NONE = 0,
+    EXT2 = 1
+} SupportedFilesystems;
 
-typedef struct{
-	char dir_name[256];
-	uint8_t name_len;
-	uint8_t type;
-}Filesystem_DirEntry;
+typedef struct
+{
+    char dir_name[256];
+    uint8_t name_len;
+    uint8_t type;
+} Filesystem_DirEntry;
 
 void Filesystem_Setup();
 
@@ -43,10 +45,10 @@ void* Filesystem_FindDescriptorFromUID(const UID id);
 uint8_t Filesystem_Close(UID fd);
 
 UID Filesystem_RegisterDescriptor(
-	const char *target, 
-	ReadFunc *read, 
-	WriteFunc *write, 
-	SupportedFilesystems fs);
+    const char *target,
+    ReadFunc *read,
+    WriteFunc *write,
+    SupportedFilesystems fs);
 
 uint8_t Filesystem_UnregisterDescriptor(UID id);
 

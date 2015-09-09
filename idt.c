@@ -35,21 +35,21 @@ void IDT_Initialize()
     asm ("lidt (%0)" :: "r" (&idt_table));         //Load the IDT
 
     for(int i = 0; i < IDT_ENTRY_COUNT; i++)
-    {
-        IDT_SetEntry(0, 0, 0, 0);
-        idt_handler_calls[i] = NULL;
-    }
+        {
+            IDT_SetEntry(0, 0, 0, 0);
+            idt_handler_calls[i] = NULL;
+        }
 
     //Fill the IDT
     int pushesToStack = 1;
     for(int i = 0; i < IDT_ENTRY_COUNT; i++)
-    {
-        //Setup the hardware interrupts
-        if(i == 8 || (i >= 10 && i <= 14)) pushesToStack = 0;
-        IDT_FillSWInterruptHandler(idt_handlers[i], i, pushesToStack);  //If pushesToStack is non-zero, the value will be pushed to stack
-        IDT_SetEntry(i, (uint32_t)idt_handlers[i], 0x08, 0x8E);
-        pushesToStack = 1;
-    }
+        {
+            //Setup the hardware interrupts
+            if(i == 8 || (i >= 10 && i <= 14)) pushesToStack = 0;
+            IDT_FillSWInterruptHandler(idt_handlers[i], i, pushesToStack);  //If pushesToStack is non-zero, the value will be pushed to stack
+            IDT_SetEntry(i, (uint32_t)idt_handlers[i], 0x08, 0x8E);
+            pushesToStack = 1;
+        }
 
     return;
 }
@@ -69,13 +69,13 @@ void IDT_FillSWInterruptHandler(char *idt_handler, uint8_t intNum, uint8_t pushT
 
     //Push dummy error code if the interrupt doesn't do so
     if(pushToStack)
-    {
-        idt_handler[index++] = 0x68; //Push
-        idt_handler[index++] = pushToStack;
-        idt_handler[index++] = 0;
-        idt_handler[index++] = 0;
-        idt_handler[index++] = 0;
-    }
+        {
+            idt_handler[index++] = 0x68; //Push
+            idt_handler[index++] = pushToStack;
+            idt_handler[index++] = 0;
+            idt_handler[index++] = 0;
+            idt_handler[index++] = 0;
+        }
 
     idt_handler[index++] = 0x68; //Push
     idt_handler[index++] = intNum; //Push the interrupt number to stack

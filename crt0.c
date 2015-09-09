@@ -22,7 +22,6 @@
 #include "utils/native.h"
 #include "utils/common.h"
 
-#include "test.h"
 #include "graphics/graphics.h"
 
 
@@ -77,19 +76,6 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     tmp = kmalloc(1080*1920*4 + 16);
     tmp += 16;
     tmp = ((uint32_t)tmp) & ~0xf;
-    char pixel[4];
-
-    uint32_t q = 0;
-    for(int y = 0; y < height; y++)
-        for(int x = 0; x < width; x++)
-        {
-            HEADER_PIXEL(header_data, pixel);
-            tmp[q] = pixel[2];
-            tmp[q + 1] = pixel[1];
-            tmp[q + 2] = pixel[0];
-            tmp[q + 3] = pixel[3];
-            q+=4;
-        }
 
     Keyboard_Setup();
 
@@ -106,21 +92,23 @@ void t_main(int argc, char **argv)
     AHCI_Initialize();
     Filesystem_Setup();
 
-    UID fd = Filesystem_OpenFile("/root/ibr7bl6uoou6po.data", 0, 0);
-    uint8_t *buf = kmalloc(1920*1080*4);
-    buf += KB(4);
-    buf = ((uint32_t)buf & ~0xFFF);
+    UID fd = Filesystem_OpenFile("/inori-yuzuriha-guilty-crown-14361.data", 0, 0);
+    uint8_t *buf = kmalloc(1920*1080*4 + 16);
+    buf += 16;
+    buf = ((uint32_t)buf) & ~0xf;
     //COM_WriteStr("%x\r\n", buf);
-    
+
+    Interrupts_Lock();
     Filesystem_ReadFile(fd, tmp, 1920*1080*4);
+    Interrupts_Unlock();
     //tmp = buf;
 
     UID id = Filesystem_OpenDir("/root/");
     Filesystem_DirEntry entry;
     while(!Filesystem_ReadDir(id, &entry))
-    {
-        COM_WriteStr("%s\r\n", entry.dir_name);
-    }
+        {
+            COM_WriteStr("%s\r\n", entry.dir_name);
+        }
 
     //while(1);
 
@@ -148,30 +136,30 @@ void t_main(int argc, char **argv)
     //asm volatile("cli");
 
     while(1)
-    {
-        //temp++;
-        //temp2 = 0xDEADBEEF;
-        asm volatile("mov $0xDEADBEEF, %eax");
-    }
+        {
+            //temp++;
+            //temp2 = 0xDEADBEEF;
+            asm volatile("mov $0xDEADBEEF, %eax");
+        }
 }
 
 //extern "C" /* Use C linkage for kernel_main. */
 void kernel_main(int argc, char** isKernelMode)
 {
     while(1)
-    {
+        {
 
-        graphics_Clear();
-        graphics_DrawBuffer(tmp, 0, 0, 1920, 1080);
+            graphics_Clear();
+            graphics_DrawBuffer(tmp, 0, 0, 1920, 1080);
 
-        RTC_Time t;
-        CMOS_GetRTCTime(&t);
+            RTC_Time t;
+            CMOS_GetRTCTime(&t);
 
-        graphics_WriteUInt64(temp, 2, 0, 16);
-        graphics_WriteUInt32(temp2, 16, 0, 32);
-        graphics_WriteUInt32(t.seconds, 10, 0, 48);
-        graphics_WriteUInt32(sizeof(HBA_FIS), 16, 0, 64);
+            graphics_WriteUInt64(temp, 2, 0, 16);
+            graphics_WriteUInt32(temp2, 16, 0, 32);
+            graphics_WriteUInt32(t.seconds, 10, 0, 48);
+            graphics_WriteUInt32(sizeof(HBA_FIS), 16, 0, 64);
 
-        graphics_SwapBuffer();
-    }
+            graphics_SwapBuffer();
+        }
 }

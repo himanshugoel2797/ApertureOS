@@ -55,39 +55,39 @@ uint8_t processMan_messageHandler(Message *msg)
 UID ProcessMan_Create(ProcessEntryPoint entryPoint, int argc, char**argv)
 {
     for(int i = 0; i < 128; i++)
-    {
-        if(processes[i].pid == 0)
         {
-            processes[i].pid = id++;
-            for(int j = 0; j < 512; j++)
-            {
-                if(threads[j].tid == 0)
+            if(processes[i].pid == 0)
                 {
-                    threads[j].tid = id++;
-                    threads[j].entryPoint = entryPoint;
-                    threads[j].next = NULL;
-                    threads[j].argc = argc;
-                    threads[j].argv = argv;
-                    threads[j].started = FALSE;
-                    threads[j].parent = &processes[i];
-                    processes[i].threads = &threads[j];
+                    processes[i].pid = id++;
+                    for(int j = 0; j < 512; j++)
+                        {
+                            if(threads[j].tid == 0)
+                                {
+                                    threads[j].tid = id++;
+                                    threads[j].entryPoint = entryPoint;
+                                    threads[j].next = NULL;
+                                    threads[j].argc = argc;
+                                    threads[j].argv = argv;
+                                    threads[j].started = FALSE;
+                                    threads[j].parent = &processes[i];
+                                    processes[i].threads = &threads[j];
 
-                    if(curThread != NULL) curThread->next = &threads[j];
-                    if(rootThread == NULL) rootThread = &threads[j];
-                    curThread = &threads[i];
-                    curThread->next = NULL;
+                                    if(curThread != NULL) curThread->next = &threads[j];
+                                    if(rootThread == NULL) rootThread = &threads[j];
+                                    curThread = &threads[i];
+                                    curThread->next = NULL;
 
-                    //TODO allocate thread specific stack space
+                                    //TODO allocate thread specific stack space
 
+                                }
+                        }
+                    if(curProc != NULL) curProc->next = &processes[i];
+                    if(rootProcess == NULL) rootProcess = &processes[i];
+                    curProc = &processes[i];
+                    curProc->next = NULL;
+                    return curProc->pid;
                 }
-            }
-            if(curProc != NULL) curProc->next = &processes[i];
-            if(rootProcess == NULL) rootProcess = &processes[i];
-            curProc = &processes[i];
-            curProc->next = NULL;
-            return curProc->pid;
         }
-    }
 }
 
 uint32_t ProcessMan_StartProcess(UID id)
@@ -95,13 +95,13 @@ uint32_t ProcessMan_StartProcess(UID id)
     //Find the process
     ProcessInfo *proc = rootProcess;
     while(proc->next != NULL)
-    {
-        if(proc->pid == id)
         {
-            return ProcessMan_StartThread(proc->threads->tid);
+            if(proc->pid == id)
+                {
+                    return ProcessMan_StartThread(proc->threads->tid);
+                }
+            proc = proc->next;
         }
-        proc = proc->next;
-    }
     return -1;
 }
 
@@ -109,11 +109,11 @@ uint32_t ProcessMan_StartThread(UID id)
 {
     ThreadInfo *thrd = rootThread;
     while(thrd->next != NULL)
-    {
-        if(thrd->tid == id)
         {
-            //Setup the stack and set eip
-            thrd->started = TRUE;
+            if(thrd->tid == id)
+                {
+                    //Setup the stack and set eip
+                    thrd->started = TRUE;
+                }
         }
-    }
 }

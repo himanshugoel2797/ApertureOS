@@ -43,19 +43,19 @@ void* bootstrap_malloc(size_t size)
     //Make sure size is 32bit aligned
     size += (size % 4);
     if( (pos + size) > BOOTSTRAP_MEM_POOL )
-    {
-        Message msg;
-        strcpy(msg.message, "Not enough space for allocation");
-        msg.system_id = btstrp_sys->sys_id;
-        msg.src_id = btstrp_sys->sys_id;
-        msg.msg_id = MI_OUT_OF_MEMORY;
-        msg.msg_type = MT_ERROR;
-        msg.msg_priority = MP_CRITICAL;
+        {
+            Message msg;
+            strcpy(msg.message, "Not enough space for allocation");
+            msg.system_id = btstrp_sys->sys_id;
+            msg.src_id = btstrp_sys->sys_id;
+            msg.msg_id = MI_OUT_OF_MEMORY;
+            msg.msg_type = MT_ERROR;
+            msg.msg_priority = MP_CRITICAL;
 
-        MessageMan_Add(&msg);
+            MessageMan_Add(&msg);
 
-        return NULL;
-    }
+            return NULL;
+        }
 
     void *ptr = &mem_pool[pos];
     pos += size;

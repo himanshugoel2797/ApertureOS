@@ -5,22 +5,24 @@
 #include "managers.h"
 #include "idt.h"
 
-typedef struct Thread {
-        uint64_t* cr3;
-        char FPU_state[512 + 16]; //Allocate extra space for alignment
-        Registers regs;
-        UID uid;
-        uint32_t status;
-        uint64_t flags;
-        struct Thread *next;
-}Thread;
+typedef struct Thread
+{
+    uint64_t* cr3;
+    char FPU_state[512 + 16]; //Allocate extra space for alignment
+    Registers regs;
+    UID uid;
+    uint32_t status;
+    uint64_t flags;
+    struct Thread *next;
+} Thread;
 
-typedef enum{
-	THREAD_FLAGS_NONE = 0,
-	THREAD_FLAGS_USER = 0,
-	THREAD_FLAGS_KERNEL = 1,
-	THREAD_FLAGS_FORK = 2,
-	THREAD_FLAGS_VM86 = 4
+typedef enum
+{
+    THREAD_FLAGS_NONE = 0,
+    THREAD_FLAGS_USER = 0,
+    THREAD_FLAGS_KERNEL = 1,
+    THREAD_FLAGS_FORK = 2,
+    THREAD_FLAGS_VM86 = 4
 };
 
 void ThreadMan_Setup();
