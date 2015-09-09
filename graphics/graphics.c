@@ -66,6 +66,14 @@ void graphics_SwapBuffer()
                       "movdqa +0x50(%%ebx), %%xmm6\n\t"
                       "movdqa +0x70(%%ebx), %%xmm0\n\t"
                       "movdqa +0x60(%%ebx), %%xmm7\n\t"
+                      "shufps $0xE4, %%xmm0,  %%xmm0\n\t"
+                      "shufps $0xE4, %%xmm1,  %%xmm1\n\t"
+                      "shufps $0xE4, %%xmm2,  %%xmm2\n\t"
+                      "shufps $0xE4, %%xmm3,  %%xmm3\n\t"
+                      "shufps $0xE4, %%xmm4,  %%xmm4\n\t"
+                      "shufps $0xE4, %%xmm5,  %%xmm5\n\t"
+                      "shufps $0xE4, %%xmm6,  %%xmm6\n\t"
+                      "shufps $0xE4, %%xmm7,  %%xmm7\n\t"
                       "movntdq %%xmm0, +0x70(%%eax)\n\t"
                       "movntdq %%xmm1, (%%eax)\n\t"
                       "movntdq %%xmm2, +0x10(%%eax)\n\t"
@@ -182,24 +190,28 @@ void graphics_SetPixel(uint32_t x, uint32_t y, uint32_t val)
 
 void graphics_DrawBuffer(void* buffer, uint32_t x, uint32_t y, uint32_t w, uint32_t h)
 {
-    uint64_t* offset = (uint64_t*)&backBuffer[x+(y*pitch)];
-    uint64_t* src = (uint64_t*)buffer;
+    uint8_t* offset = (uint8_t*)&backBuffer[x+(y*pitch)];
+    uint8_t* src = (uint8_t*)buffer;
 
     uint64_t x0 = 0, y0= 0;
+    uint64_t tmp0 = 0, tmp1 = 0;
 
     if(x+w > width) w = width - x;
     if(y+h > height) h = height - y;
 
     while(y0 < h)
     {
-        offset[0] = src[0];
+        offset[0] = src[2];
         offset[1] = src[1];
+        offset[2] = src[0];
+        offset[3] = src[3]; 
+
         //asm volatile ("movaps (%%ebx), %%xmm0\n\t"
         //              "movaps %%xmm0, (%%eax)" : "=a" (offset): "b" (src));
 
-        offset+=2;
-        x0+=4;
-        src+=2;
+        offset+=4;
+        x0+=1;
+        src+=4;
         if(x0 >= w)
         {
             x0 = 0;

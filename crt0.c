@@ -106,11 +106,14 @@ void t_main(int argc, char **argv)
     AHCI_Initialize();
     Filesystem_Setup();
 
-    UID fd = Filesystem_OpenFile("/inori-yuzuriha-guilty-crown-14361.jpg", 0, 0);
-    uint32_t *buf = kmalloc(MB(1));
-
-    Filesystem_ReadFile(fd, buf, MB(1));
-    COM_WriteStr("%x\r\n", buf[0]);
+    UID fd = Filesystem_OpenFile("/root/ibr7bl6uoou6po.data", 0, 0);
+    uint8_t *buf = kmalloc(1920*1080*4);
+    buf += KB(4);
+    buf = ((uint32_t)buf & ~0xFFF);
+    //COM_WriteStr("%x\r\n", buf);
+    
+    Filesystem_ReadFile(fd, tmp, 1920*1080*4);
+    //tmp = buf;
 
     UID id = Filesystem_OpenDir("/root/");
     Filesystem_DirEntry entry;
@@ -119,7 +122,7 @@ void t_main(int argc, char **argv)
         COM_WriteStr("%s\r\n", entry.dir_name);
     }
 
-    while(1);
+    //while(1);
 
     sys_tss.esp0 = kmalloc(KB(16));
     asm volatile(

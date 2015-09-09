@@ -7,18 +7,25 @@ int base_id = 0;
 
 EXT2_FD *fd, *last_fd;
 
-#define POOL_SIZE KB(128)
+#define POOL_SIZE MB(2)
 
 uint8_t* _EXT2_ReadAddr(FileDescriptor *desc, uint64_t addr, uint32_t len)
 {
 	EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
 	uint8_t *mem_pool = data->memory_pool;
 
-	if(data->last_read_addr <= addr && data->last_read_addr + POOL_SIZE >= addr + len)
+	if(data->last_read_addr <= addr && (data->last_read_addr + POOL_SIZE) >= (addr + len))
 	{
 		mem_pool = &mem_pool[(addr - data->last_read_addr)];
 	}else{
-		if(desc->read(addr/512, POOL_SIZE, (uint16_t*)mem_pool) < 0)return NULL;
+		//COM_WriteStr("ADDR: %x\r\n", addr);
+		//if(desc->read(addr/512, POOL_SIZE, (uint16_t*)mem_pool) < 0)
+//		{
+			while(desc->read(addr/512, POOL_SIZE, (uint16_t*)mem_pool) == 0)
+			{
+				//ThreadMan_Yield();
+			}
+//		}
 		mem_pool += addr % 512;
 		data->last_read_addr = (addr/512) * 512;
 	}
@@ -133,6 +140,7 @@ uint32_t _EXT2_Filesystem_OpenFile(FileDescriptor *desc, const char *filename, i
 		else
 		{
 			memcpy(dir_name, fname + 1, index);
+			COM_WriteStr("%s\r\n", dir_name);
 		}
 
 		//Find the directory by traversing the tree
@@ -157,9 +165,11 @@ uint32_t _EXT2_Filesystem_OpenFile(FileDescriptor *desc, const char *filename, i
 					memcpy(entry_name, dir->name, 256);
 					if(strncmp(entry_name, dir_name, strlen(dir_name)) == 0){
 						inode_i = dir->inode_index;
+						if(strchr(fname + 1, '/') == NULL){
 						i = 13;
 						fname = NULL;
-						size = (((uint64_t)inode.size_hi) << 32 | inode.size_lo); 
+						size = (((uint64_t)inode.size_hi) << 32 | inode.size_lo);
+						} 
 						break;
 					}
 					dir = (uint32_t)dir + dir->entry_size;
@@ -167,7 +177,10 @@ uint32_t _EXT2_Filesystem_OpenFile(FileDescriptor *desc, const char *filename, i
 			}	
 		}
 
-		if(fname != NULL)fname = strchr(fname + 1, '/');
+		if(fname != NULL){
+			char* f_t = strchr(fname + 1, '/');
+			if(f_t != NULL)fname = f_t;
+		}
 	}
 
 	EXT2_FD* fd_n = kmalloc(sizeof(EXT2_FD));
@@ -191,7 +204,7 @@ uint32_t _EXT2_ReadBlockData(FileDescriptor *desc, uint32_t block_index, uint32_
 {
 	EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
 	uint32_t block_address = block_index * data->block_size;
-	memcpy(dest, _EXT2_ReadAddr(desc, block_address, size) + offset, size + offset);
+	memcpy(dest, _EXT2_ReadAddr(desc, block_address, size + offset) + offset, size);
 	return size;
 }
 
@@ -203,13 +216,24 @@ uint8_t _EXT2_Filesystem_ReadFile(FileDescriptor *desc, UID id, uint8_t *buffer,
 	//Determine the address of the inode
 	EXT2_Inode inode;
 	memcpy(&inode, _EXT2_GetInode(desc, cur_fd->inode), sizeof(EXT2_Inode));
-	uint32_t cur_index = 0;
+	int32_t cur_index = -1;
 	
 	cur_fd->more_extra_info = (((uint64_t)inode.size_hi) << 32 | inode.size_lo);
 
 	//Calculate the block index given the file offset
 	uint32_t block_index = cur_fd->extra_info / data->block_size;
 	uint32_t block_offset = cur_fd->extra_info % data->block_size;
+
+	uint32_t block_index_limit_1 = data->first_indirection_entry_count + 12;
+
+
+	uint32_t *i2_i_table = kmalloc(data->block_size);
+
+	uint32_t *i1_table = kmalloc(data->block_size);
+	_EXT2_ReadBlockData(desc, inode.direct_block[12], 0, (uint8_t*)i1_table, data->block_size);
+
+	uint32_t *i2_table = kmalloc(data->block_size);
+	_EXT2_ReadBlockData(desc, inode.direct_block[13], 0, (uint8_t*)i2_table, data->block_size);
 
 	if(cur_fd->extra_info + size > cur_fd->more_extra_info)size = cur_fd->more_extra_info - cur_fd->extra_info;
 
@@ -229,14 +253,57 @@ uint8_t _EXT2_Filesystem_ReadFile(FileDescriptor *desc, UID id, uint8_t *buffer,
 		size -= read_size;
 		cur_fd->extra_info += read_size;
 		block_index++;
-	}else{
-		//Read from the indirection lists
-		COM_WriteStr("ERROR!!!");
-		//Determine which indirection list this belongs to
-	}
-}
 
-	return -1;
+	}else if(block_index < data->first_indirection_entry_count + 12)
+		{
+
+			//one indirection
+			uint32_t read_size = _EXT2_ReadBlockData(
+				desc,
+		 		i1_table[block_index - 12],
+		 		block_offset,
+		 		buffer,
+		 		((size >= data->block_size)?data->block_size:size) - block_offset);
+
+			buffer += read_size;
+			size -= read_size;
+			cur_fd->extra_info += read_size;
+			block_index++;
+		}else if(block_index < data->second_indirection_entry_count + data->first_indirection_entry_count + 12)
+		{
+			//At this point we're done with table one so lets use its storage for stuff!
+			if(i2_table[ (block_index - block_index_limit_1)/ data->first_indirection_entry_count] == 0)break;
+
+			if(cur_index != (block_index - block_index_limit_1) / data->first_indirection_entry_count)
+			{
+				cur_index = (block_index - block_index_limit_1) / data->first_indirection_entry_count;
+				_EXT2_ReadBlockData(desc, i2_table[ (block_index - block_index_limit_1) / data->first_indirection_entry_count], 0, (uint8_t*)i2_i_table, data->block_size);
+			}
+
+			//one indirection
+			uint32_t read_size = _EXT2_ReadBlockData(
+				desc,
+		 		i2_i_table[ (block_index - block_index_limit_1) % data->first_indirection_entry_count],
+		 		block_offset,
+		 		buffer,
+		 			((size > data->block_size)?data->block_size:size) - block_offset);
+
+			buffer += read_size;
+			size -= read_size;
+			cur_fd->extra_info += read_size;
+			block_index++;
+
+		}else if(block_index < data->third_indirection_entry_count + data->second_indirection_entry_count + data->first_indirection_entry_count + 11)
+		{
+			COM_WriteStr("TEST!!!\r\n");
+		}
+			COM_WriteStr("buffer: %x\r\n", buffer);
+}
+	kfree(i1_table);
+	kfree(i2_table);
+	kfree(i2_i_table);
+
+	return 0;
 }
 
 uint8_t _EXT2_Filesystem_SeekFile(FileDescriptor *desc, uint32_t fd, uint32_t offset, int whence)
