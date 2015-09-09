@@ -126,7 +126,7 @@ bool AHCI_Read(uint64_t start, uint32_t count, uint16_t *buf)
 
     cmdheader->cfl = sizeof(FIS_REG_H2D)/sizeof(uint32_t); // Command FIS size
     cmdheader->w = 0;       // Read from device
-    cmdheader->prdtl = (uint16_t)((count-1)>>4) + 1;    // PRDT entries count
+    cmdheader->prdtl = (uint16_t)((count-1)>>3) + 1;    // PRDT entries count
 
     HBA_CMD_TBL *cmd_tbl = (HBA_CMD_TBL*)cmdheader->ctba;
     memset(cmd_tbl, 0, sizeof(HBA_CMD_TBL) + sizeof(HBA_PRDT_ENTRY) * (count - 1));
@@ -152,14 +152,14 @@ bool AHCI_Read(uint64_t start, uint32_t count, uint16_t *buf)
 
     for(int i = 0; i < cmdheader->prdtl; i++)
         {
-            cmd_tbl->prdt_entry[i].dba = (uint32_t)buf;
+            cmd_tbl->prdt_entry[i].dba = (uint32_t)virtMemMan_GetPhysAddress(buf);
             cmd_tbl->prdt_entry[i].dbau = 0;
             cmd_tbl->prdt_entry[i].rsv0 = 0;
-            cmd_tbl->prdt_entry[i].dbc = KB(8) - 1;
+            cmd_tbl->prdt_entry[i].dbc = KB(4) - 1;
             cmd_tbl->prdt_entry[i].rsv1 = 0;
             cmd_tbl->prdt_entry[i].i = 0;
 
-            buf = ((uint32_t)buf) + KB(8);
+            buf = ((uint32_t)buf) + KB(4);
         }
 
     // The below loop waits until the port is no longer busy before issuing a new command

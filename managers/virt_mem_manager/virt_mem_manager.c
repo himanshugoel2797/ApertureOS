@@ -356,6 +356,34 @@ void virtMemMan_UnMap(void* v_address, size_t size)
         }
 }
 
+uint64_t virtMemMan_GetPhysAddress(void *virt_addr)
+{
+    uint32_t v_addr = (uint32_t)virt_addr;
+    //Round down to 4kb boundary
+    v_addr -= v_addr % KB(4);
+
+    //Check the page table entry for this
+    uint32_t pdpt_i = v_addr/GB(1);
+    uint32_t pd_i = (v_addr - (pdpt_i * GB(1)))/MB(2);
+    uint32_t pt_i = (v_addr & 0x00000fff);
+
+
+    PD_Entry_PSE *pd_pse = (PD_Entry_PSE*)GET_ADDR(&curInstance_virt[pdpt_i]);
+    uint64_t *pd_u64 = (uint64_t*)GET_ADDR(&curInstance_virt[pdpt_i]);
+
+    if(pd_pse[pd_i].page_size == 0) //If this is a 4KB page
+    {
+    
+        PT_Entry *pt = (PT_Entry*)(pd_u64[pd_i] & 0xfffff000);
+        return (pt[pt_i].addr * KB(4)) + ( (uint32_t)virt_addr - (pdpt_i * GB(1) + pd_i * MB(2) + pt_i * KB(4)) );   
+
+    }else   //If this is a 2MB page
+    {
+        //Address is part of a 2MB page so read the address and adjust it
+        return pd_pse[pd_i].addr * MB(2) + ( (uint32_t)virt_addr - (pdpt_i * GB(1) + pd_i * MB(2)) );
+    }
+}
+
 uint64_t* virtMemMan_GetFreePDPTEntry()
 {
     for(uint32_t i = 0; i < PDPT_STORAGE_SIZE_U64; i += 4)

@@ -40,5 +40,6 @@ void* virtMemMan_FindEmptyAddress(size_t size, MEM_SECURITY_PERMS privLevel);
 uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, MEM_TYPES type, MEM_ACCESS_PERMS perms, MEM_SECURITY_PERMS privLevel);
 void virtMemMan_UnMap(void* v_address, size_t size);
 void virtMemMan_FreeInstance(VirtMemMan_Instance inst);
+uint64_t virtMemMan_GetPhysAddress(void *virt_addr);
 
 #endif /* end of include guard: _VIRT_MEM_MAN_H_ */
