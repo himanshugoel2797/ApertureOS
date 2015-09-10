@@ -72,11 +72,19 @@ void threadMan_InterruptHandler(Registers *regs)
             nxThread = nxThread->next;
         }
 
+    uint32_t addr = curThread->FPU_state;
+    addr += 64;
+    addr -= (addr % 64);
+    asm volatile("xsave (%%eax)" :: "a"(addr));
+
     curThread->regs.unused = regs;
     curThread->regs.unused -= 4;
     curThread = nxThread;
 
-    //asm volatile("xsave ")
+    addr = curThread->FPU_state;
+    addr +=64;
+    addr -= (addr % 64);
+    asm volatile("xrstor (%%eax)" :: "a"(addr));
 
     //if((curThread->flags & 1) == THREAD_FLAGS_USER)
     {
@@ -207,6 +215,11 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64
         "mov %%edi, %%esp\n\t"
         :: "a"(argv), "b"(curThreadInfo->regs.unused), "c"(argc), "d"(curThreadInfo->regs.eip)
     );
+
+    uint32_t addr = curThreadInfo->FPU_state;
+    addr += 64;
+    addr -= (addr % 64);
+    asm volatile("xsave (%%eax)" :: "a"(addr));
 
     asm volatile("mov %%ebx, %0" : "=r"(curThreadInfo->regs.unused));
 

@@ -30,14 +30,14 @@ void graphics_Initialize()
     tileHeight = height / TILE_Y_COUNT;
 
     buffer_size = (pitch * height * sizeof(uint32_t));
-    buffer_size += 0x80;
-    buffer_size -= buffer_size % 0x80;
+    //buffer_size += 0x80;
+    //buffer_size -= buffer_size % 0x80;
 
     // Specify the pointers for both framebuffers
     frameBufferA = (char *)global_multiboot_info->framebuffer_addr;
-    frameBufferB = bootstrap_malloc(buffer_size + 16 + 0x70);
-    frameBufferB = frameBufferB + 16;
-    frameBufferB = ((uint32_t)frameBufferB) & ~0xf;
+    frameBufferB = bootstrap_malloc(buffer_size + 0x80);
+    frameBufferB = frameBufferB + 0x80;
+    frameBufferB -= ((uint32_t)frameBufferB) % 0x80;
 
     char *vPointer = virtMemMan_FindEmptyAddress(buffer_size, MEM_KERNEL);
     int retVal = virtMemMan_Map((uint32_t)vPointer, (uint64_t)frameBufferA,
@@ -66,8 +66,8 @@ void graphics_SwapBuffer()
                           "movdqa +0x30(%%ebx), %%xmm3\n\t"
                           "movdqa +0x40(%%ebx), %%xmm4\n\t"
                           "movdqa +0x50(%%ebx), %%xmm5\n\t"
-                          "movdqa +0x70(%%ebx), %%xmm6\n\t"
-                          "movdqa +0x60(%%ebx), %%xmm7\n\t"
+                          "movdqa +0x60(%%ebx), %%xmm6\n\t"
+                          "movdqa +0x70(%%ebx), %%xmm7\n\t"
                           "shufps $0xE4, %%xmm0,  %%xmm0\n\t"
                           "shufps $0xE4, %%xmm1,  %%xmm1\n\t"
                           "shufps $0xE4, %%xmm2,  %%xmm2\n\t"

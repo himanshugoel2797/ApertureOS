@@ -104,7 +104,9 @@ void t_main(int argc, char **argv)
     //COM_WriteStr("%x\r\n", buf);
 
     Interrupts_Lock();
-    Filesystem_ReadFile(fd, tmp, 1920*1080*4);
+    COM_WriteStr("FD: %x\r\n", fd);
+    memset(tmp, 0xff, 1920*1080*4);
+    if(fd != -1)Filesystem_ReadFile(fd, tmp, 1920*1080*4);
     Interrupts_Unlock();
     //tmp = buf;
 
@@ -112,10 +114,10 @@ void t_main(int argc, char **argv)
     Filesystem_DirEntry entry;
     while(!Filesystem_ReadDir(id, &entry))
         {
-            COM_WriteStr("%s\r\n", entry.dir_name);
+            //COM_WriteStr("%s\r\n", entry.dir_name);
         }
 
-
+        while(1);
     sys_tss.esp0 = kmalloc(KB(16));
     asm volatile(
         "cli \n\t"

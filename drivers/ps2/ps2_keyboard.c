@@ -17,3 +17,14 @@ uint8_t PS2Keyboard_Initialize()
     inb(DATA_PORT);
     inb(DATA_PORT);
 }
+
+void PS2Keyboard_SetLEDStatus(uint8_t led, uint8_t status)
+{
+	WAIT_DATA_SENT;
+	outb(DATA_PORT, 0xED);
+	WAIT_DATA_SENT;
+	outb(DATA_PORT, status << led);
+	WAIT_DATA_AVL;
+	inb(DATA_PORT);
+	return;
+}

@@ -8,8 +8,8 @@
 typedef struct Thread
 {
     uint64_t* cr3;
-    char FPU_state[512 + 16]; //Allocate extra space for alignment
     Registers regs;
+    char FPU_state[512 + 64]; //Allocate extra space for alignment
     UID uid;
     uint32_t status;
     uint64_t flags;

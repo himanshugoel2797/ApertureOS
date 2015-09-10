@@ -74,8 +74,6 @@ uint8_t PS2Mouse_Initialize()
 
 
 	//Initialize extra buttons
-	
-	//Initialize ScrollWheel
 	outb(CMD_PORT, 0xD4);	//Select the mouse
 	WAIT_DATA_SENT;
 	outb(DATA_PORT, 0xF3);
@@ -130,8 +128,6 @@ uint8_t PS2Mouse_Initialize()
 	if(mode == 0x4)COM_WriteStr("5-button mouse support Initialized!\r\n");
 
 	//Activate the mouse
-	WAIT_DATA_AVL;
-	inb(DATA_PORT);
 
 	outb(CMD_PORT, 0xD4);
 	WAIT_DATA_SENT;

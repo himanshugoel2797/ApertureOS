@@ -71,8 +71,10 @@ uint32_t Keyboard_ProcessInput(uint8_t input)
         COM_WriteStr("Key Press: %x", input);
         if((!(key_flags >> 1)))
         {
+            if(input == 0x58)PS2Keyboard_SetLEDStatus(2, 1);
             COM_WriteStr(" Make!\r\n");
         }else{
+            if(input == 0x58)PS2Keyboard_SetLEDStatus(2, 0);
             COM_WriteStr(" Break!\r\n");
         }
 
