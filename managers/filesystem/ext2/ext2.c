@@ -141,7 +141,6 @@ uint32_t _EXT2_Filesystem_OpenFile(FileDescriptor *desc, const char *filename, i
             else
                 {
                     memcpy(dir_name, fname + 1, index);
-                    COM_WriteStr("%s\r\n", dir_name);
                 }
 
             //Find the directory by traversing the tree
@@ -328,7 +327,7 @@ uint8_t _EXT2_Filesystem_ReadFile(FileDescriptor *desc, UID id, uint8_t *buffer,
                 {
                     COM_WriteStr("TEST!!!\r\n");
                 }
-            COM_WriteStr("buffer: %x\r\n", buffer);
+            //COM_WriteStr("buffer: %x\r\n", buffer);
         }
     kfree(i1_table);
     kfree(i2_table);
@@ -364,8 +363,7 @@ uint32_t _EXT2_Filesystem_OpenDir(FileDescriptor *desc, const char *filename)
     char dir_name[256];
 
     uint32_t inode_i = ROOT_INODE_INDEX;
-
-    //if(filename[strlen(filename) - 1] != '/')return -1;	//Make sure this is  directory path
+    uint64_t size = 0;
 
     //Maake sure the path is a directory
     while(fname != NULL)
@@ -380,7 +378,6 @@ uint32_t _EXT2_Filesystem_OpenDir(FileDescriptor *desc, const char *filename)
             else
                 {
                     memcpy(dir_name, fname + 1, index);
-                    COM_WriteStr("%s\r\n", dir_name);
                 }
 
             //Find the directory by traversing the tree
@@ -394,23 +391,23 @@ uint32_t _EXT2_Filesystem_OpenDir(FileDescriptor *desc, const char *filename)
                     //Check the block entries
                     uint64_t address = inode.direct_block[i] * data->block_size;
 
-                    if(inode.hard_link_count != 0 && inode.type_perm >> 12 == EXT2_INODE_DIR)
+                    if(inode.type_perm >> 12 == EXT2_INODE_DIR)
                         {
-                            EXT2_DirectoryEntry *dir = 	_EXT2_ReadAddr(desc, address, 512);
+                            EXT2_DirectoryEntry *dir =  _EXT2_ReadAddr(desc, address, 512);
                             char entry_name[256];
 
                             while(dir->name_len != 0)
                                 {
-                                    //TODO need to fix directory tree traversal code
                                     memset(entry_name, 0, 256);
                                     memcpy(entry_name, dir->name, 256);
-                                    if(dir->type == EXT2_DIRT_DIR && strncmp(entry_name, dir_name, strlen(dir_name)) == 0)
+                                    if(strncmp(entry_name, dir_name, strlen(dir_name)) == 0)
                                         {
                                             inode_i = dir->inode_index;
                                             if(strchr(fname + 1, '/') == NULL)
                                                 {
                                                     i = 13;
                                                     fname = NULL;
+                                                    size = (((uint64_t)inode.size_hi) << 32 | inode.size_lo);
                                                 }
                                             break;
                                         }
@@ -419,7 +416,11 @@ uint32_t _EXT2_Filesystem_OpenDir(FileDescriptor *desc, const char *filename)
                         }
                 }
 
-            if(fname != NULL)fname = strchr(fname + 1, '/');
+            if(fname != NULL)
+                {
+                    char* f_t = strchr(fname + 1, '/');
+                    if(f_t != NULL)fname = f_t;
+                }
         }
 
     EXT2_FD* fd_n = kmalloc(sizeof(EXT2_FD));
@@ -428,11 +429,13 @@ uint32_t _EXT2_Filesystem_OpenDir(FileDescriptor *desc, const char *filename)
     fd_n->inode = inode_i;
     fd_n->next = NULL;
     fd_n->extra_info = 0;
+    fd_n->more_extra_info = size;
 
     last_fd->next = fd_n;
     last_fd = last_fd->next;
 
     return fd_n->id;
+
 }
 
 uint8_t _EXT2_Filesystem_ReadDir(FileDescriptor *desc, uint32_t dd, Filesystem_DirEntry *dirent)
@@ -448,7 +451,6 @@ uint8_t _EXT2_Filesystem_ReadDir(FileDescriptor *desc, uint32_t dd, Filesystem_D
 
     for(int i = 0; i < 12; i++)
         {
-            //COM_WriteStr("%d\r\n", i);
             if(inode.direct_block[i] == 0)break;
 
             //Check the block entries

@@ -80,7 +80,7 @@ uint8_t PS2_Initialize()
 
     if(port2_test_result == 0)
         {
-
+            PS2Mouse_Initialize();
         }
 
     return 0;

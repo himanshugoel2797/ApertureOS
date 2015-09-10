@@ -4,6 +4,7 @@
 #include "types.h"
 
 #include "ps2_keyboard.h"
+#include "ps2_mouse.h"
 
 uint8_t PS2_Initialize();
 uint8_t PS2_ReadStatus();

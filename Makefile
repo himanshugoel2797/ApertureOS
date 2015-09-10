@@ -28,7 +28,7 @@ SOURCES=graphics/graphics.o	\
 				drivers/hpet/hpet.o \
 				drivers/pci/pci.o	drivers/pci/pci_devices.o \
 				drivers/pit/pit.o \
-				drivers/ps2/ps2.o drivers/ps2/ps2_keyboard.o \
+				drivers/ps2/ps2.o drivers/ps2/ps2_keyboard.o drivers/ps2/ps2_mouse.o \
 				drivers/ahci/ahci.o \
 				drivers/ata_pio/ata_pio.o \
 				kmalloc.o \
