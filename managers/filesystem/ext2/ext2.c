@@ -365,7 +365,7 @@ uint32_t _EXT2_Filesystem_OpenDir(FileDescriptor *desc, const char *filename)
 
     uint32_t inode_i = ROOT_INODE_INDEX;
 
-    if(filename[strlen(filename) - 1] != '/')return -1;	//Make sure this is  directory path
+    //if(filename[strlen(filename) - 1] != '/')return -1;	//Make sure this is  directory path
 
     //Maake sure the path is a directory
     while(fname != NULL)
@@ -373,8 +373,15 @@ uint32_t _EXT2_Filesystem_OpenDir(FileDescriptor *desc, const char *filename)
             memset(dir_name, 0, 256);
             uint32_t index = (uint32_t)strchr(fname + 1, '/') - (uint32_t)fname - 1;
             if(index == 0)break;
-            if(index > strlen(fname))break;
-            memcpy(dir_name, fname + 1, index);
+            if(index > strlen(fname))
+                {
+                    memcpy(dir_name, fname + 1, strlen(fname) - 1);
+                }
+            else
+                {
+                    memcpy(dir_name, fname + 1, index);
+                    COM_WriteStr("%s\r\n", dir_name);
+                }
 
             //Find the directory by traversing the tree
             EXT2_Inode inode;
@@ -394,13 +401,17 @@ uint32_t _EXT2_Filesystem_OpenDir(FileDescriptor *desc, const char *filename)
 
                             while(dir->name_len != 0)
                                 {
+                                    //TODO need to fix directory tree traversal code
                                     memset(entry_name, 0, 256);
                                     memcpy(entry_name, dir->name, 256);
                                     if(dir->type == EXT2_DIRT_DIR && strncmp(entry_name, dir_name, strlen(dir_name)) == 0)
                                         {
                                             inode_i = dir->inode_index;
-                                            i = 13;
-                                            fname = NULL;
+                                            if(strchr(fname + 1, '/') == NULL)
+                                                {
+                                                    i = 13;
+                                                    fname = NULL;
+                                                }
                                             break;
                                         }
                                     dir = (uint32_t)dir + dir->entry_size;

@@ -65,9 +65,12 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     //Once virtual memory management is put in place, ACPI tables become inaccessible, the acpi table will need to be copied
     physMemMan_Setup();
     virtMemMan_Setup();
-
+    
     Interrupts_Virtualize();
     graphics_Initialize();
+    
+    //Attempt to initialize all PCI drivers here so they can mark their MMIO space as used
+    AHCI_Initialize();
 
     kmalloc_init();
     Timers_Setup();
@@ -77,7 +80,8 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     tmp += KB(4);
     tmp -= ((uint32_t)tmp) % KB(4);
 
-    COM_WriteStr("Kernel Size: %x MiB\r\n", ((uint32_t)&_region_kernel_end_ - LOAD_ADDRESS)/(1024 * 1204));
+    COM_WriteStr("Kernel Size: %x MiB\r\n", ((uint32_t)&_region_kernel_end_ - LOAD_ADDRESS)/(1024 * 1024));
+
 
     Keyboard_Setup();
 
@@ -91,13 +95,12 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
 void t_main(int argc, char **argv)
 {
 
-    AHCI_Initialize();
     Filesystem_Setup();
 
-    UID fd = Filesystem_OpenFile("/inori-yuzuriha-guilty-crown-14361.data", 0, 0);
-    uint8_t *buf = kmalloc(1920*1080*4 + KB(4));
-    buf += KB(4);
-    buf -= ((uint32_t)buf) % KB(4);
+    UID fd = Filesystem_OpenFile("/home/hgoel/test.data", 0, 0);
+    //uint8_t *buf = kmalloc(1920*1080*4 + KB(4));
+    //buf += KB(4);
+    //buf -= ((uint32_t)buf) % KB(4);
     //COM_WriteStr("%x\r\n", buf);
 
     Interrupts_Lock();
@@ -105,14 +108,13 @@ void t_main(int argc, char **argv)
     Interrupts_Unlock();
     //tmp = buf;
 
-    UID id = Filesystem_OpenDir("/root/");
+    UID id = Filesystem_OpenDir("/home/hgoel/");
     Filesystem_DirEntry entry;
     while(!Filesystem_ReadDir(id, &entry))
         {
             COM_WriteStr("%s\r\n", entry.dir_name);
         }
 
-    //while(1);
 
     sys_tss.esp0 = kmalloc(KB(16));
     asm volatile(
@@ -150,7 +152,6 @@ void kernel_main(int argc, char** isKernelMode)
 {
     while(1)
         {
-
             graphics_Clear();
             graphics_DrawBuffer(tmp, 0, 0, 1920, 1080);
 

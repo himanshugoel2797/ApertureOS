@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "virt_mem_manager.h"
+#include "managers.h"
 
 #define KMEM_START 0
 #define KMEM_END 0x40000000
@@ -81,5 +82,6 @@ typedef struct
 
 uint64_t* virtMemMan_GetFreePDPTEntry();
 PD_Entry_PSE* virtMemMan_GetFreePageDirEntry();
+uint32_t virtMemMan_PageFaultHandler(Registers *regs);
 
 #endif /* end of include guard: _PRIV_VIRT_MEM_MANAGER_H_ */

@@ -31,6 +31,8 @@ uint8_t AHCI_Initialize()
                             //Map the ahci memory base address into kernel memory
                             ahci_memory_base = (uint32_t)virtMemMan_FindEmptyAddress(KB(8), MEM_KERNEL);
                             if(ahci_memory_base == NULL)break;
+                            
+                            physMemMan_MarkUsed(devices[i].bars[5], KB(8));
 
                             if(virtMemMan_Map(ahci_memory_base, devices[i].bars[5], KB(8), MEM_TYPE_UC, MEM_WRITE | MEM_READ, MEM_KERNEL) < 0)break;
                         }

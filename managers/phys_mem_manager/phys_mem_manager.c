@@ -63,7 +63,7 @@ uint32_t pmem_Initialize()
             // Mark the corresponding pages as in use
             if (hdr->sh_size != 0)
                 {
-                    MemMan_MarkUsed(hdr->sh_addr, hdr->sh_size);
+                    physMemMan_MarkUsed(hdr->sh_addr, hdr->sh_size);
                 }
 
             hdr++;
@@ -78,7 +78,7 @@ uint32_t pmem_Initialize()
 
             if (mmap->type != 1)
                 {
-                    MemMan_MarkUsed((uint32_t)mmap->addr, (uint32_t)mmap->len);
+                    physMemMan_MarkUsed((uint32_t)mmap->addr, (uint32_t)mmap->len);
                 }
             mmap = (multiboot_memory_map_t *)((unsigned int)mmap + mmap->size + sizeof(unsigned int));
         }
@@ -120,7 +120,7 @@ void MemMan_MarkKB4Used(uint64_t addr, uint64_t size)
         }
 }
 
-void MemMan_MarkUsed(uint64_t addr, uint64_t size)
+void physMemMan_MarkUsed(uint64_t addr, uint64_t size)
 {
     MemMan_MarkKB4Used(addr, size);
 }

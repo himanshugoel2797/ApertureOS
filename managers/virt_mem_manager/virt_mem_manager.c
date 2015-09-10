@@ -50,10 +50,17 @@ uint32_t virtMemMan_Initialize()
 
     curInstance_virt = virtMemMan_CreateInstance();
 
+    //Allocate the VM86 virtual memory space
+    virtMemMan_Map(0x0, 0x0, MB(1), MEM_TYPE_WB, MEM_READ | MEM_WRITE | MEM_EXEC, MEM_KERNEL);
+
     //TODO we might want to make this more secure by parsing info from hte elf table and making sections NX appropriately
     virtMemMan_Map(LOAD_ADDRESS, LOAD_ADDRESS, &_region_kernel_end_ - LOAD_ADDRESS, MEM_TYPE_WB, MEM_WRITE | MEM_READ | MEM_EXEC, MEM_KERNEL);
 
     virtMemMan_Map(0x10000000, 0xF0000000, 0x10000000, MEM_TYPE_UC, MEM_WRITE | MEM_READ, MEM_KERNEL);
+
+    physMemMan_MarkUsed(0xF0000000, 0x10000000);
+
+    Interrupts_RegisterHandler(0xE, 0, virtMemMan_PageFaultHandler);
 
     wrmsr(0xC0000080, rdmsr(0xC0000080) | (1<<11)); //Enable NXE
 
@@ -429,4 +436,12 @@ void virtMemMan_FreeInstance(VirtMemMan_Instance inst)
             memset((void*)inst[3], 0xFF, KB(4));
             memset((void*)inst, 0xFF, sizeof(uint64_t) * 4);
         }
+}
+
+uint32_t virtMemMan_PageFaultHandler(Registers *regs)
+{
+    uint32_t cr2 = 0;
+    asm volatile("mov %%cr2, %%eax" : "=a"(cr2));
+    COM_WriteStr("Page Fault! @ %x\r\n", cr2);
+    return 0;
 }

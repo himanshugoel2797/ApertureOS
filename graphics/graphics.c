@@ -30,6 +30,8 @@ void graphics_Initialize()
     tileHeight = height / TILE_Y_COUNT;
 
     buffer_size = (pitch * height * sizeof(uint32_t));
+    buffer_size += 0x80;
+    buffer_size -= buffer_size % 0x80;
 
     // Specify the pointers for both framebuffers
     frameBufferA = (char *)global_multiboot_info->framebuffer_addr;
@@ -58,13 +60,13 @@ void graphics_SwapBuffer()
     uint64_t *fbufA = (uint64_t*)frameBufferA, *fbufB = (uint64_t*)frameBufferB;
     for(uint32_t a = 0; a < buffer_size; a+=0x80)
         {
-            asm volatile ("movdqa (%%ebx), %%xmm1\n\t"
-                          "movdqa +0x10(%%ebx), %%xmm2\n\t"
-                          "movdqa +0x20(%%ebx), %%xmm3\n\t"
-                          "movdqa +0x30(%%ebx), %%xmm4\n\t"
-                          "movdqa +0x40(%%ebx), %%xmm5\n\t"
-                          "movdqa +0x50(%%ebx), %%xmm6\n\t"
-                          "movdqa +0x70(%%ebx), %%xmm0\n\t"
+            asm volatile ("movdqa (%%ebx), %%xmm0\n\t"
+                          "movdqa +0x10(%%ebx), %%xmm1\n\t"
+                          "movdqa +0x20(%%ebx), %%xmm2\n\t"
+                          "movdqa +0x30(%%ebx), %%xmm3\n\t"
+                          "movdqa +0x40(%%ebx), %%xmm4\n\t"
+                          "movdqa +0x50(%%ebx), %%xmm5\n\t"
+                          "movdqa +0x70(%%ebx), %%xmm6\n\t"
                           "movdqa +0x60(%%ebx), %%xmm7\n\t"
                           "shufps $0xE4, %%xmm0,  %%xmm0\n\t"
                           "shufps $0xE4, %%xmm1,  %%xmm1\n\t"
@@ -74,15 +76,15 @@ void graphics_SwapBuffer()
                           "shufps $0xE4, %%xmm5,  %%xmm5\n\t"
                           "shufps $0xE4, %%xmm6,  %%xmm6\n\t"
                           "shufps $0xE4, %%xmm7,  %%xmm7\n\t"
-                          "movntdq %%xmm0, +0x70(%%eax)\n\t"
-                          "movntdq %%xmm1, (%%eax)\n\t"
-                          "movntdq %%xmm2, +0x10(%%eax)\n\t"
-                          "movntdq %%xmm3, +0x20(%%eax)\n\t"
-                          "movntdq %%xmm4, +0x30(%%eax)\n\t"
-                          "movntdq %%xmm5, +0x40(%%eax)\n\t"
-                          "movntdq %%xmm6, +0x50(%%eax)\n\t"
-                          "movntdq %%xmm7, +0x60(%%eax)\n\t"
-                          : "=a" (fbufA) : "b" (fbufB) : "%xmm0","%xmm1","%xmm2","%xmm3","%xmm4","%xmm5","%xmm6","%xmm7", "%eax","%ebx");
+                          "movntdq %%xmm0, (%%eax)\n\t"
+                          "movntdq %%xmm1, +0x10(%%eax)\n\t"
+                          "movntdq %%xmm2, +0x20(%%eax)\n\t"
+                          "movntdq %%xmm3, +0x30(%%eax)\n\t"
+                          "movntdq %%xmm4, +0x40(%%eax)\n\t"
+                          "movntdq %%xmm5, +0x50(%%eax)\n\t"
+                          "movntdq %%xmm6, +0x60(%%eax)\n\t"
+                          "movntdq %%xmm7, +0x70(%%eax)\n\t"
+                          :: "a" (fbufA), "b" (fbufB) : "%xmm0","%xmm1","%xmm2","%xmm3","%xmm4","%xmm5","%xmm6","%xmm7", "%eax","%ebx");
 
             fbufB+=0x80/sizeof(uint64_t);
             fbufA+=0x80/sizeof(uint64_t);
@@ -98,7 +100,7 @@ void graphics_Clear()
     for(uint32_t a = 0; a < buffer_size; a+=16)
         {
             asm volatile ("movdqa (%0), %%xmm1" :: "a" (tmpBuf));
-            asm volatile ("movntdq %%xmm1, (%0)" : "=b" (bbuffer));
+            asm volatile ("movntdq %%xmm1, (%0)":: "b" (bbuffer));
             bbuffer+=2;
         }
 }

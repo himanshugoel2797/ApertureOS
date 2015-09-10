@@ -30,7 +30,6 @@ void Filesystem_Setup()
 
 uint32_t filesystem_Initialize()
 {
-
     //Register all filesystem drivers
     drivers = kmalloc(sizeof(Filesystem_Driver));
     drivers->filesystem = EXT2;

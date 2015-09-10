@@ -6,5 +6,6 @@
 void physMemMan_Setup(void);
 uint64_t physMemMan_Alloc(void);
 void physMemMan_Free(uint64_t ptr);
+void physMemMan_MarkUsed(uint64_t addr, uint64_t size);
 
 #endif /* end of include guard: _PHYS_MEM_MANAGER_H_ */

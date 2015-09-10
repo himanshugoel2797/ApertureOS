@@ -101,6 +101,7 @@ void *kmalloc(size_t size)
                 }
             a_info = a_info->next;
         }
+        
 
     if(IS_USED(a_info) | (a_info->size < size))
         {
@@ -116,6 +117,7 @@ void *kmalloc(size_t size)
             return NULL;
         }
 
+
     //Allocate this block, mark this one as used, append a new block object at the end that contains the remaining free space
     uint32_t addr = GET_ADDR(a_info);
     size_t freeSize = a_info->size - size;
@@ -130,8 +132,8 @@ void *kmalloc(size_t size)
 
             a_info->next = next_free_block;
             next_free_block++;
-        }
 
+        }
     MARK_USED(a_info);
     a_info->size = size;
     //TODO redesign this to automatically request more space when necessary
