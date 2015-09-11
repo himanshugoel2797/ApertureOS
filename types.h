@@ -7,7 +7,7 @@
 typedef uint64_t UID;
 typedef UID SysID;
 
-typedef void (*Callback)(uint32_t);
+typedef void (*Callback)(void*);
 typedef uint32_t (*Initializer)();
 typedef int(*ProcessEntryPoint)(int, char**);
 typedef uint8_t bool;

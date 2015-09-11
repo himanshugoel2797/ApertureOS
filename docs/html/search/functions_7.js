@@ -1,0 +1,14 @@
+var searchData=
+[
+  ['hpet_5fgetfrequency',['HPET_GetFrequency',['../hpet_8c.html#a6cb2af17f8dd6232ee81903d942183ad',1,'HPET_GetFrequency():&#160;hpet.c'],['../hpet_8h.html#a6cb2af17f8dd6232ee81903d942183ad',1,'HPET_GetFrequency():&#160;hpet.c']]],
+  ['hpet_5fgetglobalcounter',['HPET_GetGlobalCounter',['../hpet_8c.html#a75a3fcfd9a53572c5ae5ea78534f54f7',1,'HPET_GetGlobalCounter():&#160;hpet.c'],['../hpet_8h.html#a75a3fcfd9a53572c5ae5ea78534f54f7',1,'HPET_GetGlobalCounter():&#160;hpet.c']]],
+  ['hpet_5fgetsupportedirqs',['HPET_GetSupportedIRQs',['../hpet_8c.html#aaa4c8bd03e81e13631ed4be429081a2a',1,'HPET_GetSupportedIRQs(uint8_t index):&#160;hpet.c'],['../hpet_8h.html#aaa4c8bd03e81e13631ed4be429081a2a',1,'HPET_GetSupportedIRQs(uint8_t index):&#160;hpet.c']]],
+  ['hpet_5fgettimercount',['HPET_GetTimerCount',['../hpet_8c.html#a31956341e5e2b6b1c84ca86f42303abb',1,'HPET_GetTimerCount():&#160;hpet.c'],['../hpet_8h.html#a31956341e5e2b6b1c84ca86f42303abb',1,'HPET_GetTimerCount():&#160;hpet.c']]],
+  ['hpet_5finitialize',['HPET_Initialize',['../hpet_8c.html#a71788ea96651160bb8bcb065caff920b',1,'HPET_Initialize():&#160;hpet.c'],['../hpet_8h.html#a71788ea96651160bb8bcb065caff920b',1,'HPET_Initialize():&#160;hpet.c']]],
+  ['hpet_5fisperiodiccapable',['HPET_IsPeriodicCapable',['../hpet_8c.html#af9d47d7f58bdc023394c77bc01ca3601',1,'HPET_IsPeriodicCapable(uint8_t index):&#160;hpet.c'],['../hpet_8h.html#af9d47d7f58bdc023394c77bc01ca3601',1,'HPET_IsPeriodicCapable(uint8_t index):&#160;hpet.c']]],
+  ['hpet_5fread',['HPET_Read',['../hpet_8c.html#abcf867f60f7df827753aaa1f748a1c90',1,'HPET_Read(uint32_t reg):&#160;hpet.c'],['../priv__hpet_8h.html#abcf867f60f7df827753aaa1f748a1c90',1,'HPET_Read(uint32_t reg):&#160;hpet.c']]],
+  ['hpet_5fsetenable',['HPET_SetEnable',['../hpet_8c.html#abd36c0b6cef1a42bcf9955b2d91e21fd',1,'HPET_SetEnable(int enable):&#160;hpet.c'],['../hpet_8h.html#abd36c0b6cef1a42bcf9955b2d91e21fd',1,'HPET_SetEnable(int enable):&#160;hpet.c']]],
+  ['hpet_5fsetglobalcounter',['HPET_SetGlobalCounter',['../hpet_8c.html#aac6bce2804a594f2887d7b8196c7e802',1,'HPET_SetGlobalCounter(uint64_t val):&#160;hpet.c'],['../hpet_8h.html#aac6bce2804a594f2887d7b8196c7e802',1,'HPET_SetGlobalCounter(uint64_t val):&#160;hpet.c']]],
+  ['hpet_5fsettimerconfig',['HPET_SetTimerConfig',['../hpet_8c.html#a5a440d331a439e0fc7ad104098affef2',1,'HPET_SetTimerConfig(uint8_t index, uint8_t irq, uint8_t enable_int, uint8_t periodic, uint8_t timer_value_set, uint64_t tick_count):&#160;hpet.c'],['../hpet_8h.html#a5a440d331a439e0fc7ad104098affef2',1,'HPET_SetTimerConfig(uint8_t index, uint8_t irq, uint8_t enable_int, uint8_t periodic, uint8_t timer_value_set, uint64_t tick_count):&#160;hpet.c']]],
+  ['hpet_5fwrite',['HPET_Write',['../hpet_8c.html#a7b42378dceb42356c65de254e885e289',1,'HPET_Write(uint32_t reg, uint64_t val):&#160;hpet.c'],['../priv__hpet_8h.html#a7b42378dceb42356c65de254e885e289',1,'HPET_Write(uint32_t reg, uint64_t val):&#160;hpet.c']]]
+];

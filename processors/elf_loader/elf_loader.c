@@ -44,7 +44,7 @@ UID Elf_Load(const char *path)
 
 		for(int i = 0; i < hdr->e_phnum; i++)
 		{
-			if(phdr->p_type == 0){
+			if(phdr->p_type == 1){
 			//Allocate the associated physical memory and map it into the address space
 			uint32_t page_count = (phdr->p_memsz - 1)/KB(4) + 1;
 			uint64_t p_addr = 0;
