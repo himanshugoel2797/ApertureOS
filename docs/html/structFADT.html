@@ -85,23 +85,36 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#pub-attribs">Data Fields</a>  </div>
   <div class="headertitle">
-<div class="title">FADT Struct Reference</div>  </div>
+<div class="title">FADT Struct Reference<div class="ingroups"><a class="el" href="group__acpi__tables.html">ACPI Tables</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
+<p>The ACPI <a class="el" href="structFADT.html" title="The ACPI FADT. ">FADT</a>.  
+ <a href="structFADT.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="fadt_8h_source.html">fadt.h</a>&gt;</code></p>
+<div class="dynheader">
+Collaboration diagram for FADT:</div>
+<div class="dyncontent">
+<div class="center"><img src="structFADT__coll__graph.png" border="0" usemap="#FADT_coll__map" alt="Collaboration graph"/></div>
+<map name="FADT_coll__map" id="FADT_coll__map">
+<area shape="rect" id="node2" href="structGenericAddressStructure.html" title="Generic ACPI Address structure. " alt="" coords="5,5,173,32"/><area shape="rect" id="node3" href="structACPISDTHeader.html" title="ACPI Section Descriptor Table header. " alt="" coords="197,5,320,32"/></map>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:a6370fbfdcb782629fd1f9243d386abf5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structACPISDTHeader.html">ACPISDTHeader</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFADT.html#a6370fbfdcb782629fd1f9243d386abf5">h</a></td></tr>
 <tr class="separator:a6370fbfdcb782629fd1f9243d386abf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a34a5b74e45c28d23db2f1399cb0fed72"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFADT.html#a34a5b74e45c28d23db2f1399cb0fed72">FirmwareCtrl</a></td></tr>
+<tr class="memdesc:a34a5b74e45c28d23db2f1399cb0fed72"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ACPI Section Descriptor Table header.  <a href="#a34a5b74e45c28d23db2f1399cb0fed72">More...</a><br /></td></tr>
 <tr class="separator:a34a5b74e45c28d23db2f1399cb0fed72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0edfead5a199a7b48a87898f26d35ff4"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFADT.html#a0edfead5a199a7b48a87898f26d35ff4">Dsdt</a></td></tr>
 <tr class="separator:a0edfead5a199a7b48a87898f26d35ff4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afbba574a9f42ad8a2df7b2b9f320e169"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFADT.html#afbba574a9f42ad8a2df7b2b9f320e169">Reserved</a></td></tr>
+<tr class="memdesc:afbba574a9f42ad8a2df7b2b9f320e169"><td class="mdescLeft">&#160;</td><td class="mdescRight">Offset of the DSDT.  <a href="#afbba574a9f42ad8a2df7b2b9f320e169">More...</a><br /></td></tr>
 <tr class="separator:afbba574a9f42ad8a2df7b2b9f320e169"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0c1c87c1a02fc29df6d8cb41ccc4391f"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFADT.html#a0c1c87c1a02fc29df6d8cb41ccc4391f">PreferredPowerManagementProfile</a></td></tr>
+<tr class="memdesc:a0c1c87c1a02fc29df6d8cb41ccc4391f"><td class="mdescLeft">&#160;</td><td class="mdescRight">field used in ACPI 1.0; no longer in use, for compatibility only  <a href="#a0c1c87c1a02fc29df6d8cb41ccc4391f">More...</a><br /></td></tr>
 <tr class="separator:a0c1c87c1a02fc29df6d8cb41ccc4391f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6030c56b75a419de540eaf1ed6c4f38a"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFADT.html#a6030c56b75a419de540eaf1ed6c4f38a">SCI_Interrupt</a></td></tr>
 <tr class="separator:a6030c56b75a419de540eaf1ed6c4f38a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -198,7 +211,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a6c5ee76cacde4e1261526108b5168048"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structGenericAddressStructure.html">GenericAddressStructure</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFADT.html#a6c5ee76cacde4e1261526108b5168048">X_GPE1Block</a></td></tr>
 <tr class="separator:a6c5ee76cacde4e1261526108b5168048"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The ACPI <a class="el" href="structFADT.html" title="The ACPI FADT. ">FADT</a>. </p>
+</div><h2 class="groupheader">Field Documentation</h2>
 <a class="anchor" id="af1c3dca5dcd4de93b6cc53379813f2f3"></a>
 <div class="memitem">
 <div class="memproto">
@@ -316,6 +331,8 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>The ACPI Section Descriptor Table header. </p>
 
 </div>
 </div>
@@ -569,6 +586,8 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>field used in ACPI 1.0; no longer in use, for compatibility only </p>
+
 </div>
 </div>
 <a class="anchor" id="ac9e0c6a1c51aa3b8071df4b67eb83d2d"></a>
@@ -592,6 +611,8 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Offset of the DSDT. </p>
 
 </div>
 </div>

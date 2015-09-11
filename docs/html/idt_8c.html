@@ -90,67 +90,54 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="idt_8h_source.html">idt.h</a>&quot;</code><br />
+</div><div class="textblock"><div class="dynheader">
+Include dependency graph for idt.c:</div>
+<div class="dyncontent">
+<div class="center"><img src="idt_8c__incl.png" border="0" usemap="#idt_8c" alt=""/></div>
+<map name="idt_8c" id="idt_8c">
+<area shape="rect" id="node2" href="idt_8h.html" title="idt.h" alt="" coords="62,80,109,107"/><area shape="rect" id="node3" href="types_8h.html" title="types.h" alt="" coords="53,155,118,181"/></map>
+</div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Data Structures</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct____attribute____.html">__attribute__</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIDTEntry.html">IDTEntry</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct____attribute____.html">__attribute__</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIDTPtr.html">IDTPtr</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a100f688cedfbfb60c0e5306684fc5628"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structvoid.html">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#a100f688cedfbfb60c0e5306684fc5628">IDT_DefaultHandler</a> ()</td></tr>
+<tr class="memitem:a100f688cedfbfb60c0e5306684fc5628"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#a100f688cedfbfb60c0e5306684fc5628">IDT_DefaultHandler</a> ()</td></tr>
 <tr class="separator:a100f688cedfbfb60c0e5306684fc5628"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6891a7a13083aeb740006a82dff40bcf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structvoid.html">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#a6891a7a13083aeb740006a82dff40bcf">IDT_FillSWInterruptHandler</a> (char *idt_handler, uint8_t intNum, uint8_t pushToStack)</td></tr>
+<tr class="memitem:a6891a7a13083aeb740006a82dff40bcf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#a6891a7a13083aeb740006a82dff40bcf">IDT_FillSWInterruptHandler</a> (char *idt_handler, uint8_t intNum, uint8_t pushToStack)</td></tr>
 <tr class="separator:a6891a7a13083aeb740006a82dff40bcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f8b539c137882b0c7d32390980969ed"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structvoid.html">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#a4f8b539c137882b0c7d32390980969ed">IDT_Initialize</a> ()</td></tr>
+<tr class="memitem:a4f8b539c137882b0c7d32390980969ed"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#a4f8b539c137882b0c7d32390980969ed">IDT_Initialize</a> ()</td></tr>
 <tr class="separator:a4f8b539c137882b0c7d32390980969ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe6bbe4d7953c92f0576c2ae9ef2f705"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structvoid.html">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#afe6bbe4d7953c92f0576c2ae9ef2f705">IDT_SetEntry</a> (uint8_t <a class="el" href="ext2_8c.html#a750b5d744c39a06bfb13e6eb010e35d0">index</a>, uint32_t base, uint16_t selector, uint8_t flags)</td></tr>
+<tr class="memitem:afe6bbe4d7953c92f0576c2ae9ef2f705"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#afe6bbe4d7953c92f0576c2ae9ef2f705">IDT_SetEntry</a> (uint8_t <a class="el" href="ext2_8c.html#a750b5d744c39a06bfb13e6eb010e35d0">index</a>, uint32_t base, uint16_t selector, uint8_t flags)</td></tr>
 <tr class="separator:afe6bbe4d7953c92f0576c2ae9ef2f705"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae26c286b12bb72b6d3ac32ef9c06516f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#ae26c286b12bb72b6d3ac32ef9c06516f">__attribute__</a> ((naked, noreturn))</td></tr>
-<tr class="separator:ae26c286b12bb72b6d3ac32ef9c06516f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab84873dc3894ca4a696aabc16535c672"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structvoid.html">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#ab84873dc3894ca4a696aabc16535c672">IDT_MainHandler</a> (<a class="el" href="structRegisters.html">Registers</a> *regs)</td></tr>
+<tr class="memitem:ab84873dc3894ca4a696aabc16535c672"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#ab84873dc3894ca4a696aabc16535c672">IDT_MainHandler</a> (<a class="el" href="structRegisters.html">Registers</a> *regs)</td></tr>
 <tr class="separator:ab84873dc3894ca4a696aabc16535c672"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a06c6c8b57c8972d83adbb5a9d85d695d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structvoid.html">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#a06c6c8b57c8972d83adbb5a9d85d695d">IDT_RegisterHandler</a> (uint8_t intNum, <a class="el" href="structvoid.html">void</a>(*handler)(<a class="el" href="structRegisters.html">Registers</a> *))</td></tr>
+<tr class="memitem:a06c6c8b57c8972d83adbb5a9d85d695d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#a06c6c8b57c8972d83adbb5a9d85d695d">IDT_RegisterHandler</a> (uint8_t intNum, void(*handler)(<a class="el" href="structRegisters.html">Registers</a> *))</td></tr>
 <tr class="separator:a06c6c8b57c8972d83adbb5a9d85d695d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:aeab68f17dc686a2f7dc72ab2b712e464"><td class="memItemLeft" align="right" valign="top">typedef&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#aeab68f17dc686a2f7dc72ab2b712e464">__attribute__</a></td></tr>
-<tr class="separator:aeab68f17dc686a2f7dc72ab2b712e464"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b7dcc78ef822015a53282fc460a8818"><td class="memItemLeft" align="right" valign="top">IDTEntry&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#a5b7dcc78ef822015a53282fc460a8818">idt_entries</a> [<a class="el" href="idt_8h.html#ac5ba6506506314600fc35d49780e0072">IDT_ENTRY_COUNT</a>]</td></tr>
+<tr class="memitem:a5b7dcc78ef822015a53282fc460a8818"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structIDTEntry.html">IDTEntry</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#a5b7dcc78ef822015a53282fc460a8818">idt_entries</a> [<a class="el" href="idt_8h.html#ac5ba6506506314600fc35d49780e0072">IDT_ENTRY_COUNT</a>]</td></tr>
 <tr class="separator:a5b7dcc78ef822015a53282fc460a8818"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ae10996106507638da32d235783b104"><td class="memItemLeft" align="right" valign="top">IDTPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#a3ae10996106507638da32d235783b104">idt_table</a></td></tr>
+<tr class="memitem:a3ae10996106507638da32d235783b104"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structIDTPtr.html">IDTPtr</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#a3ae10996106507638da32d235783b104">idt_table</a></td></tr>
 <tr class="separator:a3ae10996106507638da32d235783b104"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ae3a250df19b072a86070cb2cb5b934"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#a1ae3a250df19b072a86070cb2cb5b934">idt_handlers</a> [<a class="el" href="idt_8h.html#ac5ba6506506314600fc35d49780e0072">IDT_ENTRY_COUNT</a>][<a class="el" href="idt_8h.html#a8185c723b3b7959c2cd93d2d74624426">IDT_ENTRY_HANDLER_SIZE</a>]</td></tr>
 <tr class="separator:a1ae3a250df19b072a86070cb2cb5b934"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b92b80fc0d97f77f0676fa28881f838"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structvoid.html">void</a>(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#a0b92b80fc0d97f77f0676fa28881f838">idt_handler_calls</a> [<a class="el" href="idt_8h.html#ac5ba6506506314600fc35d49780e0072">IDT_ENTRY_COUNT</a>])(<a class="el" href="structRegisters.html">Registers</a> *)</td></tr>
+<tr class="memitem:a0b92b80fc0d97f77f0676fa28881f838"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="idt_8c.html#a0b92b80fc0d97f77f0676fa28881f838">idt_handler_calls</a> [<a class="el" href="idt_8h.html#ac5ba6506506314600fc35d49780e0072">IDT_ENTRY_COUNT</a>])(<a class="el" href="structRegisters.html">Registers</a> *)</td></tr>
 <tr class="separator:a0b92b80fc0d97f77f0676fa28881f838"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="ae26c286b12bb72b6d3ac32ef9c06516f"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="struct____attribute____.html">__attribute__</a> </td>
-          <td>(</td>
-          <td class="paramtype">(naked, noreturn)&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a class="anchor" id="a100f688cedfbfb60c0e5306684fc5628"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structvoid.html">void</a> IDT_DefaultHandler </td>
+          <td class="memname">void IDT_DefaultHandler </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -165,7 +152,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structvoid.html">void</a> IDT_FillSWInterruptHandler </td>
+          <td class="memname">void IDT_FillSWInterruptHandler </td>
           <td>(</td>
           <td class="paramtype">char *&#160;</td>
           <td class="paramname"><em>idt_handler</em>, </td>
@@ -197,7 +184,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structvoid.html">void</a> IDT_Initialize </td>
+          <td class="memname">void IDT_Initialize </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -212,7 +199,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structvoid.html">void</a> IDT_MainHandler </td>
+          <td class="memname">void IDT_MainHandler </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structRegisters.html">Registers</a> *&#160;</td>
           <td class="paramname"><em>regs</em></td><td>)</td>
@@ -228,7 +215,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structvoid.html">void</a> IDT_RegisterHandler </td>
+          <td class="memname">void IDT_RegisterHandler </td>
           <td>(</td>
           <td class="paramtype">uint8_t&#160;</td>
           <td class="paramname"><em>intNum</em>, </td>
@@ -236,7 +223,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structvoid.html">void</a>(*)(<a class="el" href="structRegisters.html">Registers</a> *)&#160;</td>
+          <td class="paramtype">void(*)(<a class="el" href="structRegisters.html">Registers</a> *)&#160;</td>
           <td class="paramname"><em>handler</em>&#160;</td>
         </tr>
         <tr>
@@ -254,7 +241,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structvoid.html">void</a> IDT_SetEntry </td>
+          <td class="memname">void IDT_SetEntry </td>
           <td>(</td>
           <td class="paramtype">uint8_t&#160;</td>
           <td class="paramname"><em>index</em>, </td>
@@ -288,24 +275,12 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
-<a class="anchor" id="aeab68f17dc686a2f7dc72ab2b712e464"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef    <a class="el" href="struct____attribute____.html">__attribute__</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a class="anchor" id="a5b7dcc78ef822015a53282fc460a8818"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">IDTEntry idt_entries[<a class="el" href="idt_8h.html#ac5ba6506506314600fc35d49780e0072">IDT_ENTRY_COUNT</a>]</td>
+          <td class="memname"><a class="el" href="structIDTEntry.html">IDTEntry</a> idt_entries[<a class="el" href="idt_8h.html#ac5ba6506506314600fc35d49780e0072">IDT_ENTRY_COUNT</a>]</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -317,7 +292,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structvoid.html">void</a>(* idt_handler_calls[<a class="el" href="idt_8h.html#ac5ba6506506314600fc35d49780e0072">IDT_ENTRY_COUNT</a>])(<a class="el" href="structRegisters.html">Registers</a> *)</td>
+          <td class="memname">void(* idt_handler_calls[<a class="el" href="idt_8h.html#ac5ba6506506314600fc35d49780e0072">IDT_ENTRY_COUNT</a>])(<a class="el" href="structRegisters.html">Registers</a> *)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -341,7 +316,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">IDTPtr idt_table</td>
+          <td class="memname"><a class="el" href="structIDTPtr.html">IDTPtr</a> idt_table</td>
         </tr>
       </table>
 </div><div class="memdoc">

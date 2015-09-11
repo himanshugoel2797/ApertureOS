@@ -1,7 +1,7 @@
 var searchData=
 [
   ['d',['d',['../structFIS__PIO__SETUP.html#a189e327bca4ba11f7f55cfd26bbd9d19',1,'FIS_PIO_SETUP::d()'],['../structFIS__DMA__SETUP.html#a971ff6493d81b47c5ff9c6b4a05436e1',1,'FIS_DMA_SETUP::d()'],['../structPS2__ScanCodes__2__.html#a942bb619958e3e9c7d204230f93f0592',1,'PS2_ScanCodes_2_::d()']]],
-  ['data',['data',['../structFIS__DATA.html#aad059207011657581080602974da7b34',1,'FIS_DATA::data()'],['../structFileDescriptor__T.html#a37f720ced86498b7e80ca72eee2b0c6c',1,'FileDescriptor_T::data()'],['../structvoid.html#ab5fe52deb5d6e4c36f9e74bb95119af2',1,'void::data()']]],
+  ['data',['data',['../structFIS__DATA.html#aad059207011657581080602974da7b34',1,'FIS_DATA::data()'],['../structFileDescriptor__T.html#a37f720ced86498b7e80ca72eee2b0c6c',1,'FileDescriptor_T::data()'],['../structMsgData.html#a9495a88705b178b79d6e7da80dd164b5',1,'MsgData::data()']]],
   ['dayalarm',['DayAlarm',['../structFADT.html#a439d85af84eab75fa82e615012da87dd',1,'FADT']]],
   ['dayofmonth',['dayOfMonth',['../structRTC__Time.html#a8692b2e699a1c9d919dd239afa50a951',1,'RTC_Time']]],
   ['dba',['dba',['../structHBA__PRDT__ENTRY.html#a0136ae571343a80dd675e9d7e859c419',1,'HBA_PRDT_ENTRY']]],
@@ -19,7 +19,7 @@ var searchData=
   ['dir_5fbase',['dir_base',['../structFileDescriptor__T.html#aff11367cd68d0975c948150934ae62fa',1,'FileDescriptor_T']]],
   ['dir_5fname',['dir_name',['../structFilesystem__DirEntry.html#ab0af28e55db43e999c2c59961c1d033f',1,'Filesystem_DirEntry']]],
   ['direct_5fblock',['direct_block',['../structEXT2__Inode.html#a2b021880018dbfdb39be5ccd20d9121d',1,'EXT2_Inode']]],
-  ['directcolor_5fattributes',['directcolor_attributes',['../struct____attribute____.html#a86679d7f59f176ae4aa724f226f782cd',1,'__attribute__']]],
+  ['directcolor_5fattributes',['directcolor_attributes',['../structModeInfoBlock.html#af4b4eac8934a0d157b82be1612e2f7e1',1,'ModeInfoBlock']]],
   ['dirty',['dirty',['../structPD__Entry__PSE.html#a60fefa1c52439cfd20c5ee80c7f01591',1,'PD_Entry_PSE::dirty()'],['../structPT__Entry.html#a71655b38f0e73211e0ea34b308902ec6',1,'PT_Entry::dirty()']]],
   ['disk_5fsector_5fcount',['disk_sector_count',['../structEXT2__Inode.html#a1e86bf9e6a457ab6ef400da00e4d62e7',1,'EXT2_Inode']]],
   ['dmabufferid',['DMAbufferID',['../structFIS__DMA__SETUP.html#abe88d4ee9c16827fa6393d4694150b7f',1,'FIS_DMA_SETUP']]],
@@ -29,8 +29,8 @@ var searchData=
   ['drivers',['drivers',['../filesystem_8c.html#a7fd5aa79ca6d555b3abc577acf4accbb',1,'filesystem.c']]],
   ['drives_5faddr',['drives_addr',['../structmultiboot__info.html#a12916653d21ac1694b6d609a10d15332',1,'multiboot_info']]],
   ['drives_5flength',['drives_length',['../structmultiboot__info.html#a8bb6cc3d388a8abafecc7018744c14f3',1,'multiboot_info']]],
-  ['ds',['ds',['../structstrtss.html#ad2263ce0fbe1d7b734ddaddadefdf3b9',1,'strtss::ds()'],['../structRegisters.html#aa8487e9da66f06f00d88e990e7ba28b5',1,'Registers::ds()'],['../gdt_8h.html#a3b1648d63f4f79274a3ca54631f5bfe0',1,'ds():&#160;gdt.h']]],
-  ['ds_5fh',['ds_h',['../structstrtss.html#a600b2fc91d3ecddb4598c337056fb128',1,'strtss::ds_h()'],['../gdt_8h.html#a926836eb94c519460243ab5b4ca920de',1,'ds_h():&#160;gdt.h']]],
+  ['ds',['ds',['../structtss__struct.html#a729d79b542515fb9ea3b0885dda89071',1,'tss_struct::ds()'],['../structRegisters.html#aa8487e9da66f06f00d88e990e7ba28b5',1,'Registers::ds()']]],
+  ['ds_5fh',['ds_h',['../structtss__struct.html#a53579332d42cfa1ce4d74fa30b3f6dd5',1,'tss_struct']]],
   ['dsdt',['Dsdt',['../structFADT.html#a0edfead5a199a7b48a87898f26d35ff4',1,'FADT']]],
   ['dseg',['dseg',['../structmultiboot__apm__info.html#a98cd7da8760cf5d49ba55e1f9e76c6d4',1,'multiboot_apm_info']]],
   ['dseg_5flen',['dseg_len',['../structmultiboot__apm__info.html#afee11d31183fe424af90546b10c9fac2',1,'multiboot_apm_info']]],

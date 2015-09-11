@@ -96,13 +96,13 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:gab28b8499af0d0e0b3ccb6fcfd7ab3ce7"><td class="memItemLeft" align="right" valign="top">typedef uint32_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Sockets.html#gab28b8499af0d0e0b3ccb6fcfd7ab3ce7">Sock_ReadAsync</a>) (uint8_t *buffer, uint32_t <a class="el" href="multiboot_8h.html#a6d813a0f2b5281b18dea3f4cda696c33">size</a>)</td></tr>
+<tr class="memitem:gab28b8499af0d0e0b3ccb6fcfd7ab3ce7"><td class="memItemLeft" align="right" valign="top">typedef uint32_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Sockets.html#gab28b8499af0d0e0b3ccb6fcfd7ab3ce7">Sock_ReadAsync</a>) (uint8_t *buffer, uint32_t size)</td></tr>
 <tr class="memdesc:gab28b8499af0d0e0b3ccb6fcfd7ab3ce7"><td class="mdescLeft">&#160;</td><td class="mdescRight">A pointer to a function that asynchronously performs a Socket read.  <a href="#gab28b8499af0d0e0b3ccb6fcfd7ab3ce7">More...</a><br /></td></tr>
 <tr class="separator:gab28b8499af0d0e0b3ccb6fcfd7ab3ce7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga45a30f1742eda4485aa12d96c2ebdcfe"><td class="memItemLeft" align="right" valign="top">typedef uint32_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Sockets.html#ga45a30f1742eda4485aa12d96c2ebdcfe">Sock_SeekAsync</a>) (uint64_t offset, int whence)</td></tr>
 <tr class="memdesc:ga45a30f1742eda4485aa12d96c2ebdcfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">A pointer to a function that asynchronously performs a Socket seek.  <a href="#ga45a30f1742eda4485aa12d96c2ebdcfe">More...</a><br /></td></tr>
 <tr class="separator:ga45a30f1742eda4485aa12d96c2ebdcfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga30094e56df3569e17e82fc7ed47b6818"><td class="memItemLeft" align="right" valign="top">typedef uint32_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Sockets.html#ga30094e56df3569e17e82fc7ed47b6818">Sock_WriteAsync</a>) (uint8_t *src_buf, uint32_t <a class="el" href="multiboot_8h.html#a6d813a0f2b5281b18dea3f4cda696c33">size</a>)</td></tr>
+<tr class="memitem:ga30094e56df3569e17e82fc7ed47b6818"><td class="memItemLeft" align="right" valign="top">typedef uint32_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Sockets.html#ga30094e56df3569e17e82fc7ed47b6818">Sock_WriteAsync</a>) (uint8_t *src_buf, uint32_t size)</td></tr>
 <tr class="memdesc:ga30094e56df3569e17e82fc7ed47b6818"><td class="mdescLeft">&#160;</td><td class="mdescRight">A pointer to a function that asynchronously performs a Socket write.  <a href="#ga30094e56df3569e17e82fc7ed47b6818">More...</a><br /></td></tr>
 <tr class="separator:ga30094e56df3569e17e82fc7ed47b6818"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -158,10 +158,10 @@ Functions</h2></td></tr>
 <tr class="memitem:ga3dc331d1f2209cc2086ea1c7e5afcdea"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__Sockets.html#ga8f0f9f004326047a95b8088cb3bb1b40">SOCK_ERROR</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Sockets.html#ga3dc331d1f2209cc2086ea1c7e5afcdea">Socket_Disconnect</a> (<a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a> <a class="el" href="process__manager_8c.html#a17d665b03c4f1b180b8b7f01528cdad5">id</a>)</td></tr>
 <tr class="memdesc:ga3dc331d1f2209cc2086ea1c7e5afcdea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attempt to disconnect from the socket.  <a href="#ga3dc331d1f2209cc2086ea1c7e5afcdea">More...</a><br /></td></tr>
 <tr class="separator:ga3dc331d1f2209cc2086ea1c7e5afcdea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga003d53bb4c7b8f040fa89354c84a88b5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__Sockets.html#ga8f0f9f004326047a95b8088cb3bb1b40">SOCK_ERROR</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Sockets.html#ga003d53bb4c7b8f040fa89354c84a88b5">Socket_ReadAsync</a> (<a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a> <a class="el" href="process__manager_8c.html#a17d665b03c4f1b180b8b7f01528cdad5">id</a>, uint8_t *buffer, uint32_t <a class="el" href="multiboot_8h.html#a6d813a0f2b5281b18dea3f4cda696c33">size</a>)</td></tr>
+<tr class="memitem:ga003d53bb4c7b8f040fa89354c84a88b5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__Sockets.html#ga8f0f9f004326047a95b8088cb3bb1b40">SOCK_ERROR</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Sockets.html#ga003d53bb4c7b8f040fa89354c84a88b5">Socket_ReadAsync</a> (<a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a> <a class="el" href="process__manager_8c.html#a17d665b03c4f1b180b8b7f01528cdad5">id</a>, uint8_t *buffer, uint32_t size)</td></tr>
 <tr class="memdesc:ga003d53bb4c7b8f040fa89354c84a88b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Request an asynchronous read from the socket.  <a href="#ga003d53bb4c7b8f040fa89354c84a88b5">More...</a><br /></td></tr>
 <tr class="separator:ga003d53bb4c7b8f040fa89354c84a88b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga65d7de7675ecbe706fb19919aa3f1539"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__Sockets.html#ga8f0f9f004326047a95b8088cb3bb1b40">SOCK_ERROR</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Sockets.html#ga65d7de7675ecbe706fb19919aa3f1539">Socket_WriteAsync</a> (<a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a> <a class="el" href="process__manager_8c.html#a17d665b03c4f1b180b8b7f01528cdad5">id</a>, uint8_t *buffer, uint32_t <a class="el" href="multiboot_8h.html#a6d813a0f2b5281b18dea3f4cda696c33">size</a>)</td></tr>
+<tr class="memitem:ga65d7de7675ecbe706fb19919aa3f1539"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__Sockets.html#ga8f0f9f004326047a95b8088cb3bb1b40">SOCK_ERROR</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Sockets.html#ga65d7de7675ecbe706fb19919aa3f1539">Socket_WriteAsync</a> (<a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a> <a class="el" href="process__manager_8c.html#a17d665b03c4f1b180b8b7f01528cdad5">id</a>, uint8_t *buffer, uint32_t size)</td></tr>
 <tr class="memdesc:ga65d7de7675ecbe706fb19919aa3f1539"><td class="mdescLeft">&#160;</td><td class="mdescRight">Request an asynchronous write to the socket.  <a href="#ga65d7de7675ecbe706fb19919aa3f1539">More...</a><br /></td></tr>
 <tr class="separator:ga65d7de7675ecbe706fb19919aa3f1539"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga58a69b2407a61f69c74034a78f716be6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__Sockets.html#ga8f0f9f004326047a95b8088cb3bb1b40">SOCK_ERROR</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Sockets.html#ga58a69b2407a61f69c74034a78f716be6">Socket_SeekAsync</a> (<a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a> <a class="el" href="process__manager_8c.html#a17d665b03c4f1b180b8b7f01528cdad5">id</a>, uint64_t offset, int whence)</td></tr>
@@ -175,7 +175,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef uint32_t(* Sock_ReadAsync) (uint8_t *buffer, uint32_t <a class="el" href="multiboot_8h.html#a6d813a0f2b5281b18dea3f4cda696c33">size</a>)</td>
+          <td class="memname">typedef uint32_t(* Sock_ReadAsync) (uint8_t *buffer, uint32_t size)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -203,7 +203,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef uint32_t(* Sock_WriteAsync) (uint8_t *src_buf, uint32_t <a class="el" href="multiboot_8h.html#a6d813a0f2b5281b18dea3f4cda696c33">size</a>)</td>
+          <td class="memname">typedef uint32_t(* Sock_WriteAsync) (uint8_t *src_buf, uint32_t size)</td>
         </tr>
       </table>
 </div><div class="memdoc">

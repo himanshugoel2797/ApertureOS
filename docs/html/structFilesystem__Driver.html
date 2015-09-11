@@ -97,7 +97,7 @@ Data Fields</h2></td></tr>
 <tr class="separator:a7ddf8f9019f03edeaa23199a5dc1542e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4f61b15dc23a91531841cfa8ffe7a2e"><td class="memItemLeft" align="right" valign="top">uint32_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFilesystem__Driver.html#ad4f61b15dc23a91531841cfa8ffe7a2e">_H_Filesystem_OpenFile</a> )(FileDescriptor *desc, const char *filename, int flags, int perms)</td></tr>
 <tr class="separator:ad4f61b15dc23a91531841cfa8ffe7a2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc43686542a7735d42d5a9ac65ff61b9"><td class="memItemLeft" align="right" valign="top">uint8_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFilesystem__Driver.html#adc43686542a7735d42d5a9ac65ff61b9">_H_Filesystem_ReadFile</a> )(FileDescriptor *desc, <a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a> <a class="el" href="process__manager_8c.html#a17d665b03c4f1b180b8b7f01528cdad5">id</a>, uint8_t *buffer, size_t <a class="el" href="multiboot_8h.html#a6d813a0f2b5281b18dea3f4cda696c33">size</a>)</td></tr>
+<tr class="memitem:adc43686542a7735d42d5a9ac65ff61b9"><td class="memItemLeft" align="right" valign="top">uint8_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFilesystem__Driver.html#adc43686542a7735d42d5a9ac65ff61b9">_H_Filesystem_ReadFile</a> )(FileDescriptor *desc, <a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a> <a class="el" href="process__manager_8c.html#a17d665b03c4f1b180b8b7f01528cdad5">id</a>, uint8_t *buffer, size_t size)</td></tr>
 <tr class="separator:adc43686542a7735d42d5a9ac65ff61b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1aab985dfd31e93e324dd3cc776343bb"><td class="memItemLeft" align="right" valign="top">uint64_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFilesystem__Driver.html#a1aab985dfd31e93e324dd3cc776343bb">_H_Filesystem_SeekFile</a> )(FileDescriptor *desc, uint32_t <a class="el" href="ext2_8c.html#ada6ba1a7aa61d2fd3517a683750ba6e4">fd</a>, uint64_t offset, int whence)</td></tr>
 <tr class="separator:a1aab985dfd31e93e324dd3cc776343bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -224,7 +224,7 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t(* Filesystem_Driver::_H_Filesystem_ReadFile) (FileDescriptor *desc, <a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a> <a class="el" href="process__manager_8c.html#a17d665b03c4f1b180b8b7f01528cdad5">id</a>, uint8_t *buffer, size_t <a class="el" href="multiboot_8h.html#a6d813a0f2b5281b18dea3f4cda696c33">size</a>)</td>
+          <td class="memname">uint8_t(* Filesystem_Driver::_H_Filesystem_ReadFile) (FileDescriptor *desc, <a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a> <a class="el" href="process__manager_8c.html#a17d665b03c4f1b180b8b7f01528cdad5">id</a>, uint8_t *buffer, size_t size)</td>
         </tr>
       </table>
 </div><div class="memdoc">

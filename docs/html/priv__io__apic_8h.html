@@ -93,6 +93,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="types_8h_source.html">types.h</a>&quot;</code><br />
+</div><div class="textblock"><div class="dynheader">
+Include dependency graph for priv_io_apic.h:</div>
+<div class="dyncontent">
+<div class="center"><img src="priv__io__apic_8h__incl.png" border="0" usemap="#drivers_2apic_2io__apic_2priv__io__apic_8h" alt=""/></div>
+<map name="drivers_2apic_2io__apic_2priv__io__apic_8h" id="drivers_2apic_2io__apic_2priv__io__apic_8h">
+<area shape="rect" id="node2" href="types_8h.html" title="types.h" alt="" coords="53,95,118,121"/></map>
+</div>
+</div><div class="textblock"><div class="dynheader">
+This graph shows which files directly or indirectly include this file:</div>
+<div class="dyncontent">
+<div class="center"><img src="priv__io__apic_8h__dep__incl.png" border="0" usemap="#drivers_2apic_2io__apic_2priv__io__apic_8hdep" alt=""/></div>
+<map name="drivers_2apic_2io__apic_2priv__io__apic_8hdep" id="drivers_2apic_2io__apic_2priv__io__apic_8hdep">
+<area shape="rect" id="node2" href="io__apic_8c.html" title="drivers/apic/io_apic\l/io_apic.c" alt="" coords="5,95,140,136"/></map>
+</div>
 </div>
 <p><a href="priv__io__apic_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -105,70 +119,11 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a18dba16062705f4fc4f4b5db679a760d"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="priv__io__apic_8h.html#a18dba16062705f4fc4f4b5db679a760d">IOAPIC_Read</a> (uint32_t *io_apic_baseAddr, uint32_t <a class="el" href="ext2_8c.html#a750b5d744c39a06bfb13e6eb010e35d0">index</a>)</td></tr>
-<tr class="separator:a18dba16062705f4fc4f4b5db679a760d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc17d90580cf30f31f54a10b7a7dfbb6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structvoid.html">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="priv__io__apic_8h.html#abc17d90580cf30f31f54a10b7a7dfbb6">IOAPIC_Write</a> (uint32_t *io_apic_baseAddr, uint32_t <a class="el" href="ext2_8c.html#a750b5d744c39a06bfb13e6eb010e35d0">index</a>, uint32_t val)</td></tr>
-<tr class="separator:abc17d90580cf30f31f54a10b7a7dfbb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga18dba16062705f4fc4f4b5db679a760d"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ioapic__driver.html#ga18dba16062705f4fc4f4b5db679a760d">IOAPIC_Read</a> (uint32_t *io_apic_baseAddr, uint32_t <a class="el" href="ext2_8c.html#a750b5d744c39a06bfb13e6eb010e35d0">index</a>)</td></tr>
+<tr class="separator:ga18dba16062705f4fc4f4b5db679a760d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabc17d90580cf30f31f54a10b7a7dfbb6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ioapic__driver.html#gabc17d90580cf30f31f54a10b7a7dfbb6">IOAPIC_Write</a> (uint32_t *io_apic_baseAddr, uint32_t <a class="el" href="ext2_8c.html#a750b5d744c39a06bfb13e6eb010e35d0">index</a>, uint32_t val)</td></tr>
+<tr class="separator:gabc17d90580cf30f31f54a10b7a7dfbb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="a18dba16062705f4fc4f4b5db679a760d"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint32_t IOAPIC_Read </td>
-          <td>(</td>
-          <td class="paramtype">uint32_t *&#160;</td>
-          <td class="paramname"><em>io_apic_baseAddr</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>index</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="abc17d90580cf30f31f54a10b7a7dfbb6"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structvoid.html">void</a> IOAPIC_Write </td>
-          <td>(</td>
-          <td class="paramtype">uint32_t *&#160;</td>
-          <td class="paramname"><em>io_apic_baseAddr</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>index</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>val</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

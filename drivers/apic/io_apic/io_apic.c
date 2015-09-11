@@ -8,7 +8,9 @@ uint32_t curIOAPIC_index = 0;
 
 IOAPIC_InterruptMapEntry ioapic_interruptMap[256];
 
-uint8_t IOAPIC_Initialize(uint32_t baseAddr, uint32_t global_int_base)
+uint8_t 
+IOAPIC_Initialize(uint32_t baseAddr, 
+                  uint32_t global_int_base)
 {
     if(curIOAPIC_index >= MAX_IOAPIC_COUNT) return -1;
     ioapics[curIOAPIC_index].baseAddr = baseAddr;
@@ -22,19 +24,26 @@ uint8_t IOAPIC_Initialize(uint32_t baseAddr, uint32_t global_int_base)
     return 0;
 }
 
-uint32_t IOAPIC_Read(uint32_t* io_apic_baseAddr, uint32_t index)
+uint32_t 
+IOAPIC_Read(uint32_t* io_apic_baseAddr, 
+            uint32_t index)
 {
     io_apic_baseAddr[0] = index;
     return io_apic_baseAddr[4];
 }
 
-void IOAPIC_Write(uint32_t* io_apic_baseAddr, uint32_t index, uint32_t val)
+void 
+IOAPIC_Write(uint32_t* io_apic_baseAddr, 
+             uint32_t index, 
+             uint32_t val)
 {
     io_apic_baseAddr[0] = index;
     io_apic_baseAddr[4] = val;
 }
 
-uint8_t IOAPIC_GetVector(uint8_t global_irq, uint8_t *vec)
+uint8_t 
+IOAPIC_GetVector(uint8_t global_irq, 
+                 uint8_t *vec)
 {
     uint32_t irq_pin = 0;
     uint32_t *baseAddr = NULL;
@@ -57,7 +66,13 @@ uint8_t IOAPIC_GetVector(uint8_t global_irq, uint8_t *vec)
     return low & 0xff;
 }
 
-void IOAPIC_MapIRQ(uint8_t global_irq, uint8_t apic_vector, uint64_t apic_id, uint8_t trigger_mode, uint8_t polarity, uint8_t delivery_mode)
+void 
+IOAPIC_MapIRQ(uint8_t global_irq, 
+              uint8_t apic_vector, 
+              uint64_t apic_id, 
+              uint8_t trigger_mode, 
+              uint8_t polarity, 
+              uint8_t delivery_mode)
 {
     uint32_t irq_pin = 0;
     uint32_t *baseAddr = NULL;
@@ -109,7 +124,9 @@ void IOAPIC_MapIRQ(uint8_t global_irq, uint8_t apic_vector, uint64_t apic_id, ui
     IOAPIC_Write(baseAddr, low_index, low);
 }
 
-void IOAPIC_SetEnableMode(uint8_t vector, bool active)
+void 
+IOAPIC_SetEnableMode(uint8_t vector, 
+                     bool active)
 {
     //Make sure this interrupt has even been mapped to something!
     if(ioapic_interruptMap[vector].ioapic_index != 0xFFFFFFFF)
@@ -123,7 +140,8 @@ void IOAPIC_SetEnableMode(uint8_t vector, bool active)
         }
 }
 
-void IOAPIC_VirtualizeAll()
+void 
+IOAPIC_VirtualizeAll(void)
 {
     for(int i = 0; i < curIOAPIC_index; i++)
         {

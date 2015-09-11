@@ -1,4 +1,23 @@
 var searchData=
 [
-  ['kmalloc_5finfo',['kmalloc_info',['../structkmalloc__info.html',1,'']]]
+  ['madt',['MADT',['../structMADT.html',1,'']]],
+  ['madt_5fentryapic_5fnmi',['MADT_EntryAPIC_NMI',['../structMADT__EntryAPIC__NMI.html',1,'']]],
+  ['madt_5fentryheader',['MADT_EntryHeader',['../structMADT__EntryHeader.html',1,'']]],
+  ['madt_5fentryioapic',['MADT_EntryIOAPIC',['../structMADT__EntryIOAPIC.html',1,'']]],
+  ['madt_5fentryioapic_5fnmi',['MADT_EntryIOAPIC_NMI',['../structMADT__EntryIOAPIC__NMI.html',1,'']]],
+  ['madt_5fentryisaovr',['MADT_EntryISAOVR',['../structMADT__EntryISAOVR.html',1,'']]],
+  ['madt_5fentrylapic',['MADT_EntryLAPIC',['../structMADT__EntryLAPIC.html',1,'']]],
+  ['mcfg',['MCFG',['../structMCFG.html',1,'']]],
+  ['mcfg_5fentry',['MCFG_Entry',['../structMCFG__Entry.html',1,'']]],
+  ['message',['Message',['../structMessage.html',1,'']]],
+  ['modeinfoblock',['ModeInfoBlock',['../structModeInfoBlock.html',1,'']]],
+  ['msgdata',['MsgData',['../structMsgData.html',1,'']]],
+  ['multiboot_5faout_5fsymbol_5ftable',['multiboot_aout_symbol_table',['../structmultiboot__aout__symbol__table.html',1,'']]],
+  ['multiboot_5fapm_5finfo',['multiboot_apm_info',['../structmultiboot__apm__info.html',1,'']]],
+  ['multiboot_5fcolor',['multiboot_color',['../structmultiboot__color.html',1,'']]],
+  ['multiboot_5felf_5fsection_5fheader_5ftable',['multiboot_elf_section_header_table',['../structmultiboot__elf__section__header__table.html',1,'']]],
+  ['multiboot_5fheader',['multiboot_header',['../structmultiboot__header.html',1,'']]],
+  ['multiboot_5finfo',['multiboot_info',['../structmultiboot__info.html',1,'']]],
+  ['multiboot_5fmmap_5fentry',['multiboot_mmap_entry',['../structmultiboot__mmap__entry.html',1,'']]],
+  ['multiboot_5fmod_5flist',['multiboot_mod_list',['../structmultiboot__mod__list.html',1,'']]]
 ];

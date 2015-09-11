@@ -1,0 +1,6 @@
+<map id="elf.h" name="elf.h">
+<area shape="rect" id="node2" href="$crt0_8c.html" title="crt0.c" alt="" coords="5,87,60,114"/>
+<area shape="rect" id="node3" href="$phys__mem__manager_8c.html" title="managers/phys_mem_manager\l/phys_mem_manager.c" alt="" coords="84,80,288,121"/>
+<area shape="rect" id="node4" href="$priv__elf__loader_8h.html" title="processors/elf_loader\l/priv_elf_loader.h" alt="" coords="313,80,459,121"/>
+<area shape="rect" id="node5" href="$elf__loader_8c.html" title="processors/elf_loader\l/elf_loader.c" alt="" coords="313,169,459,211"/>
+</map>

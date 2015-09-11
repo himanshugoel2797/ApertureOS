@@ -1,7 +1,6 @@
 var searchData=
 [
   ['i_5foff',['I_OFF',['../priv__phys__mem__manager_8h.html#a7d73e27756f954cb88c1aaba8994dd5d',1,'priv_phys_mem_manager.h']]],
-  ['ia32_5fapic_5fbase',['IA32_APIC_BASE',['../priv__apic_8h.html#a160afc66daeb37e1ed812565695e67a7',1,'priv_apic.h']]],
   ['icw1_5ficw4',['ICW1_ICW4',['../pic_8c.html#a964d12193d2b36e8a7ec7fa57438e313',1,'pic.c']]],
   ['icw1_5finit',['ICW1_INIT',['../pic_8c.html#a286dc251f3d73c08e08a53a4696f31ef',1,'pic.c']]],
   ['icw1_5finterval4',['ICW1_INTERVAL4',['../pic_8c.html#a6ba324062a88dc9ff1e2916abdcde17e',1,'pic.c']]],
@@ -26,7 +25,6 @@ var searchData=
   ['interrupt_5fcount',['INTERRUPT_COUNT',['../interrupt__manager_8h.html#a943ddfcda7deb009245a6afa1024d4b0',1,'interrupt_manager.h']]],
   ['interrupt_5fhandler_5fslots',['INTERRUPT_HANDLER_SLOTS',['../interrupt__manager_8h.html#ae129a063b98dff417086d38d1ae2ecb2',1,'interrupt_manager.h']]],
   ['intr',['INTR',['../interrupt__manager_8h.html#a4356c3e6b7ae44d6c7acc00afb8bae45',1,'interrupt_manager.h']]],
-  ['ioapic_5fpin_5fcount',['IOAPIC_PIN_COUNT',['../io__apic_8h.html#a082123e6ffce76dbda0b5e88929c8b57',1,'io_apic.h']]],
   ['irq',['IRQ',['../interrupt__manager_8h.html#af05a46aec5b8bcce6b48214ca45ce762',1,'interrupt_manager.h']]],
   ['is_5fcmd_5fsent',['IS_CMD_SENT',['../priv__ps2_8h.html#a29205c77ab3254396c2387342265fb3e',1,'priv_ps2.h']]],
   ['is_5fdata_5favl',['IS_DATA_AVL',['../priv__ps2_8h.html#a21ec8d2394440b584ad619774cbfdb4b',1,'priv_ps2.h']]],

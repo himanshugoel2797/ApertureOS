@@ -4,6 +4,11 @@
 #include "types.h"
 #include "io_apic/io_apic.h"
 
+/**
+ * \defgroup apic_driver APIC driver
+ * @{
+*/
+
 #define APIC_TIMER 0x320
 #define APIC_THERMAL_SENSOR 0x330
 #define APIC_PERF_MON 0x340
@@ -28,20 +33,56 @@
 #define APIC_POLARITY_HIGH 0
 #define APIC_POLARITY_LOW  1
 
-uint8_t APIC_LocalInitialize();
-uint32_t APIC_Initialize();
-void APIC_SetEnableMode(uint8_t enabled);
-uint8_t APIC_GetID();
-void APIC_SetTimerMode(uint8_t mode);
-void APIC_SetDeliveryMode(uint32_t lvt_entry, uint8_t mode);
-void APIC_SetTriggerMode(uint32_t lvt_entry, uint8_t mode);
-void APIC_SetPolarity(uint32_t lvt_entry, uint8_t mode);
-void APIC_SetTimerValue(uint32_t val);
-uint32_t APIC_GetTimerValue();
-void APIC_SetTimerDivisor(uint8_t divisor);
-void APIC_SetEnableInterrupt(uint32_t interrupt, int enableMode);
-void APIC_SetVector(uint32_t interrupt, uint8_t vector);
-void APIC_SendEOI(uint8_t int_num);
-void APIC_Virtualize();
+uint8_t 
+APIC_LocalInitialize(void);
+
+uint32_t 
+APIC_Initialize(void);
+
+void 
+APIC_SetEnableMode(uint8_t enabled);
+
+uint8_t 
+APIC_GetID(void);
+
+void 
+APIC_SetTimerMode(uint8_t mode);
+
+void 
+APIC_SetDeliveryMode(uint32_t lvt_entry, 
+                     uint8_t mode);
+
+void 
+APIC_SetTriggerMode(uint32_t lvt_entry, 
+                    uint8_t mode);
+
+void 
+APIC_SetPolarity(uint32_t lvt_entry, 
+                 uint8_t mode);
+
+void 
+APIC_SetTimerValue(uint32_t val);
+
+uint32_t 
+APIC_GetTimerValue(void);
+
+void 
+APIC_SetTimerDivisor(uint8_t divisor);
+
+void 
+APIC_SetEnableInterrupt(uint32_t interrupt, 
+                        int enableMode);
+
+void 
+APIC_SetVector(uint32_t interrupt, 
+               uint8_t vector);
+
+void 
+APIC_SendEOI(uint8_t int_num);
+
+void 
+APIC_Virtualize(void);
+
+/**@}*/
 
 #endif /* end of include guard: _APIC_DRIVER_H_ */

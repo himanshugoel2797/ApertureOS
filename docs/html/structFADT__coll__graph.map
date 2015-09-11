@@ -1,0 +1,4 @@
+<map id="FADT" name="FADT">
+<area shape="rect" id="node2" href="$structGenericAddressStructure.html" title="Generic ACPI Address structure. " alt="" coords="5,5,173,32"/>
+<area shape="rect" id="node3" href="$structACPISDTHeader.html" title="ACPI Section Descriptor Table header. " alt="" coords="197,5,320,32"/>
+</map>

@@ -3,6 +3,11 @@
 
 #include "types.h"
 
+/**
+ * \addtogroup multiboot_header Multiboot structures
+ * @{
+*/
+
 typedef unsigned char multiboot_uint8_t;
 typedef unsigned short multiboot_uint16_t;
 typedef unsigned int multiboot_uint32_t;
@@ -219,4 +224,7 @@ struct multiboot_apm_info
     multiboot_uint16_t cseg_16_len;
     multiboot_uint16_t dseg_len;
 };
+
+/**@}*/
+
 #endif /* end of include guard: _MULTIBOOT_HEADER_H_ */
