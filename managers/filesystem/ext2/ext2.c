@@ -344,7 +344,7 @@ uint64_t _EXT2_Filesystem_SeekFile(FileDescriptor *desc, uint32_t fd, uint64_t o
 {
     //Seek for a part of the file
     EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
-    EXT2_FD *cur_fd = _EXT2_FindFDFromID(id);
+    EXT2_FD *cur_fd = _EXT2_FindFDFromID(fd);
 
     if(cur_fd == NULL)return -1;
 
@@ -357,11 +357,11 @@ uint64_t _EXT2_Filesystem_SeekFile(FileDescriptor *desc, uint32_t fd, uint64_t o
         cur_fd->extra_info += offset;
         break;
         case SEEK_END:
-        cur_fd->extra_info = cur_fd->more_extra_info - offset - 1;
+        cur_fd->extra_info = cur_fd->more_extra_info - offset;
         break;
     }
 
-    if(cur_fd->extra_info >= cur_fd->more_extra_info)cur_fd->extra_info = cur_fd->more_extra_info - 1;
+    if(cur_fd->extra_info >= cur_fd->more_extra_info)cur_fd->extra_info = cur_fd->more_extra_info;
     return cur_fd->extra_info;
 }
 

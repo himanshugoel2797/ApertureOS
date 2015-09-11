@@ -17,9 +17,9 @@ typedef enum
 
 typedef enum
 {
-    MEM_WRITE = 1,
-    MEM_READ = 2,
-    MEM_EXEC = 4
+    MEM_WRITE = 2,
+    MEM_READ = 4,
+    MEM_EXEC = 1
 } MEM_ACCESS_PERMS;
 
 typedef enum

@@ -52,8 +52,6 @@ enum Elf_Type {
         ET_NONE   = 0,// Unkown Type
         ET_REL    = 1,// Relocatable File
         ET_EXEC   = 2,// Executable File
-        ET_SCE_EXEC = 0xFE00,
-        ET_SCE_RELEXEC = 0xFE04
 };
 
 enum Ph_Type {
@@ -67,7 +65,7 @@ enum Pf_Type{
     PF_R = 4
 };
 
-#define EM_860      (7)  // x86 Machine Type
+#define EM_x86      (0x3)  // x86 Machine Type
 #define EV_CURRENT  (1)  // ELF Current Version
 
 typedef struct {
