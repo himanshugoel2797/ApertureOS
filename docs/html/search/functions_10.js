@@ -5,6 +5,7 @@ var searchData=
   ['threadman_5fdeletethread',['ThreadMan_DeleteThread',['../threads_8c.html#ad8b2999c0099b4430d55f4c46fd38ef2',1,'ThreadMan_DeleteThread(UID id):&#160;threads.c'],['../threads_8h.html#ad8b2999c0099b4430d55f4c46fd38ef2',1,'ThreadMan_DeleteThread(UID id):&#160;threads.c']]],
   ['threadman_5fexitthread',['ThreadMan_ExitThread',['../threads_8c.html#aa61d8004ddb98f7a9ccd337d335891b9',1,'ThreadMan_ExitThread(UID id):&#160;threads.c'],['../threads_8h.html#aa61d8004ddb98f7a9ccd337d335891b9',1,'ThreadMan_ExitThread(UID id):&#160;threads.c']]],
   ['threadman_5fgetcurthreadid',['ThreadMan_GetCurThreadID',['../threads_8h.html#ae9c6164ee8e880b3a8b98713d49dad3c',1,'threads.h']]],
+  ['threadman_5fidthandler',['threadMan_IDTHandler',['../threads_8c.html#a4dca1c0a91a9d0fb443c2ad89ab29e66',1,'threads.c']]],
   ['threadman_5finitialize',['threadMan_Initialize',['../threads_8c.html#a8db6ec5c8dca0720350bc80235a1e21d',1,'threads.c']]],
   ['threadman_5finterrupthandler',['threadMan_InterruptHandler',['../threads_8c.html#a811e661dd42936e13196360ffd0427f9',1,'threads.c']]],
   ['threadman_5fmessagehandler',['threadMan_messageHandler',['../threads_8c.html#a03dc769ee54f8364962ac13c69cfe96f',1,'threads.c']]],

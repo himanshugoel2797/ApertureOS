@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['gdt_5finitialize',['GDT_Initialize',['../gdt_8h.html#a598263d3083614521b8f0bd9d6ace061',1,'gdt.h']]],
+  ['gdt_5finitialize',['GDT_Initialize',['../gdt_8c.html#a598263d3083614521b8f0bd9d6ace061',1,'GDT_Initialize():&#160;gdt.c'],['../gdt_8h.html#a598263d3083614521b8f0bd9d6ace061',1,'GDT_Initialize():&#160;gdt.c']]],
   ['gdt_5fsetentry',['GDT_SetEntry',['../gdt_8c.html#a5a5ffb6bba6032ce72b169b5dcdde165',1,'gdt.c']]],
   ['graphics_5fclear',['graphics_Clear',['../group__graphics.html#ga7119a8761724795e83104d5c8bdbdc23',1,'graphics_Clear(void):&#160;graphics.c'],['../group__graphics.html#ga7119a8761724795e83104d5c8bdbdc23',1,'graphics_Clear(void):&#160;graphics.c']]],
   ['graphics_5fdrawbuffer',['graphics_DrawBuffer',['../group__graphics.html#gabedafa821a3ea8c8b1824e58c185c4dc',1,'graphics_DrawBuffer(void *buffer, uint32_t x, uint32_t y, uint32_t w, uint32_t h):&#160;graphics.c'],['../group__graphics.html#gabedafa821a3ea8c8b1824e58c185c4dc',1,'graphics_DrawBuffer(void *buffer, uint32_t x, uint32_t y, uint32_t width, uint32_t height):&#160;graphics.c']]],

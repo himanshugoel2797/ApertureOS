@@ -3,9 +3,19 @@
 
 #include "types.h"
 
+/**
+ * \defgroup ioapic_driver IO APIC driver
+ * @{
+*/
 
-uint32_t IOAPIC_Read(uint32_t* io_apic_baseAddr, uint32_t index);
-void IOAPIC_Write(uint32_t* io_apic_baseAddr, uint32_t index, uint32_t val);
+uint32_t 
+IOAPIC_Read(uint32_t* io_apic_baseAddr, 
+            uint32_t index);
+
+void 
+IOAPIC_Write(uint32_t* io_apic_baseAddr, 
+             uint32_t index, 
+             uint32_t val);
 
 
 typedef struct
@@ -21,5 +31,7 @@ typedef struct
     uint32_t ioapic_index;
     uint32_t ioapic_pin;
 } IOAPIC_InterruptMapEntry;
+
+/**@}*/
 
 #endif /* end of include guard: _PRIV_IO_APIC_DRIVER_H_ */

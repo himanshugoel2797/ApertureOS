@@ -108,8 +108,8 @@ var searchData=
   ['free_5fspace',['free_space',['../kmalloc_8c.html#aa34bbdee19d0822d5dac5e4f32dfa4db',1,'kmalloc.c']]],
   ['freepagecount',['freePageCount',['../priv__phys__mem__manager_8h.html#ac7953a80232169c23446e8891a106144',1,'priv_phys_mem_manager.h']]],
   ['frequency',['frequency',['../priv__hpet_8h.html#a60853c0fe5192cdabaf62a639edc936d',1,'priv_hpet.h']]],
-  ['fs',['fs',['../structstrtss.html#a87463fb8da32305dfc6c17d346caa744',1,'strtss::fs()'],['../gdt_8h.html#aa154975545a07a9dfdcc549b303b5eeb',1,'fs():&#160;gdt.h']]],
-  ['fs_5fh',['fs_h',['../structstrtss.html#a4ff2d51fa1521f50bde376d417199336',1,'strtss::fs_h()'],['../gdt_8h.html#a8f1bf29370c56efeacccc605f61efe3d',1,'fs_h():&#160;gdt.h']]],
+  ['fs',['fs',['../structtss__struct.html#a2a860464ef75bee976b3cfc25eaf41a9',1,'tss_struct']]],
+  ['fs_5fh',['fs_h',['../structtss__struct.html#a1ac8863e7e9d6c06fdf3084b0e00350b',1,'tss_struct']]],
   ['fs_5fid',['fs_id',['../structEXT2__SuperBlock__Ext.html#a1c410cd08bab72f1e2f0ce434f1d289c',1,'EXT2_SuperBlock_Ext']]],
   ['fs_5fstate',['fs_state',['../structEXT2__SuperBlock.html#afa7c86627ca2d56262ff2bc40ce56fba',1,'EXT2_SuperBlock']]],
   ['function',['function',['../structPCI__DeviceFuncs.html#ad94f63cba21bbcac524b2fec52da1a47',1,'PCI_DeviceFuncs']]]

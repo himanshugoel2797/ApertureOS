@@ -13,7 +13,5 @@ var searchData=
   ['read_5fver_5fsectors_5fcmd',['READ_VER_SECTORS_CMD',['../priv__ata__pio_8h.html#a0d2aad62d75fbe9fe502746b017e338f',1,'priv_ata_pio.h']]],
   ['read_5fver_5fsectors_5fr_5fcmd',['READ_VER_SECTORS_R_CMD',['../priv__ata__pio_8h.html#a3fd99a08b49b053f939a7cb3d45510ba',1,'priv_ata_pio.h']]],
   ['recalibrate_5fcmd',['RECALIBRATE_CMD',['../priv__ata__pio_8h.html#a70b51f2abe32706228b73def64468a30',1,'priv_ata_pio.h']]],
-  ['root_5finode_5findex',['ROOT_INODE_INDEX',['../ext2__structs_8h.html#a6ef61c488202853a29f3756493869218',1,'ext2_structs.h']]],
-  ['rsdp_5fexpected_5fsig',['RSDP_EXPECTED_SIG',['../priv__acpi__tables_8h.html#afd3356898382d440865ce48370f23034',1,'priv_acpi_tables.h']]],
-  ['rsdt_5fget_5fpointer_5fcount',['RSDT_GET_POINTER_COUNT',['../priv__acpi__tables_8h.html#aca60c852b295a6ae845d0a4fdf773f02',1,'priv_acpi_tables.h']]]
+  ['root_5finode_5findex',['ROOT_INODE_INDEX',['../ext2__structs_8h.html#a6ef61c488202853a29f3756493869218',1,'ext2_structs.h']]]
 ];

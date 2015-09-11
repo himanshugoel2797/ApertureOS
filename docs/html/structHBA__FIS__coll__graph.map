@@ -1,0 +1,5 @@
+<map id="HBA_FIS" name="HBA_FIS">
+<area shape="rect" id="node2" href="$structFIS__PIO__SETUP.html" title="FIS_PIO_SETUP" alt="" coords="5,5,131,32"/>
+<area shape="rect" id="node3" href="$structFIS__REG__D2H.html" title="FIS_REG_D2H" alt="" coords="155,5,269,32"/>
+<area shape="rect" id="node4" href="$structFIS__DMA__SETUP.html" title="FIS_DMA_SETUP" alt="" coords="293,5,425,32"/>
+</map>

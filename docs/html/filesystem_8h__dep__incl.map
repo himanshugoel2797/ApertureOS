@@ -1,0 +1,37 @@
+<map id="managers/filesystem/filesystem.h" name="managers/filesystem/filesystem.h">
+<area shape="rect" id="node2" href="$managers_8h.html" title="managers/managers.h" alt="" coords="2011,95,2162,121"/>
+<area shape="rect" id="node22" href="$filesystem_8c.html" title="managers/filesystem\l/filesystem.c" alt="" coords="4165,363,4307,404"/>
+<area shape="rect" id="node23" href="$priv__filesystem_8h.html" title="managers/filesystem\l/priv_filesystem.h" alt="" coords="4107,177,4250,218"/>
+<area shape="rect" id="node3" href="$crt0_8c.html" title="crt0.c" alt="" coords="2991,184,3046,211"/>
+<area shape="rect" id="node4" href="$process__manager_8h.html" title="managers/process/process\l_manager.h" alt="" coords="1997,177,2176,218"/>
+<area shape="rect" id="node5" href="$process__manager_8c.html" title="managers/process/process\l_manager.c" alt="" coords="1487,273,1665,315"/>
+<area shape="rect" id="node6" href="$threads_8h.html" title="managers/threads/threads.h" alt="" coords="71,184,255,211"/>
+<area shape="rect" id="node7" href="$threads_8c.html" title="managers/threads/threads.c" alt="" coords="5,281,189,307"/>
+<area shape="rect" id="node8" href="$ahci_8c.html" title="drivers/ahci/ahci.c" alt="" coords="433,184,561,211"/>
+<area shape="rect" id="node9" href="$apic_8c.html" title="drivers/apic/apic.c" alt="" coords="585,184,713,211"/>
+<area shape="rect" id="node10" href="$io__apic_8c.html" title="drivers/apic/io_apic\l/io_apic.c" alt="" coords="738,177,873,218"/>
+<area shape="rect" id="node11" href="$ata__pio_8h.html" title="drivers/ata_pio/ata\l_pio.h" alt="" coords="279,177,409,218"/>
+<area shape="rect" id="node13" href="$priv__ata__pio_8h.html" title="drivers/ata_pio/priv\l_ata_pio.h" alt="" coords="897,177,1029,218"/>
+<area shape="rect" id="node14" href="$fpu_8c.html" title="drivers/fpu/fpu.c" alt="" coords="1105,184,1221,211"/>
+<area shape="rect" id="node15" href="$pci_8c.html" title="drivers/pci/pci.c" alt="" coords="1245,184,1360,211"/>
+<area shape="rect" id="node16" href="$pit_8c.html" title="drivers/pit/pit.c" alt="" coords="1385,184,1493,211"/>
+<area shape="rect" id="node17" href="$graphics_8c.html" title="graphics/graphics.c" alt="" coords="1517,184,1651,211"/>
+<area shape="rect" id="node18" href="$kmalloc_8c.html" title="kmalloc/kmalloc.c" alt="" coords="1675,184,1802,211"/>
+<area shape="rect" id="node19" href="$bootstrap__mem__pool_8c.html" title="managers/bootstrap\l_mem_pool/bootstrap\l_mem_pool.c" alt="" coords="1827,169,1973,225"/>
+<area shape="rect" id="node20" href="$ext2_8h.html" title="managers/filesystem\l/ext2/ext2.h" alt="" coords="4013,273,4155,315"/>
+<area shape="rect" id="node24" href="$interrupt__manager_8c.html" title="managers/interrupt\l/interrupt_manager.c" alt="" coords="2200,177,2341,218"/>
+<area shape="rect" id="node25" href="$keyboard_8c.html" title="managers/keyboard/keyboard.c" alt="" coords="2366,184,2570,211"/>
+<area shape="rect" id="node26" href="$phys__mem__manager_8c.html" title="managers/phys_mem_manager\l/phys_mem_manager.c" alt="" coords="2594,177,2798,218"/>
+<area shape="rect" id="node27" href="$timer__manager_8c.html" title="managers/timer/timer\l_manager.c" alt="" coords="2822,177,2967,218"/>
+<area shape="rect" id="node28" href="$priv__virt__mem__manager_8h.html" title="managers/virt_mem_manager\l/priv_virt_mem_manager.h" alt="" coords="3071,177,3265,218"/>
+<area shape="rect" id="node29" href="$virt__mem__manager_8c.html" title="managers/virt_mem_manager\l/virt_mem_manager.c" alt="" coords="3096,273,3291,315"/>
+<area shape="rect" id="node30" href="$priv__elf__loader_8h.html" title="processors/elf_loader\l/priv_elf_loader.h" alt="" coords="3340,177,3487,218"/>
+<area shape="rect" id="node32" href="$keyboard__proc_8h.html" title="processors/keyboard\l_proc/keyboard_proc.h" alt="" coords="3511,177,3665,218"/>
+<area shape="rect" id="node33" href="$socket_8h.html" title="processors/socket/socket.h" alt="" coords="3690,184,3873,211"/>
+<area shape="rect" id="node36" href="$umalloc_8c.html" title="processors/umalloc\l/umalloc.c" alt="" coords="3897,177,4031,218"/>
+<area shape="rect" id="node12" href="$ata__pio_8c.html" title="drivers/ata_pio/ata\l_pio.c" alt="" coords="551,273,681,315"/>
+<area shape="rect" id="node21" href="$ext2_8c.html" title="managers/filesystem\l/ext2/ext2.c" alt="" coords="3998,363,4141,404"/>
+<area shape="rect" id="node31" href="$elf__loader_8c.html" title="processors/elf_loader\l/elf_loader.c" alt="" coords="3340,273,3487,315"/>
+<area shape="rect" id="node34" href="$priv__socket_8h.html" title="processors/socket/priv\l_socket.h" alt="" coords="3761,273,3916,315"/>
+<area shape="rect" id="node35" href="$socket_8c.html" title="processors/socket/socket.c" alt="" coords="3690,370,3873,397"/>
+</map>

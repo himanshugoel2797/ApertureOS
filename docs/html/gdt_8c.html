@@ -92,37 +92,43 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="textblock"><code>#include &lt;stddef.h&gt;</code><br />
 <code>#include &lt;stdint.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="gdt_8h_source.html">gdt.h</a>&quot;</code><br />
+</div><div class="textblock"><div class="dynheader">
+Include dependency graph for gdt.c:</div>
+<div class="dyncontent">
+<div class="center"><img src="gdt_8c__incl.png" border="0" usemap="#gdt_8c" alt=""/></div>
+<map name="gdt_8c" id="gdt_8c">
+<area shape="rect" id="node4" href="gdt_8h.html" title="gdt.h" alt="" coords="189,80,240,107"/></map>
+</div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Data Structures</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct____attribute____.html">__attribute__</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structGDTEntry.html">GDTEntry</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct____attribute____.html">__attribute__</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structGDTPtr.html">GDTPtr</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a5a5ffb6bba6032ce72b169b5dcdde165"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="gdt_8c.html#a5a5ffb6bba6032ce72b169b5dcdde165">GDT_SetEntry</a> (int num, uint32_t base, uint32_t limit, uint8_t access, uint8_t gran)</td></tr>
 <tr class="separator:a5a5ffb6bba6032ce72b169b5dcdde165"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13b6ac0c7b448a9f45ef3d7a636eb8ce"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="gdt_8c.html#a13b6ac0c7b448a9f45ef3d7a636eb8ce">__attribute__</a> ((optnone))</td></tr>
-<tr class="separator:a13b6ac0c7b448a9f45ef3d7a636eb8ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a598263d3083614521b8f0bd9d6ace061"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="gdt_8c.html#a598263d3083614521b8f0bd9d6ace061">GDT_Initialize</a> ()</td></tr>
+<tr class="separator:a598263d3083614521b8f0bd9d6ace061"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a47b9d67d88e967c691ca3be266cb8851"><td class="memItemLeft" align="right" valign="top">GDTEntry&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="gdt_8c.html#a47b9d67d88e967c691ca3be266cb8851">gdt_entries</a> [<a class="el" href="gdt_8h.html#a297f2b8ecd7aef9861d7b84527ee0c4e">GDT_ENTRY_COUNT</a>]</td></tr>
+<tr class="memitem:a47b9d67d88e967c691ca3be266cb8851"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structGDTEntry.html">GDTEntry</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="gdt_8c.html#a47b9d67d88e967c691ca3be266cb8851">gdt_entries</a> [<a class="el" href="gdt_8h.html#a297f2b8ecd7aef9861d7b84527ee0c4e">GDT_ENTRY_COUNT</a>]</td></tr>
 <tr class="separator:a47b9d67d88e967c691ca3be266cb8851"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a66558ac1a0f42db5c3c1edffbb861025"><td class="memItemLeft" align="right" valign="top">GDTPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="gdt_8c.html#a66558ac1a0f42db5c3c1edffbb861025">gdt_table</a></td></tr>
+<tr class="memitem:a66558ac1a0f42db5c3c1edffbb861025"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structGDTPtr.html">GDTPtr</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="gdt_8c.html#a66558ac1a0f42db5c3c1edffbb861025">gdt_table</a></td></tr>
 <tr class="separator:a66558ac1a0f42db5c3c1edffbb861025"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="a13b6ac0c7b448a9f45ef3d7a636eb8ce"></a>
+<a class="anchor" id="a598263d3083614521b8f0bd9d6ace061"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="struct____attribute____.html">__attribute__</a> </td>
+          <td class="memname">void GDT_Initialize </td>
           <td>(</td>
-          <td class="paramtype">(optnone)&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -181,7 +187,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">GDTEntry gdt_entries[<a class="el" href="gdt_8h.html#a297f2b8ecd7aef9861d7b84527ee0c4e">GDT_ENTRY_COUNT</a>]</td>
+          <td class="memname"><a class="el" href="structGDTEntry.html">GDTEntry</a> gdt_entries[<a class="el" href="gdt_8h.html#a297f2b8ecd7aef9861d7b84527ee0c4e">GDT_ENTRY_COUNT</a>]</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -193,7 +199,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">GDTPtr gdt_table</td>
+          <td class="memname"><a class="el" href="structGDTPtr.html">GDTPtr</a> gdt_table</td>
         </tr>
       </table>
 </div><div class="memdoc">

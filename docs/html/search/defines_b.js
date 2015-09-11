@@ -4,7 +4,6 @@ var searchData=
   ['mark_5fused',['MARK_USED',['../kmalloc_8c.html#ab094f4ae9e2f7b00317a468ba0639366',1,'MARK_USED():&#160;kmalloc.c'],['../umalloc_8c.html#ab094f4ae9e2f7b00317a468ba0639366',1,'MARK_USED():&#160;umalloc.c']]],
   ['max_5fallocs_5fperentry',['MAX_ALLOCS_PERENTRY',['../priv__phys__mem__manager_8h.html#ad2cec68f910c4ff1ddf83d0b978f109a',1,'priv_phys_mem_manager.h']]],
   ['max_5fdevice_5fcount',['MAX_DEVICE_COUNT',['../pci_8h.html#a70ca23c85c6385ea64dfa919547104f2',1,'pci.h']]],
-  ['max_5fioapic_5fcount',['MAX_IOAPIC_COUNT',['../io__apic_8h.html#aae56740375e9882b1757f0b2a39009bb',1,'io_apic.h']]],
   ['max_5fopen_5fdirs',['MAX_OPEN_DIRS',['../priv__filesystem_8h.html#a277cecfc163ffac62738982c422d9a36',1,'priv_filesystem.h']]],
   ['max_5fopen_5ffiles',['MAX_OPEN_FILES',['../priv__filesystem_8h.html#ae4777ede3ed2173c78fab7798ad6eddb',1,'priv_filesystem.h']]],
   ['max_5fpossible_5fbars',['MAX_POSSIBLE_BARS',['../pci_8h.html#adc4d9180b0fe2596d9e13b8a6ec026e0',1,'pci.h']]],

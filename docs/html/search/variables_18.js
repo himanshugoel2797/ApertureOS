@@ -11,6 +11,6 @@ var searchData=
   ['x_5fpm1beventblock',['X_PM1bEventBlock',['../structFADT.html#af6521309129b600e5db56c01db88487b',1,'FADT']]],
   ['x_5fpm2controlblock',['X_PM2ControlBlock',['../structFADT.html#a34f565c9efecdc431648c7d080e6e33d',1,'FADT']]],
   ['x_5fpmtimerblock',['X_PMTimerBlock',['../structFADT.html#aecd4a023f2e6a5538d02b9de8934418a',1,'FADT']]],
-  ['xres',['Xres',['../struct____attribute____.html#a9b53dbc25104f1d036a0e9aef2f46e67',1,'__attribute__']]],
+  ['xres',['Xres',['../structModeInfoBlock.html#aa1689e0a6974f17f882a1157910b449f',1,'ModeInfoBlock']]],
   ['xsdtaddress',['XsdtAddress',['../structRSDPDescriptor20.html#abf107de569405ed9aca817b160a3086c',1,'RSDPDescriptor20']]]
 ];

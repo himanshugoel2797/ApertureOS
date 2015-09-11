@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['kernel_20memory_20allocation',['Kernel Memory Allocation',['../group__kmalloc.html',1,'']]]
+  ['io_20apic_20driver',['IO APIC driver',['../group__ioapic__driver.html',1,'']]]
 ];

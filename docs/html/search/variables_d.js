@@ -23,7 +23,7 @@ var searchData=
   ['mem_5flower',['mem_lower',['../structmultiboot__info.html#a6b80f033d5a9151a4d1abd2d155942a7',1,'multiboot_info']]],
   ['mem_5fpool',['mem_pool',['../bootstrap__mem__pool_8c.html#afaf22d3ccdff030cf3284e3ef78c2d26',1,'bootstrap_mem_pool.c']]],
   ['mem_5fupper',['mem_upper',['../structmultiboot__info.html#a1ea7d9e665d6fff00665d97e81207a8f',1,'multiboot_info']]],
-  ['memory_5fmodel',['memory_model',['../struct____attribute____.html#a8a98d16cdcbdcd81a85f2409994a109a',1,'__attribute__']]],
+  ['memory_5fmodel',['memory_model',['../structModeInfoBlock.html#a368e3f85d0a00531688244562fee1c5f',1,'ModeInfoBlock']]],
   ['memory_5fpool',['memory_pool',['../structEXT2__DriverData.html#af8d121d2889daf4fc547c56e13b5b8d0',1,'EXT2_DriverData']]],
   ['memory_5fsize',['memory_size',['../phys__mem__manager_8c.html#ad447c812501af2e4f871e651c05e9852',1,'memory_size():&#160;phys_mem_manager.c'],['../priv__phys__mem__manager_8h.html#ad447c812501af2e4f871e651c05e9852',1,'memory_size():&#160;priv_phys_mem_manager.h']]],
   ['message',['message',['../structMessage.html#ac9a42a6407daf90d9f0400e30ee64ed5',1,'Message::message()'],['../structMsgData.html#a848939c24b29ce4e3b230ccb5ed02940',1,'MsgData::message()']]],

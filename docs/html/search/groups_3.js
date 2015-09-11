@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['message_20pump_20api',['Message Pump API',['../group__msg__pump.html',1,'']]]
+  ['kernel_20memory_20allocation',['Kernel Memory Allocation',['../group__kmalloc.html',1,'']]]
 ];

@@ -1,0 +1,6 @@
+<map id="globals.h" name="globals.h">
+<area shape="rect" id="node2" href="$crt0_8c.html" title="crt0.c" alt="" coords="5,87,60,114"/>
+<area shape="rect" id="node3" href="$graphics_8c.html" title="graphics/graphics.c" alt="" coords="84,87,219,114"/>
+<area shape="rect" id="node4" href="$phys__mem__manager_8c.html" title="managers/phys_mem_manager\l/phys_mem_manager.c" alt="" coords="243,80,447,121"/>
+<area shape="rect" id="node5" href="$virt__mem__manager_8c.html" title="managers/virt_mem_manager\l/virt_mem_manager.c" alt="" coords="471,80,666,121"/>
+</map>

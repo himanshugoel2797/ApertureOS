@@ -1,0 +1,35 @@
+<map id="processors/socket/socket.h" name="processors/socket/socket.h">
+<area shape="rect" id="node2" href="$types_8h.html" title="types.h" alt="" coords="1323,497,1389,524"/>
+<area shape="rect" id="node5" href="$managers_8h.html" title="managers.h" alt="" coords="1789,80,1880,107"/>
+<area shape="rect" id="node6" href="$msg__types_8h.html" title="msg_manager/msg_types.h" alt="" coords="1318,341,1501,367"/>
+<area shape="rect" id="node7" href="$filesystem_8h.html" title="filesystem/filesystem.h" alt="" coords="1036,162,1193,189"/>
+<area shape="rect" id="node25" href="$process__manager_8h.html" title="process/process_manager.h" alt="" coords="1585,162,1772,189"/>
+<area shape="rect" id="node26" href="$virt__mem__manager_8h.html" title="virt_mem_manager/virt\l_mem_manager.h" alt="" coords="1625,244,1780,285"/>
+<area shape="rect" id="node27" href="$keyboard_8h.html" title="keyboard/keyboard.h" alt="" coords="1805,251,1947,278"/>
+<area shape="rect" id="node28" href="$interrupt__manager_8h.html" title="interrupt/interrupt\l_manager.h" alt="" coords="1897,155,2017,196"/>
+<area shape="rect" id="node30" href="$threads_8h.html" title="threads/threads.h" alt="" coords="2041,162,2164,189"/>
+<area shape="rect" id="node31" href="$timer__manager_8h.html" title="timer/timer_manager.h" alt="" coords="2145,251,2297,278"/>
+<area shape="rect" id="node32" href="$phys__mem__manager_8h.html" title="phys_mem_manager/phys\l_mem_manager.h" alt="" coords="2239,155,2414,196"/>
+<area shape="rect" id="node33" href="$bootstrap__mem__pool_8h.html" title="bootstrap_mem_pool\l/bootstrap_mem_pool.h" alt="" coords="2309,333,2467,375"/>
+<area shape="rect" id="node36" href="$msg__manager_8h.html" title="msg_manager/msg_manager.h" alt="" coords="1309,162,1510,189"/>
+<area shape="rect" id="node37" href="$system__manager_8h.html" title="../system_manager/system\l_manager.h" alt="" coords="1319,244,1500,285"/>
+<area shape="rect" id="node8" href="$drivers_8h.html" title="drivers.h" alt="" coords="569,251,641,278"/>
+<area shape="rect" id="node24" href="$kmalloc_8h.html" title="kmalloc.h" alt="" coords="1095,251,1174,278"/>
+<area shape="rect" id="node9" href="$acpi__tables_8h.html" title="acpi_tables/acpi_tables.h" alt="" coords="701,423,870,449"/>
+<area shape="rect" id="node10" href="$ahci_8h.html" title="ahci/ahci.h" alt="" coords="397,341,483,367"/>
+<area shape="rect" id="node12" href="$apic_8h.html" title="apic/apic.h" alt="" coords="865,341,951,367"/>
+<area shape="rect" id="node14" href="$cmos_8h.html" title="cmos/cmos.h" alt="" coords="1089,423,1191,449"/>
+<area shape="rect" id="node15" href="$fpu_8h.html" title="fpu/fpu.h" alt="" coords="1215,423,1289,449"/>
+<area shape="rect" id="node16" href="$hpet_8h.html" title="hpet/hpet.h" alt="" coords="1313,423,1399,449"/>
+<area shape="rect" id="node17" href="$pic_8h.html" title="pic/pic.h" alt="" coords="25,341,95,367"/>
+<area shape="rect" id="node18" href="$pit_8h.html" title="pit/pit.h" alt="" coords="142,341,207,367"/>
+<area shape="rect" id="node19" href="$pci_8h.html" title="pci/pci.h" alt="" coords="243,341,314,367"/>
+<area shape="rect" id="node20" href="$ps2_8h.html" title="ps2/ps2.h" alt="" coords="509,341,587,367"/>
+<area shape="rect" id="node23" href="$COM_8h.html" title="serial/COM.h" alt="" coords="613,341,712,367"/>
+<area shape="rect" id="node11" href="$priv__ahci_8h.html" title="priv_ahci.h" alt="" coords="175,423,260,449"/>
+<area shape="rect" id="node13" href="$io__apic_8h.html" title="io_apic/io_apic.h" alt="" coords="946,423,1065,449"/>
+<area shape="rect" id="node21" href="$ps2__keyboard_8h.html" title="ps2_keyboard.h" alt="" coords="511,423,625,449"/>
+<area shape="rect" id="node22" href="$ps2__mouse_8h.html" title="ps2_mouse.h" alt="" coords="335,423,435,449"/>
+<area shape="rect" id="node29" href="$idt_8h.html" title="idt.h" alt="" coords="2023,251,2070,278"/>
+<area shape="rect" id="node34" href="$common_8h.html" title="utils/common.h" alt="" coords="2357,423,2467,449"/>
+</map>

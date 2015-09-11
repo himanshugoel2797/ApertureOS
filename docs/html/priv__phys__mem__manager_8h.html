@@ -94,6 +94,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="types_8h_source.html">types.h</a>&quot;</code><br />
+</div><div class="textblock"><div class="dynheader">
+Include dependency graph for priv_phys_mem_manager.h:</div>
+<div class="dyncontent">
+<div class="center"><img src="priv__phys__mem__manager_8h__incl.png" border="0" usemap="#managers_2phys__mem__manager_2priv__phys__mem__manager_8h" alt=""/></div>
+<map name="managers_2phys__mem__manager_2priv__phys__mem__manager_8h" id="managers_2phys__mem__manager_2priv__phys__mem__manager_8h">
+<area shape="rect" id="node2" href="types_8h.html" title="types.h" alt="" coords="75,95,140,121"/></map>
+</div>
+</div><div class="textblock"><div class="dynheader">
+This graph shows which files directly or indirectly include this file:</div>
+<div class="dyncontent">
+<div class="center"><img src="priv__phys__mem__manager_8h__dep__incl.png" border="0" usemap="#managers_2phys__mem__manager_2priv__phys__mem__manager_8hdep" alt=""/></div>
+<map name="managers_2phys__mem__manager_2priv__phys__mem__manager_8hdep" id="managers_2phys__mem__manager_2priv__phys__mem__manager_8hdep">
+<area shape="rect" id="node2" href="phys__mem__manager_8c.html" title="managers/phys_mem_manager\l/phys_mem_manager.c" alt="" coords="5,95,209,136"/></map>
+</div>
 </div>
 <p><a href="priv__phys__mem__manager_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -126,15 +140,15 @@ Macros</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:a9dea1f3fef4fedeec1fffc795bfa1005"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="priv__phys__mem__manager_8h.html#a9dea1f3fef4fedeec1fffc795bfa1005">MemMan_Initialize</a> ()</td></tr>
 <tr class="separator:a9dea1f3fef4fedeec1fffc795bfa1005"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15edda2186be94a17a90aa13b064e004"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="priv__phys__mem__manager_8h.html#a15edda2186be94a17a90aa13b064e004">MemMan_Alloc</a> (uint64_t <a class="el" href="multiboot_8h.html#a6d813a0f2b5281b18dea3f4cda696c33">size</a>)</td></tr>
+<tr class="memitem:a15edda2186be94a17a90aa13b064e004"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="priv__phys__mem__manager_8h.html#a15edda2186be94a17a90aa13b064e004">MemMan_Alloc</a> (uint64_t size)</td></tr>
 <tr class="separator:a15edda2186be94a17a90aa13b064e004"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af92e7390478773aa89ae55abd9b95a4c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="priv__phys__mem__manager_8h.html#af92e7390478773aa89ae55abd9b95a4c">MemMan_Free</a> (void *ptr, uint64_t <a class="el" href="multiboot_8h.html#a6d813a0f2b5281b18dea3f4cda696c33">size</a>)</td></tr>
+<tr class="memitem:af92e7390478773aa89ae55abd9b95a4c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="priv__phys__mem__manager_8h.html#af92e7390478773aa89ae55abd9b95a4c">MemMan_Free</a> (void *ptr, uint64_t size)</td></tr>
 <tr class="separator:af92e7390478773aa89ae55abd9b95a4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f5f977cfaf54128d086d82c39e16163"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="priv__phys__mem__manager_8h.html#a6f5f977cfaf54128d086d82c39e16163">MemMan_CalculateBitmapIndex</a> (uint64_t <a class="el" href="multiboot_8h.html#a8286ae6db03c34c4bb161accbfbfbbcd">addr</a>, size_t blockSize)</td></tr>
+<tr class="memitem:a6f5f977cfaf54128d086d82c39e16163"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="priv__phys__mem__manager_8h.html#a6f5f977cfaf54128d086d82c39e16163">MemMan_CalculateBitmapIndex</a> (uint64_t addr, size_t blockSize)</td></tr>
 <tr class="separator:a6f5f977cfaf54128d086d82c39e16163"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ceb4338b87aefc2fc3441fe6ea55061"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="priv__phys__mem__manager_8h.html#a6ceb4338b87aefc2fc3441fe6ea55061">MemMan_MarkUsed</a> (uint64_t <a class="el" href="multiboot_8h.html#a8286ae6db03c34c4bb161accbfbfbbcd">addr</a>, uint64_t <a class="el" href="multiboot_8h.html#a6d813a0f2b5281b18dea3f4cda696c33">size</a>)</td></tr>
+<tr class="memitem:a6ceb4338b87aefc2fc3441fe6ea55061"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="priv__phys__mem__manager_8h.html#a6ceb4338b87aefc2fc3441fe6ea55061">MemMan_MarkUsed</a> (uint64_t addr, uint64_t size)</td></tr>
 <tr class="separator:a6ceb4338b87aefc2fc3441fe6ea55061"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4790ef48b6a3593339378e92f1f751ff"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="priv__phys__mem__manager_8h.html#a4790ef48b6a3593339378e92f1f751ff">MemMan_MarkKB4Used</a> (uint64_t <a class="el" href="multiboot_8h.html#a8286ae6db03c34c4bb161accbfbfbbcd">addr</a>, uint64_t <a class="el" href="multiboot_8h.html#a6d813a0f2b5281b18dea3f4cda696c33">size</a>)</td></tr>
+<tr class="memitem:a4790ef48b6a3593339378e92f1f751ff"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="priv__phys__mem__manager_8h.html#a4790ef48b6a3593339378e92f1f751ff">MemMan_MarkKB4Used</a> (uint64_t addr, uint64_t size)</td></tr>
 <tr class="separator:a4790ef48b6a3593339378e92f1f751ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>

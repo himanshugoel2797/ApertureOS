@@ -3,6 +3,12 @@
 
 #include "types.h"
 
+/**
+ * \addtogroup acpi_tables ACPI Tables
+ * @{
+*/
+
+//! RSDT pointer Table
 typedef struct
 {
     char Signature[8];
@@ -12,6 +18,7 @@ typedef struct
     uint32_t RsdtAddress;
 } RSDPDescriptor;
 
+//! XSDT pointer Table
 typedef struct
 {
     RSDPDescriptor firstPart;
@@ -26,6 +33,7 @@ typedef struct
 #define ACPI_VERSION_1 0
 #define ACPI_VERSION_2 1
 
+//! ACPI Section Descriptor Table header
 typedef struct
 {
     char Signature[4];
@@ -39,18 +47,21 @@ typedef struct
     uint32_t CreatorRevision;
 } ACPISDTHeader;
 
+//! XSDT Table
 typedef struct
 {
     ACPISDTHeader h;
     uint64_t PointerToOtherSDT[1];
 } XSDT;
 
+//! RSDT Table
 typedef struct
 {
     ACPISDTHeader h;
     uint32_t PointerToOtherSDT[1];
 } RSDT;
 
+//! Generic ACPI Address structure
 typedef struct
 {
     uint8_t address_space_id; // 0 - system memory, 1 - system I/O
@@ -95,5 +106,6 @@ typedef struct pci_subclass
     const char *name;
 } pci_subclass_t;
 
+/**@}*/
 
 #endif /* end of include guard: _PRIV_ACPI_TABLES_DRIVER_H_ */

@@ -1,0 +1,4 @@
+<map id="MCFG" name="MCFG">
+<area shape="rect" id="node2" href="$structMCFG__Entry.html" title="An entry in the MCFG table. " alt="" coords="5,5,104,32"/>
+<area shape="rect" id="node3" href="$structACPISDTHeader.html" title="ACPI Section Descriptor Table header. " alt="" coords="128,5,251,32"/>
+</map>
