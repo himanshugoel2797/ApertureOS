@@ -38,6 +38,6 @@ var searchData=
   ['hpet_5fsetenable',['HPET_SetEnable',['../hpet_8c.html#abd36c0b6cef1a42bcf9955b2d91e21fd',1,'HPET_SetEnable(int enable):&#160;hpet.c'],['../hpet_8h.html#abd36c0b6cef1a42bcf9955b2d91e21fd',1,'HPET_SetEnable(int enable):&#160;hpet.c']]],
   ['hpet_5fsetglobalcounter',['HPET_SetGlobalCounter',['../hpet_8c.html#aac6bce2804a594f2887d7b8196c7e802',1,'HPET_SetGlobalCounter(uint64_t val):&#160;hpet.c'],['../hpet_8h.html#aac6bce2804a594f2887d7b8196c7e802',1,'HPET_SetGlobalCounter(uint64_t val):&#160;hpet.c']]],
   ['hpet_5fsettimerconfig',['HPET_SetTimerConfig',['../hpet_8c.html#a5a440d331a439e0fc7ad104098affef2',1,'HPET_SetTimerConfig(uint8_t index, uint8_t irq, uint8_t enable_int, uint8_t periodic, uint8_t timer_value_set, uint64_t tick_count):&#160;hpet.c'],['../hpet_8h.html#a5a440d331a439e0fc7ad104098affef2',1,'HPET_SetTimerConfig(uint8_t index, uint8_t irq, uint8_t enable_int, uint8_t periodic, uint8_t timer_value_set, uint64_t tick_count):&#160;hpet.c']]],
-  ['hpet_5fsig',['HPET_SIG',['../acpi__tables_8h.html#a1821c66b58038ee3216b0edda540d5c6',1,'acpi_tables.h']]],
+  ['hpet_5fsig',['HPET_SIG',['../group__acpi__tables.html#ga1821c66b58038ee3216b0edda540d5c6',1,'acpi_tables.h']]],
   ['hpet_5fwrite',['HPET_Write',['../hpet_8c.html#a7b42378dceb42356c65de254e885e289',1,'HPET_Write(uint32_t reg, uint64_t val):&#160;hpet.c'],['../priv__hpet_8h.html#a7b42378dceb42356c65de254e885e289',1,'HPET_Write(uint32_t reg, uint64_t val):&#160;hpet.c']]]
 ];

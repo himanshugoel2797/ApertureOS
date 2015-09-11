@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['graphics_20library',['Graphics Library',['../group__graphics.html',1,'']]]
+  ['acpi_20tables',['ACPI Tables',['../group__acpi__tables.html',1,'']]],
+  ['ahci_20driver',['AHCI Driver',['../group__ahci.html',1,'']]]
 ];

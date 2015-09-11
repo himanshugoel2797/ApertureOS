@@ -29,6 +29,7 @@ var searchData=
   ['resetvalue',['ResetValue',['../structFADT.html#af9ca02451305ba79460fc7ae589eb4cc',1,'FADT']]],
   ['resvd',['resvd',['../structFIS__DMA__SETUP.html#a95267263d73d8b9a51720c0f613b428a',1,'FIS_DMA_SETUP']]],
   ['retry',['retry',['../kmalloc_8c.html#a5c31878e4fdd075652a146ec168ee379',1,'kmalloc.c']]],
+  ['return',['return',['../ahci_8c.html#a9717e7bbecb906637e86cef6da3d83c2',1,'ahci.c']]],
   ['revision',['Revision',['../structRSDPDescriptor.html#a6a22d340d3189067f152e368ab5d79b0',1,'RSDPDescriptor::Revision()'],['../structACPISDTHeader.html#ad710f8bf79ece5cc5e4fe45c7dc56173',1,'ACPISDTHeader::Revision()']]],
   ['rfis',['rfis',['../structHBA__FIS.html#ae83c5af195b9de6dcd1c45e02dc89dae',1,'HBA_FIS']]],
   ['rootprocess',['rootProcess',['../process__manager_8c.html#a17b0540d6762350391a75f457a49fd2c',1,'process_manager.c']]],

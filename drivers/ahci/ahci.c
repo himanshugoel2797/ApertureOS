@@ -14,27 +14,38 @@ void stop_cmd(HBA_PORT *port);
 void start_cmd(HBA_PORT *port);
 
 
-uint8_t AHCI_Initialize()
+uint8_t 
+AHCI_Initialize(void)
 {
     //Search for AHCI compatible controllers in the PCI device list
-    for(int i = 0; i < pci_deviceCount; i++)
+    for (int i = 0; i < pci_deviceCount; i++)
         {
-            if(devices[i].classCode == PCI_MASS_STORAGE_DEVICE_CLASS && devices[i].subClassCode == 0x06)
+            if (devices[i].classCode == PCI_MASS_STORAGE_DEVICE_CLASS && 
+                devices[i].subClassCode == 0x06)
                 {
                     //Found an AHCI compatible device!
                     COM_WriteStr("Found an AHCI controller!\r\n");
-                    if(devices[i].bar_count < 6)break;
+                    if (devices[i].bar_count < 6)
+                        break;
 
                     //Check to see if the base address has already been mapped due to the top half mapping scheme
-                    if(devices[i].bars[5] < MEMIO_TOP_BASE)
+                    if (devices[i].bars[5] < MEMIO_TOP_BASE)
                         {
                             //Map the ahci memory base address into kernel memory
                             ahci_memory_base = (uint32_t)virtMemMan_FindEmptyAddress(KB(8), MEM_KERNEL);
-                            if(ahci_memory_base == NULL)break;
+                            
+                            if (ahci_memory_base == NULL)
+                                break;
                             
                             physMemMan_MarkUsed(devices[i].bars[5], KB(8));
 
-                            if(virtMemMan_Map(ahci_memory_base, devices[i].bars[5], KB(8), MEM_TYPE_UC, MEM_WRITE | MEM_READ, MEM_KERNEL) < 0)break;
+                            if (virtMemMan_Map(ahci_memory_base, 
+                                devices[i].bars[5], 
+                                KB(8), 
+                                MEM_TYPE_UC, 
+                                MEM_WRITE | MEM_READ, 
+                                MEM_KERNEL) < 0)
+                                break;
                         }
                     else
                         {
@@ -47,27 +58,35 @@ uint8_t AHCI_Initialize()
                     hba_mem = (HBA_MEM*)ahci_memory_base;
 
                     //Obtain ownership of the controller if ownershp handoff is supported
-                    if(hba_mem->cap2 & 1)
+                    if (hba_mem->cap2 & 1)
                         {
                             hba_mem->bohc |= 2;
-                            while((hba_mem->bohc & 1) || !(hba_mem->bohc & 2))ThreadMan_Yield();
+                            while((hba_mem->bohc & 1) || !(hba_mem->bohc & 2))
+                                ThreadMan_Yield();
                         }
 
                     //Software Reset the controller
                     hba_mem->ghc |= (1 << 31);  //Enable AHCI
                     hba_mem->ghc |= 1;  //Reset
-                    while(hba_mem->ghc & 1)ThreadMan_Yield();
+                    
+                    while (hba_mem->ghc & 1)
+                        ThreadMan_Yield();
+                    
                     hba_mem->ghc |= (1 << 31);  //Re-enable AHCI
 
-                    COM_WriteStr("AHCI Version: %d%d.%d%d\r\n", (hba_mem->vs >> 24) & 0xFF, (hba_mem->vs >> 16) & 0xFF, (hba_mem->vs >> 8) & 0xFF, hba_mem->vs & 0xFF);
-                    COM_WriteStr("Ports: %b\r\n", hba_mem->pi);
+                    COM_WriteStr ("AHCI Version: %d%d.%d%d\r\n", 
+                                  (hba_mem->vs >> 24) & 0xFF, 
+                                  (hba_mem->vs >> 16) & 0xFF, 
+                                  (hba_mem->vs >> 8) & 0xFF, 
+                                  hba_mem->vs & 0xFF);
+
+                    COM_WriteStr ("Ports: %b\r\n", hba_mem->pi);
 
                     //Find the index of the first port that is an ATA Disk
-                    for(uint32_t i = 0; i < 32; i++)
+                    for (uint32_t i = 0; i < 32; i++)
                         {
-                            if(((hba_mem->pi >> i) & 1) == 1)
-                                {
-                                    if(AHCI_CheckDeviceType(&hba_mem->ports[i]) == AHCI_DEV_SATA)
+                            if (((hba_mem->pi >> i) & 1) == 1 &&
+                                AHCI_CheckDeviceType(&hba_mem->ports[i]) == AHCI_DEV_SATA)
                                         {
                                             port = &hba_mem->ports[i];
                                             COM_WriteStr("Using port #%d\r\n", i);
@@ -87,14 +106,16 @@ uint8_t AHCI_Initialize()
     return -1;
 }
 
-uint8_t AHCI_CheckDeviceType(HBA_PORT *port)
+uint8_t 
+AHCI_CheckDeviceType(HBA_PORT *port)
 {
     uint32_t ssts = port->ssts;
 
     uint8_t ipm = (ssts >> 8) & 0x0F;
     uint8_t det = (ssts & 0x0F);
 
-    if(ipm != HBA_PORT_IPM_ACTIVE | det != HBA_PORT_DET_PRESENT)return HBA_NO_DEVICE;
+    if (ipm != HBA_PORT_IPM_ACTIVE | det != HBA_PORT_DET_PRESENT)
+        return HBA_NO_DEVICE;
 
 
     switch (port->sig)
@@ -111,14 +132,17 @@ uint8_t AHCI_CheckDeviceType(HBA_PORT *port)
 
 }
 
-bool AHCI_Read(uint64_t start, uint32_t count, uint16_t *buf)
+bool 
+AHCI_Read(uint64_t start, 
+          uint32_t count, 
+          uint16_t *buf)
 {
 
     count = ((count - 1) >> 9) + 1;   //Convert value into sector count
 
     port->is = ~0;       // Clear pending interrupt bits
     int spin = 0; // Spin lock timeout counter
-    int slot = find_cmdslot(port);
+    int slot = find_cmdslot (port);
 
     if (slot == -1)
         return FALSE;
@@ -126,8 +150,8 @@ bool AHCI_Read(uint64_t start, uint32_t count, uint16_t *buf)
     HBA_CMD_HEADER *cmdheader = (HBA_CMD_HEADER*)port->clb;//[slot];
     cmdheader = &cmdheader[slot];
 
-    cmdheader->cfl = sizeof(FIS_REG_H2D)/sizeof(uint32_t); // Command FIS size
-    cmdheader->w = 0;       // Read from device
+    cmdheader->cfl = sizeof (FIS_REG_H2D)/sizeof(uint32_t); // Command FIS size
+    cmdheader->w = 0;                                   // Read from device
     cmdheader->prdtl = (uint16_t)((count-1)>>3) + 1;    // PRDT entries count
 
     HBA_CMD_TBL *cmd_tbl = (HBA_CMD_TBL*)cmdheader->ctba;
@@ -153,7 +177,7 @@ bool AHCI_Read(uint64_t start, uint32_t count, uint16_t *buf)
     fis->counth = count >> 8;
 
     int i = 0;
-    for(; i < cmdheader->prdtl - 1; i++)
+    for (;i < cmdheader->prdtl - 1; i++)
         {
             cmd_tbl->prdt_entry[i].dba = (uint32_t)virtMemMan_GetPhysAddress(buf);
             cmd_tbl->prdt_entry[i].dbau = 0;
@@ -180,7 +204,7 @@ bool AHCI_Read(uint64_t start, uint32_t count, uint16_t *buf)
         }
     if (spin == 1000000)
         {
-            COM_WriteStr("Port is hung\r\n");
+            COM_WriteStr ("Port is hung\r\n");
             return FALSE;
         }
 
@@ -196,7 +220,7 @@ bool AHCI_Read(uint64_t start, uint32_t count, uint16_t *buf)
 
             if (port->is & (1<<30))   // Task file error
                 {
-                    COM_WriteStr("Read disk error\r\n");
+                    COM_WriteStr ("Read disk error\r\n");
                     return FALSE;
                 }
         }
@@ -205,7 +229,7 @@ bool AHCI_Read(uint64_t start, uint32_t count, uint16_t *buf)
     // Check again
     if (port->is & (1<<30))
         {
-            COM_WriteStr("Read disk error\r\n");
+            COM_WriteStr ("Read disk error\r\n");
             return FALSE;
         }
 
@@ -213,7 +237,8 @@ bool AHCI_Read(uint64_t start, uint32_t count, uint16_t *buf)
 }
 
 // Find a free command list slot
-int find_cmdslot(HBA_PORT *port)
+int 
+find_cmdslot(HBA_PORT *port)
 {
     // If not set in SACT and CI, the slot is free
     uint32_t slots = (port->sact | port->ci);
@@ -223,13 +248,13 @@ int find_cmdslot(HBA_PORT *port)
                 return i;
             slots >>= 1;
         }
-    COM_WriteStr("Cannot find free command list entry\r\n");
+    COM_WriteStr ("Cannot find free command list entry\r\n");
     return -1;
 }
 
 void port_rebase(HBA_PORT *port, int portno)
 {
-    stop_cmd(port); // Stop command engine
+    stop_cmd (port); // Stop command engine
 
     // Command list offset: 1K*portno
     // Command list entry size = 32
@@ -237,14 +262,14 @@ void port_rebase(HBA_PORT *port, int portno)
     // Command list maxim size = 32*32 = 1K per port
     port->clb = AHCI_BASE + (portno<<10);
     port->clbu = 0;
-    memset((void*)(port->clb), 0, 1024);
+    memset ((void*)(port->clb), 0, 1024);
 
 
     // FIS offset: 32K+256*portno
     // FIS entry size = 256 bytes per port
     port->fb = AHCI_BASE + (32<<10) + (portno<<8);
     port->fbu = 0;
-    memset((void*)(port->fb), 0, 256);
+    memset ((void*)(port->fb), 0, 256);
 
     // Command table offset: 40K + 8K*portno
     // Command table size = 256*32 = 8K per port
@@ -256,10 +281,10 @@ void port_rebase(HBA_PORT *port, int portno)
             // Command table offset: 40K + 8K*portno + cmdheader_index*256
             cmdheader[i].ctba = AHCI_BASE + (40<<10) + (portno<<13) + (i<<8);
             cmdheader[i].ctbau = 0;
-            memset((void*)cmdheader[i].ctba, 0, 256);
+            memset ((void*)cmdheader[i].ctba, 0, 256);
         }
 
-    start_cmd(port);    // Start command engine
+    start_cmd (port);    // Start command engine
     uint32_t c = port->cmd; //Flush the cmd buffer
     c = c;
 }

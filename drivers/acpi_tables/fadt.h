@@ -5,15 +5,19 @@
 #include "types.h"
 #include "priv_acpi_tables.h"
 
+/**
+ * \addtogroup acpi_tables ACPI Tables
+ * @{
+*/
 
+//! The ACPI FADT
 typedef struct
 {
-    ACPISDTHeader h;
+    ACPISDTHeader h;    //! The ACPI Section Descriptor Table header
     uint32_t FirmwareCtrl;
-    uint32_t Dsdt;
-
-    // field used in ACPI 1.0; no longer in use, for compatibility only
-    uint8_t Reserved;
+    uint32_t Dsdt;      //! Offset of the DSDT
+                        
+    uint8_t Reserved;   //! field used in ACPI 1.0; no longer in use, for compatibility only
 
     uint8_t PreferredPowerManagementProfile;
     uint16_t SCI_Interrupt;
@@ -73,5 +77,7 @@ typedef struct
     GenericAddressStructure X_GPE0Block;
     GenericAddressStructure X_GPE1Block;
 } FADT;
+
+/**@}*/
 
 #endif /* end of include guard: _FADT_ACPI_TABLE_H_ */

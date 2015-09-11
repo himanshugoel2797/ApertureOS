@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['kernel_20memory_20allocation',['Kernel Memory Allocation',['../group__kmalloc.html',1,'']]]
+  ['graphics_20library',['Graphics Library',['../group__graphics.html',1,'']]]
 ];
