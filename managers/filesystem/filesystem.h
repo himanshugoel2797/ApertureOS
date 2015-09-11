@@ -18,6 +18,19 @@ typedef enum
     EXT2 = 1
 } SupportedFilesystems;
 
+typedef enum{
+	O_RDONLY = 0,
+	O_RD_WR = 1,
+	O_APPED = 2,
+	O_CREAT = 4
+} FILE_IO_FLAGS;
+
+typedef enum{
+    SEEK_SET = 0,
+    SEEK_CUR = 1,
+    SEEK_END = 2
+} FILE_IO_WHENCE;
+
 typedef struct
 {
     char dir_name[256];
@@ -29,7 +42,7 @@ void Filesystem_Setup();
 
 UID Filesystem_OpenFile(const char *filename, int flags, int perms);
 uint8_t Filesystem_CloseFile(UID fd);
-uint8_t Filesystem_SeekFile(UID fd, uint32_t offset, int whence);
+uint64_t Filesystem_SeekFile(UID fd, uint64_t offset, int whence);
 uint8_t Filesystem_DeleteFile(const char *file);
 uint8_t Filesystem_RenameFile(const char *orig_name, const char *new_name);
 

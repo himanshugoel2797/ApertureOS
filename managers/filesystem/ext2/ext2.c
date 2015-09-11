@@ -168,9 +168,13 @@ uint32_t _EXT2_Filesystem_OpenFile(FileDescriptor *desc, const char *filename, i
                                             inode_i = dir->inode_index;
                                             if(strchr(fname + 1, '/') == NULL)
                                                 {
+                                                    EXT2_Inode inode2;
+                                                    memcpy(&inode2, _EXT2_GetInode(desc, inode_i), sizeof(EXT2_Inode));
+
+
                                                     i = 13;
                                                     fname = NULL;
-                                                    size = (((uint64_t)inode.size_hi) << 32 | inode.size_lo);
+                                                    size = (((uint64_t)inode2.size_hi) << 32 | inode2.size_lo);
                                                 }
                                             break;
                                         }
@@ -336,9 +340,29 @@ uint8_t _EXT2_Filesystem_ReadFile(FileDescriptor *desc, UID id, uint8_t *buffer,
     return 0;
 }
 
-uint8_t _EXT2_Filesystem_SeekFile(FileDescriptor *desc, uint32_t fd, uint32_t offset, int whence)
+uint64_t _EXT2_Filesystem_SeekFile(FileDescriptor *desc, uint32_t fd, uint64_t offset, int whence)
 {
     //Seek for a part of the file
+    EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
+    EXT2_FD *cur_fd = _EXT2_FindFDFromID(id);
+
+    if(cur_fd == NULL)return -1;
+
+    switch(whence)
+    {
+        case SEEK_SET:
+        cur_fd->extra_info = offset;
+        break;
+        case SEEK_CUR:
+        cur_fd->extra_info += offset;
+        break;
+        case SEEK_END:
+        cur_fd->extra_info = cur_fd->more_extra_info - offset - 1;
+        break;
+    }
+
+    if(cur_fd->extra_info >= cur_fd->more_extra_info)cur_fd->extra_info = cur_fd->more_extra_info - 1;
+    return cur_fd->extra_info;
 }
 
 uint8_t _EXT2_Filesystem_CloseFile(FileDescriptor *desc, uint32_t fd)

@@ -9,7 +9,7 @@
 uint32_t _EXT2_Initialize(FileDescriptor *desc);
 uint32_t _EXT2_Filesystem_OpenFile(FileDescriptor *desc, const char *filename, int flags, int perms);
 uint8_t _EXT2_Filesystem_ReadFile(FileDescriptor *desc, UID id, uint8_t *buffer, size_t size);
-uint8_t _EXT2_Filesystem_SeekFile(FileDescriptor *desc, uint32_t fd, uint32_t offset, int whence);
+uint64_t _EXT2_Filesystem_SeekFile(FileDescriptor *desc, uint32_t fd, uint64_t offset, int whence);
 uint8_t _EXT2_Filesystem_CloseFile(FileDescriptor *desc, uint32_t fd);
 uint8_t _EXT2_Filesystem_DeleteFile(FileDescriptor *desc, const char *file);
 uint8_t _EXT2_Filesystem_RenameFile(FileDescriptor *desc, const char *orig_name, const char *new_name);

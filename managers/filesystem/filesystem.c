@@ -94,11 +94,11 @@ uint8_t Filesystem_CloseFile(UID fd)
     return result;
 }
 
-uint8_t Filesystem_SeekFile(UID fd, uint32_t offset, int whence)
+uint64_t Filesystem_SeekFile(UID fd, uint64_t offset, int whence)
 {
     if(!initialized)return -1;
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromUID(fd);
-    uint8_t result = desc->driver->_H_Filesystem_SeekFile(desc, fd, offset, whence);
+    uint8_t result = desc->driver->_H_Filesystem_SeekFile(desc, fd - desc->fd_base, offset, whence);
     return result;
 }
 

@@ -1,6 +1,6 @@
 # Environment
 
-INCLUDES=-I. -Idrivers -Imanagers
+INCLUDES=-I. -Idrivers -Imanagers -Iprocessors -Ikmalloc
 
 PRE_FPU_BOOT=crt0.o gdt.o idt.o cpuid.o \
 				boot.o \
@@ -31,8 +31,10 @@ SOURCES=graphics/graphics.o	\
 				drivers/ps2/ps2.o drivers/ps2/ps2_keyboard.o drivers/ps2/ps2_mouse.o \
 				drivers/ahci/ahci.o \
 				drivers/ata_pio/ata_pio.o \
-				kmalloc.o \
+				kmalloc/kmalloc.o \
 
+POST_INIT=processors/elf_loader/elf_loader.o \
+		  processors/umalloc/umalloc.o \
 
 
 PLATFORM=~/opt/cross/bin/i686
@@ -63,9 +65,10 @@ MKDIR=mkdir
 CP=cp
 CCADMIN=CCadmin
 GCC=clang -target i986-none-elf
-CFLAGS_A= -ffreestanding -O0 -Wall -Wextra -Wno-trigraphs -D$(CONF) -DBOOT_FS=$(BOOT_FS)  -DCURRENT_YEAR=$(CURRENT_YEAR) -DCOM_ENABLED=$(COM_ENABLED) $(INCLUDES)
-CFLAGS=$(CFLAGS_A) -ftree-vectorize
-stageA:CFLAGS=-mno-sse $(CFLAGS_A)
+CFLAGS_A= -ffreestanding -Wall -Wextra -Wno-trigraphs -D$(CONF) -DBOOT_FS=$(BOOT_FS)  -DCURRENT_YEAR=$(CURRENT_YEAR) -DCOM_ENABLED=$(COM_ENABLED) $(INCLUDES)
+CFLAGS=$(CFLAGS_A) -ftree-vectorize -O0
+stageA:CFLAGS=-mno-sse -O0 $(CFLAGS_A)
+post_init:CFLAGS=-ftree-vectorize -O4 $(CFLAGS_A)
 ASM=$(PLATFORM)-elf-gcc -DDEBUG -ffreestanding -march=i686
 TEST_CMD=qemu-system-x86_64 $(QEMU_OPTS)
 
@@ -93,16 +96,19 @@ makefs:
 debug: build build-tests
 
 # build
-build:stageA $(SOURCES)
+build:stageA $(SOURCES) post_init
 	mkdir -p build/$(CONF)
-	$(PLATFORM)-elf-gcc -T linker.ld -o "build/$(CONF)/kernel.bin" -ffreestanding -O2 -nostdlib $(PRE_FPU_BOOT) $(SOURCES) -lgcc
+	$(PLATFORM)-elf-gcc -T linker.ld -o "build/$(CONF)/kernel.bin" -ffreestanding -O2 -nostdlib $(PRE_FPU_BOOT) $(SOURCES) $(POST_INIT) -lgcc
 
 stageA:$(PRE_FPU_BOOT)
+
+post_init:$(POST_INIT)
 
 # clean
 clean:
 	rm -f $(SOURCES)
 	rm -f $(PRE_FPU_BOOT)
+	rm -f $(POST_INIT)
 	rm -f *.plist
 	rm -rf build/*
 	rm -rf ISO/*
