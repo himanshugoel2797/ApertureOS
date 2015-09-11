@@ -12,8 +12,6 @@ var searchData=
   ['threads',['threads',['../structProcessInfo.html#a95165c983299b94a52da02b878993fc4',1,'ProcessInfo::threads()'],['../process__manager_8c.html#ac1cada328000f8e03b0dfa54279b907c',1,'threads():&#160;process_manager.c'],['../threads_8c.html#a43679a1dbe387a644812534d80be07f0',1,'threads():&#160;threads.c']]],
   ['ticks',['ticks',['../structTimerData.html#a0590c390dec5b8e557ac5556fa69c6ba',1,'TimerData']]],
   ['tid',['tid',['../structThreadInfo.html#a54a0a5b12d3bc65ca97faf4818b166ed',1,'ThreadInfo']]],
-  ['tileheight',['tileHeight',['../graphics_8c.html#ad05ab353f9f72c1ae3e30cf7f962c6ef',1,'graphics.c']]],
-  ['tilewidth',['tileWidth',['../graphics_8c.html#a0d7dc92d8c4e78c59e24c48955ebb865',1,'graphics.c']]],
   ['timer_5fcount',['timer_count',['../hpet_8c.html#a9291091d73d615194e13ec7ee2f03fd7',1,'hpet.c']]],
   ['timer_5fentries',['timer_entries',['../timer__manager_8c.html#a87eef225efc1ed8689ada0bf745b7081',1,'timer_manager.c']]],
   ['timer_5fsys',['timer_sys',['../timer__manager_8c.html#a2f03b3ff24dc55ad45d8a1424be89450',1,'timer_manager.c']]],

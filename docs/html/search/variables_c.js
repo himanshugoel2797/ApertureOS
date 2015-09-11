@@ -31,7 +31,7 @@ var searchData=
   ['legacy_5freplacement',['legacy_replacement',['../structHPET.html#a3f3b2071b11fd657d131809e610744aa',1,'HPET']]],
   ['len',['len',['../structmultiboot__mmap__entry.html#a0c5d40a87a63b01fc424bb3c15c89997',1,'multiboot_mmap_entry::len()'],['../multiboot_8h.html#a6de3a6d27a7e07942958b912d39792e6',1,'len():&#160;multiboot.h']]],
   ['length',['Length',['../structRSDPDescriptor20.html#a5b5604d6c4021ce4f43b237c3665dc6f',1,'RSDPDescriptor20::Length()'],['../structACPISDTHeader.html#a565e00a0cbe1e23ab10cc0e22e780618',1,'ACPISDTHeader::Length()']]],
-  ['letters',['letters',['../font_8h.html#a059dc2a923cc926cb19214aa9a8301e3',1,'font.h']]],
+  ['letters',['letters',['../group__graphics.html#ga059dc2a923cc926cb19214aa9a8301e3',1,'font.h']]],
   ['limit',['limit',['../struct____attribute____.html#ae553ba76530f8098756b5f37923a8fd6',1,'__attribute__']]],
   ['limit_5flow',['limit_low',['../struct____attribute____.html#a54184ec46d0ff0e8e38a37055db8ba48',1,'__attribute__']]],
   ['link',['link',['../structstrtss.html#a31ac0d377bd92b464c550347318017b3',1,'strtss::link()'],['../gdt_8h.html#a5eb6ade46c665aa9034659ec4f25a268',1,'link():&#160;gdt.h']]],

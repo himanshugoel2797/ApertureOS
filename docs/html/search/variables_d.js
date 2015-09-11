@@ -26,7 +26,7 @@ var searchData=
   ['memory_5fmodel',['memory_model',['../struct____attribute____.html#a8a98d16cdcbdcd81a85f2409994a109a',1,'__attribute__']]],
   ['memory_5fpool',['memory_pool',['../structEXT2__DriverData.html#af8d121d2889daf4fc547c56e13b5b8d0',1,'EXT2_DriverData']]],
   ['memory_5fsize',['memory_size',['../phys__mem__manager_8c.html#ad447c812501af2e4f871e651c05e9852',1,'memory_size():&#160;phys_mem_manager.c'],['../priv__phys__mem__manager_8h.html#ad447c812501af2e4f871e651c05e9852',1,'memory_size():&#160;priv_phys_mem_manager.h']]],
-  ['message',['message',['../structMessage.html#ac9a42a6407daf90d9f0400e30ee64ed5',1,'Message::message()'],['../structvoid.html#ae6cf0d7f7d91bc2b2dbeaaefae2f846a',1,'void::message()']]],
+  ['message',['message',['../structMessage.html#ac9a42a6407daf90d9f0400e30ee64ed5',1,'Message::message()'],['../structMsgData.html#a848939c24b29ce4e3b230ccb5ed02940',1,'MsgData::message()']]],
   ['minimum_5ftick',['minimum_tick',['../structHPET.html#a28ecf80980e4ee2a73eab350c0a804d5',1,'HPET']]],
   ['minor_5fversion',['minor_version',['../structEXT2__SuperBlock.html#a5352e40f62d7ec8b6376e7de243d35f1',1,'EXT2_SuperBlock']]],
   ['minutes',['minutes',['../structRTC__Time.html#a9fe2e6fe206a73e74659c55b081a29de',1,'RTC_Time']]],

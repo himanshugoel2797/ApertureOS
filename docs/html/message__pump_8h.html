@@ -87,7 +87,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Data Structures</a> &#124;
-<a href="#enum-members">Enumerations</a>  </div>
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">message_pump.h File Reference</div>  </div>
 </div><!--header-->
@@ -98,38 +99,28 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Data Structures</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvoid.html">void</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structMsgData.html">MsgData</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structMessage.html">Message</a> Data.  <a href="structMsgData.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a4c6ba707faf30ea4de970e741b177f90"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="message__pump_8h.html#a4c6ba707faf30ea4de970e741b177f90">PumpMsgTypes</a> { <a class="el" href="message__pump_8h.html#a4c6ba707faf30ea4de970e741b177f90aba7d7ba470788fc41803039cbf79a37f">MSG_T_NONE</a> = 0, 
-<a class="el" href="message__pump_8h.html#a4c6ba707faf30ea4de970e741b177f90a4266ba3b7dcd31dee2d901c4d42fe7d6">MSG_T_ERROR</a> = 1, 
-<a class="el" href="message__pump_8h.html#a4c6ba707faf30ea4de970e741b177f90a91b8803c3a110d8c29fb89e1d9c45a6e">MSG_T_SOCK</a> = 3
+<tr class="memitem:ga4c6ba707faf30ea4de970e741b177f90"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__msg__pump.html#ga4c6ba707faf30ea4de970e741b177f90">PumpMsgTypes</a> { <a class="el" href="group__msg__pump.html#gga4c6ba707faf30ea4de970e741b177f90aba7d7ba470788fc41803039cbf79a37f">MSG_T_NONE</a> = 0, 
+<a class="el" href="group__msg__pump.html#gga4c6ba707faf30ea4de970e741b177f90a4266ba3b7dcd31dee2d901c4d42fe7d6">MSG_T_ERROR</a> = 1, 
+<a class="el" href="group__msg__pump.html#gga4c6ba707faf30ea4de970e741b177f90a91b8803c3a110d8c29fb89e1d9c45a6e">MSG_T_SOCK</a> = 3
  }</td></tr>
-<tr class="separator:a4c6ba707faf30ea4de970e741b177f90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:ga4c6ba707faf30ea4de970e741b177f90"><td class="mdescLeft">&#160;</td><td class="mdescRight">Messages that can be sent by the message pump.  <a href="group__msg__pump.html#ga4c6ba707faf30ea4de970e741b177f90">More...</a><br /></td></tr>
+<tr class="separator:ga4c6ba707faf30ea4de970e741b177f90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga7463b0b27922d8cbb290c902068b9c85"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__msg__pump.html#ga7463b0b27922d8cbb290c902068b9c85">MsgPump_Register</a> ()</td></tr>
+<tr class="memdesc:ga7463b0b27922d8cbb290c902068b9c85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register the current thread to recieve message pump notifications.  <a href="group__msg__pump.html#ga7463b0b27922d8cbb290c902068b9c85">More...</a><br /></td></tr>
+<tr class="separator:ga7463b0b27922d8cbb290c902068b9c85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga60d32fd416fe39093af5516c07c7a055"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__msg__pump.html#ga60d32fd416fe39093af5516c07c7a055">MsgPump_SendMessage</a> ()</td></tr>
+<tr class="memdesc:ga60d32fd416fe39093af5516c07c7a055"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a message through the message pump.  <a href="group__msg__pump.html#ga60d32fd416fe39093af5516c07c7a055">More...</a><br /></td></tr>
+<tr class="separator:ga60d32fd416fe39093af5516c07c7a055"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Enumeration Type Documentation</h2>
-<a class="anchor" id="a4c6ba707faf30ea4de970e741b177f90"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum <a class="el" href="message__pump_8h.html#a4c6ba707faf30ea4de970e741b177f90">PumpMsgTypes</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="a4c6ba707faf30ea4de970e741b177f90aba7d7ba470788fc41803039cbf79a37f"></a>MSG_T_NONE&#160;</td><td class="fielddoc">
-</td></tr>
-<tr><td class="fieldname"><a class="anchor" id="a4c6ba707faf30ea4de970e741b177f90a4266ba3b7dcd31dee2d901c4d42fe7d6"></a>MSG_T_ERROR&#160;</td><td class="fielddoc">
-</td></tr>
-<tr><td class="fieldname"><a class="anchor" id="a4c6ba707faf30ea4de970e741b177f90a91b8803c3a110d8c29fb89e1d9c45a6e"></a>MSG_T_SOCK&#160;</td><td class="fielddoc">
-</td></tr>
-</table>
-
-</div>
-</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

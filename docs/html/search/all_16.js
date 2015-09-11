@@ -40,7 +40,6 @@ var searchData=
   ['virtmemman_5funmap',['virtMemMan_UnMap',['../virt__mem__manager_8c.html#ac78d0124ef46c21bee4e86024569cee1',1,'virtMemMan_UnMap(void *v_address, size_t size):&#160;virt_mem_manager.c'],['../virt__mem__manager_8h.html#ac78d0124ef46c21bee4e86024569cee1',1,'virtMemMan_UnMap(void *v_address, size_t size):&#160;virt_mem_manager.c']]],
   ['virtualize_5fhigher_5fmem_5foffset',['VIRTUALIZE_HIGHER_MEM_OFFSET',['../virt__mem__manager_8h.html#a39a7fa3619cd85c491958c90657c9c23',1,'virt_mem_manager.h']]],
   ['vmem_5fsys',['vmem_sys',['../virt__mem__manager_8c.html#a079bf67bbc01eb38c26936644d8b9880',1,'virt_mem_manager.c']]],
-  ['void',['void',['../structvoid.html',1,'']]],
   ['vol_5fdown',['vol_down',['../structPS2__ScanCodes__2__.html#a0710ab409761cf73f28b8edcc6419ce0',1,'PS2_ScanCodes_2_']]],
   ['vol_5fname',['vol_name',['../structEXT2__SuperBlock__Ext.html#a9888d3fa0ab3aaf512301893b1c1fc1e',1,'EXT2_SuperBlock_Ext::vol_name()'],['../structEXT2__DriverData.html#aa223f4b42f048cd7df0d06330a680191',1,'EXT2_DriverData::vol_name()']]],
   ['vs',['vs',['../structHBA__MEM.html#a7b20af0e1285bf4e6d01e2bdd861c3fa',1,'HBA_MEM']]],

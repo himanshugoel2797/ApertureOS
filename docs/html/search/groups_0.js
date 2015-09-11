@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['socket_20api',['Socket API',['../group__Sockets.html',1,'']]]
+  ['graphics_20library',['Graphics Library',['../group__graphics.html',1,'']]]
 ];

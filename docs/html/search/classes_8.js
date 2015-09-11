@@ -10,6 +10,7 @@ var searchData=
   ['mcfg',['MCFG',['../structMCFG.html',1,'']]],
   ['mcfg_5fentry',['MCFG_Entry',['../structMCFG__Entry.html',1,'']]],
   ['message',['Message',['../structMessage.html',1,'']]],
+  ['msgdata',['MsgData',['../structMsgData.html',1,'']]],
   ['multiboot_5faout_5fsymbol_5ftable',['multiboot_aout_symbol_table',['../structmultiboot__aout__symbol__table.html',1,'']]],
   ['multiboot_5fapm_5finfo',['multiboot_apm_info',['../structmultiboot__apm__info.html',1,'']]],
   ['multiboot_5fcolor',['multiboot_color',['../structmultiboot__color.html',1,'']]],
