@@ -207,6 +207,9 @@ uint8_t
 _EXT2_Filesystem_DeleteFile(FileDescriptor *desc,
                             const char *file)
 {
+
+    //Still need to update some flags
+
     //Locate the file and mark its inode as having 0 links
     uint32_t inode_i = 0;
     _EXT2_GetFileInfo(desc, file, NULL, &inode_i);
@@ -241,10 +244,10 @@ _EXT2_Filesystem_DeleteFile(FileDescriptor *desc,
         _EXT2_GetFileInfo(desc, dir, &is_dir, &dir_inode);
 
         //Clear the entry for the file in the directory table
-        _EXT2_ClearEntry(desc, dir_inode, file_name);        
-        
+        _EXT2_ClearEntry(desc, dir_inode, file_name);
+
         //Finally mark the inode as free
-        _EXT2_MarkInodeFree(desc, inode_i);        
+        _EXT2_MarkInodeFree(desc, inode_i);
 
         kfree(dir);
         //Remove the reference to the specified file

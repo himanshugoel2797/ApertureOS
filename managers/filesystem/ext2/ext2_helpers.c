@@ -80,52 +80,52 @@ void
 _EXT2_MarkBlockFree(FileDescriptor *desc,
                     uint32_t block)
 {
-        EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
-        uint32_t block_index = (block)/data->blocks_per_group;
+    EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
+    uint32_t block_index = (block)/data->blocks_per_group;
 
-        EXT2_BlockGroupDescriptor bgd;
-        memcpy(&bgd, _EXT2_GetBlockGroup(desc, block_index), sizeof(EXT2_BlockGroupDescriptor));
+    EXT2_BlockGroupDescriptor bgd;
+    memcpy(&bgd, _EXT2_GetBlockGroup(desc, block_index), sizeof(EXT2_BlockGroupDescriptor));
 
-        uint32_t block_index_base = block % data->blocks_per_group;
+    uint32_t block_index_base = block % data->blocks_per_group;
 
-        //Read the inode bitmap block
-        uint32_t *bitmap = _EXT2_ReadAddr(desc, 
-                                          bgd.block_usage_bitmap_addr * data->block_size, 
-                                          data->block_size);
+    //Read the inode bitmap block
+    uint32_t *bitmap = _EXT2_ReadAddr(desc,
+                                      bgd.block_usage_bitmap_addr * data->block_size,
+                                      data->block_size);
 
-        bitmap[block/32] &= ~(1 << (block % 32));
+    bitmap[block/32] &= ~(1 << (block % 32));
 
-        _EXT2_CommitChanges(desc);
+    _EXT2_CommitChanges(desc);
 }
 
 void
 _EXT2_MarkInodeFree(FileDescriptor *desc,
                     uint32_t inode_i)
 {
-        EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
-        uint32_t block_index = (inode_i - 1)/data->inodes_per_group;
+    EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
+    uint32_t block_index = (inode_i - 1)/data->inodes_per_group;
 
-        EXT2_BlockGroupDescriptor bgd;
-        memcpy(&bgd, _EXT2_GetBlockGroup(desc, block_index), sizeof(EXT2_BlockGroupDescriptor));
+    EXT2_BlockGroupDescriptor bgd;
+    memcpy(&bgd, _EXT2_GetBlockGroup(desc, block_index), sizeof(EXT2_BlockGroupDescriptor));
 
-        uint32_t block_index_base = (inode_i - 1) % data->inodes_per_group;
+    uint32_t block_index_base = (inode_i - 1) % data->inodes_per_group;
 
-        uint64_t address =
-            (bgd.inode_table_start_addr * data->block_size) + (block_index_base * data->inode_size);
+    uint64_t address =
+        (bgd.inode_table_start_addr * data->block_size) + (block_index_base * data->inode_size);
 
-        //Read the inode bitmap block
-        uint32_t *bitmap = _EXT2_ReadAddr(desc, 
-                                          bgd.inode_usage_bitmap_addr * data->block_size, 
-                                          data->block_size);
+    //Read the inode bitmap block
+    uint32_t *bitmap = _EXT2_ReadAddr(desc,
+                                      bgd.inode_usage_bitmap_addr * data->block_size,
+                                      data->block_size);
 
-        bitmap[inode_i/32] &= ~(1 << (inode_i % 32));
-        _EXT2_CommitChanges(desc);
+    bitmap[inode_i/32] &= ~(1 << (inode_i % 32));
+    _EXT2_CommitChanges(desc);
 
-        //Modify the entry in place and then commit the changes
-        EXT2_Inode *inode = _EXT2_ReadAddr(desc, address, data->inode_size);
-        inode->hard_link_count = 0;
+    //Modify the entry in place and then commit the changes
+    EXT2_Inode *inode = _EXT2_ReadAddr(desc, address, data->inode_size);
+    inode->hard_link_count = 0;
 
-        _EXT2_CommitChanges(desc);
+    _EXT2_CommitChanges(desc);
 }
 
 void
@@ -133,46 +133,46 @@ _EXT2_ClearEntry(FileDescriptor *desc,
                  uint32_t dir_inode,
                  const char *file_name)
 {
-        EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
+    EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
     if(dir_inode != 0)
+    {
+        //Search the tree to find the entry for the file
+        //Find the directory by traversing the tree
+        EXT2_Inode inode2;
+        memcpy(&inode2, _EXT2_GetInode(desc, dir_inode), sizeof(EXT2_Inode));
+
+        uint32_t size = (((uint64_t)inode2.size_hi) << 32 | inode2.size_lo);
+
+        if(inode2.type_perm >> 12 == EXT2_INODE_DIR && inode2.hard_link_count != 0)
         {
-            //Search the tree to find the entry for the file
-            //Find the directory by traversing the tree
-            EXT2_Inode inode2;
-            memcpy(&inode2, _EXT2_GetInode(desc, dir_inode), sizeof(EXT2_Inode));
 
-            uint32_t size = (((uint64_t)inode2.size_hi) << 32 | inode2.size_lo);
-
-            if(inode2.type_perm >> 12 == EXT2_INODE_DIR && inode2.hard_link_count != 0)
+            for(int i = 0; i < size/data->block_size; i++)
             {
 
-                for(int i = 0; i < size/data->block_size; i++)
+                EXT2_DirectoryEntry *dir = _EXT2_GetBlockFromInode(desc, &inode2, i, FALSE);
+                if(dir == NULL)break;
+                char entry_name[256];
+                uint32_t s = 0;
+
+                while(dir->name_len != 0)
                 {
-
-                    EXT2_DirectoryEntry *dir = _EXT2_GetBlockFromInode(desc, &inode2, i, FALSE);
-                    if(dir == NULL)break;
-                    char entry_name[256];
-                    uint32_t s = 0;
-
-                    while(dir->name_len != 0)
+                    memset(entry_name, 0, 256);
+                    memcpy(entry_name, dir->name, 256);
+                    COM_WriteStr("%s\r\n", entry_name);
+                    if(strncmp(entry_name, file_name, strlen(file_name)) == 0)
                     {
-                        memset(entry_name, 0, 256);
-                        memcpy(entry_name, dir->name, 256);
-                        COM_WriteStr("%s\r\n", entry_name);
-                        if(strncmp(entry_name, file_name, strlen(file_name)) == 0)
-                        {
-                            memset(dir, 0, dir->entry_size);
-                            dir->entry_size = (size - s);
-                            _EXT2_CommitChanges(desc);
-                            i = size;
-                            break;
-                        }
-                        s += dir->entry_size;
-                        dir = (uint32_t)dir + dir->entry_size;
+                        memset(dir, 0, dir->entry_size);
+                        dir->entry_size = (size - s);
+                        _EXT2_CommitChanges(desc);
+                        i = size;
+                        break;
                     }
+                    s += dir->entry_size;
+                    dir = (uint32_t)dir + dir->entry_size;
                 }
             }
         }
+    }
 }
 
 EXT2_BlockGroupDescriptor*
@@ -317,10 +317,10 @@ _EXT2_GetBlockFromInode(FileDescriptor *desc,
 
     if(!del)
     {
-    return _EXT2_ReadAddr(desc,
-                          read_index * data->block_size,
-                          data->block_size);
-    }else
+        return _EXT2_ReadAddr(desc,
+                              read_index * data->block_size,
+                              data->block_size);
+    } else
     {
         _EXT2_MarkBlockFree(desc, read_index);
         return (uint8_t*)1;
@@ -339,23 +339,27 @@ _EXT2_GetFileInfo(FileDescriptor *desc,
 
     uint32_t inode_i = ROOT_INODE_INDEX;
     uint64_t size = 0;
+    uint32_t prev_inode = 0;
 
     //Maake sure the path is a directory
     while(fname != NULL)
     {
         memset(dir_name, 0, 256);
         uint32_t index = (uint32_t)strchr(fname + 1, '/') - (uint32_t)fname - 1;
-        if(index == 0)break;
-        if(index > strlen(fname))
-        {
-            memcpy(dir_name, fname + 1, strlen(fname) - 1);
-        }
-        else
-        {
-            memcpy(dir_name, fname + 1, index);
-        }
+        
+        if(index == 0)
+            break;
+
+        memcpy(dir_name, fname + 1, (index > strlen(fname))?strlen(fname):index);
 
         //Find the directory by traversing the tree
+        
+        if(inode_i == prev_inode)
+        {
+            COM_WriteStr("PATH NOT FOUND\r\n");
+            return -1;
+        }
+
         EXT2_Inode inode;
         memcpy(&inode, _EXT2_GetInode(desc, inode_i), sizeof(EXT2_Inode));
 
@@ -363,37 +367,40 @@ _EXT2_GetFileInfo(FileDescriptor *desc,
 
         size = (((uint64_t)inode.size_hi) << 32 | inode.size_lo);
 
-        if(inode.type_perm >> 12 == EXT2_INODE_DIR && inode.hard_link_count != 0)
+        if(inode.type_perm >> 12 == EXT2_INODE_DIR)
         {
 
             for(int i = 0; i < size/data->block_size; i++)
             {
 
                 EXT2_DirectoryEntry *dir = _EXT2_GetBlockFromInode(desc, &inode, i, FALSE);
-                if(dir == NULL)break;
+                if(dir == NULL)
+                    break;
+                
                 char entry_name[256];
 
                 while(dir->name_len != 0)
                 {
                     memset(entry_name, 0, 256);
                     memcpy(entry_name, dir->name, 256);
+                    
+                    prev_inode = inode_i;
+
                     if(strncmp(entry_name, dir_name, strlen(dir_name)) == 0)
                     {
-                        COM_WriteStr("%s\r\n", entry_name);
                         inode_i = dir->inode_index;
                         if(strchr(fname + 1, '/') == NULL)
                         {
+                            if(inode_num != NULL)*inode_num = inode_i;
                             if(is_dir != NULL)*is_dir = (dir->type == 2);
                             i = size;
                             fname = NULL;
                         }
                         break;
                     }
-                    COM_WriteStr("TEST!!!");
                     if(dir->entry_size == 0)break;
                     dir = (uint32_t)dir + dir->entry_size;
                 }
-                    COM_WriteStr("LOLO\r\n");
             }
         }
 
@@ -403,6 +410,7 @@ _EXT2_GetFileInfo(FileDescriptor *desc,
             if(f_t != NULL)fname = f_t;
         }
     }
-    if(inode_num != NULL)*inode_num = inode_i;
+
+    if(*inode_num == 0)COM_WriteStr("FAILURE!!");
     return 0;
 }

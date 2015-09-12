@@ -98,7 +98,8 @@ void t_main(int argc, char **argv)
 
     Filesystem_Setup();
 
-    Filesystem_DeleteFile("/home/root/ibr7bl6uoou6po.data");
+    Filesystem_DeleteFile("/root/test.data1");
+    COM_WriteStr("LOL\r\n");
     UID fd = Filesystem_OpenFile("/home/hgoel/test.data", 0, 0);
     //uint8_t *buf = kmalloc(1920*1080*4 + KB(4));
     //buf += KB(4);
