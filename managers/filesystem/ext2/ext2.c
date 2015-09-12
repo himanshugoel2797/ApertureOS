@@ -11,10 +11,10 @@ _EXT2_FindFDFromID(uint32_t id)
 {
     EXT2_FD *cur_fd = fd;
     while(cur_fd->next != NULL)
-        {
-            if(cur_fd->id == id)break;
-            cur_fd = cur_fd->next;
-        }
+    {
+        if(cur_fd->id == id)break;
+        cur_fd = cur_fd->next;
+    }
     if(cur_fd->id == id)return cur_fd;
     return NULL;
 }
@@ -68,6 +68,7 @@ _EXT2_Initialize(FileDescriptor *desc)
     fd->inode = 2;
     fd->is_directory = TRUE;
     fd->id = new_uid();
+    fd->prev = NULL;
 
     return 0;
 }
@@ -88,19 +89,21 @@ _EXT2_Filesystem_OpenFile(FileDescriptor *desc,
     fd_n->more_extra_info = 0;
 
     last_fd->next = fd_n;
+    fd_n->prev = last_fd;
     last_fd = last_fd->next;
 
     _EXT2_GetFileInfo(desc, filename, &fd_n->is_directory, &fd_n->inode);
 
     if(fd_n->inode != 0)
-        {
-            EXT2_Inode *inode = _EXT2_GetInode(desc, fd_n->inode);
-            fd_n->more_extra_info = (((uint64_t)inode->size_hi) << 32 | inode->size_lo);
-        }
+    {
+        EXT2_Inode *inode = _EXT2_GetInode(desc, fd_n->inode);
+        if(inode->hard_link_count == 0)return -1;
+        fd_n->more_extra_info = (((uint64_t)inode->size_hi) << 32 | inode->size_lo);
+    }
     else
-        {
-            return -1;
-        }
+    {
+        return -1;
+    }
 
     COM_WriteStr("inode_i %d\r\n", fd_n->inode);
     COM_WriteStr("size %d\r\n", fd_n->extra_info);
@@ -118,6 +121,7 @@ _EXT2_Filesystem_ReadFile(FileDescriptor *desc,
     EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
     EXT2_FD *cur_fd = _EXT2_FindFDFromID(id);
 
+    COM_WriteStr("Blocks Per Group %d\r\n", data->blocks_per_group);
     //Determine the address of the inode
     EXT2_Inode inode;
     memcpy(&inode, _EXT2_GetInode(desc, cur_fd->inode), sizeof(EXT2_Inode));
@@ -133,25 +137,26 @@ _EXT2_Filesystem_ReadFile(FileDescriptor *desc,
         size = cur_fd->more_extra_info - cur_fd->extra_info;
 
     while(size > 0)
-        {
+    {
 
-            uint8_t* block_data = _EXT2_GetBlockFromInode(desc,
-                                  &inode,
-                                  block_index);
+        uint8_t* block_data = _EXT2_GetBlockFromInode(desc,
+                              &inode,
+                              block_index,
+                              FALSE);
 
-            if(block_data == NULL)break;
+        if(block_data == NULL)break;
 
-            //Determine the address from which to begin copying
-            uint32_t read_size = (data->block_size > size)? size : data->block_size;
+        //Determine the address from which to begin copying
+        uint32_t read_size = (data->block_size > size)? size : data->block_size;
 
-            memcpy(buffer, block_data + block_offset, read_size);
+        memcpy(buffer, block_data + block_offset, read_size);
 
-            buffer += read_size;
-            size -= read_size;
+        buffer += read_size;
+        size -= read_size;
 
-            cur_fd->extra_info += read_size;
-            block_index++;
-        }
+        cur_fd->extra_info += read_size;
+        block_index++;
+    }
 
     return 0;
 }
@@ -169,17 +174,17 @@ _EXT2_Filesystem_SeekFile(FileDescriptor *desc,
     if(cur_fd == NULL)return -1;
 
     switch(whence)
-        {
-        case SEEK_SET:
-            cur_fd->extra_info = offset;
-            break;
-        case SEEK_CUR:
-            cur_fd->extra_info += offset;
-            break;
-        case SEEK_END:
-            cur_fd->extra_info = cur_fd->more_extra_info - offset;
-            break;
-        }
+    {
+    case SEEK_SET:
+        cur_fd->extra_info = offset;
+        break;
+    case SEEK_CUR:
+        cur_fd->extra_info += offset;
+        break;
+    case SEEK_END:
+        cur_fd->extra_info = cur_fd->more_extra_info - offset;
+        break;
+    }
 
     if(cur_fd->extra_info >= cur_fd->more_extra_info)cur_fd->extra_info = cur_fd->more_extra_info;
     return cur_fd->extra_info;
@@ -190,13 +195,60 @@ _EXT2_Filesystem_CloseFile(FileDescriptor *desc,
                            uint32_t fd)
 {
     //Remove the entry for the file
+    EXT2_FD *cur_fd = _EXT2_FindFDFromID(fd);
+
+    cur_fd->prev->next = cur_fd->next;
+    cur_fd->next->prev = cur_fd->prev;
+
+    kfree(cur_fd);
 }
 
 uint8_t
 _EXT2_Filesystem_DeleteFile(FileDescriptor *desc,
                             const char *file)
 {
+    //Locate the file and mark its inode as having 0 links
+    uint32_t inode_i = 0;
+    _EXT2_GetFileInfo(desc, file, NULL, &inode_i);
 
+
+    if(inode_i != 0)
+    {
+        EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
+
+        //Free all blocks for this inode
+        EXT2_Inode inode;
+        memcpy(&inode, _EXT2_GetInode(desc, inode_i), sizeof(EXT2_Inode));
+
+
+        //Mark the blocks used by the file as free in their block group descriptors
+        uint32_t n = 0;
+        while(_EXT2_GetBlockFromInode(desc, &inode, n++, TRUE));
+
+
+
+        //The position of the last slash + 1 is start of filename
+        const char *file_name = strrchr(file, '/') + 1;
+
+        char *dir = kmalloc(file_name - file + 1);
+        memcpy(dir, file, file_name - file);
+        dir[file_name - file] = 0;
+
+        //Find the parent directory block table
+        bool is_dir = FALSE;
+        uint32_t dir_inode = 0;
+
+        _EXT2_GetFileInfo(desc, dir, &is_dir, &dir_inode);
+
+        //Clear the entry for the file in the directory table
+        _EXT2_ClearEntry(desc, dir_inode, file_name);        
+        
+        //Finally mark the inode as free
+        _EXT2_MarkInodeFree(desc, inode_i);        
+
+        kfree(dir);
+        //Remove the reference to the specified file
+    }
 }
 
 uint8_t
@@ -242,36 +294,36 @@ _EXT2_Filesystem_ReadDir(FileDescriptor *desc,
     uint32_t cur_index = 0;
 
     for(int i = 0; i < 12; i++)
+    {
+        if(inode.direct_block[i] == 0)break;
+
+        //Check the block entries
+        uint64_t address = inode.direct_block[i] * data->block_size;
+
+        EXT2_DirectoryEntry *dir = 	_EXT2_ReadAddr(desc, address, 512);
+
+        uint32_t traversed_size = 0;
+
+        while(traversed_size < data->block_size)
         {
-            if(inode.direct_block[i] == 0)break;
+            if(cur_index == cur_fd->extra_info)
+            {
 
-            //Check the block entries
-            uint64_t address = inode.direct_block[i] * data->block_size;
+                memset(dirent->dir_name, 0, 256);
+                memcpy(dirent->dir_name, dir->name, dir->name_len);
+                dirent->name_len = strlen(dirent->dir_name);
+                dirent->type = dir->type;
+                i = 13;
 
-            EXT2_DirectoryEntry *dir = 	_EXT2_ReadAddr(desc, address, 512);
+                cur_fd->extra_info++;
+                return 0;
+            }
+            cur_index++;
 
-            uint32_t traversed_size = 0;
-
-            while(traversed_size < data->block_size)
-                {
-                    if(cur_index == cur_fd->extra_info)
-                        {
-
-                            memset(dirent->dir_name, 0, 256);
-                            memcpy(dirent->dir_name, dir->name, dir->name_len);
-                            dirent->name_len = strlen(dirent->dir_name);
-                            dirent->type = dir->type;
-                            i = 13;
-
-                            cur_fd->extra_info++;
-                            return 0;
-                        }
-                    cur_index++;
-
-                    traversed_size += dir->entry_size;
-                    dir = (uint32_t)dir + dir->entry_size;
-                }
+            traversed_size += dir->entry_size;
+            dir = (uint32_t)dir + dir->entry_size;
         }
+    }
     return -1;
 }
 
@@ -287,12 +339,14 @@ uint8_t
 _EXT2_Filesystem_MakeDir(FileDescriptor *desc,
                          const char *path)
 {
+    //Extract the directory name and find the inode for the parent directory
 
+    //Add an entry to the blocks for the directory
 }
 
 uint8_t
 _EXT2_Filesystem_DeleteDir(FileDescriptor *desc,
                            const char *path)
 {
-
+    //Locate the inode for the directory, mark all its files as having 0 links, mark the directory inode as having 0 links
 }

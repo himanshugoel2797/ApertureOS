@@ -7,23 +7,23 @@ uint32_t FPU_StateHandler(Registers *regs);
 void FPU_Initialize()
 {
     if(!CPUID_FeatureIsAvailable(CPUID_EDX, CPUID_FEAT_EDX_FPU))
-        {
-            //OS can't load
-            asm volatile("mov $0, %eax\n\thlt");
-            return;
-        }
+    {
+        //OS can't load
+        asm volatile("mov $0, %eax\n\thlt");
+        return;
+    }
     if(!CPUID_FeatureIsAvailable(CPUID_EDX, CPUID_FEAT_EDX_SSE))
-        {
-            //OS can't load
-            asm volatile("mov $1, %eax\n\thlt");
-            return;
-        }
+    {
+        //OS can't load
+        asm volatile("mov $1, %eax\n\thlt");
+        return;
+    }
     if(!CPUID_FeatureIsAvailable(CPUID_EDX, CPUID_FEAT_EDX_FXSR))
-        {
-            //OS can't load
-            asm volatile("mov $2, %eax\n\thlt");
-            return;
-        }
+    {
+        //OS can't load
+        asm volatile("mov $2, %eax\n\thlt");
+        return;
+    }
 
     uint32_t bitmask = 0;
     //Get the current control register 0 value

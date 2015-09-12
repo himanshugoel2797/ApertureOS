@@ -47,51 +47,51 @@ uint32_t Keyboard_ProcessInput(uint8_t input)
 
     //An extended key code is expected
     if(input == 0xE0)
-        {
-            key_flags |= 1;
-            return 0;
-        }
+    {
+        key_flags |= 1;
+        return 0;
+    }
 
     //Break code
     if(input == 0xF0)
-        {
-            key_flags |= 2;
-            return 0;
-        }
+    {
+        key_flags |= 2;
+        return 0;
+    }
 
 
     //Check for certain scan codes (Lock keys) to enable/disable the related LEDs
     if(input)
+    {
+        int64_t key_index = (input - 1) / 64;
+        int64_t key_offset = (input - 1) % 64;
+
+        if(key_flags & 1)
         {
-            int64_t key_index = (input - 1) / 64;
-            int64_t key_offset = (input - 1) % 64;
-
-            if(key_flags & 1)
-                {
-                    key_index += 4;
-                }
-
-            //keys[key_index] = SET_VAL_BIT(keys[key_index], key_offset, ((~key_flags & 2) >> 1)  );
-            COM_WriteStr("Key Press: %x, %d, %d\r\n %b \r\n", input, key_index, key_offset, keys[key_index]);
-            if((!(key_flags >> 1)))
-                {
-                    if(input == 0x7E)PS2Keyboard_SetLEDStatus(1, 1);
-                    if(input == 0x58)PS2Keyboard_SetLEDStatus(2, 1);
-                    COM_WriteStr(" Make!\r\n");
-
-                    keys[key_index] |= (uint64_t)1 << (uint64_t)key_offset;
-                }
-            else
-                {
-                    if(input == 0x7E)PS2Keyboard_SetLEDStatus(1, 0);
-                    if(input == 0x58)PS2Keyboard_SetLEDStatus(2, 0);
-                    COM_WriteStr(" Break!\r\n");
-
-                    keys[key_index] &= ~((uint64_t)1 << (uint64_t)key_offset);
-                }
-
-            key_flags = 0;
+            key_index += 4;
         }
+
+        //keys[key_index] = SET_VAL_BIT(keys[key_index], key_offset, ((~key_flags & 2) >> 1)  );
+        COM_WriteStr("Key Press: %x, %d, %d\r\n %b \r\n", input, key_index, key_offset, keys[key_index]);
+        if((!(key_flags >> 1)))
+        {
+            if(input == 0x7E)PS2Keyboard_SetLEDStatus(1, 1);
+            if(input == 0x58)PS2Keyboard_SetLEDStatus(2, 1);
+            COM_WriteStr(" Make!\r\n");
+
+            keys[key_index] |= (uint64_t)1 << (uint64_t)key_offset;
+        }
+        else
+        {
+            if(input == 0x7E)PS2Keyboard_SetLEDStatus(1, 0);
+            if(input == 0x58)PS2Keyboard_SetLEDStatus(2, 0);
+            COM_WriteStr(" Break!\r\n");
+
+            keys[key_index] &= ~((uint64_t)1 << (uint64_t)key_offset);
+        }
+
+        key_flags = 0;
+    }
     return 0;
 
 }

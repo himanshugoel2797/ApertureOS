@@ -98,6 +98,7 @@ void t_main(int argc, char **argv)
 
     Filesystem_Setup();
 
+    Filesystem_DeleteFile("/home/root/ibr7bl6uoou6po.data");
     UID fd = Filesystem_OpenFile("/home/hgoel/test.data", 0, 0);
     //uint8_t *buf = kmalloc(1920*1080*4 + KB(4));
     //buf += KB(4);
@@ -113,9 +114,9 @@ void t_main(int argc, char **argv)
     UID id = Filesystem_OpenDir("/home/hgoel/");
     Filesystem_DirEntry entry;
     while(!Filesystem_ReadDir(id, &entry))
-        {
-            //COM_WriteStr("%s\r\n", entry.dir_name);
-        }
+    {
+        //COM_WriteStr("%s\r\n", entry.dir_name);
+    }
 
     while(1);
     sys_tss.esp0 = kmalloc(KB(16));
@@ -142,29 +143,29 @@ void t_main(int argc, char **argv)
     //asm volatile("cli");
 
     while(1)
-        {
-            //temp++;
-            //temp2 = 0xDEADBEEF;
-            asm volatile("mov $0xDEADBEEF, %eax");
-        }
+    {
+        //temp++;
+        //temp2 = 0xDEADBEEF;
+        asm volatile("mov $0xDEADBEEF, %eax");
+    }
 }
 
 //extern "C" /* Use C linkage for kernel_main. */
 void kernel_main(int argc, char** isKernelMode)
 {
     while(1)
-        {
-            graphics_Clear();
-            graphics_DrawBuffer(tmp, 0, 0, 1920, 1080);
+    {
+        graphics_Clear();
+        graphics_DrawBuffer(tmp, 0, 0, 1920, 1080);
 
-            RTC_Time t;
-            CMOS_GetRTCTime(&t);
+        RTC_Time t;
+        CMOS_GetRTCTime(&t);
 
-            graphics_WriteUInt64(temp, 2, 0, 16);
-            graphics_WriteUInt32(temp2, 16, 0, 32);
-            graphics_WriteUInt32(t.seconds, 10, 0, 48);
-            graphics_WriteUInt32(sizeof(HBA_FIS), 16, 0, 64);
+        graphics_WriteUInt64(temp, 2, 0, 16);
+        graphics_WriteUInt32(temp2, 16, 0, 32);
+        graphics_WriteUInt32(t.seconds, 10, 0, 48);
+        graphics_WriteUInt32(sizeof(HBA_FIS), 16, 0, 64);
 
-            graphics_SwapBuffer();
-        }
+        graphics_SwapBuffer();
+    }
 }

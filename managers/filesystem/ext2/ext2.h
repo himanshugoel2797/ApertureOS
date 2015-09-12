@@ -28,6 +28,7 @@ typedef struct EXT2_FD_T
     uint64_t extra_info;
     uint64_t more_extra_info;
     struct EXT2_FD_T *next;
+    struct EXT2_FD_T *prev;
 } EXT2_FD;
 
 #endif

@@ -71,32 +71,32 @@ void* memset(void *dstpp, int c, size_t len)
     asm volatile ("cld");
     /* This threshold value is optimal.  */
     if (len >= 12)
-        {
-            /* Fill X with four copies of the char we want to fill with. */
-            x |= (x << 8);
-            x |= (x << 16);
-            /* Adjust LEN for the bytes handled in the first loop.  */
-            len -= (-dstp) % sizeof(uint32_t);
-            /*
-             * There are at least some bytes to set. No need to test for
-             * LEN == 0 in this alignment loop.
-             */
-            /* Fill bytes until DSTP is aligned on a longword boundary. */
-            asm volatile (
-                "rep\n"
-                "stosb" /* %0, %2, %3 */ :
-                "=D" (dstp), "=c" (d0) :
-                "0" (dstp), "1" ((-dstp) % sizeof(uint32_t)), "a" (x) :
-                "memory");
-            /* Fill longwords.  */
-            asm volatile (
-                "rep\n"
-                "stosl" /* %0, %2, %3 */ :
-                "=D" (dstp), "=c" (d0) :
-                "0" (dstp), "1" (len / sizeof(uint32_t)), "a" (x) :
-                "memory");
-            len %= sizeof(uint32_t);
-        }
+    {
+        /* Fill X with four copies of the char we want to fill with. */
+        x |= (x << 8);
+        x |= (x << 16);
+        /* Adjust LEN for the bytes handled in the first loop.  */
+        len -= (-dstp) % sizeof(uint32_t);
+        /*
+         * There are at least some bytes to set. No need to test for
+         * LEN == 0 in this alignment loop.
+         */
+        /* Fill bytes until DSTP is aligned on a longword boundary. */
+        asm volatile (
+            "rep\n"
+            "stosb" /* %0, %2, %3 */ :
+            "=D" (dstp), "=c" (d0) :
+            "0" (dstp), "1" ((-dstp) % sizeof(uint32_t)), "a" (x) :
+            "memory");
+        /* Fill longwords.  */
+        asm volatile (
+            "rep\n"
+            "stosl" /* %0, %2, %3 */ :
+            "=D" (dstp), "=c" (d0) :
+            "0" (dstp), "1" (len / sizeof(uint32_t)), "a" (x) :
+            "memory");
+        len %= sizeof(uint32_t);
+    }
     /* Write the last few bytes. */
     asm volatile (
         "rep\n"
@@ -119,22 +119,22 @@ void strrev(char *str)
 
     /* Swap the chars */
     while( end_ptr > str )
-        {
-            temp = *str;
-            *str = *end_ptr;
-            *end_ptr = temp;
-            str++;
-            end_ptr--;
-        }
+    {
+        temp = *str;
+        *str = *end_ptr;
+        *end_ptr = temp;
+        str++;
+        end_ptr--;
+    }
 }
 
 size_t strlen(const char *str)
 {
     size_t size = 0;
     while(str[size] != 0)
-        {
-            size++;
-        }
+    {
+        size++;
+    }
     return size;
 }
 
@@ -157,6 +157,15 @@ char *strchr(const char *s, int c)
         if (!*s++)
             return 0;
     return (char *)s;
+}
+
+char *strrchr(const char *s, int c)
+{
+    char *e = s + strlen(s);
+    while (*e != (char)c)
+        if (e-- == s)
+            return 0;
+    return (char *)e;
 }
 
 UID uids_base = 0;

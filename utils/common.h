@@ -21,6 +21,7 @@ int sprintf ( char * str, const char * format, ... );
 char* utoa(uint64_t val, char *ostr, int base);
 char* itoa(int64_t val, char *ostr, int base);
 char* strchr(const char *s, int c);
+char* strrchr(const char *s, int c);
 
 UID new_uid();
 

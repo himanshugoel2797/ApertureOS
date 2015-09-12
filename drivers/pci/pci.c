@@ -41,73 +41,73 @@ void pci_Initialize()
 
     //Enumerate PCI devices
     for(int bus = 0; bus < 256; bus++)
+    {
+        for(int device = 0; device < 32; device++)
         {
-            for(int device = 0; device < 32; device++)
+            uint32_t vid = pci_readDWord(bus, device, 0, 0);
+            if( (vid >> 16) != 0xFFFF)
+            {
+                int headerType = pci_readDWord(bus, device, 0, 0x0C);
+                int functionCount = 1;
+                if( (headerType >> 23) & 1) functionCount = 8;
+
+                for(int f = 0; f < functionCount; f++)
                 {
-                    uint32_t vid = pci_readDWord(bus, device, 0, 0);
-                    if( (vid >> 16) != 0xFFFF)
+                    char *base, *sub, *prog;
+
+                    if(pci_readDWord(bus, device, f, 0) >> 16 != 0xFFFF)
+                    {
+                        pci_GetPCIClass(pci_readDWord(bus, device, f, 8),&base, &sub, &prog);
+
+                        devices[pci_deviceCount].classCode = pci_readDWord(bus, device, f, 8) >> 24;
+                        devices[pci_deviceCount].subClassCode = pci_readDWord(bus, device, f, 8) >> 16;
+                        devices[pci_deviceCount].progIf = pci_readDWord(bus, device, f, 8) >> 8;
+                        devices[pci_deviceCount].bus = bus;
+                        devices[pci_deviceCount].device = device;
+                        devices[pci_deviceCount].function = f;
+                        devices[pci_deviceCount].headerType = (pci_readDWord(bus, device, f, 0x0C) >> 16) & 0xFF;
+
+                        switch(devices[pci_deviceCount].headerType)
                         {
-                            int headerType = pci_readDWord(bus, device, 0, 0x0C);
-                            int functionCount = 1;
-                            if( (headerType >> 23) & 1) functionCount = 8;
-
-                            for(int f = 0; f < functionCount; f++)
-                                {
-                                    char *base, *sub, *prog;
-
-                                    if(pci_readDWord(bus, device, f, 0) >> 16 != 0xFFFF)
-                                        {
-                                            pci_GetPCIClass(pci_readDWord(bus, device, f, 8),&base, &sub, &prog);
-
-                                            devices[pci_deviceCount].classCode = pci_readDWord(bus, device, f, 8) >> 24;
-                                            devices[pci_deviceCount].subClassCode = pci_readDWord(bus, device, f, 8) >> 16;
-                                            devices[pci_deviceCount].progIf = pci_readDWord(bus, device, f, 8) >> 8;
-                                            devices[pci_deviceCount].bus = bus;
-                                            devices[pci_deviceCount].device = device;
-                                            devices[pci_deviceCount].function = f;
-                                            devices[pci_deviceCount].headerType = (pci_readDWord(bus, device, f, 0x0C) >> 16) & 0xFF;
-
-                                            switch(devices[pci_deviceCount].headerType)
-                                                {
-                                                case 0:
-                                                    devices[pci_deviceCount].bar_count = 6;
-                                                    break;
-                                                case 1:
-                                                    devices[pci_deviceCount].bar_count = 2;
-                                                    break;
-                                                }
-
-                                            for(uint8_t bar_index = 0; bar_index < devices[pci_deviceCount].bar_count; bar_index++)
-                                                {
-                                                    devices[pci_deviceCount].bars[bar_index] = pci_readDWord(bus, device, f, 0x10 + (bar_index * 4));
-                                                }
-
-                                            pci_deviceCount++;
-
-                                            COM_WriteStr("\tFound %s %s %s(%d.%d.%d) at %d:%d:%d\r\n", sub, prog, base, devices[pci_deviceCount - 1].classCode, devices[pci_deviceCount - 1].subClassCode, devices[pci_deviceCount - 1].progIf, bus, device, f);
-                                        }
-                                }
+                        case 0:
+                            devices[pci_deviceCount].bar_count = 6;
+                            break;
+                        case 1:
+                            devices[pci_deviceCount].bar_count = 2;
+                            break;
                         }
+
+                        for(uint8_t bar_index = 0; bar_index < devices[pci_deviceCount].bar_count; bar_index++)
+                        {
+                            devices[pci_deviceCount].bars[bar_index] = pci_readDWord(bus, device, f, 0x10 + (bar_index * 4));
+                        }
+
+                        pci_deviceCount++;
+
+                        COM_WriteStr("\tFound %s %s %s(%d.%d.%d) at %d:%d:%d\r\n", sub, prog, base, devices[pci_deviceCount - 1].classCode, devices[pci_deviceCount - 1].subClassCode, devices[pci_deviceCount - 1].progIf, bus, device, f);
+                    }
                 }
+            }
         }
+    }
 
     //Initialize PCI Express info
     MCFG* mcfg = ACPITables_FindTable(MCFG_SIG, 0);
 
     if(mcfg == NULL)
-        {
-            COM_WriteStr("\r\nFailed to find MCFG table, driver will only support PCI devices!\r\n");
-            return;
-        }
+    {
+        COM_WriteStr("\r\nFailed to find MCFG table, driver will only support PCI devices!\r\n");
+        return;
+    }
 
     mcfg_entry_count = (mcfg->h.Length - sizeof(ACPISDTHeader) - 8)/sizeof(MCFG_Entry);
     mcfg_tables = bootstrap_malloc(mcfg_entry_count * sizeof(MCFG_Entry));
     memcpy(mcfg_tables, mcfg->entries, sizeof(MCFG_Entry) * mcfg_entry_count);
 
     for(int i = 0; i < mcfg_entry_count; i++)
-        {
-            COM_WriteStr("%x\r\n", mcfg_tables[i].baseAddr);
-        }
+    {
+        COM_WriteStr("%x\r\n", mcfg_tables[i].baseAddr);
+    }
 }
 
 void pci_setCommand(uint32_t device_index, uint16_t value)

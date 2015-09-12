@@ -25,16 +25,16 @@ void PIT_SetFrequency(uint8_t channel, uint8_t access, uint8_t mode, uint8_t val
 
     // Divisor has to be sent byte-wise, so split here into upper/lower bytes.
     if((access & PIT_ACCESS_LO_BYTE) == PIT_ACCESS_LO_BYTE)
-        {
-            uint8_t l = (uint8_t)(divisor & 0xFF);
-            outb(0x40 + channel, l);
-        }
+    {
+        uint8_t l = (uint8_t)(divisor & 0xFF);
+        outb(0x40 + channel, l);
+    }
 
     if((access & PIT_ACCESS_HI_BYTE) == PIT_ACCESS_HI_BYTE)
-        {
-            uint8_t h = (uint8_t)( (divisor>>8) & 0xFF );
-            outb(0x40 + channel, h);
-        }
+    {
+        uint8_t h = (uint8_t)( (divisor>>8) & 0xFF );
+        outb(0x40 + channel, h);
+    }
 }
 
 uint32_t pit_ticksToWait = 0;
@@ -44,9 +44,9 @@ uint32_t PIT_TempIntHandler(Registers *reg)
 {
 
     if(pit_handlerMode == 0)
-        {
-            if(pit_ticksToWait != 0) pit_ticksToWait--;
-        }
+    {
+        if(pit_ticksToWait != 0) pit_ticksToWait--;
+    }
 
     return 1; //Always prevent any other handlers from running
 }
@@ -73,22 +73,22 @@ void PIT_Sleep(uint32_t interval)
     Interrupts_SetInterruptEnableMode(IRQ(0), ENABLED);
 
     while(1)
-        {
-            //Prevent race conditions
-            asm volatile ("cli");
-            if(pit_ticksToWait == 0) break;
-            asm volatile ("sti");
+    {
+        //Prevent race conditions
+        asm volatile ("cli");
+        if(pit_ticksToWait == 0) break;
+        asm volatile ("sti");
 
-            //Wait some time
-            for(int a = 0; a < 50; a++)
-                {
-                    asm volatile ("nop");
-                    asm volatile ("nop");
-                    asm volatile ("nop");
-                    asm volatile ("nop");
-                    asm volatile ("nop");
-                }
+        //Wait some time
+        for(int a = 0; a < 50; a++)
+        {
+            asm volatile ("nop");
+            asm volatile ("nop");
+            asm volatile ("nop");
+            asm volatile ("nop");
+            asm volatile ("nop");
         }
+    }
 
     Interrupts_SetInterruptEnableMode(IRQ(0), DISABLED);
     Interrupts_RegisterHandler(IRQ(0), 0, handler);

@@ -65,18 +65,18 @@ uint64_t HPET_Read(uint32_t reg)
 uint64_t HPET_GetGlobalCounter()
 {
     if(hpet != NULL)
-        {
-            return HPET_Read(HPET_MCV_REG);
-        }
+    {
+        return HPET_Read(HPET_MCV_REG);
+    }
     return 0;
 }
 
 void HPET_SetGlobalCounter(uint64_t val)
 {
     if(hpet != NULL)
-        {
-            HPET_Write(HPET_MCV_REG, val);
-        }
+    {
+        HPET_Write(HPET_MCV_REG, val);
+    }
 }
 
 uint32_t HPET_GetSupportedIRQs(uint8_t index)

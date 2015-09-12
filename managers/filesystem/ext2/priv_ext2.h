@@ -15,6 +15,12 @@ _EXT2_ReadAddr(FileDescriptor *desc,
                uint64_t addr,
                uint32_t len);
 
+uint32_t
+_EXT2_WriteAddr(FileDescriptor *desc,
+                uint64_t addr,
+                uint32_t len,
+                uint16_t *src);
+
 EXT2_BlockGroupDescriptor*
 _EXT2_GetBlockGroup(FileDescriptor *desc,
                     uint32_t block_index);
@@ -33,7 +39,8 @@ _EXT2_ReadBlockData(FileDescriptor *desc,
 uint8_t*
 _EXT2_GetBlockFromInode(FileDescriptor *desc,
                         EXT2_Inode *inode,
-                        uint32_t index);
+                        uint32_t index,
+                        bool del);
 
 uint8_t
 _EXT2_GetFileInfo(FileDescriptor *desc,

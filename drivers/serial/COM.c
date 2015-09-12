@@ -39,9 +39,9 @@ void COM_WriteStr(const char *fmt, ...)
     va_end(vl);
 #if COM_ENABLED == 1
     while(str[index])
-        {
-            while(COM_ready() == 0) ;
-            outb(PORT, str[index++]);
-        }
+    {
+        while(COM_ready() == 0) ;
+        outb(PORT, str[index++]);
+    }
 #endif
 }

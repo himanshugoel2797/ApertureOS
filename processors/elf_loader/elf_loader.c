@@ -16,10 +16,10 @@ UID Elf_Load(const char *path)
     uint64_t file_size = Filesystem_SeekFile(fd, 0, SEEK_END);
 
     if(file_size > MB(2))
-        {
-            Filesystem_CloseFile(fd);
-            return -2;
-        }
+    {
+        Filesystem_CloseFile(fd);
+        return -2;
+    }
 
     uint8_t *elf_temp = kmalloc(file_size);
     Filesystem_ReadFile(fd, elf_temp, file_size);
@@ -39,36 +39,36 @@ UID Elf_Load(const char *path)
 
     //Don't support relocations for now
     if(hdr->e_type == ET_EXEC)
+    {
+        Elf32_Phdr *phdr = (Elf32_Phdr*)(elf_temp + hdr->e_phoff);	//Find the program header
+
+        for(int i = 0; i < hdr->e_phnum; i++)
         {
-            Elf32_Phdr *phdr = (Elf32_Phdr*)(elf_temp + hdr->e_phoff);	//Find the program header
+            if(phdr->p_type == 1)
+            {
+                //Allocate the associated physical memory and map it into the address space
+                uint32_t page_count = (phdr->p_memsz - 1)/KB(4) + 1;
+                uint64_t p_addr = 0;
+                uint32_t v_addr = phdr->p_vaddr;
 
-            for(int i = 0; i < hdr->e_phnum; i++)
+                for(int j = 0; j < page_count; j++)
                 {
-                    if(phdr->p_type == 1)
-                        {
-                            //Allocate the associated physical memory and map it into the address space
-                            uint32_t page_count = (phdr->p_memsz - 1)/KB(4) + 1;
-                            uint64_t p_addr = 0;
-                            uint32_t v_addr = phdr->p_vaddr;
+                    p_addr = physMemMan_Alloc();
+                    virtMemMan_Map(v_addr, p_addr, KB(4), MEM_TYPE_WB, phdr->p_flags, MEM_USER);
 
-                            for(int j = 0; j < page_count; j++)
-                                {
-                                    p_addr = physMemMan_Alloc();
-                                    virtMemMan_Map(v_addr, p_addr, KB(4), MEM_TYPE_WB, phdr->p_flags, MEM_USER);
-
-                                    v_addr += KB(4);
-                                }
-
-                            v_addr = phdr->p_vaddr;
-                            memset(v_addr, 0, phdr->p_memsz);
-                            memcpy(v_addr, elf_temp + phdr->p_offset, phdr->p_filesz);
-
-                        }
-
-                    phdr = (Elf32_Phdr*)((uint8_t*)phdr + hdr->e_phentsize);
+                    v_addr += KB(4);
                 }
 
+                v_addr = phdr->p_vaddr;
+                memset(v_addr, 0, phdr->p_memsz);
+                memcpy(v_addr, elf_temp + phdr->p_offset, phdr->p_filesz);
+
+            }
+
+            phdr = (Elf32_Phdr*)((uint8_t*)phdr + hdr->e_phentsize);
         }
+
+    }
     else goto error;
 
     kfree(elf_temp);
@@ -78,15 +78,15 @@ UID Elf_Load(const char *path)
     elf_info_tmp->elf_main = (void(*)(void))hdr->e_entry;
 
     if(e_info == NULL)
-        {
-            e_info = elf_info_tmp;
-            last_e_info = e_info;
-        }
+    {
+        e_info = elf_info_tmp;
+        last_e_info = e_info;
+    }
     else
-        {
-            last_e_info->next = elf_info_tmp;
-            last_e_info = last_e_info->next;
-        }
+    {
+        last_e_info->next = elf_info_tmp;
+        last_e_info = last_e_info->next;
+    }
 
     return elf_info_tmp->id;
 
