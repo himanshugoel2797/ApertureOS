@@ -13,9 +13,9 @@ FileDescriptor *descriptors = NULL, *lastDescriptor = NULL;
 Filesystem_Driver *drivers = NULL, *lastDriver = NULL;
 
 bool initialized = FALSE;
-UID fd_base = 0;
 
-void Filesystem_Setup()
+void
+Filesystem_Setup(void)
 {
     filesys_sys = SysMan_RegisterSystem();
     strcpy(filesys_sys->sys_name, "filesystem");
@@ -29,7 +29,8 @@ void Filesystem_Setup()
     SysMan_StartSystem(filesys_sys->sys_id);
 }
 
-uint32_t filesystem_Initialize()
+uint32_t
+filesystem_Initialize(void)
 {
     //Register all filesystem drivers
     drivers = kmalloc(sizeof(Filesystem_Driver));
@@ -54,39 +55,48 @@ uint32_t filesystem_Initialize()
 
 
     //Setup the first boot disk as the specified type of FS
-    if(Filesystem_RegisterDescriptor("/", AHCI_Read, NULL, BOOT_FS) == 0)
-    {
-        initialized = TRUE;
-    }
+    if(Filesystem_RegisterDescriptor("/", AHCI_0_Read, NULL, BOOT_FS) == 0)
+        {
+            initialized = TRUE;
+        }
     descriptors = lastDescriptor;
+
+    return 0;
 }
 
-uint8_t filesystem_messageHandler(Message *msg)
+uint8_t
+filesystem_messageHandler(Message *msg)
 {
 
 }
 
 
-UID Filesystem_OpenFile(const char *filename, int flags, int perms)
+UID
+Filesystem_OpenFile(const char *filename,
+                    int flags,
+                    int perms)
 {
     if(!initialized)return -1;
     //Determine the descriptor based on the filename, call the appropriate function and convert it's returned ID into a UID
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromPath(filename);
     uint32_t result = desc->driver->_H_Filesystem_OpenFile(desc, filename, flags, perms);
 
-    if(result != 0)return result + desc->fd_base;
-    return -1;
+    return result | (desc->id << 32);
 }
 
-uint8_t Filesystem_ReadFile(UID id, uint8_t *buffer, size_t size)
+uint8_t
+Filesystem_ReadFile(UID id,
+                    uint8_t *buffer,
+                    size_t size)
 {
     if(!initialized)return -1;
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromUID(id);
-    uint8_t result = desc->driver->_H_Filesystem_ReadFile(desc, id - desc->fd_base, buffer, size);
+    uint8_t result = desc->driver->_H_Filesystem_ReadFile(desc, id, buffer, size);
     return result;
 }
 
-uint8_t Filesystem_CloseFile(UID fd)
+uint8_t
+Filesystem_CloseFile(UID fd)
 {
     if(!initialized)return -1;
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromUID(fd);
@@ -94,15 +104,19 @@ uint8_t Filesystem_CloseFile(UID fd)
     return result;
 }
 
-uint64_t Filesystem_SeekFile(UID fd, uint64_t offset, int whence)
+uint64_t
+Filesystem_SeekFile(UID fd,
+                    uint64_t offset,
+                    int whence)
 {
     if(!initialized)return -1;
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromUID(fd);
-    uint8_t result = desc->driver->_H_Filesystem_SeekFile(desc, fd - desc->fd_base, offset, whence);
+    uint8_t result = desc->driver->_H_Filesystem_SeekFile(desc, fd, offset, whence);
     return result;
 }
 
-uint8_t Filesystem_DeleteFile(const char *file)
+uint8_t
+Filesystem_DeleteFile(const char *file)
 {
     if(!initialized)return -1;
     //Determine the descriptor based on the filename, call the appropriate function and convert it's returned ID into a UID
@@ -111,7 +125,9 @@ uint8_t Filesystem_DeleteFile(const char *file)
     return result;
 }
 
-uint8_t Filesystem_RenameFile(const char *orig_name, const char *new_name)
+uint8_t
+Filesystem_RenameFile(const char *orig_name,
+                      const char *new_name)
 {
     if(!initialized)return -1;
     //Determine the descriptor based on the filename, call the appropriate function and convert it's returned ID into a UID
@@ -120,27 +136,29 @@ uint8_t Filesystem_RenameFile(const char *orig_name, const char *new_name)
     return result;
 }
 
-UID Filesystem_OpenDir(const char *dirname)
+UID
+Filesystem_OpenDir(const char *dirname)
 {
     if(!initialized)return -1;
     //Determine the descriptor based on the filename, call the appropriate function and convert it's returned ID into a UID
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromPath(dirname);
     uint32_t result = desc->driver->_H_Filesystem_OpenDir(desc, dirname);
-
-    if(result != 0)return result + desc->dir_base;
-    return -1;
+    return result | (desc->id << 32);
 }
 
 
-uint8_t Filesystem_ReadDir(UID dd, Filesystem_DirEntry *dir)
+uint8_t
+Filesystem_ReadDir(UID dd,
+                   Filesystem_DirEntry *dir)
 {
     if(!initialized)return -1;
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromUID(dd);
-    uint8_t result = desc->driver->_H_Filesystem_ReadDir(desc, dd - desc->dir_base, dir);
+    uint8_t result = desc->driver->_H_Filesystem_ReadDir(desc, dd, dir);
     return result;
 }
 
-uint8_t Filesystem_CloseDir(UID fd)
+uint8_t
+Filesystem_CloseDir(UID fd)
 {
     if(!initialized)return -1;
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromUID(fd);
@@ -148,7 +166,8 @@ uint8_t Filesystem_CloseDir(UID fd)
     return result;
 }
 
-uint8_t Filesystem_MakeDir(const char *path)
+uint8_t
+Filesystem_MakeDir(const char *path)
 {
     if(!initialized)return -1;
     //Determine the descriptor based on the filename, call the appropriate function and convert it's returned ID into a UID
@@ -157,7 +176,8 @@ uint8_t Filesystem_MakeDir(const char *path)
     return result;
 }
 
-uint8_t Filesystem_DeleteDir(const char *path)
+uint8_t
+Filesystem_DeleteDir(const char *path)
 {
     if(!initialized)return -1;
     //Determine the descriptor based on the filename, call the appropriate function and convert it's returned ID into a UID
@@ -167,7 +187,8 @@ uint8_t Filesystem_DeleteDir(const char *path)
 }
 
 
-uint8_t Filesystem_Close(UID fd)
+uint8_t
+Filesystem_Close(UID fd)
 {
     if(!initialized)return -1;
     return -1;
@@ -212,20 +233,17 @@ UID Filesystem_RegisterDescriptor(
     desc->driver = driver;
     desc->next = NULL;
 
-    desc->fd_base = fd_base;
-    fd_base += MAX_OPEN_FILES;
-    desc->dir_base = fd_base;
-    fd_base += MAX_OPEN_DIRS;
+    desc->id = new_uid();
 
-    desc->id = fd_base++;
+    uint32_t ret = driver->_H_Initialize(desc); //Tell the filesystem driver to check this device
 
-    uint32_t ret = driver->_H_Initialize(desc);	//Tell the filesystem driver to check this device
     if(ret != 0)return -3;
 
     return 0;
 }
 
-uint8_t Filesystem_UnregisterDescriptor(UID id)
+uint8_t
+Filesystem_UnregisterDescriptor(UID id)
 {
     FileDescriptor *driver = descriptors, *prev_driver = NULL;
     while(driver != NULL && driver->next != NULL)
@@ -252,7 +270,8 @@ uint8_t Filesystem_UnregisterDescriptor(UID id)
     kfree(driver);
 }
 
-void* Filesystem_FindDescriptorFromPath(const char *path)
+void*
+Filesystem_FindDescriptorFromPath(const char *path)
 {
 
     FileDescriptor *descriptor = descriptors;
@@ -273,20 +292,22 @@ void* Filesystem_FindDescriptorFromPath(const char *path)
     return NULL;
 }
 
-void* Filesystem_FindDescriptorFromUID(const UID id)
+void*
+Filesystem_FindDescriptorFromUID(const UID id)
 {
 
     FileDescriptor *descriptor = descriptors;
+    UID s_id = id >> 32;
     while(descriptor != NULL && descriptor->next != NULL)
         {
-            if( descriptor->fd_base <= id && (descriptor->dir_base + MAX_OPEN_DIRS) >= id)
+            if( descriptor->id == s_id)
                 {
                     return descriptor;	//This path has already been hooked
                 }
             descriptor = descriptor->next;
         }
 
-    if( descriptor->fd_base <= id && (descriptor->dir_base + MAX_OPEN_DIRS) >= id)
+    if( descriptor->id == s_id)
         {
             return descriptor;  //This path has already been hooked
         }

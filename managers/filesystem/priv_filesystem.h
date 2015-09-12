@@ -38,10 +38,8 @@ struct FileDescriptor_T
     ReadFunc read;
     WriteFunc write;
     Filesystem_Driver *driver;
-    UID fd_base;
-    UID dir_base;
-    UID id;
     void *data;
+    UID id;
     FileDescriptor *next;
 };
 

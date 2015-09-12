@@ -380,16 +380,17 @@ uint64_t virtMemMan_GetPhysAddress(void *virt_addr)
     if(pd_pse[pd_i].present == 0)return -1;
 
     if(pd_pse[pd_i].page_size == 0) //If this is a 4KB page
-    {    
-        PT_Entry *pt = (PT_Entry*)(pd_u64[pd_i] & 0xfffff000);
-        COM_WriteStr("%x\r\n", pt[pt_i].addr);
-        return (pt[pt_i].addr * KB(4)) + ((uint32_t)virt_addr - v_addr);   
+        {
+            PT_Entry *pt = (PT_Entry*)(pd_u64[pd_i] & 0xfffff000);
+            COM_WriteStr("%x\r\n", pt[pt_i].addr);
+            return (pt[pt_i].addr * KB(4)) + ((uint32_t)virt_addr - v_addr);
 
-    }else   //If this is a 2MB page
-    {
-        //Address is part of a 2MB page so read the address and adjust it
-        return pd_pse[pd_i].addr * MB(2) + ( (uint32_t)virt_addr - (pdpt_i * GB(1) + pd_i * MB(2)) );
-    }
+        }
+    else    //If this is a 2MB page
+        {
+            //Address is part of a 2MB page so read the address and adjust it
+            return pd_pse[pd_i].addr * MB(2) + ( (uint32_t)virt_addr - (pdpt_i * GB(1) + pd_i * MB(2)) );
+        }
 }
 
 uint64_t* virtMemMan_GetFreePDPTEntry()

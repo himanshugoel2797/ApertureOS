@@ -8,13 +8,23 @@
  * @{
 */
 
-uint32_t 
-IOAPIC_Read(uint32_t* io_apic_baseAddr, 
+//! Read an IOAPIC configuration register
+
+//! \param io_apic_baseAddr the base address of the IO APIC MMIO space
+//! \param index the register index to read
+//! \return the value of the register
+uint32_t
+IOAPIC_Read(uint32_t* io_apic_baseAddr,
             uint32_t index);
 
-void 
-IOAPIC_Write(uint32_t* io_apic_baseAddr, 
-             uint32_t index, 
+//! Write an IOAPIC configuration register
+
+//! \param io_apic_baseAddr the base address of the IO APIC MMIO space
+//! \param index the register index to read
+//! \param val the register value
+void
+IOAPIC_Write(uint32_t* io_apic_baseAddr,
+             uint32_t index,
              uint32_t val);
 
 

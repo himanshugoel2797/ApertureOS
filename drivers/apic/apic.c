@@ -12,7 +12,7 @@
 
 uint32_t *apic_base_addr = 0;
 
-uint8_t 
+uint8_t
 APIC_LocalInitialize(void)
 {
     PIC_MaskAll();    //disable all interrupts from the PIC
@@ -45,28 +45,28 @@ APIC_LocalInitialize(void)
     return 0;
 }
 
-void 
+void
 APIC_Virtualize(void)
 {
     //Adjust the base address for virtual memory
     apic_base_addr = VIRTUALIZE_HIGHER_MEM_OFFSET(apic_base_addr);
 }
 
-void 
-APIC_Write(uint32_t reg, 
+void
+APIC_Write(uint32_t reg,
            uint32_t val)
 {
     apic_base_addr[reg/4] = val;
 }
 
-uint32_t 
+uint32_t
 APIC_Read(uint32_t reg)
 {
     return apic_base_addr[reg/4];
 }
 
-void 
-APIC_SetEnableInterrupt(uint32_t interrupt, 
+void
+APIC_SetEnableInterrupt(uint32_t interrupt,
                         int enableMode)
 {
     if (interrupt < APIC_TIMER || interrupt > APIC_ERR) return;
@@ -75,8 +75,8 @@ APIC_SetEnableInterrupt(uint32_t interrupt,
     APIC_Write(interrupt, val);
 }
 
-void 
-APIC_SetVector(uint32_t interrupt, 
+void
+APIC_SetVector(uint32_t interrupt,
                uint8_t vector)
 {
     if (interrupt < APIC_TIMER || interrupt > APIC_ERR) return;
@@ -85,8 +85,8 @@ APIC_SetVector(uint32_t interrupt,
     APIC_Write(interrupt, val);
 }
 
-void 
-APIC_SetDeliveryMode(uint32_t interrupt, 
+void
+APIC_SetDeliveryMode(uint32_t interrupt,
                      uint8_t vector)
 {
     if (interrupt < APIC_TIMER || interrupt > APIC_LINT1) return;
@@ -95,8 +95,8 @@ APIC_SetDeliveryMode(uint32_t interrupt,
     APIC_Write(interrupt, val);
 }
 
-void 
-APIC_SetTriggerMode(uint32_t interrupt, 
+void
+APIC_SetTriggerMode(uint32_t interrupt,
                     uint8_t vector)
 {
     if (interrupt < APIC_LINT0 || interrupt > APIC_LINT1) return;
@@ -105,8 +105,8 @@ APIC_SetTriggerMode(uint32_t interrupt,
     APIC_Write(interrupt, val);
 }
 
-void 
-APIC_SetPolarity(uint32_t interrupt, 
+void
+APIC_SetPolarity(uint32_t interrupt,
                  uint8_t vector)
 {
     if (interrupt < APIC_LINT0 || interrupt > APIC_LINT1) return;
@@ -115,7 +115,7 @@ APIC_SetPolarity(uint32_t interrupt,
     APIC_Write (interrupt, val);
 }
 
-void 
+void
 APIC_SetTimerMode(uint8_t mode)
 {
     uint32_t val = APIC_Read(APIC_TIMER);
@@ -123,7 +123,7 @@ APIC_SetTimerMode(uint8_t mode)
     APIC_Write(APIC_TIMER, val);
 }
 
-void 
+void
 APIC_SetTimerDivisor(uint8_t divisor)
 {
     uint8_t val = 0;
@@ -140,19 +140,19 @@ APIC_SetTimerDivisor(uint8_t divisor)
     APIC_Write (0x3E0, val);
 }
 
-void 
+void
 APIC_SetTimerValue(uint32_t val)
 {
     APIC_Write(APIC_TIMER_VAL, val);
 }
 
-uint32_t 
+uint32_t
 APIC_GetTimerValue(void)
 {
     return APIC_Read(APIC_TIMER_VAL);
 }
 
-void 
+void
 APIC_SetEnableMode(uint8_t enabled)
 {
     uint32_t svr = APIC_Read(APIC_SVR);
@@ -160,15 +160,15 @@ APIC_SetEnableMode(uint8_t enabled)
     APIC_Write(APIC_SVR, svr);
 }
 
-uint8_t 
+uint8_t
 APIC_GetID(void)
 {
     return (uint8_t)APIC_Read(APIC_ID);
 }
 
-void 
-APIC_FillHWInterruptHandler(char *idt_handler, 
-                            uint8_t intNum, 
+void
+APIC_FillHWInterruptHandler(char *idt_handler,
+                            uint8_t intNum,
                             uint8_t irqNum)
 {
     int index = 0;
@@ -196,11 +196,11 @@ APIC_FillHWInterruptHandler(char *idt_handler,
     idt_handler[index++] = 0xC3;
 }
 
-void 
+void
 APIC_MainHandler(Registers *regs);
 
 __attribute__((naked, noreturn))
-void 
+void
 APIC_DefaultHandler(void)
 {
     asm volatile(
@@ -231,7 +231,7 @@ APIC_DefaultHandler(void)
     );
 }
 
-void 
+void
 APIC_SendEOI(uint8_t int_num)
 {
 //Test if this is in service and send EOI
@@ -243,7 +243,7 @@ APIC_SendEOI(uint8_t int_num)
         }
 }
 
-void 
+void
 APIC_MainHandler(Registers *regs)
 {
     IDT_MainHandler(regs);

@@ -33,54 +33,54 @@
 #define APIC_POLARITY_HIGH 0
 #define APIC_POLARITY_LOW  1
 
-uint8_t 
+uint8_t
 APIC_LocalInitialize(void);
 
-uint32_t 
+uint32_t
 APIC_Initialize(void);
 
-void 
+void
 APIC_SetEnableMode(uint8_t enabled);
 
-uint8_t 
+uint8_t
 APIC_GetID(void);
 
-void 
+void
 APIC_SetTimerMode(uint8_t mode);
 
-void 
-APIC_SetDeliveryMode(uint32_t lvt_entry, 
+void
+APIC_SetDeliveryMode(uint32_t lvt_entry,
                      uint8_t mode);
 
-void 
-APIC_SetTriggerMode(uint32_t lvt_entry, 
+void
+APIC_SetTriggerMode(uint32_t lvt_entry,
                     uint8_t mode);
 
-void 
-APIC_SetPolarity(uint32_t lvt_entry, 
+void
+APIC_SetPolarity(uint32_t lvt_entry,
                  uint8_t mode);
 
-void 
+void
 APIC_SetTimerValue(uint32_t val);
 
-uint32_t 
+uint32_t
 APIC_GetTimerValue(void);
 
-void 
+void
 APIC_SetTimerDivisor(uint8_t divisor);
 
-void 
-APIC_SetEnableInterrupt(uint32_t interrupt, 
+void
+APIC_SetEnableInterrupt(uint32_t interrupt,
                         int enableMode);
 
-void 
-APIC_SetVector(uint32_t interrupt, 
+void
+APIC_SetVector(uint32_t interrupt,
                uint8_t vector);
 
-void 
+void
 APIC_SendEOI(uint8_t int_num);
 
-void 
+void
 APIC_Virtualize(void);
 
 /**@}*/

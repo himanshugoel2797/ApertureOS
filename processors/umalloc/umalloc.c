@@ -101,7 +101,7 @@ void *umalloc(size_t size)
                 }
             a_info = a_info->next;
         }
-        
+
 
     if(IS_USED(a_info) | (a_info->size < size))
         {

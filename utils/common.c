@@ -162,5 +162,5 @@ char *strchr(const char *s, int c)
 UID uids_base = 0;
 UID new_uid()
 {
-    return ++uids_base;
+    return (++uids_base & 0xFFFFFFFF);
 }

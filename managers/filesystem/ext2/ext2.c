@@ -9,17 +9,25 @@ EXT2_FD *fd, *last_fd;
 
 #define POOL_SIZE MB(2)
 
-uint32_t _EXT2_ReadToAddr(FileDescriptor *desc, uint64_t addr, uint32_t len, uint8_t *target)
+uint32_t
+_EXT2_ReadToAddr(FileDescriptor *desc,
+                 uint64_t addr,
+                 uint32_t len,
+                 uint8_t *target)
 {
     return desc->read(addr/512, len, target) - 1;
 }
 
-uint8_t* _EXT2_ReadAddr(FileDescriptor *desc, uint64_t addr, uint32_t len)
+uint8_t*
+_EXT2_ReadAddr(FileDescriptor *desc,
+               uint64_t addr,
+               uint32_t len)
 {
     EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
     uint8_t *mem_pool = data->memory_pool;
 
-    if(data->last_read_addr <= addr && (data->last_read_addr + POOL_SIZE) >= (addr + len))
+    if(data->last_read_addr <= addr &&
+            (data->last_read_addr + POOL_SIZE) >= (addr + len))
         {
             mem_pool = &mem_pool[(addr - data->last_read_addr)];
         }
@@ -33,7 +41,10 @@ uint8_t* _EXT2_ReadAddr(FileDescriptor *desc, uint64_t addr, uint32_t len)
     return mem_pool;
 }
 
-EXT2_BlockGroupDescriptor * _EXT2_GetBlockGroup(FileDescriptor *desc, uint32_t block_index)
+
+EXT2_BlockGroupDescriptor*
+_EXT2_GetBlockGroup(FileDescriptor *desc,
+                    uint32_t block_index)
 {
     EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
 
@@ -44,7 +55,9 @@ EXT2_BlockGroupDescriptor * _EXT2_GetBlockGroup(FileDescriptor *desc, uint32_t b
     return &bgdt[block_index];
 }
 
-EXT2_Inode * _EXT2_GetInode(FileDescriptor *desc, uint32_t inode_i)
+EXT2_Inode*
+_EXT2_GetInode(FileDescriptor *desc,
+               uint32_t inode_i)
 {
     EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
     uint32_t block_index = (inode_i - 1)/data->inodes_per_group;
@@ -57,7 +70,8 @@ EXT2_Inode * _EXT2_GetInode(FileDescriptor *desc, uint32_t inode_i)
     return _EXT2_ReadAddr(desc, address, data->inode_size);
 }
 
-EXT2_FD * _EXT2_FindFDFromID(uint32_t id)
+EXT2_FD*
+_EXT2_FindFDFromID(uint32_t id)
 {
     EXT2_FD *cur_fd = fd;
     while(cur_fd->next != NULL)
@@ -69,11 +83,12 @@ EXT2_FD * _EXT2_FindFDFromID(uint32_t id)
     return NULL;
 }
 
-uint32_t _EXT2_Initialize(FileDescriptor *desc)
+uint32_t
+_EXT2_Initialize(FileDescriptor *desc)
 {
     uint8_t *memory_pool = bootstrap_malloc(POOL_SIZE);
     if(memory_pool == NULL)return -1;
-
+    
     if(desc->read(0, POOL_SIZE, (uint16_t*)memory_pool) < 0)return -2;
 
     EXT2_SuperBlock *s_blk = &memory_pool[1024];
@@ -116,7 +131,11 @@ uint32_t _EXT2_Initialize(FileDescriptor *desc)
 }
 
 
-uint32_t _EXT2_Filesystem_OpenFile(FileDescriptor *desc, const char *filename, int flags, int perms)
+uint32_t
+_EXT2_Filesystem_OpenFile(FileDescriptor *desc,
+                          const char *filename,
+                          int flags,
+                          int perms)
 {
     //Navigate the tree to find the inode for the file
     //Read the inode for the file to retrive its contents
@@ -205,7 +224,12 @@ uint32_t _EXT2_Filesystem_OpenFile(FileDescriptor *desc, const char *filename, i
 
 }
 
-uint32_t _EXT2_ReadBlockData(FileDescriptor *desc, uint32_t block_index, uint32_t offset, uint8_t *dest, size_t size)
+uint32_t
+_EXT2_ReadBlockData(FileDescriptor *desc,
+                    uint32_t block_index,
+                    uint32_t offset,
+                    uint8_t *dest,
+                    size_t size)
 {
     EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
     uint32_t block_address = block_index * data->block_size;
@@ -213,7 +237,12 @@ uint32_t _EXT2_ReadBlockData(FileDescriptor *desc, uint32_t block_index, uint32_
     return size;
 }
 
-uint8_t _EXT2_Filesystem_ReadFile(FileDescriptor *desc, UID id, uint8_t *buffer, size_t size)
+
+uint8_t
+_EXT2_Filesystem_ReadFile(FileDescriptor *desc,
+                          UID id,
+                          uint8_t *buffer,
+                          size_t size)
 {
     EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
     EXT2_FD *cur_fd = _EXT2_FindFDFromID(id);
@@ -288,8 +317,8 @@ uint8_t _EXT2_Filesystem_ReadFile(FileDescriptor *desc, UID id, uint8_t *buffer,
             else if(block_index < data->second_indirection_entry_count + data->first_indirection_entry_count + 12)
                 {
                     //At this point we're done with table one so lets use its storage for stuff!
-                    uint32_t table_index = 
-                    (block_index - block_index_limit_1)/ data->first_indirection_entry_count;
+                    uint32_t table_index =
+                        (block_index - block_index_limit_1)/ data->first_indirection_entry_count;
 
                     if(i2_table[table_index] == 0)break;
 
@@ -306,19 +335,19 @@ uint8_t _EXT2_Filesystem_ReadFile(FileDescriptor *desc, UID id, uint8_t *buffer,
                             );
                         }
 
-                    uint32_t i = 
-                    (block_index - block_index_limit_1) % data->first_indirection_entry_count;
+                    uint32_t i =
+                        (block_index - block_index_limit_1) % data->first_indirection_entry_count;
 
                     //one indirection
-                    uint32_t read_size = 
-                    ((size > data->block_size)?data->block_size:size) - block_offset;
-                    
+                    uint32_t read_size =
+                        ((size > data->block_size)?data->block_size:size) - block_offset;
+
                     _EXT2_ReadBlockData(
-                                             desc,
-                                             i2_i_table[i],
-                                             block_offset,
-                                             buffer,
-                                             read_size);
+                        desc,
+                        i2_i_table[i],
+                        block_offset,
+                        buffer,
+                        read_size);
 
                     buffer += read_size;
                     size -= read_size;
@@ -340,7 +369,11 @@ uint8_t _EXT2_Filesystem_ReadFile(FileDescriptor *desc, UID id, uint8_t *buffer,
     return 0;
 }
 
-uint64_t _EXT2_Filesystem_SeekFile(FileDescriptor *desc, uint32_t fd, uint64_t offset, int whence)
+uint64_t
+_EXT2_Filesystem_SeekFile(FileDescriptor *desc,
+                          uint32_t fd,
+                          uint64_t offset,
+                          int whence)
 {
     //Seek for a part of the file
     EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
@@ -349,38 +382,47 @@ uint64_t _EXT2_Filesystem_SeekFile(FileDescriptor *desc, uint32_t fd, uint64_t o
     if(cur_fd == NULL)return -1;
 
     switch(whence)
-    {
+        {
         case SEEK_SET:
-        cur_fd->extra_info = offset;
-        break;
+            cur_fd->extra_info = offset;
+            break;
         case SEEK_CUR:
-        cur_fd->extra_info += offset;
-        break;
+            cur_fd->extra_info += offset;
+            break;
         case SEEK_END:
-        cur_fd->extra_info = cur_fd->more_extra_info - offset;
-        break;
-    }
+            cur_fd->extra_info = cur_fd->more_extra_info - offset;
+            break;
+        }
 
     if(cur_fd->extra_info >= cur_fd->more_extra_info)cur_fd->extra_info = cur_fd->more_extra_info;
     return cur_fd->extra_info;
 }
 
-uint8_t _EXT2_Filesystem_CloseFile(FileDescriptor *desc, uint32_t fd)
+uint8_t
+_EXT2_Filesystem_CloseFile(FileDescriptor *desc,
+                           uint32_t fd)
 {
     //Remove the entry for the file
 }
 
-uint8_t _EXT2_Filesystem_DeleteFile(FileDescriptor *desc, const char *file)
+uint8_t
+_EXT2_Filesystem_DeleteFile(FileDescriptor *desc,
+                            const char *file)
 {
 
 }
 
-uint8_t _EXT2_Filesystem_RenameFile(FileDescriptor *desc, const char *orig_name, const char *new_name)
+uint8_t
+_EXT2_Filesystem_RenameFile(FileDescriptor *desc,
+                            const char *orig_name,
+                            const char *new_name)
 {
 
 }
 
-uint32_t _EXT2_Filesystem_OpenDir(FileDescriptor *desc, const char *filename)
+uint32_t
+_EXT2_Filesystem_OpenDir(FileDescriptor *desc,
+                         const char *filename)
 {
     EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
     char *fname = filename + strlen(desc->path) - 1;
@@ -462,7 +504,10 @@ uint32_t _EXT2_Filesystem_OpenDir(FileDescriptor *desc, const char *filename)
 
 }
 
-uint8_t _EXT2_Filesystem_ReadDir(FileDescriptor *desc, uint32_t dd, Filesystem_DirEntry *dirent)
+uint8_t
+_EXT2_Filesystem_ReadDir(FileDescriptor *desc,
+                         uint32_t dd,
+                         Filesystem_DirEntry *dirent)
 {
     //provide the next entry in the directory
     EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
@@ -507,18 +552,24 @@ uint8_t _EXT2_Filesystem_ReadDir(FileDescriptor *desc, uint32_t dd, Filesystem_D
     return -1;
 }
 
-uint8_t _EXT2_Filesystem_CloseDir(FileDescriptor *desc, uint32_t fd)
+uint8_t
+_EXT2_Filesystem_CloseDir(FileDescriptor *desc,
+                          uint32_t fd)
 {
     //Find and remove the associated entry
 
 }
 
-uint8_t _EXT2_Filesystem_MakeDir(FileDescriptor *desc, const char *path)
+uint8_t
+_EXT2_Filesystem_MakeDir(FileDescriptor *desc,
+                         const char *path)
 {
 
 }
 
-uint8_t _EXT2_Filesystem_DeleteDir(FileDescriptor *desc, const char *path)
+uint8_t
+_EXT2_Filesystem_DeleteDir(FileDescriptor *desc,
+                           const char *path)
 {
 
 }

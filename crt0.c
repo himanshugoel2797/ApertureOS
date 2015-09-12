@@ -65,12 +65,12 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     //Once virtual memory management is put in place, ACPI tables become inaccessible, the acpi table will need to be copied
     physMemMan_Setup();
     virtMemMan_Setup();
-    
+
     Interrupts_Virtualize();
     graphics_Initialize();
-    
+
     //Attempt to initialize all PCI drivers here so they can mark their MMIO space as used
-    AHCI_Initialize();
+    temp2 = AHCI_Initialize();
 
     kmalloc_init();
     Timers_Setup();
@@ -79,6 +79,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     tmp = kmalloc(1080*1920*4 + KB(4));
     tmp += KB(4);
     tmp -= ((uint32_t)tmp) % KB(4);
+    memset(tmp, 0xff, 1920*1080*4);
 
     COM_WriteStr("Kernel Size: %x MiB\r\n", ((uint32_t)&_region_kernel_end_ - LOAD_ADDRESS)/(1024 * 1024));
 
@@ -105,7 +106,6 @@ void t_main(int argc, char **argv)
 
     Interrupts_Lock();
     COM_WriteStr("FD: %x\r\n", fd);
-    memset(tmp, 0xff, 1920*1080*4);
     if(fd != -1)Filesystem_ReadFile(fd, tmp, 1920*1080*4);
     Interrupts_Unlock();
     //tmp = buf;
@@ -117,7 +117,7 @@ void t_main(int argc, char **argv)
             //COM_WriteStr("%s\r\n", entry.dir_name);
         }
 
-        while(1);
+    while(1);
     sys_tss.esp0 = kmalloc(KB(16));
     asm volatile(
         "cli \n\t"

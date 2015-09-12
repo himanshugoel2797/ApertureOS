@@ -11,27 +11,27 @@
 #define MAX_IOAPIC_COUNT 128
 #define IOAPIC_PIN_COUNT 24
 
-uint8_t 
-IOAPIC_Initialize(uint32_t baseAddr, 
+uint8_t
+IOAPIC_Initialize(uint32_t baseAddr,
                   uint32_t global_int_base);
 
-void 
-IOAPIC_MapIRQ(uint8_t global_irq, 
-              uint8_t apic_vector, 
-              uint64_t apic_id, 
-              uint8_t trigger_mode, 
-              uint8_t polarity, 
+void
+IOAPIC_MapIRQ(uint8_t global_irq,
+              uint8_t apic_vector,
+              uint64_t apic_id,
+              uint8_t trigger_mode,
+              uint8_t polarity,
               uint8_t delivery_mode);
 
-void 
-IOAPIC_SetEnableMode(uint8_t vector, 
+void
+IOAPIC_SetEnableMode(uint8_t vector,
                      bool active);
 
-uint8_t 
-IOAPIC_GetVector(uint8_t global_irq, 
+uint8_t
+IOAPIC_GetVector(uint8_t global_irq,
                  uint8_t *vec);
 
-void 
+void
 IOAPIC_VirtualizeAll(void);
 
 /**@}*/

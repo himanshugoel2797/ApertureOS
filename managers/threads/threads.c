@@ -86,24 +86,6 @@ void threadMan_InterruptHandler(Registers *regs)
     addr -= (addr % 64);
     asm volatile("xrstor (%%eax)" :: "a"(addr));
 
-    //if((curThread->flags & 1) == THREAD_FLAGS_USER)
-    {
-        /*asm volatile(
-                "push %%ebx\n\t"
-                "push %%eax\n\t"
-                "add $4, %%eax\n\t"
-                "movl $0x23, (%%eax)\n\t"
-                "add $40, %%eax\n\t"
-                "movl $0x23, (%%eax)\n\t"
-                "sub $4, %%eax\n\t"
-                "pop %%ebx\n\t"
-                "add $48, %%ebx\n\t"
-                "movl %%ebx, (%%eax)\n\t"
-                "pop %%ebx\n\t"
-                 :: "a"(nxThread->regs.unused)
-                );*/
-    }
-
     //Switch stacks
     asm volatile
     (
@@ -157,7 +139,6 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64
     //Entering critical section, disable all interrupts
     Interrupts_Lock();
     Thread *curThreadInfo = kmalloc(sizeof(Thread));
-    COM_WriteStr("curThreadInfo %d\r\n", curThreadInfo);
     curThreadInfo->uid = uidBase++;
     curThreadInfo->flags = flags;
     curThreadInfo->status = 0;

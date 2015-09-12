@@ -5,12 +5,13 @@
 #include "elf.h"
 #include "types.h"
 
-typedef struct ELF_Info_T{
-	UID id;
-	void (*elf_main)(void);
-	uint32_t flags;
-	struct ELF_Info_T *next;
-}ELF_Info;
+typedef struct ELF_Info_T
+{
+    UID id;
+    void (*elf_main)(void);
+    uint32_t flags;
+    struct ELF_Info_T *next;
+} ELF_Info;
 
 
 #endif

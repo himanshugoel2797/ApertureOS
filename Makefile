@@ -35,6 +35,7 @@ SOURCES=graphics/graphics.o	\
 
 POST_INIT=processors/elf_loader/elf_loader.o \
 		  processors/umalloc/umalloc.o \
+		  processors/socket/socket.o \
 
 
 PLATFORM=~/opt/cross/bin/i686
@@ -65,11 +66,14 @@ MKDIR=mkdir
 CP=cp
 CCADMIN=CCadmin
 GCC=clang -target i986-none-elf
+
 CFLAGS_A= -ffreestanding -Wall -Wextra -Wno-trigraphs -D$(CONF) -DBOOT_FS=$(BOOT_FS)  -DCURRENT_YEAR=$(CURRENT_YEAR) -DCOM_ENABLED=$(COM_ENABLED) $(INCLUDES)
 CFLAGS=$(CFLAGS_A) -ftree-vectorize -O0
+
 stageA:CFLAGS=-mno-sse -O0 $(CFLAGS_A)
-post_init:CFLAGS=-ftree-vectorize -O4 $(CFLAGS_A)
+post_init:CFLAGS=-ftree-vectorize -O3 $(CFLAGS_A)
 ASM=$(PLATFORM)-elf-gcc -DDEBUG -ffreestanding -march=i686
+
 TEST_CMD=qemu-system-x86_64 $(QEMU_OPTS)
 
 ANALYZE=clang-check -analyze

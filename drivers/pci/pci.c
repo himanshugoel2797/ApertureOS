@@ -119,7 +119,6 @@ void pci_setCommand(uint32_t device_index, uint16_t value)
                        0x04);
 
     //reg &= 0xFFFF0000;
-    COM_WriteStr("%b\r\n", reg);
     reg |= value;
     pci_writeDWord(
         devices[device_index].bus,
