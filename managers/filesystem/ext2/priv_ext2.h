@@ -7,6 +7,9 @@
 
 #define POOL_SIZE MB(2)
 
+uint32_t *i1_cache, *i2_1_cache, *i2_2_cache;
+uint32_t i1_prev_index, i2_1_prev_index, i2_2_prev_index;
+
 uint8_t*
 _EXT2_ReadAddr(FileDescriptor *desc,
                uint64_t addr,

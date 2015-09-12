@@ -106,8 +106,6 @@ _EXT2_GetBlockFromInode(FileDescriptor *desc,
                         EXT2_Inode *inode,
                         uint32_t index)
 {
-
-	//TODO optimize this by using a cache for the indirection tables
 	
 	//Determine what the block index for the requested index is
 	EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
@@ -129,11 +127,19 @@ _EXT2_GetBlockFromInode(FileDescriptor *desc,
 		if (inode->direct_block[12] == 0)
 			return NULL;
 
-		uint32_t *ind_t_1 = (uint32_t*)_EXT2_ReadAddr(desc,
-		                                              inode->direct_block[12] * data->block_size,
-		                                              data->block_size);
+		if (i1_prev_index != inode->direct_block[12])
+		{
+			i1_prev_index = inode->direct_block[12];
 
-		read_index = ind_t_1[index - 12];
+			memcpy(i1_cache, 
+			       (uint32_t*)_EXT2_ReadAddr(desc,
+		    	                            inode->direct_block[12] * data->block_size,
+		        	                        data->block_size)
+			       , data->block_size);
+		}
+
+		COM_WriteStr("i1_prev_index %x\r\n", i1_prev_index);
+		read_index = i1_cache[index - 12];
 	}
 	else if (index < data->s_indir_e_cnt + data->f_indir_e_cnt + 12)
 	{
@@ -142,17 +148,30 @@ _EXT2_GetBlockFromInode(FileDescriptor *desc,
 
 		uint32_t table_1_index = (index - block_index_limit_1)/data->f_indir_e_cnt;
 
-		uint32_t *ind_t_1 = (uint32_t*)_EXT2_ReadAddr(desc,
-		                                              inode->direct_block[13] * data->block_size,
-		                                              data->block_size);
+		if(i2_1_prev_index != inode->direct_block[13])
+		{
+			i2_1_prev_index = inode->direct_block[13];
 
+			memcpy(i2_1_cache, 
+			       (uint32_t*)_EXT2_ReadAddr(desc,
+		   		                            inode->direct_block[13] * data->block_size,
+	   		    	                        data->block_size)
+			, data->block_size);
+
+		}
 		uint32_t i = (index - block_index_limit_1) % data->f_indir_e_cnt;
 
-		ind_t_1 = (uint32_t*)_EXT2_ReadAddr(desc,
-		                                   	ind_t_1[table_1_index] * data->block_size,
-		                                    data->block_size);
+		if(i2_2_prev_index != i2_1_cache[table_1_index])
+		{
+			i2_2_prev_index = i2_1_cache[table_1_index];
+			memcpy(i2_2_cache, 
+			       (uint32_t*)_EXT2_ReadAddr(desc,
+		    	                           	i2_1_cache[table_1_index] * data->block_size,
+		        	                        data->block_size)
+			, data->block_size);
+		}
 
-		read_index = ind_t_1[i];
+		read_index = i2_2_cache[i];
 	}
 	else if (index < data->t_indir_e_cnt + data->s_indir_e_cnt + data->f_indir_e_cnt + 12)
 	{

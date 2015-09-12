@@ -53,6 +53,13 @@ _EXT2_Initialize(FileDescriptor *desc)
     else
         sprintf(data->vol_name, "EXT2_%d", new_uid());
 
+    i1_cache = kmalloc(data->block_size);
+    i2_1_cache = kmalloc(data->block_size);
+    i2_2_cache = kmalloc(data->block_size);
+
+    i1_prev_index = 0;
+    i2_1_prev_index = 0;
+    i2_2_prev_index = 0;
 
 
     if(fd == NULL)fd = kmalloc(sizeof(EXT2_FD));
