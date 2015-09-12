@@ -166,6 +166,29 @@ AHCI_Read(HBA_PORT *port,
     return AHCI_SendIOCommand(port, start, count, buf, FALSE);
 }
 
+
+
+bool
+AHCI_0_Write(uint64_t start,
+            uint32_t count,
+            uint16_t *buf)
+{
+    if(disks[0] == 0xFF)return FALSE;
+    return AHCI_Write(&hba_mem->ports[disks[0]], start, count, buf);
+}
+
+bool
+AHCI_Write(HBA_PORT *port,
+          uint64_t start,
+          uint32_t count,
+          uint16_t *buf)
+{
+    if(count & 511 != 0)count -= 512;   //Make it so that count gets rounded down
+    return AHCI_SendIOCommand(port, start, count, buf, TRUE);
+}
+
+
+
 bool
 AHCI_SendIOCommand(HBA_PORT *port,
                    uint64_t start,

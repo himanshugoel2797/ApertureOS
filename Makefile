@@ -1,5 +1,6 @@
 # Environment
 
+PLATFORM=~/opt/cross/bin/i686
 INCLUDES=-I. -Idrivers -Imanagers -Iprocessors -Ikmalloc
 
 PRE_FPU_BOOT=crt0.o gdt.o idt.o cpuid.o \
@@ -18,7 +19,7 @@ PRE_FPU_BOOT=crt0.o gdt.o idt.o cpuid.o \
 
 SOURCES=graphics/graphics.o	\
 				managers/filesystem/filesystem.o \
-				managers/filesystem/ext2/ext2.o \
+				managers/filesystem/ext2/ext2.o managers/filesystem/ext2/ext2_helpers.o \
 				managers/keyboard/keyboard.o	\
 				managers/phys_mem_manager/phys_mem_manager.o \
 				managers/process/process_manager.o	\
@@ -38,7 +39,6 @@ POST_INIT=processors/elf_loader/elf_loader.o \
 		  processors/socket/socket.o \
 
 
-PLATFORM=~/opt/cross/bin/i686
 
 OUTDISK=sdb
 

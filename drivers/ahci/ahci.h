@@ -50,6 +50,33 @@ AHCI_0_Read(uint64_t start,
            uint32_t count,
            uint16_t *buf);
 
+
+
+//! Write to the disk
+
+//! \param start The LBA48 sector start address
+//! \param count The number of bytes to write, this is rounded down to a multiple of 512
+//! \param buf The buffer to read data from
+//! \return TRUE on write success, FALSE on failure
+bool
+AHCI_Write(HBA_PORT *port,
+          uint64_t start,
+          uint32_t count,
+          uint16_t *buf);
+
+
+//! Write to the first disk
+
+//! \param start The LBA48 sector start address
+//! \param count The number of bytes to write, this is rounded down to a multiple of 512
+//! \param buf The buffer to read data from
+//! \return TRUE on write success, FALSE on failure
+bool
+AHCI_0_Write(uint64_t start,
+          	uint32_t count,
+          	uint16_t *buf);
+
+
 /**@}*/
 
 #endif

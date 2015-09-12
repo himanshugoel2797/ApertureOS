@@ -55,7 +55,7 @@ filesystem_Initialize(void)
 
 
     //Setup the first boot disk as the specified type of FS
-    if(Filesystem_RegisterDescriptor("/", AHCI_0_Read, NULL, BOOT_FS) == 0)
+    if(Filesystem_RegisterDescriptor("/", AHCI_0_Read, AHCI_0_Write, BOOT_FS) == 0)
         {
             initialized = TRUE;
         }
@@ -91,7 +91,7 @@ Filesystem_ReadFile(UID id,
 {
     if(!initialized)return -1;
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromUID(id);
-    uint8_t result = desc->driver->_H_Filesystem_ReadFile(desc, id, buffer, size);
+    uint8_t result = desc->driver->_H_Filesystem_ReadFile(desc, EXTRACT_ID(id), buffer, size);
     return result;
 }
 
@@ -100,7 +100,7 @@ Filesystem_CloseFile(UID fd)
 {
     if(!initialized)return -1;
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromUID(fd);
-    uint8_t result = desc->driver->_H_Filesystem_CloseFile(desc, fd);
+    uint8_t result = desc->driver->_H_Filesystem_CloseFile(desc, EXTRACT_ID(fd));
     return result;
 }
 
@@ -111,7 +111,7 @@ Filesystem_SeekFile(UID fd,
 {
     if(!initialized)return -1;
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromUID(fd);
-    uint8_t result = desc->driver->_H_Filesystem_SeekFile(desc, fd, offset, whence);
+    uint8_t result = desc->driver->_H_Filesystem_SeekFile(desc, EXTRACT_ID(fd), offset, whence);
     return result;
 }
 
@@ -153,7 +153,7 @@ Filesystem_ReadDir(UID dd,
 {
     if(!initialized)return -1;
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromUID(dd);
-    uint8_t result = desc->driver->_H_Filesystem_ReadDir(desc, dd, dir);
+    uint8_t result = desc->driver->_H_Filesystem_ReadDir(desc, EXTRACT_ID(dd), dir);
     return result;
 }
 
@@ -162,7 +162,7 @@ Filesystem_CloseDir(UID fd)
 {
     if(!initialized)return -1;
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromUID(fd);
-    uint8_t result = desc->driver->_H_Filesystem_CloseDir(desc, fd);
+    uint8_t result = desc->driver->_H_Filesystem_CloseDir(desc, EXTRACT_ID(fd));
     return result;
 }
 
