@@ -35,4 +35,10 @@ _EXT2_GetBlockFromInode(FileDescriptor *desc,
                         EXT2_Inode *inode,
                         uint32_t index);
 
+uint8_t
+_EXT2_GetFileInfo(FileDescriptor *desc,
+                  const char *filename,
+                  bool *is_dir,
+                  uint32_t *inode_num);
+
 #endif

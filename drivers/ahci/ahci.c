@@ -60,7 +60,7 @@ AHCI_Initialize(void)
             ahci_memory_base =
                 VIRTUALIZE_HIGHER_MEM_OFFSET(devices[ahci_controller_index].bars[5]);
         }
-    
+
     //Enable PCI busmastering for this device
     pci_setCommand(ahci_controller_index, PCI_BUS_MASTER_CMD);
 
@@ -149,10 +149,10 @@ AHCI_CheckDeviceType(HBA_PORT *port)
 
 bool
 AHCI_0_Read(uint64_t start,
-           uint32_t count,
-           uint16_t *buf)
+            uint32_t count,
+            uint16_t *buf)
 {
-        //Determine the first present port
+    //Determine the first present port
     if(disks[0] == 0xFF)return FALSE;
     return AHCI_Read(&hba_mem->ports[disks[0]], start, count, buf);
 }
@@ -170,8 +170,8 @@ AHCI_Read(HBA_PORT *port,
 
 bool
 AHCI_0_Write(uint64_t start,
-            uint32_t count,
-            uint16_t *buf)
+             uint32_t count,
+             uint16_t *buf)
 {
     if(disks[0] == 0xFF)return FALSE;
     return AHCI_Write(&hba_mem->ports[disks[0]], start, count, buf);
@@ -179,9 +179,9 @@ AHCI_0_Write(uint64_t start,
 
 bool
 AHCI_Write(HBA_PORT *port,
-          uint64_t start,
-          uint32_t count,
-          uint16_t *buf)
+           uint64_t start,
+           uint32_t count,
+           uint16_t *buf)
 {
     if(count & 511 != 0)count -= 512;   //Make it so that count gets rounded down
     return AHCI_SendIOCommand(port, start, count, buf, TRUE);
@@ -254,7 +254,7 @@ AHCI_SendIOCommand(HBA_PORT *port,
     cmd_tbl->prdt_entry[i].dbc = (count * 512) - 1;
     cmd_tbl->prdt_entry[i].rsv1 = 0;
     cmd_tbl->prdt_entry[i].i = 0;
-    
+
     // The below loop waits until the port is no longer busy before issuing a new command
     while ((port->tfd & (ATA_DEV_BUSY | ATA_DEV_DRQ)) && spin < 1000000)
         {
@@ -310,8 +310,8 @@ AHCI_FindCMDSlot(HBA_PORT *port)
     return -1;
 }
 
-void 
-AHCI_RebasePort(HBA_PORT *port, 
+void
+AHCI_RebasePort(HBA_PORT *port,
                 uint32_t AHCI_BASE,
                 int portno)
 {
@@ -351,7 +351,7 @@ AHCI_RebasePort(HBA_PORT *port,
 }
 
 // Start command engine
-void 
+void
 AHCI_StartCMD(HBA_PORT *port)
 {
     // Wait until CR (bit15) is cleared
@@ -363,7 +363,7 @@ AHCI_StartCMD(HBA_PORT *port)
 }
 
 // Stop command engine
-void 
+void
 AHCI_StopCMD(HBA_PORT *port)
 {
     // Clear ST (bit0)

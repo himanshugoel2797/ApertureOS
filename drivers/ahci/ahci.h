@@ -47,8 +47,8 @@ AHCI_Read(HBA_PORT *port,
 //! \return TRUE on read success, FALSe on failure
 bool
 AHCI_0_Read(uint64_t start,
-           uint32_t count,
-           uint16_t *buf);
+            uint32_t count,
+            uint16_t *buf);
 
 
 
@@ -60,9 +60,9 @@ AHCI_0_Read(uint64_t start,
 //! \return TRUE on write success, FALSE on failure
 bool
 AHCI_Write(HBA_PORT *port,
-          uint64_t start,
-          uint32_t count,
-          uint16_t *buf);
+           uint64_t start,
+           uint32_t count,
+           uint16_t *buf);
 
 
 //! Write to the first disk
@@ -73,8 +73,8 @@ AHCI_Write(HBA_PORT *port,
 //! \return TRUE on write success, FALSE on failure
 bool
 AHCI_0_Write(uint64_t start,
-          	uint32_t count,
-          	uint16_t *buf);
+             uint32_t count,
+             uint16_t *buf);
 
 
 /**@}*/

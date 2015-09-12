@@ -24,7 +24,7 @@ _EXT2_Initialize(FileDescriptor *desc)
 {
     uint8_t *memory_pool = bootstrap_malloc(POOL_SIZE);
     if(memory_pool == NULL)return -1;
-    
+
     if(desc->read(1024/512, POOL_SIZE, (uint16_t*)memory_pool) == 0)return -2;
 
     EXT2_SuperBlock *s_blk = &memory_pool[0];
@@ -79,91 +79,33 @@ _EXT2_Filesystem_OpenFile(FileDescriptor *desc,
                           int flags,
                           int perms)
 {
-    //Navigate the tree to find the inode for the file
-    //Read the inode for the file to retrive its contents
-
-    EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
-    char *fname = filename + strlen(desc->path) - 1;
-    char dir_name[256];
-
-    uint32_t inode_i = ROOT_INODE_INDEX;
-    uint64_t size = 0;
-
-    //Maake sure the path is a directory
-    while(fname != NULL)
-        {
-            memset(dir_name, 0, 256);
-            uint32_t index = (uint32_t)strchr(fname + 1, '/') - (uint32_t)fname - 1;
-            if(index == 0)break;
-            if(index > strlen(fname))
-                {
-                    memcpy(dir_name, fname + 1, strlen(fname) - 1);
-                }
-            else
-                {
-                    memcpy(dir_name, fname + 1, index);
-                }
-
-            //Find the directory by traversing the tree
-            EXT2_Inode inode;
-            memcpy(&inode, _EXT2_GetInode(desc, inode_i), sizeof(EXT2_Inode));
-
-            for(int i = 0; i < 12; i++)
-                {
-                    if(inode.direct_block[i] == 0)break;
-
-                    //Check the block entries
-                    uint64_t address = inode.direct_block[i] * data->block_size;
-
-                    if(inode.type_perm >> 12 == EXT2_INODE_DIR)
-                        {
-                            EXT2_DirectoryEntry *dir =  _EXT2_ReadAddr(desc, address, 512);
-                            char entry_name[256];
-
-                            while(dir->name_len != 0)
-                                {
-                                    memset(entry_name, 0, 256);
-                                    memcpy(entry_name, dir->name, 256);
-                                    if(strncmp(entry_name, dir_name, strlen(dir_name)) == 0)
-                                        {
-                                            inode_i = dir->inode_index;
-                                            if(strchr(fname + 1, '/') == NULL)
-                                                {
-                                                    EXT2_Inode inode2;
-                                                    memcpy(&inode2, _EXT2_GetInode(desc, inode_i), sizeof(EXT2_Inode));
-
-
-                                                    i = 13;
-                                                    fname = NULL;
-                                                    size = (((uint64_t)inode2.size_hi) << 32 | inode2.size_lo);
-                                                }
-                                            break;
-                                        }
-                                    dir = (uint32_t)dir + dir->entry_size;
-                                }
-                        }
-                }
-
-            if(fname != NULL)
-                {
-                    char* f_t = strchr(fname + 1, '/');
-                    if(f_t != NULL)fname = f_t;
-                }
-        }
-
     EXT2_FD* fd_n = kmalloc(sizeof(EXT2_FD));
     fd_n->id = new_uid();
-    fd_n->is_directory = FALSE;
-    fd_n->inode = inode_i;
+    fd_n->is_directory = TRUE;
+    fd_n->inode = 0;
     fd_n->next = NULL;
     fd_n->extra_info = 0;
-    fd_n->more_extra_info = size;
+    fd_n->more_extra_info = 0;
 
     last_fd->next = fd_n;
     last_fd = last_fd->next;
 
-    return fd_n->id;
+    _EXT2_GetFileInfo(desc, filename, &fd_n->is_directory, &fd_n->inode);
 
+    if(fd_n->inode != 0)
+        {
+            EXT2_Inode *inode = _EXT2_GetInode(desc, fd_n->inode);
+            fd_n->more_extra_info = (((uint64_t)inode->size_hi) << 32 | inode->size_lo);
+        }
+    else
+        {
+            return -1;
+        }
+
+    COM_WriteStr("inode_i %d\r\n", fd_n->inode);
+    COM_WriteStr("size %d\r\n", fd_n->extra_info);
+    COM_WriteStr("is_dir %d\r\n", fd_n->is_directory);
+    return fd_n->id;
 }
 
 
@@ -193,22 +135,22 @@ _EXT2_Filesystem_ReadFile(FileDescriptor *desc,
     while(size > 0)
         {
 
-                    uint8_t* block_data = _EXT2_GetBlockFromInode(desc, 
-                                                                  &inode, 
-                                                                  block_index);
+            uint8_t* block_data = _EXT2_GetBlockFromInode(desc,
+                                  &inode,
+                                  block_index);
 
-                    if(block_data == NULL)break;
+            if(block_data == NULL)break;
 
-                    //Determine the address from which to begin copying
-                    uint32_t read_size = (data->block_size > size)? size : data->block_size; 
+            //Determine the address from which to begin copying
+            uint32_t read_size = (data->block_size > size)? size : data->block_size;
 
-                    memcpy(buffer, block_data + block_offset, read_size);
+            memcpy(buffer, block_data + block_offset, read_size);
 
-                    buffer += read_size;
-                    size -= read_size;
+            buffer += read_size;
+            size -= read_size;
 
-                    cur_fd->extra_info += read_size;
-                    block_index++;
+            cur_fd->extra_info += read_size;
+            block_index++;
         }
 
     return 0;
@@ -269,84 +211,20 @@ uint32_t
 _EXT2_Filesystem_OpenDir(FileDescriptor *desc,
                          const char *filename)
 {
-    EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
-    char *fname = filename + strlen(desc->path) - 1;
-    char dir_name[256];
-
-    uint32_t inode_i = ROOT_INODE_INDEX;
-    uint64_t size = 0;
-
-    //Maake sure the path is a directory
-    while(fname != NULL)
-        {
-            memset(dir_name, 0, 256);
-            uint32_t index = (uint32_t)strchr(fname + 1, '/') - (uint32_t)fname - 1;
-            if(index == 0)break;
-            if(index > strlen(fname))
-                {
-                    memcpy(dir_name, fname + 1, strlen(fname) - 1);
-                }
-            else
-                {
-                    memcpy(dir_name, fname + 1, index);
-                }
-
-            //Find the directory by traversing the tree
-            EXT2_Inode inode;
-            memcpy(&inode, _EXT2_GetInode(desc, inode_i), sizeof(EXT2_Inode));
-
-            for(int i = 0; i < 12; i++)
-                {
-                    if(inode.direct_block[i] == 0)break;
-
-                    //Check the block entries
-                    uint64_t address = inode.direct_block[i] * data->block_size;
-
-                    if(inode.type_perm >> 12 == EXT2_INODE_DIR)
-                        {
-                            EXT2_DirectoryEntry *dir =  _EXT2_ReadAddr(desc, address, 512);
-                            char entry_name[256];
-
-                            while(dir->name_len != 0)
-                                {
-                                    memset(entry_name, 0, 256);
-                                    memcpy(entry_name, dir->name, 256);
-                                    if(strncmp(entry_name, dir_name, strlen(dir_name)) == 0)
-                                        {
-                                            inode_i = dir->inode_index;
-                                            if(strchr(fname + 1, '/') == NULL)
-                                                {
-                                                    i = 13;
-                                                    fname = NULL;
-                                                    size = (((uint64_t)inode.size_hi) << 32 | inode.size_lo);
-                                                }
-                                            break;
-                                        }
-                                    dir = (uint32_t)dir + dir->entry_size;
-                                }
-                        }
-                }
-
-            if(fname != NULL)
-                {
-                    char* f_t = strchr(fname + 1, '/');
-                    if(f_t != NULL)fname = f_t;
-                }
-        }
-
     EXT2_FD* fd_n = kmalloc(sizeof(EXT2_FD));
     fd_n->id = new_uid();
-    fd_n->is_directory = TRUE;
-    fd_n->inode = inode_i;
+    fd_n->is_directory = FALSE;
+    fd_n->inode = 0;
     fd_n->next = NULL;
     fd_n->extra_info = 0;
-    fd_n->more_extra_info = size;
+    fd_n->more_extra_info = 0;
 
     last_fd->next = fd_n;
     last_fd = last_fd->next;
 
-    return fd_n->id;
+    _EXT2_GetFileInfo(desc, filename, &fd_n->is_directory, &fd_n->inode);
 
+    return fd_n->id;
 }
 
 uint8_t

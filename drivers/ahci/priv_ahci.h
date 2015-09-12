@@ -311,7 +311,7 @@ typedef struct tagHBA_CMD_TBL
 #define ATA_DEV_BUSY 0x80
 #define ATA_DEV_DRQ 0x08
 
-int 
+int
 AHCI_FindCMDSlot(HBA_PORT *port);
 
 void
@@ -321,10 +321,10 @@ AHCI_RebasePort(HBA_PORT *port,
 
 bool
 AHCI_SendIOCommand(HBA_PORT *port,
-                 uint64_t start,
-                 uint32_t count,
-                 uint16_t *buf,
-                 bool write);
+                   uint64_t start,
+                   uint32_t count,
+                   uint16_t *buf,
+                   bool write);
 
 void
 AHCI_StartCMD(HBA_PORT *port);

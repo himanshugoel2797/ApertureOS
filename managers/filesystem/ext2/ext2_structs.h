@@ -123,7 +123,7 @@ typedef struct EXT2_DriverData_T
     uint32_t f_indir_e_cnt;
     uint32_t s_indir_e_cnt;
     uint32_t t_indir_e_cnt;
-    
+
     uint8_t *memory_pool;
 } EXT2_DriverData;
 
