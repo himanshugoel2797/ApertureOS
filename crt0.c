@@ -103,7 +103,7 @@ void t_main(int argc, char **argv)
 
     Interrupts_Lock();
     if(fd != -1)Filesystem_ReadFile(fd, tmp, 1920*1080*4);
-    //Interrupts_Unlock();
+    Interrupts_Unlock();
     //tmp = buf;
 
     UID id = Filesystem_OpenDir("/home/hgoel/");

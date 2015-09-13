@@ -109,6 +109,11 @@ VirtMemMan_Instance virtMemMan_CreateInstance()
     memset((void*)instance[2], 0, KB(4));
     memset((void*)instance[3], 0, KB(4));
 
+    instance[0] |= 1;
+    instance[1] |= 1;
+    instance[2] |= 1;
+    instance[3] |= 1;
+
     return instance;  //The rest should be setup later
 }
 
@@ -205,8 +210,6 @@ uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, 
         //Align the virtAddr to 2MB
         //virtAddr = (virtAddr/MB(2)) * MB(2);
 
-        curInstance_virt[pdpt_i] |= 1;
-
         //Now update the current page directory
         PD_Entry_PSE *pd_pse = (PD_Entry_PSE*)GET_ADDR(&curInstance_virt[pdpt_i]);
 
@@ -231,8 +234,6 @@ uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, 
     {
         //Align the virtAddr to 4KB
         //virtAddr = (virtAddr/KB(4)) * KB(4);
-
-        curInstance_virt[pdpt_i] |= 1;
 
         //Now update the current page directory
         PD_Entry *pd = (PD_Entry*)GET_ADDR(&curInstance_virt[pdpt_i]);

@@ -42,7 +42,7 @@ POST_INIT=processors/elf_loader/elf_loader.o \
 
 OUTDISK=sdb
 
-QEMU_OPTS=-enable-kvm -m 4096 -cpu Haswell,+xsave -d cpu_reset,guest_errors -drive id=disk,file=flash.img,if=none -device ahci,id=ahci -device ide-drive,drive=disk,bus=ahci.0 #-serial file:log.txt
+QEMU_OPTS=-enable-kvm -m 4096M -cpu Haswell,+xsave -d cpu_reset,guest_errors -drive id=disk,file=flash.img,if=none -device ahci,id=ahci -device ide-drive,drive=disk,bus=ahci.0 #-serial file:log.txt
 
 BOOT_FS=EXT2
 
