@@ -75,7 +75,7 @@ void threadMan_InterruptHandler(Registers *regs)
     uint32_t addr = curThread->FPU_state;
     addr += 64;
     addr -= (addr % 64);
-    asm volatile("xsave (%%eax)" :: "a"(addr));
+    //asm volatile("xsave (%%eax)" :: "a"(addr));
 
     curThread->regs.unused = regs;
     curThread->regs.unused -= 4;
@@ -84,7 +84,7 @@ void threadMan_InterruptHandler(Registers *regs)
     addr = curThread->FPU_state;
     addr +=64;
     addr -= (addr % 64);
-    asm volatile("xrstor (%%eax)" :: "a"(addr));
+    //asm volatile("xrstor (%%eax)" :: "a"(addr));
 
     //Switch stacks
     asm volatile
@@ -200,7 +200,7 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64
     uint32_t addr = curThreadInfo->FPU_state;
     addr += 64;
     addr -= (addr % 64);
-    asm volatile("xsave (%%eax)" :: "a"(addr));
+    //asm volatile("xsave (%%eax)" :: "a"(addr));
 
     asm volatile("mov %%ebx, %0" : "=r"(curThreadInfo->regs.unused));
 

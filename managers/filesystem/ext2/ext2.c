@@ -94,7 +94,7 @@ _EXT2_Filesystem_OpenFile(FileDescriptor *desc,
 
     _EXT2_GetFileInfo(desc, filename, &fd_n->is_directory, &fd_n->inode);
 
-    if(fd_n->inode != 0)
+    if(fd_n->inode != 0 && fd_n->is_directory == 0)
     {
         EXT2_Inode *inode = _EXT2_GetInode(desc, fd_n->inode);
         if(inode->hard_link_count == 0)return -1;
@@ -105,9 +105,6 @@ _EXT2_Filesystem_OpenFile(FileDescriptor *desc,
         return -1;
     }
 
-    COM_WriteStr("inode_i %d\r\n", fd_n->inode);
-    COM_WriteStr("size %d\r\n", fd_n->extra_info);
-    COM_WriteStr("is_dir %d\r\n", fd_n->is_directory);
     return fd_n->id;
 }
 
@@ -185,8 +182,11 @@ _EXT2_Filesystem_SeekFile(FileDescriptor *desc,
         cur_fd->extra_info = cur_fd->more_extra_info - offset;
         break;
     }
+    if(cur_fd->extra_info > cur_fd->more_extra_info)cur_fd->extra_info = cur_fd->more_extra_info;
 
-    if(cur_fd->extra_info >= cur_fd->more_extra_info)cur_fd->extra_info = cur_fd->more_extra_info;
+    COM_WriteStr("inode_i %d\r\n", cur_fd->inode);
+    COM_WriteStr("size %d\r\n", cur_fd->extra_info);
+    COM_WriteStr("is_dir %d\r\n", cur_fd->is_directory);
     return cur_fd->extra_info;
 }
 

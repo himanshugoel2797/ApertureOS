@@ -385,7 +385,6 @@ _EXT2_GetFileInfo(FileDescriptor *desc,
                     memcpy(entry_name, dir->name, 256);
                     
                     prev_inode = inode_i;
-
                     if(strncmp(entry_name, dir_name, strlen(dir_name)) == 0)
                     {
                         inode_i = dir->inode_index;
@@ -411,6 +410,10 @@ _EXT2_GetFileInfo(FileDescriptor *desc,
         }
     }
 
-    if(*inode_num == 0)COM_WriteStr("FAILURE!!");
+    if(*inode_num == 0)
+    {
+        COM_WriteStr("FAILURE!!");
+        return -1;
+    }
     return 0;
 }

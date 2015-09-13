@@ -1,11 +1,12 @@
 #include "elf_loader.h"
 #include "priv_elf_loader.h"
 #include "kmalloc.h"
+#include "utils/common.h"
 
-UID e_uid_base = 0;
 ELF_Info *e_info = NULL, *last_e_info = NULL;
 
-UID Elf_Load(const char *path)
+UID 
+Elf_Load(const char *path)
 {
     //Open the file
     UID fd = Filesystem_OpenFile(path, O_RDONLY, 0777);
@@ -14,6 +15,7 @@ UID Elf_Load(const char *path)
 
     //Get the file length
     uint64_t file_size = Filesystem_SeekFile(fd, 0, SEEK_END);
+    Filesystem_SeekFile(fd, 0, SEEK_SET);
 
     if(file_size > MB(2))
     {
@@ -26,7 +28,6 @@ UID Elf_Load(const char *path)
 
     //Parse the elf from here
     Elf32_Ehdr *hdr = (Elf32_Ehdr*)elf_temp;
-
     if(hdr->e_ident[EI_MAG0] != ELFMAG0)goto error;
     if(hdr->e_ident[EI_MAG1] != ELFMAG1)goto error;
     if(hdr->e_ident[EI_MAG2] != ELFMAG2)goto error;
@@ -54,7 +55,7 @@ UID Elf_Load(const char *path)
                 for(int j = 0; j < page_count; j++)
                 {
                     p_addr = physMemMan_Alloc();
-                    virtMemMan_Map(v_addr, p_addr, KB(4), MEM_TYPE_WB, phdr->p_flags, MEM_USER);
+                    virtMemMan_Map(v_addr, p_addr, KB(4), MEM_TYPE_WB, MEM_WRITE | MEM_READ | MEM_EXEC, MEM_USER);
 
                     v_addr += KB(4);
                 }
@@ -62,6 +63,7 @@ UID Elf_Load(const char *path)
                 v_addr = phdr->p_vaddr;
                 memset(v_addr, 0, phdr->p_memsz);
                 memcpy(v_addr, elf_temp + phdr->p_offset, phdr->p_filesz);
+                COM_WriteStr("TEST:%x\r\n", file_size);
 
             }
 
@@ -74,7 +76,7 @@ UID Elf_Load(const char *path)
     kfree(elf_temp);
 
     ELF_Info *elf_info_tmp = kmalloc(sizeof(ELF_Info));
-    elf_info_tmp->id = ++e_uid_base;
+    elf_info_tmp->id = new_uid();
     elf_info_tmp->elf_main = (void(*)(void))hdr->e_entry;
 
     if(e_info == NULL)
@@ -91,6 +93,22 @@ UID Elf_Load(const char *path)
     return elf_info_tmp->id;
 
 error:
+    COM_WriteStr("ERROR!!!");
     kfree(elf_temp);
     return -2;
+}
+
+void 
+Elf_Start(UID id)
+{
+    ELF_Info *inf = e_info;
+    do{
+        if(inf->id == id)break;
+        inf = inf->next;
+    }while(inf != NULL);
+
+    if(inf == NULL)return;
+
+    inf->elf_main();
+
 }

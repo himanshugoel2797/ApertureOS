@@ -23,7 +23,7 @@
 #include "utils/common.h"
 
 #include "graphics/graphics.h"
-
+#include "processors.h"
 
 int temp = 0, temp2 = 0;
 char *tmp;
@@ -98,18 +98,12 @@ void t_main(int argc, char **argv)
 
     Filesystem_Setup();
 
-    Filesystem_DeleteFile("/root/test.data1");
-    COM_WriteStr("LOL\r\n");
-    UID fd = Filesystem_OpenFile("/home/hgoel/test.data", 0, 0);
-    //uint8_t *buf = kmalloc(1920*1080*4 + KB(4));
-    //buf += KB(4);
-    //buf -= ((uint32_t)buf) % KB(4);
-    //COM_WriteStr("%x\r\n", buf);
+    //Filesystem_DeleteFile("/root/test.data");
+    UID fd = Filesystem_OpenFile("/test.elf", 0, 0);
 
     Interrupts_Lock();
-    COM_WriteStr("FD: %x\r\n", fd);
     if(fd != -1)Filesystem_ReadFile(fd, tmp, 1920*1080*4);
-    Interrupts_Unlock();
+    //Interrupts_Unlock();
     //tmp = buf;
 
     UID id = Filesystem_OpenDir("/home/hgoel/");
@@ -118,6 +112,10 @@ void t_main(int argc, char **argv)
     {
         //COM_WriteStr("%s\r\n", entry.dir_name);
     }
+
+    id = Elf_Load("/test.elf");
+    COM_WriteStr("FD: %x\r\n", id);
+    Elf_Start(id);
 
     while(1);
     sys_tss.esp0 = kmalloc(KB(16));

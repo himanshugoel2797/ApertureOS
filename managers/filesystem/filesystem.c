@@ -111,7 +111,7 @@ Filesystem_SeekFile(UID fd,
 {
     if(!initialized)return -1;
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromUID(fd);
-    uint8_t result = desc->driver->_H_Filesystem_SeekFile(desc, EXTRACT_ID(fd), offset, whence);
+    uint64_t result = desc->driver->_H_Filesystem_SeekFile(desc, EXTRACT_ID(fd), offset, whence);
     return result;
 }
 

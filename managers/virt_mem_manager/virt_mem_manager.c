@@ -212,7 +212,7 @@ uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, 
 
         pd_pse[pd_i].addr = physAddr/MB(2);
         pd_pse[pd_i].present = 1;
-        pd_pse[pd_i].user_supervisor = 1;//privLevel;
+        pd_pse[pd_i].user_supervisor = privLevel;
         pd_pse[pd_i].page_size = 1;
         pd_pse[pd_i].read_write = (perms & MEM_WRITE == MEM_WRITE);
         pd_pse[pd_i].nx = (perms & MEM_EXEC != MEM_EXEC);
@@ -255,10 +255,10 @@ uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, 
         }
 
         PT_Entry *pt = (PT_Entry*)(pd[pd_i].addr * KB(4));
-
+        //COM_WriteStr("%b\r\n", perms);
         pt[pt_i].addr = physAddr/KB(4);
         pt[pt_i].present = 1;
-        pt[pt_i].user_supervisor = 1;//privLevel;
+        pt[pt_i].user_supervisor = privLevel;
         pt[pt_i].read_write = (perms & MEM_WRITE == MEM_WRITE);
         pt[pt_i].nx = (perms & MEM_EXEC  != MEM_EXEC);
 
@@ -443,6 +443,6 @@ uint32_t virtMemMan_PageFaultHandler(Registers *regs)
 {
     uint32_t cr2 = 0;
     asm volatile("mov %%cr2, %%eax" : "=a"(cr2));
-    COM_WriteStr("Page Fault! @ %x\r\n", cr2);
+    COM_WriteStr("Page Fault! @ %x Error Code: %b\r\n", cr2, regs->err_code);
     return 0;
 }
