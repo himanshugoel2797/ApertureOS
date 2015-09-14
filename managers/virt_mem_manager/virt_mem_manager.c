@@ -81,7 +81,7 @@ uint8_t virtMemMan_messageHandler(Message *msg)
 
 }
 
-VirtMemMan_Instance virtMemMan_SetCurrent(VirtMemMan_Instance *instance)
+VirtMemMan_Instance virtMemMan_SetCurrent(VirtMemMan_Instance instance)
 {
     VirtMemMan_Instance prev = curInstance_virt;
     curInstance_virt = instance;
@@ -101,13 +101,16 @@ VirtMemMan_Instance virtMemMan_CreateInstance()
     memset(instance, 0, sizeof(uint64_t) * 4);
 
     instance[0] = kernel_main_entry;
+    
     instance[1] = virtMemMan_GetFreePageDirEntry();
-    instance[2] = virtMemMan_GetFreePageDirEntry();
-    instance[3] = virtMemMan_GetFreePageDirEntry();
-
     memset((void*)instance[1], 0, KB(4));
+    
+    instance[2] = virtMemMan_GetFreePageDirEntry();
     memset((void*)instance[2], 0, KB(4));
+    
+    instance[3] = virtMemMan_GetFreePageDirEntry();
     memset((void*)instance[3], 0, KB(4));
+
 
     instance[0] |= 1;
     instance[1] |= 1;
@@ -119,9 +122,10 @@ VirtMemMan_Instance virtMemMan_CreateInstance()
 
 void virtMemMan_Fork(VirtMemMan_Instance dst, VirtMemMan_Instance src)
 {
-    memcpy(&dst[1], &src[1], KB(4));
-    memcpy(&dst[2], &src[2], KB(4));
-    memcpy(&dst[3], &src[3], KB(4));
+
+    memcpy( (dst[1] & ~1), (src[1] & ~1), KB(4));
+    memcpy( (dst[2] & ~1), (src[2] & ~1), KB(4));
+    memcpy( (dst[3] & ~1), (src[3] & ~1), KB(4));
 }
 
 void virtMemMan_ForkCurrent(VirtMemMan_Instance dst)
@@ -200,6 +204,8 @@ uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, 
     //if(virtAddr >= KMEM_END && privLevel != MEM_USER) return -2;
     //if(virtAddr + size > KMEM_END && virtAddr < KMEM_END) return -3;                 //Don't allow boundary crossing
 
+    //privLevel = MEM_USER;
+
     //Calculate the indices
     uint32_t pdpt_i = virtAddr/GB(1);
     uint32_t pd_i = (virtAddr - (pdpt_i * GB(1)))/MB(2);
@@ -217,8 +223,8 @@ uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, 
         pd_pse[pd_i].present = 1;
         pd_pse[pd_i].user_supervisor = privLevel;
         pd_pse[pd_i].page_size = 1;
-        pd_pse[pd_i].read_write = (perms & MEM_WRITE == MEM_WRITE);
-        pd_pse[pd_i].nx = (perms & MEM_EXEC != MEM_EXEC);
+        pd_pse[pd_i].read_write = ((perms & MEM_WRITE) == MEM_WRITE);
+        pd_pse[pd_i].nx = ((perms & MEM_EXEC) != MEM_EXEC);
 
         //Setup cache controls
         pd_pse[pd_i].global = 0;
@@ -260,8 +266,8 @@ uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, 
         pt[pt_i].addr = physAddr/KB(4);
         pt[pt_i].present = 1;
         pt[pt_i].user_supervisor = privLevel;
-        pt[pt_i].read_write = (perms & MEM_WRITE == MEM_WRITE);
-        pt[pt_i].nx = (perms & MEM_EXEC  != MEM_EXEC);
+        pt[pt_i].read_write = ((perms & MEM_WRITE) == MEM_WRITE);
+        pt[pt_i].nx = ((perms & MEM_EXEC) != MEM_EXEC);
 
         //Setup cache controls
         pt[pt_i].global = 0;
@@ -444,6 +450,50 @@ uint32_t virtMemMan_PageFaultHandler(Registers *regs)
 {
     uint32_t cr2 = 0;
     asm volatile("mov %%cr2, %%eax" : "=a"(cr2));
-    COM_WriteStr("Page Fault! @ %x Error Code: %b\r\n", cr2, regs->err_code);
+    COM_WriteStr("Page Fault! @ %x Details: ", cr2);
+
+    if(regs->err_code & 1)
+    {
+        COM_WriteStr("Protection Violation");
+    }else
+    {
+        COM_WriteStr("Non-present page");
+    }
+
+    COM_WriteStr(" caused by ");
+
+    if(regs->err_code & 2)
+    {
+        COM_WriteStr("Write access");
+    }else
+    {
+        COM_WriteStr("Read access");
+    }
+
+    COM_WriteStr(" in ");
+
+    if(regs->err_code & 4)
+    {
+        COM_WriteStr("User mode");
+    }else
+    {
+        COM_WriteStr("Kernel mode");
+    }
+
+    COM_WriteStr("  Additional Info: ");
+
+    if(regs->err_code & 8)
+    {
+        COM_WriteStr("Reserved bit set");
+    }
+
+    if(regs->err_code & 16)
+    {
+        COM_WriteStr("Instruction Fetch");
+    }
+
+    COM_WriteStr("\r\n");
+
+    while(1);
     return 0;
 }

@@ -99,7 +99,7 @@ void t_main(int argc, char **argv)
     Filesystem_Setup();
 
     //Filesystem_DeleteFile("/root/test.data");
-    UID fd = Filesystem_OpenFile("/test.elf", 0, 0);
+    UID fd = Filesystem_OpenFile("/home/hgoel/test.data", 0, 0);
 
     Interrupts_Lock();
     if(fd != -1)Filesystem_ReadFile(fd, tmp, 1920*1080*4);
@@ -116,28 +116,8 @@ void t_main(int argc, char **argv)
     id = Elf_Load("/test.elf");
     COM_WriteStr("FD: %x\r\n", id);
     Elf_Start(id);
-
     while(1);
-    sys_tss.esp0 = kmalloc(KB(16));
-    asm volatile(
-        "cli \n\t"
-        "mov $0x23, %ax\n\t"
-        "mov %ax, %ds\n\t"
-        "mov %ax, %es\n\t"
-        "mov %ax, %fs\n\t"
-        "mov %ax, %gs\n\t"
-        "mov %esp, %eax\n\t"
-        "pushl $0x23\n\t"
-        "pushl %eax\n\t"
-        "pushf\n\t"
-        "pop %eax\n\t"
-        "or $512, %eax\n\t"
-        "push %eax\n\t"
-        "pushl $0x1B\n\t"
-        "push $t_main_user\n\t"
-        "iret\n\t"
-        "t_main_user: \n\t"
-    );
+
 
     //asm volatile("cli");
 
@@ -152,7 +132,7 @@ void t_main(int argc, char **argv)
 //extern "C" /* Use C linkage for kernel_main. */
 void kernel_main(int argc, char** isKernelMode)
 {
-    while(1)
+    while(1);
     {
         graphics_Clear();
         graphics_DrawBuffer(tmp, 0, 0, 1920, 1080);

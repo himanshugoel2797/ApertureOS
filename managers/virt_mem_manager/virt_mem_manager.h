@@ -31,7 +31,7 @@ typedef enum
 typedef uint64_t* VirtMemMan_Instance;
 
 void virtMemMan_Setup();
-VirtMemMan_Instance virtMemMan_SetCurrent(VirtMemMan_Instance *instance);
+VirtMemMan_Instance virtMemMan_SetCurrent(VirtMemMan_Instance instance);
 VirtMemMan_Instance virtMemMan_GetCurrent();
 VirtMemMan_Instance virtMemMan_CreateInstance();
 void virtMemMan_Fork(VirtMemMan_Instance dst, VirtMemMan_Instance src);

@@ -12,7 +12,8 @@ typedef struct Thread
     char FPU_state[512 + 64]; //Allocate extra space for alignment
     UID uid;
     uint32_t status;
-    uint64_t flags;
+    uint32_t flags;
+    uint32_t kstack;
     struct Thread *next;
 } Thread;
 
@@ -26,7 +27,7 @@ typedef enum
 };
 
 void ThreadMan_Setup();
-UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char** argv, uint64_t flags);
+UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char** argv, uint32_t flags);
 void ThreadMan_StartThread(UID id);
 void ThreadMan_ExitThread(UID id);
 void ThreadMan_DeleteThread(UID id);

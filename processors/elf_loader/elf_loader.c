@@ -109,6 +109,31 @@ Elf_Start(UID id)
 
     if(inf == NULL)return;
 
-    inf->elf_main();
+    if(inf->flags & ELF_KERNEL == ELF_KERNEL)
+    {
+        inf->elf_main();
+    }else
+    {
+            asm volatile(
+        "cli \n\t"
+        "mov $0x23, %ax\n\t"
+        "mov %ax, %ds\n\t"
+        "mov %ax, %es\n\t"
+        "mov %ax, %fs\n\t"
+        "mov %ax, %gs\n\t"
+        "mov %esp, %eax\n\t"
+        "pushl $0x23\n\t"
+        "pushl %eax\n\t"
+        "pushf\n\t"
+        "pop %eax\n\t"
+        "or $512, %eax\n\t"
+        "push %eax\n\t"
+        "pushl $0x1B\n\t"
+        "push $0x80000000\n\t"
+        "iret\n\t"
+        "t_main_user: \n\t"
+    );
+
+    }
 
 }

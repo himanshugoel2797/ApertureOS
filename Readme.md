@@ -21,6 +21,7 @@ Address Range            | Use
 0x00100000 -> 0x10000000 | Kernel Code Memory
 0x10000000 -> 0x20000000 | MMIO
 0x10000000 -> 0x40000000 | Kernel Data Memory
+0x40000000 -> 0x40004000 | Kernel Bootstrap code
 0x40000000 -> 0xFFFFBFFF | User Memory
 0xFFFFBFFF -> 0xFFFFFFFF | User Stack
 
