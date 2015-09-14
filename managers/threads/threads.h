@@ -7,15 +7,15 @@
 
 typedef struct Thread
 {
-    uint64_t* cr3;
-    Registers regs;
-    char FPU_state[512 + 64]; //Allocate extra space for alignment
-    UID uid;
-    uint32_t status;
-    uint32_t flags;
-    uint32_t kstack;
     struct Thread *next;
-} Thread;
+    Registers regs;
+    uint64_t* cr3;
+    uint32_t kstack;
+    uint32_t status;
+    UID uid;
+    uint32_t flags;
+    char FPU_state[KB(16)]; //Allocate extra space for alignment
+} __attribute__((packed)) Thread;
 
 typedef enum
 {

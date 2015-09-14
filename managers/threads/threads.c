@@ -68,16 +68,24 @@ void threadMan_InterruptHandler(Registers *regs)
 {
     Thread *nxThread = curThread->next;
 
+    COM_WriteStr("CurThread: %x Next: %x NXThread->status = %x\r\n", curThread, curThread->next, nxThread->status);
     while( (nxThread->status & 1) == 0)
     {
         nxThread = nxThread->next;
-        COM_WriteStr("STALL!!! Cur:%x, Next:%x\r\n", curThread, curThread->next);
+        COM_WriteStr("STALL!!! Cur:%x, Next:%x, Status: %x\r\n", nxThread, nxThread->next, nxThread->status);
     }
+    COM_WriteStr("DONE!!! Cur:%x, Status: %x\r\n", nxThread, nxThread->status);
 
     uint32_t addr = curThread->FPU_state;
     addr += 64;
     addr -= (addr % 64);
-    asm volatile("xsave (%%eax)" :: "a"(addr));
+    asm volatile("push %%eax\n\t"
+                 "push %%edx\n\t"
+                 "mov $0xffffffff, %%eax\n\t"
+                 "mov $0xffffffff, %%edx\n\t"
+                 "xsave (%%ecx)\n\t"
+                 "pop %%edx\n\t"
+                 "pop %%eax\n\t" :: "c"(addr));
 
     curThread->regs.unused = regs;
     curThread->regs.unused -= 4;
@@ -87,9 +95,15 @@ void threadMan_InterruptHandler(Registers *regs)
     curThread = nxThread;
 
     addr = nxThread->FPU_state;
-    addr +=64;
+    addr += 64;
     addr -= (addr % 64);
-    asm volatile("xrstor (%%eax)" :: "a"(addr));
+    asm volatile("push %%eax\n\t"
+                 "push %%edx\n\t"
+                 "mov $0xffffffff, %%eax\n\t"
+                 "mov $0xffffffff, %%edx\n\t"
+                 "xrstor (%%ecx)\n\t"
+                 "pop %%edx\n\t"
+                 "pop %%eax\n\t" :: "c"(addr));
     sys_tss.esp0 = curThread->kstack;
 
     //Switch stacks
@@ -147,6 +161,8 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint32
     Thread *curThreadInfo = kmalloc(sizeof(Thread));
     curThreadInfo->uid = new_uid();
     curThreadInfo->flags = flags;
+    //curThreadInfo->FPU_state = kmalloc(4096 + 64);
+    COM_WriteStr("%x\r\n", curThreadInfo->FPU_state);
     curThreadInfo->status = 0;
 
     //Setup the paging structures for the thread
@@ -157,7 +173,7 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint32
     }
     //TODO setup the remaining registers to suit, set the args for the function too
     memset(&curThreadInfo->regs, 0, sizeof(Registers));
-    memset(curThreadInfo->FPU_state, 0, 512);
+    //memset(curThreadInfo->FPU_state, 0, 4096 + 64);
 
     curThreadInfo->regs.eip = entry;
 
@@ -213,20 +229,27 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint32
         //Backup and reset
         "mov %%esp, %%ebx\n\t"
         "mov %%edi, %%esp\n\t"
-        :: "a"(argv), "b"(curThreadInfo->regs.unused), "c"(argc), "d"(curThreadInfo->regs.eip)
+        :
+        : "a"(argv), "b"(curThreadInfo->regs.unused), "c"(argc), "d"(curThreadInfo->regs.eip)
     );
+    asm volatile("mov %%ebx, %0" : "=r"(curThreadInfo->regs.unused) :: "%edi");
     
     virtMemMan_SetCurrent(prev);
 
     uint32_t addr = curThreadInfo->FPU_state;
     addr += 64;
     addr -= (addr % 64);
-    asm volatile("xsave (%%eax)" :: "a"(addr));
+    asm volatile("push %%eax\n\t"
+                 "push %%edx\n\t"
+                 "mov $0xffffffff, %%eax\n\t"
+                 "mov $0xffffffff, %%edx\n\t"
+                 "xsave (%%ecx)\n\t"
+                 "pop %%edx\n\t"
+                 "pop %%eax\n\t" :: "c"(addr));
 
-    asm volatile("mov %%ebx, %0" : "=r"(curThreadInfo->regs.unused));
     
     //Allocate a kernel mode stack for each thread
-    curThreadInfo->kstack = kmalloc(KB(4));
+    curThreadInfo->kstack = kmalloc(KB(16));
 
     //Store the thread in the queue
     curThreadInfo->next = threads;

@@ -132,7 +132,7 @@ void t_main(int argc, char **argv)
 //extern "C" /* Use C linkage for kernel_main. */
 void kernel_main(int argc, char** isKernelMode)
 {
-    while(1);
+    while(1)
     {
         graphics_Clear();
         graphics_DrawBuffer(tmp, 0, 0, 1920, 1080);
