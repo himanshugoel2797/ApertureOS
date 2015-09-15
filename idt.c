@@ -50,7 +50,6 @@ void IDT_Initialize()
         IDT_SetEntry(i, (uint32_t)idt_handlers[i], 0x08, 0xEE);
         pushesToStack = 1;
     }
-    IDT_SetEntry(0x80, (uint32_t)idt_handlers[0x80], 0x08, 0xEE);
 
     return;
 }
