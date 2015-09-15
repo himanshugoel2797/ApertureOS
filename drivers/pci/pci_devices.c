@@ -58,17 +58,16 @@ pci_GetPCIVendor(uint16_t venID,
                  char ** long_name)
 {
     int i;
-    *short_name = *long_name = "";
+    *short_name = *long_name = "Unknown";
 
     for(i = 0; i < PCI_VENTABLE_LEN; ++i)
     {
         if(PciVenTable[i].VenId == venID)
         {
-            if (!(**short_name))
-                *short_name = PciVenTable[i].VenShort;
+            *short_name = PciVenTable[i].VenShort;
+            *long_name = PciVenTable[i].VenFull;
 
-            if (!(**long_name))
-                *long_name = PciVenTable[i].VenFull;
+            break;
         }
     }
 }
@@ -80,17 +79,16 @@ pci_GetPCIDevice(uint16_t venID,
                  char **chip_desc)
 {
     int i;
-    *chip_name = *chip_desc = "";
+    *chip_name = *chip_desc = "Unknown";
 
     for(i = 0; i < PCI_DEVTABLE_LEN; ++i)
     {
         if(PciDevTable[i].VenId == venID && PciDevTable[i].DevId == devID)
         {
-            if (!(**chip_name))
-                *chip_name = PciDevTable[i].Chip;
+            *chip_name = PciDevTable[i].Chip;
+            *chip_desc = PciDevTable[i].ChipDesc;
 
-            if (!(**chip_desc))
-                *chip_desc = PciDevTable[i].ChipDesc;
+            break;
         }
     }
 }

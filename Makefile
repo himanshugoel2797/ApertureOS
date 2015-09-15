@@ -33,6 +33,8 @@ SOURCES=graphics/graphics.o	\
 				drivers/ps2/ps2.o drivers/ps2/ps2_keyboard.o drivers/ps2/ps2_mouse.o \
 				drivers/ahci/ahci.o \
 				drivers/ata_pio/ata_pio.o \
+				drivers/network/network.o \
+				drivers/network/rtl8139/rtl8139.o \
 				kmalloc/kmalloc.o \
 
 POST_INIT=processors/elf_loader/elf_loader.o \
