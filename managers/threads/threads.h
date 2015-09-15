@@ -26,12 +26,12 @@ typedef enum
     THREAD_FLAGS_VM86 = 4
 };
 
-void ThreadMan_Setup();
+void ThreadMan_Setup(void);
 UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char** argv, uint32_t flags);
 void ThreadMan_StartThread(UID id);
 void ThreadMan_ExitThread(UID id);
 void ThreadMan_DeleteThread(UID id);
-UID ThreadMan_GetCurThreadID();
-void ThreadMan_Yield();
+UID ThreadMan_GetCurThreadID(void);
+void ThreadMan_Yield(void);
 
 #endif /* end of include guard: _THREAD_MANAGER_H_ */

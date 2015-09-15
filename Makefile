@@ -2,6 +2,7 @@
 
 PLATFORM=~/opt/cross/bin/i686
 INCLUDES=-I. -Idrivers -Imanagers -Iprocessors -Ikmalloc
+DEFINES=-DLOG_SYSCALL
 
 PRE_FPU_BOOT=crt0.o gdt.o idt.o cpuid.o \
 				boot.o \
@@ -37,7 +38,7 @@ SOURCES=graphics/graphics.o	\
 POST_INIT=processors/elf_loader/elf_loader.o \
 		  processors/umalloc/umalloc.o \
 		  processors/socket/socket.o \
-
+		  processors/syscall_manager/syscall_man.o \
 
 
 OUTDISK=sdb
@@ -67,7 +68,7 @@ CP=cp
 CCADMIN=CCadmin
 GCC=clang -target i986-none-elf
 
-CFLAGS_A= -ffreestanding -Wall -Wextra -Wno-trigraphs -D$(CONF) -DBOOT_FS=$(BOOT_FS)  -DCURRENT_YEAR=$(CURRENT_YEAR) -DCOM_ENABLED=$(COM_ENABLED) $(INCLUDES)
+CFLAGS_A= -ffreestanding -Wall -Wextra -Wno-trigraphs -D$(CONF) -DBOOT_FS=$(BOOT_FS)  -DCURRENT_YEAR=$(CURRENT_YEAR) -DCOM_ENABLED=$(COM_ENABLED) $(DEFINES) $(INCLUDES)
 CFLAGS=$(CFLAGS_A) -ftree-vectorize -O0
 
 stageA:CFLAGS=-mno-sse -O0 $(CFLAGS_A)

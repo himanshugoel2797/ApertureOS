@@ -47,9 +47,10 @@ void IDT_Initialize()
         //Setup the hardware interrupts
         if(i == 8 || (i >= 10 && i <= 14)) pushesToStack = 0;
         IDT_FillSWInterruptHandler(idt_handlers[i], i, pushesToStack);  //If pushesToStack is non-zero, the value will be pushed to stack
-        IDT_SetEntry(i, (uint32_t)idt_handlers[i], 0x08, 0x8E);
+        IDT_SetEntry(i, (uint32_t)idt_handlers[i], 0x08, 0xEE);
         pushesToStack = 1;
     }
+    IDT_SetEntry(0x80, (uint32_t)idt_handlers[0x80], 0x08, 0xEE);
 
     return;
 }

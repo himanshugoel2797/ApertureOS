@@ -179,7 +179,7 @@ void Interrupts_Unlock()
 
 void Interrupts_GPF_Handler(Registers *regs)
 {
-    COM_WriteStr("General Protection Fault: Register Dump\r\n");
+    COM_WriteStr("General Protection Fault (%x): Register Dump\r\n", regs->err_code);
     COM_WriteStr("EAX: %x\t", regs->eax);
     COM_WriteStr("EBX: %x\t", regs->ebx);
     COM_WriteStr("ECX: %x\t", regs->ecx);

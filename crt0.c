@@ -85,6 +85,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
 
 
     Keyboard_Setup();
+    SyscallManager_Initialize();
 
     UID tid = ThreadMan_CreateThread( t_main, 50, 51, THREAD_FLAGS_USER);
     ThreadMan_StartThread(tid);

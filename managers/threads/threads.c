@@ -13,7 +13,8 @@ UID uidBase = 0;
 
 void kernel_main(int, char**);
 
-void ThreadMan_Setup()
+void 
+ThreadMan_Setup(void)
 {
     thread_sys = SysMan_RegisterSystem();
     strcpy(thread_sys->sys_name, "threadMan");
@@ -29,7 +30,8 @@ void ThreadMan_Setup()
 }
 
 __attribute__((naked, noreturn))
-void threadMan_IDTHandler()
+void 
+threadMan_IDTHandler()
 {
     asm volatile(
         "pusha\n\t"
@@ -64,18 +66,16 @@ void threadMan_IDTHandler()
     );
 }
 
-void threadMan_InterruptHandler(Registers *regs)
+void 
+threadMan_InterruptHandler(Registers *regs)
 {
     Thread *nxThread = curThread->next;
 
-    COM_WriteStr("CurThread: %x Next: %x NXThread->status = %x\r\n", curThread, curThread->next, nxThread->status);
     while( (nxThread->status & 1) == 0)
     {
         nxThread = nxThread->next;
-        COM_WriteStr("STALL!!! Cur:%x, Next:%x, Status: %x\r\n", nxThread, nxThread->next, nxThread->status);
     }
-    COM_WriteStr("DONE!!! Cur:%x, Status: %x\r\n", nxThread, nxThread->status);
-
+    
     uint32_t addr = curThread->FPU_state;
     addr += 64;
     addr -= (addr % 64);
@@ -116,7 +116,8 @@ void threadMan_InterruptHandler(Registers *regs)
     );
 }
 
-uint32_t threadMan_Initialize()
+uint32_t 
+threadMan_Initialize(void)
 {
     //TODO create a new thread and resume remaining work on that by calling another function, this lets us keep things clean
     curThread = NULL;
@@ -149,12 +150,17 @@ uint32_t threadMan_Initialize()
     return 0;
 }
 
-uint8_t threadMan_messageHandler(Message *msg)
+uint8_t 
+threadMan_messageHandler(Message *msg)
 {
 
 }
 
-UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint32_t flags)
+UID 
+ThreadMan_CreateThread(ProcessEntryPoint entry, 
+                       int argc, 
+                       char**argv, 
+                       uint32_t flags)
 {
     //Entering critical section, disable all interrupts
     Interrupts_Lock();
@@ -261,7 +267,8 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint32
     return curThreadInfo->uid;
 }
 
-void ThreadMan_StartThread(UID id)
+void 
+ThreadMan_StartThread(UID id)
 {
     Thread *thd = threads;
     while(thd->next != NULL)
@@ -273,17 +280,26 @@ void ThreadMan_StartThread(UID id)
     thd->status |= 1;
 }
 
-void ThreadMan_ExitThread(UID id)
+void 
+ThreadMan_ExitThread(UID id)
 {
 
 }
 
-void ThreadMan_DeleteThread(UID id)
+void 
+ThreadMan_DeleteThread(UID id)
 {
 
 }
 
-void ThreadMan_Yield()
+void 
+ThreadMan_Yield(void)
 {
     asm volatile("int $48");
+}
+
+UID
+ThreadMan_GetCurThreadID(void)
+{
+    return curThread->uid;
 }
