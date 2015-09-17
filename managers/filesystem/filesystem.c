@@ -10,7 +10,7 @@ uint32_t filesystem_Initialize();
 uint8_t filesystem_messageHandler(Message *msg);
 
 FileDescriptor *descriptors = NULL, *lastDescriptor = NULL;
-Filesystem_Driver *drivers = NULL, *lastDriver = NULL;
+Filesystem_Driver *fs_drivers = NULL, *lastDriver = NULL;
 
 bool initialized = FALSE;
 
@@ -32,25 +32,25 @@ Filesystem_Setup(void)
 uint32_t
 filesystem_Initialize(void)
 {
-    //Register all filesystem drivers
-    drivers = kmalloc(sizeof(Filesystem_Driver));
-    drivers->filesystem = EXT2;
-    drivers->next = NULL;
-    drivers->_H_Initialize = _EXT2_Initialize;
-    drivers->_H_Filesystem_OpenFile = _EXT2_Filesystem_OpenFile;
-    drivers->_H_Filesystem_ReadFile = _EXT2_Filesystem_ReadFile;
-    drivers->_H_Filesystem_SeekFile = _EXT2_Filesystem_SeekFile;
-    drivers->_H_Filesystem_CloseFile = _EXT2_Filesystem_CloseFile;
-    drivers->_H_Filesystem_DeleteFile = _EXT2_Filesystem_DeleteFile;
-    drivers->_H_Filesystem_RenameFile = _EXT2_Filesystem_RenameFile;
+    //Register all filesystem fs_drivers
+    fs_drivers = kmalloc(sizeof(Filesystem_Driver));
+    fs_drivers->filesystem = EXT2;
+    fs_drivers->next = NULL;
+    fs_drivers->_H_Initialize = _EXT2_Initialize;
+    fs_drivers->_H_Filesystem_OpenFile = _EXT2_Filesystem_OpenFile;
+    fs_drivers->_H_Filesystem_ReadFile = _EXT2_Filesystem_ReadFile;
+    fs_drivers->_H_Filesystem_SeekFile = _EXT2_Filesystem_SeekFile;
+    fs_drivers->_H_Filesystem_CloseFile = _EXT2_Filesystem_CloseFile;
+    fs_drivers->_H_Filesystem_DeleteFile = _EXT2_Filesystem_DeleteFile;
+    fs_drivers->_H_Filesystem_RenameFile = _EXT2_Filesystem_RenameFile;
 
-    drivers->_H_Filesystem_OpenDir = _EXT2_Filesystem_OpenDir;
-    drivers->_H_Filesystem_ReadDir = _EXT2_Filesystem_ReadDir;
-    drivers->_H_Filesystem_CloseDir = _EXT2_Filesystem_CloseDir;
-    drivers->_H_Filesystem_MakeDir = _EXT2_Filesystem_MakeDir;
-    drivers->_H_Filesystem_DeleteDir = _EXT2_Filesystem_DeleteDir;
+    fs_drivers->_H_Filesystem_OpenDir = _EXT2_Filesystem_OpenDir;
+    fs_drivers->_H_Filesystem_ReadDir = _EXT2_Filesystem_ReadDir;
+    fs_drivers->_H_Filesystem_CloseDir = _EXT2_Filesystem_CloseDir;
+    fs_drivers->_H_Filesystem_MakeDir = _EXT2_Filesystem_MakeDir;
+    fs_drivers->_H_Filesystem_DeleteDir = _EXT2_Filesystem_DeleteDir;
 
-    lastDriver = drivers;
+    lastDriver = fs_drivers;
 
 
 
@@ -211,7 +211,7 @@ UID Filesystem_RegisterDescriptor(
     }
 
     //Find the filesystem driver
-    Filesystem_Driver *driver = drivers;
+    Filesystem_Driver *driver = fs_drivers;
     while(driver != NULL && driver->next != NULL)
     {
         if(driver->filesystem == fs)break;

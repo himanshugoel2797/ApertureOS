@@ -1,18 +1,14 @@
 #include "rtl8139.h"
 #include "drivers.h"
+#include "managers.h"
 #include "utils/native.h"
 
 uint32_t rtl8139_index = 0;
-uint32_t rtl8139_io_bar = 0;
+uint8_t *rtl8139_mem_bar = 0;
 
 bool
-RTL8139_Detect(void)
+RTL8139_Detect(uint32_t i)
 {
-	int i;
-
-	//Search PCI devices for devices of this family
-	for (i = 0; i < pci_deviceCount; i++)
-	{
 		//Official IDs
 		if(devices[i].vendorID == 0x10EC)
 		{
@@ -63,7 +59,6 @@ RTL8139_Detect(void)
 		{
 			return TRUE;
 		}
-	}
 
 	return FALSE;	//The device wasn't found
 }
@@ -71,13 +66,13 @@ RTL8139_Detect(void)
 void
 RTL8139_Outl(uint32_t offset, uint32_t val)
 {
-	outl(rtl8139_io_bar + offset, val);
+	*(uint32_t*)(rtl8139_mem_bar + offset) = val;
 }
 
 void
 RTL8139_Outb(uint32_t offset, uint8_t val)
 {
-	outb(rtl8139_io_bar + offset, val);
+	rtl8139_mem_bar[offset] = val;
 }
 
 uint32_t
@@ -86,7 +81,18 @@ RTL8139_Initialize(uint32_t deviceIndex)
 	//Enable bus master
 	pci_setCommand(deviceIndex, PCI_BUS_MASTER_CMD);
 	rtl8139_index = deviceIndex;
-	rtl8139_io_bar = devices[rtl8139_index].bars[0];	//Maybe use MMIO instead
+	rtl8139_mem_bar = devices[rtl8139_index].bars[1] & ~1;	//Use the MMIO interface
+
+	COM_WriteStr("IO Base: %x", devices[rtl8139_index].bars[0]);
+
+	if(rtl8139_mem_bar < MEMIO_TOP_BASE)
+	{
+		//We'll have to map 256 bytes into RAM :| 
+	}
+	else
+	{
+		rtl8139_mem_bar = VIRTUALIZE_HIGHER_MEM_OFFSET(rtl8139_mem_bar);
+	}
 }
 
 uint32_t

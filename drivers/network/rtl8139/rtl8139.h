@@ -5,7 +5,7 @@
 #include "../network.h"
 
 bool
-RTL8139_Detect(void);
+RTL8139_Detect(uint32_t index);
 
 uint32_t
 RTL8139_Initialize(uint32_t deviceIndex);
