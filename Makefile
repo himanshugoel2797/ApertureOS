@@ -23,7 +23,6 @@ SOURCES=graphics/graphics.o	\
 				managers/filesystem/ext2/ext2.o managers/filesystem/ext2/ext2_helpers.o \
 				managers/keyboard/keyboard.o	\
 				managers/phys_mem_manager/phys_mem_manager.o \
-				managers/process/process_manager.o	\
 				managers/threads/threads.o	\
 				managers/timer/timer_manager.o \
 				managers/virt_mem_manager/virt_mem_manager.o \
@@ -41,7 +40,7 @@ POST_INIT=processors/elf_loader/elf_loader.o \
 		  processors/umalloc/umalloc.o \
 		  processors/socket/socket.o \
 		  processors/syscall_manager/syscall_man.o \
-
+		  processors/process_manager/process_man.o 
 
 OUTDISK=sdb
 

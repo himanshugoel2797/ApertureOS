@@ -7,6 +7,7 @@
 SystemData *thread_sys = NULL;
 uint32_t threadMan_Initialize();
 uint8_t threadMan_messageHandler(Message *msg);
+bool thread_lock = FALSE;
 
 Thread *threads, *curThread, *lastThread;
 UID uidBase = 0;
@@ -69,6 +70,8 @@ threadMan_IDTHandler()
 void 
 threadMan_InterruptHandler(Registers *regs)
 {
+    if(thread_lock)return;  //Thread switching has been disabled, keep running current thread
+
     Thread *nxThread = curThread->next;
 
     while( (nxThread->status & 1) == 0)
@@ -167,6 +170,7 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
     Thread *curThreadInfo = kmalloc(sizeof(Thread));
     curThreadInfo->uid = new_uid();
     curThreadInfo->flags = flags;
+    curThreadInfo->k_tls = kmalloc(256);
     //curThreadInfo->FPU_state = kmalloc(4096 + 64);
     COM_WriteStr("%x\r\n", curThreadInfo->FPU_state);
     curThreadInfo->status = 0;
@@ -270,6 +274,7 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
 void 
 ThreadMan_StartThread(UID id)
 {
+    ThreadMan_Lock();
     Thread *thd = threads;
     do
     {
@@ -279,11 +284,13 @@ ThreadMan_StartThread(UID id)
     while(thd != NULL);
 
     thd->status |= 1;
+    ThreadMan_Unlock();
 }
 
 void 
 ThreadMan_ExitThread(UID id)
 {
+    ThreadMan_Lock();
     Thread *thd = threads;
     do
     {
@@ -293,11 +300,15 @@ ThreadMan_ExitThread(UID id)
     while(thd != NULL);
 
     thd->status &= ~1;
+    ThreadMan_Unlock();
 }
 
 void 
 ThreadMan_DeleteThread(UID id)
 {
+    if(id == ThreadMan_GetCurThreadID())return; //The current thread object will automatically be cleaned by the kernel
+
+    ThreadMan_Lock();
     Thread *thd = threads, *prev = NULL;
     do
     {
@@ -311,9 +322,10 @@ ThreadMan_DeleteThread(UID id)
     if( (thd->status & 1) == 0)
     {
         prev->next = thd->next;
-        virtMemMan_FreeInstance(thd->regs.cr3);
+        virtMemMan_FreeInstance(thd->cr3);
         kfree(thd);
     }
+    ThreadMan_Unlock();
 }
 
 void 
@@ -326,4 +338,22 @@ UID
 ThreadMan_GetCurThreadID(void)
 {
     return curThread->uid;
+}
+
+void*
+ThreadMan_GetCurThreadTLS(void)
+{
+    return curThread->k_tls;
+}
+
+void
+ThreadMan_Lock(void)
+{
+    thread_lock = TRUE;
+}
+
+void
+ThreadMan_Unlock(void)
+{
+    thread_lock = FALSE;
 }

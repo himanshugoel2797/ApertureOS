@@ -3,5 +3,6 @@
 
 #include "elf_loader/elf_loader.h"
 #include "syscall_manager/syscall_man.h"
+#include "process_manager/process_man.h"
 
 #endif

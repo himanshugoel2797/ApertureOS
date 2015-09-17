@@ -11,23 +11,23 @@
 
 typedef struct{
 	uint32_t size;
-	uint32_t arg0;
-	uint32_t retval;
+	uint64_t arg0;
+	uint64_t retval;
 }generic_syscall;
 
 typedef struct{
 	uint32_t size;
-	uint32_t arg0;
-	uint32_t arg1;
-	uint32_t retval;
+	uint64_t arg0;
+	uint64_t arg1;
+	uint64_t retval;
 }generic_syscall_2;
 
 typedef struct{
 	uint32_t size;
-	uint32_t arg0;
-	uint32_t arg1;
-	uint32_t arg2;
-	uint32_t retval;
+	uint64_t arg0;
+	uint64_t arg1;
+	uint64_t arg2;
+	uint64_t retval;
 }generic_syscall_3;
 
 typedef void(*SyscallHandler)(void *args);
