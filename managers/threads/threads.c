@@ -311,6 +311,7 @@ ThreadMan_DeleteThread(UID id)
     if( (thd->status & 1) == 0)
     {
         prev->next = thd->next;
+        virtMemMan_FreeInstance(thd->regs.cr3);
         kfree(thd);
     }
 }
