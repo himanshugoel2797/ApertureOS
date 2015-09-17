@@ -223,6 +223,9 @@ graphics_DrawBuffer(void* buffer,
     uint64_t x0 = 0, y0= 0;
     uint64_t tmp0 = 0, tmp1 = 0;
 
+    if (x > width) x = 0;
+    if (y > height) y = 0;
+
     if (x+w > width) w = width - x;
     if (y+h > height) h = height - y;
 

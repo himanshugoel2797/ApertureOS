@@ -271,11 +271,12 @@ void
 ThreadMan_StartThread(UID id)
 {
     Thread *thd = threads;
-    while(thd->next != NULL)
+    do
     {
         if(thd->uid == id)break;
         thd = thd->next;
     }
+    while(thd != NULL);
 
     thd->status |= 1;
 }
@@ -283,13 +284,35 @@ ThreadMan_StartThread(UID id)
 void 
 ThreadMan_ExitThread(UID id)
 {
+    Thread *thd = threads;
+    do
+    {
+        if(thd->uid == id)break;
+        thd = thd->next;
+    }
+    while(thd != NULL);
 
+    thd->status &= ~1;
 }
 
 void 
 ThreadMan_DeleteThread(UID id)
 {
+    Thread *thd = threads, *prev = NULL;
+    do
+    {
+        if(thd->uid == id)break;
 
+        prev = thd;
+        thd = thd->next;
+    }
+    while(thd != NULL);
+
+    if( (thd->status & 1) == 0)
+    {
+        prev->next = thd->next;
+        kfree(thd);
+    }
 }
 
 void 
