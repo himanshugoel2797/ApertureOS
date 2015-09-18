@@ -211,7 +211,6 @@ virtMemMan_MapInst(VirtMemMan_Instance curInstance_virt,
 
     uint32_t virtAddr = (uint32_t)v_address;
     uint64_t physAddr = (uint64_t)phys_address;
-    COM_WriteStr("physAddr : %0#16x", physAddr);
     //Check requested permissions to make sure they match up with the virtual address
     //if(virtAddr < KMEM_END && privLevel != MEM_KERNEL) return -2;                 //Make sure permissions match
     //if(virtAddr >= KMEM_END && privLevel != MEM_USER) return -2;
@@ -326,9 +325,6 @@ virtMemMan_MapInst(VirtMemMan_Instance curInstance_virt,
             }
         }
     }
-    uint32_t ra = 0;
-    asm volatile("mov +4(%%ebp), %0" : "=r"(ra));
-    COM_WriteStr("TEST PAGEING! %x\r\n", ra);
     return 0;
 }
 

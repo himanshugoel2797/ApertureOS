@@ -76,7 +76,7 @@ stageA:CFLAGS=-mno-sse -O0 $(CFLAGS_A)
 post_init:CFLAGS=-ftree-vectorize -O3 $(CFLAGS_A)
 ASM=$(PLATFORM)-elf-gcc -DDEBUG -ffreestanding -march=i686
 
-TEST_CMD=qemu-system-x86_64 -s -S $(QEMU_OPTS)
+TEST_CMD=qemu-system-x86_64 $(QEMU_OPTS)
 
 ANALYZE=clang-check -analyze
 

@@ -96,7 +96,6 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
 
 void t_main(int argc, char **argv)
 {
-    while(1);
     Filesystem_Setup();
 
     //Filesystem_DeleteFile("/root/test.data");
@@ -115,7 +114,7 @@ void t_main(int argc, char **argv)
     }
 
     ProcessManager_Initialize();
-    ProcessManager_CreateProcess("test", "/test.elf", 0, NULL, NULL, PROC_PERM_SUPERUSER);
+    ProcessManager_CreateProcess("test", "/test.elf", 0, NULL, NULL, PROC_PERM_KERNEL);
 
     //id = Elf_Load("/test.elf", ELF_USER);
     //COM_WriteStr("FD: %x\r\n", id);
@@ -129,7 +128,7 @@ void t_main(int argc, char **argv)
     {
         //temp++;
         //temp2 = 0xDEADBEEF;
-        asm volatile("mov $0xDEADBEEF, %eax");
+        //asm volatile("mov $0xDEADBEEF, %eax");
     }
 }
 

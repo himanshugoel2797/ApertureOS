@@ -10,7 +10,6 @@ Elf_Load(const char *path, ELF_FLAGS perms)
 {
     //Open the file
     UID fd = Filesystem_OpenFile(path, O_RDONLY, 0777);
-
     if(fd <= 0)return -1;
 
     //Get the file length

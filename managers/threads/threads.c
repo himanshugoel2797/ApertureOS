@@ -99,9 +99,6 @@ threadMan_InterruptHandler(Registers *regs)
 
     //First backup the current page table pointer
     curThread->cr3 = virtMemMan_GetCurrent();
-
-    COM_WriteStr("FROM: %x TO: %x", curThread->regs.unused, nxThread->regs.unused);
-    curThread = nxThread;
     
     addr = nxThread->FPU_state;
     addr += 64;
@@ -116,14 +113,20 @@ threadMan_InterruptHandler(Registers *regs)
     sys_tss.esp0 = nxThread->kstack;
 
     //Switch stacks
+    curThread = nxThread;
 
     asm volatile
     (
+        "mov %%ebp, %%esp\n\t"
+        "pop %%ecx\n\t"
+        "pop %%ecx\n\t"
+        //"mov 4(%%ebp), %%ecx\n\t"
         "mov %%ebx, %%cr3\n\t"  //Force update this manually
         "mov %%eax, %%esp\n\t"
+        "push %%ecx\n\t"
         "push %%ebx\n\t"        //New stack is setup nicely, officially switch now
         "call virtMemMan_SetCurrent\n\t"
-        "push 4(%%ebp)\n\t"    //Push the return address for this function
+        "pop %%ebx\n\t"
         "ret\n\t"
         :: "a"(nxThread->regs.unused), "b"(nxThread->cr3)
     );
@@ -182,7 +185,7 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
     curThreadInfo->flags = flags;
     curThreadInfo->k_tls = kmalloc(256);
     //curThreadInfo->FPU_state = kmalloc(4096 + 64);
-    COM_WriteStr("%x\r\n", curThreadInfo->k_tls);
+    //COM_WriteStr("%x\r\n", curThreadInfo->k_tls);
     curThreadInfo->status = 0;
 
     //Setup the paging structures for the thread
@@ -238,18 +241,18 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
         "push %%edx\n\t"
 
         //Push popa
-        "push $0x00\n\t"
-        "push $0x00\n\t"
-        "push $0x00\n\t"
-        "push $0x00\n\t"
-        "push $0x00\n\t"
-        "push %%ebx\n\t"
-        "push $0x00\n\t"
-        "push $0x00\n\t"
+        "push $0xAAAAAAAA\n\t"
+        "push $0xBBBBBBBB\n\t"
+        "push $0xCCCCCCCC\n\t"
+        "push $0xDDDDDDDD\n\t"
+        "push $0xEEEEEEEE\n\t"
+        "push $0xFFFFFFFF\n\t"
+        "push $0xA0A0A0A0\n\t"
+        "push $0xABABABAB\n\t"
 
         //Push filler
         "push $0x10\n\t"
-        "push $0x00\n\t"
+        "push $0xABCDABCD\n\t"
 
         //Backup and reset
         "xchg %%esp, %%ebx\n\t"
@@ -409,6 +412,18 @@ ThreadMan_GetCurThreadTLS(void)
     return curThread->k_tls;
 }
 
+void*
+ThreadMan_GetThreadTLS(UID id)
+{
+    Thread *thd = threads;
+    do
+    {
+        if(thd->uid == id)break;
+        thd = thd->next;
+    }
+    while(thd != NULL);
+    return thd->k_tls;
+}
 
 static uint32_t curCallNum = 0;
 static uint32_t callNumWhereThreadsDisabled = 0;

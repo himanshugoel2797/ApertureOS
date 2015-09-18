@@ -60,4 +60,7 @@ ThreadMan_Lock(void);
 void
 ThreadMan_Unlock(void);
 
+void*
+ThreadMan_GetThreadTLS(UID id);
+
 #endif /* end of include guard: _THREAD_MANAGER_H_ */

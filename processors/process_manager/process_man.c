@@ -78,7 +78,7 @@ ProcessManager_CreateProcess(const char *name,
 	                                 argv, 
 	                                 (flags & 2)?THREAD_FLAGS_KERNEL:THREAD_FLAGS_USER );
 
-	uint32_t* ktls = (uint32_t*)ThreadMan_GetCurThreadTLS();
+	uint32_t* ktls = (uint32_t*)ThreadMan_GetThreadTLS(tid);
 	ktls[0] = (uint32_t)proc;
 
 	ThreadMan_Unlock();

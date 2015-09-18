@@ -94,6 +94,7 @@ _EXT2_Filesystem_OpenFile(FileDescriptor *desc,
 
     _EXT2_GetFileInfo(desc, filename, &fd_n->is_directory, &fd_n->inode);
 
+
     if(fd_n->inode != 0 && fd_n->is_directory == 0)
     {
         EXT2_Inode *inode = _EXT2_GetInode(desc, fd_n->inode);
