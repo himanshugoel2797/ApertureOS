@@ -89,55 +89,111 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="process__manager_8h_source.html">process_manager.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="process__man_8h_source.html">process_man.h</a>&gt;</code></p>
 <div class="dynheader">
 Collaboration diagram for ProcessInfo:</div>
 <div class="dyncontent">
 <div class="center"><img src="structProcessInfo__coll__graph.png" border="0" usemap="#ProcessInfo_coll__map" alt="Collaboration graph"/></div>
 <map name="ProcessInfo_coll__map" id="ProcessInfo_coll__map">
-<area shape="rect" id="node2" href="structThreadInfo.html" title="ThreadInfo" alt="" coords="9,5,93,32"/></map>
+</map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:a17ed82650099b206c95d903c95a96d47"><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structProcessInfo.html#a17ed82650099b206c95d903c95a96d47">pid</a></td></tr>
-<tr class="separator:a17ed82650099b206c95d903c95a96d47"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95165c983299b94a52da02b878993fc4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structThreadInfo.html">ThreadInfo</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structProcessInfo.html#a95165c983299b94a52da02b878993fc4">threads</a></td></tr>
-<tr class="separator:a95165c983299b94a52da02b878993fc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa646e2aa1d515f10c80548a22bfe9386"><td class="memItemLeft" align="right" valign="top">struct p_info *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structProcessInfo.html#aa646e2aa1d515f10c80548a22bfe9386">next</a></td></tr>
-<tr class="separator:aa646e2aa1d515f10c80548a22bfe9386"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a470fcd40b8d439222b5430688d0e5fcb"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structProcessInfo.html#a470fcd40b8d439222b5430688d0e5fcb">flags</a></td></tr>
+<tr class="separator:a470fcd40b8d439222b5430688d0e5fcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0276689f5359acb05f07c061dd96b036"><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structProcessInfo.html#a0276689f5359acb05f07c061dd96b036">uid</a></td></tr>
+<tr class="separator:a0276689f5359acb05f07c061dd96b036"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4bf12ed2068cc4eb24d3b487adb38fa3"><td class="memItemLeft" align="right" valign="top">const char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structProcessInfo.html#a4bf12ed2068cc4eb24d3b487adb38fa3">name</a> [<a class="el" href="process__man_8h.html#a9d58a262aee8bdb8659c78682a3e4ed3">MAX_PROC_NAME_LEN</a>]</td></tr>
+<tr class="separator:a4bf12ed2068cc4eb24d3b487adb38fa3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03e31db3f169da2d98e79d8944c60f5c"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structProcessInfo.html#a03e31db3f169da2d98e79d8944c60f5c">path</a></td></tr>
+<tr class="separator:a03e31db3f169da2d98e79d8944c60f5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68896659869920cc6fbf1388a52126d3"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structProcessInfo.html">ProcessInfo</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structProcessInfo.html#a68896659869920cc6fbf1388a52126d3">parent</a></td></tr>
+<tr class="separator:a68896659869920cc6fbf1388a52126d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a093464e3c90594a85fd716df9bcc6a93"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structProcessInfo.html">ProcessInfo</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structProcessInfo.html#a093464e3c90594a85fd716df9bcc6a93">children</a></td></tr>
+<tr class="separator:a093464e3c90594a85fd716df9bcc6a93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb35f30bc16805c418eb7f58ce4e9b5f"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structProcessInfo.html">ProcessInfo</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structProcessInfo.html#adb35f30bc16805c418eb7f58ce4e9b5f">next</a></td></tr>
+<tr class="separator:adb35f30bc16805c418eb7f58ce4e9b5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Field Documentation</h2>
-<a class="anchor" id="aa646e2aa1d515f10c80548a22bfe9386"></a>
+<a class="anchor" id="a093464e3c90594a85fd716df9bcc6a93"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">struct p_info* ProcessInfo::next</td>
+          <td class="memname">struct <a class="el" href="structProcessInfo.html">ProcessInfo</a>* ProcessInfo::children</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a class="anchor" id="a17ed82650099b206c95d903c95a96d47"></a>
+<a class="anchor" id="a470fcd40b8d439222b5430688d0e5fcb"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a> ProcessInfo::pid</td>
+          <td class="memname">uint32_t ProcessInfo::flags</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a class="anchor" id="a95165c983299b94a52da02b878993fc4"></a>
+<a class="anchor" id="a4bf12ed2068cc4eb24d3b487adb38fa3"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structThreadInfo.html">ThreadInfo</a>* ProcessInfo::threads</td>
+          <td class="memname">const char ProcessInfo::name[<a class="el" href="process__man_8h.html#a9d58a262aee8bdb8659c78682a3e4ed3">MAX_PROC_NAME_LEN</a>]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="adb35f30bc16805c418eb7f58ce4e9b5f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct <a class="el" href="structProcessInfo.html">ProcessInfo</a>* ProcessInfo::next</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a68896659869920cc6fbf1388a52126d3"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct <a class="el" href="structProcessInfo.html">ProcessInfo</a>* ProcessInfo::parent</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a03e31db3f169da2d98e79d8944c60f5c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* ProcessInfo::path</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a0276689f5359acb05f07c061dd96b036"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a> ProcessInfo::uid</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -145,7 +201,7 @@ Data Fields</h2></td></tr>
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>managers/process/<a class="el" href="process__manager_8h_source.html">process_manager.h</a></li>
+<li>processors/process_manager/<a class="el" href="process__man_8h_source.html">process_man.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

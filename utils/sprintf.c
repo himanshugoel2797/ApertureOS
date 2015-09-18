@@ -124,6 +124,7 @@ int vsnprintf ( char * str, const char * format, va_list vl )
                                 {
                                 case '0':
                                     padding_char = '0';
+                                    i++;
                                     break;
                                 case '#':
                                     *str++ = '0';

@@ -1,6 +1,8 @@
 # Environment
 
+PLATFORM=~/opt/cross/bin/i686
 INCLUDES=-I. -Idrivers -Imanagers -Iprocessors -Ikmalloc
+DEFINES=-DLOG_SYSCALL
 
 PRE_FPU_BOOT=crt0.o gdt.o idt.o cpuid.o \
 				boot.o \
@@ -18,10 +20,9 @@ PRE_FPU_BOOT=crt0.o gdt.o idt.o cpuid.o \
 
 SOURCES=graphics/graphics.o	\
 				managers/filesystem/filesystem.o \
-				managers/filesystem/ext2/ext2.o \
+				managers/filesystem/ext2/ext2.o managers/filesystem/ext2/ext2_helpers.o \
 				managers/keyboard/keyboard.o	\
 				managers/phys_mem_manager/phys_mem_manager.o \
-				managers/process/process_manager.o	\
 				managers/threads/threads.o	\
 				managers/timer/timer_manager.o \
 				managers/virt_mem_manager/virt_mem_manager.o \
@@ -31,17 +32,19 @@ SOURCES=graphics/graphics.o	\
 				drivers/ps2/ps2.o drivers/ps2/ps2_keyboard.o drivers/ps2/ps2_mouse.o \
 				drivers/ahci/ahci.o \
 				drivers/ata_pio/ata_pio.o \
+				drivers/network/network.o \
+				drivers/network/rtl8139/rtl8139.o \
 				kmalloc/kmalloc.o \
 
 POST_INIT=processors/elf_loader/elf_loader.o \
 		  processors/umalloc/umalloc.o \
-
-
-PLATFORM=~/opt/cross/bin/i686
+		  processors/socket/socket.o \
+		  processors/syscall_manager/syscall_man.o \
+		  processors/process_manager/process_man.o 
 
 OUTDISK=sdb
 
-QEMU_OPTS=-enable-kvm -m 1024 -cpu host -d cpu_reset,guest_errors -drive id=disk,file=flash.img,if=none -device ahci,id=ahci -device ide-drive,drive=disk,bus=ahci.0 #-serial file:log.txt
+QEMU_OPTS=-enable-kvm -m 4096M -cpu Haswell,+xsave -d int,cpu_reset,guest_errors -drive id=disk,file=flash.img,if=none -device ahci,id=ahci -device ide-drive,drive=disk,bus=ahci.0 -netdev user,id=mynet0 -device rtl8139,netdev=mynet0
 
 BOOT_FS=EXT2
 
@@ -65,11 +68,14 @@ MKDIR=mkdir
 CP=cp
 CCADMIN=CCadmin
 GCC=clang -target i986-none-elf
-CFLAGS_A= -ffreestanding -Wall -Wextra -Wno-trigraphs -D$(CONF) -DBOOT_FS=$(BOOT_FS)  -DCURRENT_YEAR=$(CURRENT_YEAR) -DCOM_ENABLED=$(COM_ENABLED) $(INCLUDES)
+
+CFLAGS_A= -ffreestanding -Wall -Wextra -Wno-trigraphs -D$(CONF) -DBOOT_FS=$(BOOT_FS)  -DCURRENT_YEAR=$(CURRENT_YEAR) -DCOM_ENABLED=$(COM_ENABLED) $(DEFINES) $(INCLUDES)
 CFLAGS=$(CFLAGS_A) -ftree-vectorize -O0
+
 stageA:CFLAGS=-mno-sse -O0 $(CFLAGS_A)
-post_init:CFLAGS=-ftree-vectorize -O4 $(CFLAGS_A)
+post_init:CFLAGS=-ftree-vectorize -O3 $(CFLAGS_A)
 ASM=$(PLATFORM)-elf-gcc -DDEBUG -ffreestanding -march=i686
+
 TEST_CMD=qemu-system-x86_64 $(QEMU_OPTS)
 
 ANALYZE=clang-check -analyze

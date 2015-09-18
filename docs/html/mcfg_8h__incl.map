@@ -1,5 +1,5 @@
 <map id="drivers/acpi_tables/mcfg.h" name="drivers/acpi_tables/mcfg.h">
-<area shape="rect" id="node2" href="$types_8h.html" title="types.h" alt="" coords="53,169,118,196"/>
-<area shape="rect" id="node5" href="$acpi__tables_8h.html" title="acpi_tables.h" alt="" coords="36,95,135,121"/>
-<area shape="rect" id="node6" href="$priv__acpi__tables_8h.html" title="priv_acpi_tables.h" alt="" coords="159,95,286,121"/>
+<area shape="rect" id="node2" href="$types_8h.html" title="types.h" alt="" coords="99,169,165,196"/>
+<area shape="rect" id="node6" href="$acpi__tables_8h.html" title="acpi_tables.h" alt="" coords="83,95,181,121"/>
+<area shape="rect" id="node7" href="$priv__acpi__tables_8h.html" title="priv_acpi_tables.h" alt="" coords="206,95,333,121"/>
 </map>

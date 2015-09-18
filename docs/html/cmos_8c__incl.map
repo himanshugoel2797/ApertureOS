@@ -1,8 +1,8 @@
 <map id="drivers/cmos/cmos.c" name="drivers/cmos/cmos.c">
 <area shape="rect" id="node2" href="$cmos_8h.html" title="cmos.h" alt="" coords="5,155,71,181"/>
-<area shape="rect" id="node6" href="$acpi__tables_8h.html" title="acpi_tables/acpi_tables.h" alt="" coords="95,155,264,181"/>
-<area shape="rect" id="node7" href="$fadt_8h.html" title="acpi_tables/fadt.h" alt="" coords="239,80,365,107"/>
-<area shape="rect" id="node9" href="$native_8h.html" title="utils/native.h" alt="" coords="422,80,518,107"/>
+<area shape="rect" id="node7" href="$acpi__tables_8h.html" title="acpi_tables/acpi_tables.h" alt="" coords="95,155,264,181"/>
+<area shape="rect" id="node8" href="$fadt_8h.html" title="acpi_tables/fadt.h" alt="" coords="239,80,365,107"/>
+<area shape="rect" id="node10" href="$native_8h.html" title="utils/native.h" alt="" coords="422,80,518,107"/>
 <area shape="rect" id="node3" href="$types_8h.html" title="types.h" alt="" coords="269,229,335,256"/>
-<area shape="rect" id="node8" href="$priv__acpi__tables_8h.html" title="priv_acpi_tables.h" alt="" coords="340,155,467,181"/>
+<area shape="rect" id="node9" href="$priv__acpi__tables_8h.html" title="priv_acpi_tables.h" alt="" coords="340,155,467,181"/>
 </map>

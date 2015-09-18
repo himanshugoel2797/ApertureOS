@@ -43,6 +43,6 @@ var searchData=
   ['pit_5fmode_5fsquare_5fwave',['PIT_MODE_SQUARE_WAVE',['../pit_8h.html#a71ea49f12316bbc28ec884ebdd0ed506',1,'pit.h']]],
   ['pit_5fval_5f16bit',['PIT_VAL_16BIT',['../pit_8h.html#af906a0fb93fc1cc610f4581c6dbd1e40',1,'pit.h']]],
   ['pit_5fval_5fbcd',['PIT_VAL_BCD',['../pit_8h.html#a9653d01509ef9b0d6cd2de1ff131fda1',1,'pit.h']]],
-  ['pool_5fsize',['POOL_SIZE',['../ext2_8c.html#aa2ac54564b3514084afd2c5dafe9d232',1,'ext2.c']]],
+  ['pool_5fsize',['POOL_SIZE',['../priv__ext2_8h.html#aa2ac54564b3514084afd2c5dafe9d232',1,'priv_ext2.h']]],
   ['port',['PORT',['../COM_8c.html#a614217d263be1fb1a5f76e2ff7be19a2',1,'COM.c']]]
 ];

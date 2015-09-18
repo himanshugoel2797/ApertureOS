@@ -10,6 +10,8 @@
 #define MAX_OPEN_FILES 0x10000000
 #define MAX_OPEN_DIRS 0x10000000
 
+#define EXTRACT_ID(n) (n & 0xFFFFFFFF)
+
 typedef struct FileDescriptor_T FileDescriptor;
 
 typedef struct Filesystem_Driver_T
@@ -38,10 +40,8 @@ struct FileDescriptor_T
     ReadFunc read;
     WriteFunc write;
     Filesystem_Driver *driver;
-    UID fd_base;
-    UID dir_base;
-    UID id;
     void *data;
+    UID id;
     FileDescriptor *next;
 };
 

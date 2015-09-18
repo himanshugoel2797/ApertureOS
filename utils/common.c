@@ -159,8 +159,17 @@ char *strchr(const char *s, int c)
     return (char *)s;
 }
 
+char *strrchr(const char *s, int c)
+{
+    char *e = s + strlen(s);
+    while (*e != (char)c)
+        if (e-- == s)
+            return 0;
+    return (char *)e;
+}
+
 UID uids_base = 0;
 UID new_uid()
 {
-    return ++uids_base;
+    return (++uids_base & 0xFFFFFFFF);
 }

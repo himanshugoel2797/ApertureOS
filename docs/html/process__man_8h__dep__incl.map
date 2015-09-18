@@ -1,0 +1,7 @@
+<map id="processors/process_manager/process_man.h" name="processors/process_manager/process_man.h">
+<area shape="rect" id="node2" href="$process__man_8c.html" title="processors/process\l_manager/process_man.c" alt="" coords="5,95,177,136"/>
+<area shape="rect" id="node3" href="$processors_8h.html" title="processors/processors.h" alt="" coords="202,102,367,129"/>
+<area shape="rect" id="node4" href="$crt0_8c.html" title="crt0.c" alt="" coords="123,191,177,218"/>
+<area shape="rect" id="node5" href="$syscall__man_8h.html" title="processors/syscall\l_manager/syscall_man.h" alt="" coords="201,184,368,225"/>
+<area shape="rect" id="node6" href="$syscall__man_8c.html" title="processors/syscall\l_manager/syscall_man.c" alt="" coords="201,273,368,315"/>
+</map>

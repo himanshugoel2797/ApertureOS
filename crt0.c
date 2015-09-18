@@ -23,7 +23,7 @@
 #include "utils/common.h"
 
 #include "graphics/graphics.h"
-
+#include "processors.h"
 
 int temp = 0, temp2 = 0;
 char *tmp;
@@ -65,12 +65,12 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     //Once virtual memory management is put in place, ACPI tables become inaccessible, the acpi table will need to be copied
     physMemMan_Setup();
     virtMemMan_Setup();
-    
+
     Interrupts_Virtualize();
     graphics_Initialize();
-    
+
     //Attempt to initialize all PCI drivers here so they can mark their MMIO space as used
-    AHCI_Initialize();
+    temp2 = AHCI_Initialize();
 
     kmalloc_init();
     Timers_Setup();
@@ -79,11 +79,13 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     tmp = kmalloc(1080*1920*4 + KB(4));
     tmp += KB(4);
     tmp -= ((uint32_t)tmp) % KB(4);
+    memset(tmp, 0xff, 1920*1080*4);
 
     COM_WriteStr("Kernel Size: %x MiB\r\n", ((uint32_t)&_region_kernel_end_ - LOAD_ADDRESS)/(1024 * 1024));
 
 
     Keyboard_Setup();
+    SyscallManager_Initialize();
 
     UID tid = ThreadMan_CreateThread( t_main, 50, 51, THREAD_FLAGS_USER);
     ThreadMan_StartThread(tid);
@@ -94,18 +96,12 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
 
 void t_main(int argc, char **argv)
 {
-
     Filesystem_Setup();
 
+    //Filesystem_DeleteFile("/root/test.data");
     UID fd = Filesystem_OpenFile("/home/hgoel/test.data", 0, 0);
-    //uint8_t *buf = kmalloc(1920*1080*4 + KB(4));
-    //buf += KB(4);
-    //buf -= ((uint32_t)buf) % KB(4);
-    //COM_WriteStr("%x\r\n", buf);
 
     Interrupts_Lock();
-    COM_WriteStr("FD: %x\r\n", fd);
-    memset(tmp, 0xff, 1920*1080*4);
     if(fd != -1)Filesystem_ReadFile(fd, tmp, 1920*1080*4);
     Interrupts_Unlock();
     //tmp = buf;
@@ -117,27 +113,14 @@ void t_main(int argc, char **argv)
             //COM_WriteStr("%s\r\n", entry.dir_name);
         }
 
-        while(1);
-    sys_tss.esp0 = kmalloc(KB(16));
-    asm volatile(
-        "cli \n\t"
-        "mov $0x23, %ax\n\t"
-        "mov %ax, %ds\n\t"
-        "mov %ax, %es\n\t"
-        "mov %ax, %fs\n\t"
-        "mov %ax, %gs\n\t"
-        "mov %esp, %eax\n\t"
-        "pushl $0x23\n\t"
-        "pushl %eax\n\t"
-        "pushf\n\t"
-        "pop %eax\n\t"
-        "or $512, %eax\n\t"
-        "push %eax\n\t"
-        "pushl $0x1B\n\t"
-        "push $t_main_user\n\t"
-        "iret\n\t"
-        "t_main_user: \n\t"
-    );
+    ProcessManager_Initialize();
+    ProcessManager_CreateProcess("test", "/test.elf", 0, NULL, NULL, PROC_PERM_KERNEL);
+
+    //id = Elf_Load("/test.elf", ELF_USER);
+    //COM_WriteStr("FD: %x\r\n", id);
+    //Elf_Start(id);
+    while(1);
+
 
     //asm volatile("cli");
 
@@ -145,7 +128,7 @@ void t_main(int argc, char **argv)
         {
             //temp++;
             //temp2 = 0xDEADBEEF;
-            asm volatile("mov $0xDEADBEEF, %eax");
+            //asm volatile("mov $0xDEADBEEF, %eax");
         }
 }
 

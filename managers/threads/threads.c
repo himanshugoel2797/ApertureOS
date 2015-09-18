@@ -2,17 +2,22 @@
 #include "drivers.h"
 #include "managers.h"
 #include "utils/common.h"
+#include "gdt.h"
 
 SystemData *thread_sys = NULL;
 uint32_t threadMan_Initialize();
 uint8_t threadMan_messageHandler(Message *msg);
+
+uint32_t lock_num = 0;
+bool thread_lock = FALSE;
 
 Thread *threads, *curThread, *lastThread;
 UID uidBase = 0;
 
 void kernel_main(int, char**);
 
-void ThreadMan_Setup()
+void
+ThreadMan_Setup(void)
 {
     thread_sys = SysMan_RegisterSystem();
     strcpy(thread_sys->sys_name, "threadMan");
@@ -28,7 +33,8 @@ void ThreadMan_Setup()
 }
 
 __attribute__((naked, noreturn))
-void threadMan_IDTHandler()
+void
+threadMan_IDTHandler()
 {
     asm volatile(
         "pusha\n\t"
@@ -63,8 +69,11 @@ void threadMan_IDTHandler()
     );
 }
 
-void threadMan_InterruptHandler(Registers *regs)
+void
+threadMan_InterruptHandler(Registers *regs)
 {
+    if(thread_lock)return;  //Thread switching has been disabled, keep running current thread
+
     Thread *nxThread = curThread->next;
 
     while( (nxThread->status & 1) == 0)
@@ -72,49 +81,59 @@ void threadMan_InterruptHandler(Registers *regs)
             nxThread = nxThread->next;
         }
 
+
     uint32_t addr = curThread->FPU_state;
     addr += 64;
     addr -= (addr % 64);
-    asm volatile("xsave (%%eax)" :: "a"(addr));
+    asm volatile("push %%eax\n\t"
+                 "push %%edx\n\t"
+                 "mov $0xffffffff, %%eax\n\t"
+                 "mov $0xffffffff, %%edx\n\t"
+                 "xsave (%%ecx)\n\t"
+                 "pop %%edx\n\t"
+                 "pop %%eax\n\t" :: "c"(addr));
 
     curThread->regs.unused = regs;
     curThread->regs.unused -= 4;
-    curThread = nxThread;
+    curThread->kstack = sys_tss.esp0;
 
-    addr = curThread->FPU_state;
-    addr +=64;
+    //First backup the current page table pointer
+    curThread->cr3 = virtMemMan_GetCurrent();
+
+    addr = nxThread->FPU_state;
+    addr += 64;
     addr -= (addr % 64);
-    asm volatile("xrstor (%%eax)" :: "a"(addr));
-
-    //if((curThread->flags & 1) == THREAD_FLAGS_USER)
-    {
-        /*asm volatile(
-                "push %%ebx\n\t"
-                "push %%eax\n\t"
-                "add $4, %%eax\n\t"
-                "movl $0x23, (%%eax)\n\t"
-                "add $40, %%eax\n\t"
-                "movl $0x23, (%%eax)\n\t"
-                "sub $4, %%eax\n\t"
-                "pop %%ebx\n\t"
-                "add $48, %%ebx\n\t"
-                "movl %%ebx, (%%eax)\n\t"
-                "pop %%ebx\n\t"
-                 :: "a"(nxThread->regs.unused)
-                );*/
-    }
+    asm volatile("push %%eax\n\t"
+                 "push %%edx\n\t"
+                 "mov $0xffffffff, %%eax\n\t"
+                 "mov $0xffffffff, %%edx\n\t"
+                 "xrstor (%%ecx)\n\t"
+                 "pop %%edx\n\t"
+                 "pop %%eax\n\t" :: "c"(addr));
+    sys_tss.esp0 = nxThread->kstack;
 
     //Switch stacks
+    curThread = nxThread;
+
     asm volatile
     (
+        "mov %%ebp, %%esp\n\t"
+        "pop %%ecx\n\t"
+        "pop %%ecx\n\t"
+        //"mov 4(%%ebp), %%ecx\n\t"
+        "mov %%ebx, %%cr3\n\t"  //Force update this manually
         "mov %%eax, %%esp\n\t"
-        "push 4(%%ebp)\n\t"    //Push the return address for this function
+        "push %%ecx\n\t"
+        "push %%ebx\n\t"        //New stack is setup nicely, officially switch now
+        "call virtMemMan_SetCurrent\n\t"
+        "pop %%ebx\n\t"
         "ret\n\t"
-        :: "a"(nxThread->regs.unused)
+        :: "a"(nxThread->regs.unused), "b"(nxThread->cr3)
     );
 }
 
-uint32_t threadMan_Initialize()
+uint32_t
+threadMan_Initialize(void)
 {
     //TODO create a new thread and resume remaining work on that by calling another function, this lets us keep things clean
     curThread = NULL;
@@ -147,19 +166,26 @@ uint32_t threadMan_Initialize()
     return 0;
 }
 
-uint8_t threadMan_messageHandler(Message *msg)
+uint8_t
+threadMan_messageHandler(Message *msg)
 {
 
 }
 
-UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64_t flags)
+UID
+ThreadMan_CreateThread(ProcessEntryPoint entry,
+                       int argc,
+                       char**argv,
+                       uint32_t flags)
 {
     //Entering critical section, disable all interrupts
     Interrupts_Lock();
     Thread *curThreadInfo = kmalloc(sizeof(Thread));
-    COM_WriteStr("curThreadInfo %d\r\n", curThreadInfo);
-    curThreadInfo->uid = uidBase++;
+    curThreadInfo->uid = new_uid();
     curThreadInfo->flags = flags;
+    curThreadInfo->k_tls = kmalloc(256);
+    //curThreadInfo->FPU_state = kmalloc(4096 + 64);
+    //COM_WriteStr("%x\r\n", curThreadInfo->k_tls);
     curThreadInfo->status = 0;
 
     //Setup the paging structures for the thread
@@ -170,18 +196,36 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64
         }
     //TODO setup the remaining registers to suit, set the args for the function too
     memset(&curThreadInfo->regs, 0, sizeof(Registers));
-    memset(curThreadInfo->FPU_state, 0, 512);
+    //memset(curThreadInfo->FPU_state, 0, 4096 + 64);
 
     curThreadInfo->regs.eip = entry;
-    curThreadInfo->regs.unused = kmalloc(KB(16)) + KB(16); //Stack ptr
+
+    //Allocate a kernel mode stack for each thread
+    curThreadInfo->kstack = kmalloc(KB(16));
+
+    //uint64_t* prev = virtMemMan_SetCurrent(curThreadInfo->cr3);
+
+    //if((flags & THREAD_FLAGS_KERNEL) == 0){
+
+    //Map the stack into another place for now
+
+    curThreadInfo->regs.unused = 0x50004000; //Stack ptr
+    virtMemMan_Map(curThreadInfo->regs.unused - KB(4), physMemMan_Alloc(), KB(4), MEM_TYPE_WB, MEM_READ | MEM_WRITE, (flags & THREAD_FLAGS_KERNEL)?MEM_KERNEL : MEM_USER);
+    virtMemMan_Map(curThreadInfo->regs.unused - KB(8), physMemMan_Alloc(), KB(4), MEM_TYPE_WB, MEM_READ | MEM_WRITE, (flags & THREAD_FLAGS_KERNEL)?MEM_KERNEL : MEM_USER);
+    virtMemMan_Map(curThreadInfo->regs.unused - KB(12), physMemMan_Alloc(), KB(4), MEM_TYPE_WB, MEM_READ | MEM_WRITE, (flags & THREAD_FLAGS_KERNEL)?MEM_KERNEL : MEM_USER);
+    virtMemMan_Map(curThreadInfo->regs.unused - KB(16), physMemMan_Alloc(), KB(4), MEM_TYPE_WB, MEM_READ | MEM_WRITE, (flags & THREAD_FLAGS_KERNEL)?MEM_KERNEL : MEM_USER);
+    virtMemMan_Map(curThreadInfo->regs.unused, physMemMan_Alloc(), KB(4), MEM_TYPE_WB, MEM_READ | MEM_WRITE, (flags & THREAD_FLAGS_KERNEL)?MEM_KERNEL : MEM_USER);
+
+    //}else{
+    //    curThreadInfo->regs.unused = kmalloc(KB(16)) + KB(16);
+    //}
+
     curThreadInfo->regs.ebp = curThreadInfo->regs.unused;
 
-    //Somehow deal with globals here
 
     //Push args onto the stack by temporarily switching stacks and pushing the stuff
     asm volatile(
-        "mov %%esp, %%edi\n\t"
-        "mov %%ebx, %%esp\n\t"
+        "xchg %%ebx, %%esp\n\t"
 
         //Push parameters
         "push %%ecx\n\t"
@@ -197,31 +241,91 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64
         "push %%edx\n\t"
 
         //Push popa
-        "push $0x00\n\t"
-        "push $0x00\n\t"
-        "push $0x00\n\t"
-        "push $0x00\n\t"
-        "push $0x00\n\t"
-        "push %%ebx\n\t"
-        "push $0x00\n\t"
-        "push $0x00\n\t"
+        "push $0xAAAAAAAA\n\t"
+        "push $0xBBBBBBBB\n\t"
+        "push $0xCCCCCCCC\n\t"
+        "push $0xDDDDDDDD\n\t"
+        "push $0xEEEEEEEE\n\t"
+        "push $0xFFFFFFFF\n\t"
+        "push $0xA0A0A0A0\n\t"
+        "push $0xABABABAB\n\t"
 
         //Push filler
         "push $0x10\n\t"
-        "push $0x00\n\t"
+        "push $0xABCDABCD\n\t"
 
         //Backup and reset
-        "mov %%esp, %%ebx\n\t"
-        "mov %%edi, %%esp\n\t"
-        :: "a"(argv), "b"(curThreadInfo->regs.unused), "c"(argc), "d"(curThreadInfo->regs.eip)
+        "xchg %%esp, %%ebx\n\t"
+        :
+        : "a"(argv), "b"(curThreadInfo->regs.unused), "c"(argc), "d"(curThreadInfo->regs.eip)
     );
+    asm volatile("mov %%ebx, %0\n\t" : "=r"(curThreadInfo->regs.unused));
+
+    //virtMemMan_SetCurrent(prev);
+
+    //Everything's setup, now setup the address space with the stack without setting it as current
+    //if((flags & THREAD_FLAGS_KERNEL) == 0){
+
+    //Map the stack into another place for now
+    uint32_t stack_vaddr = 0x40004000;
+
+    curThreadInfo->regs.ebp = stack_vaddr;
+    curThreadInfo->regs.unused -= 0x10000000; //Stack ptr
+
+    virtMemMan_MapInst(curThreadInfo->cr3,
+                       stack_vaddr - KB(4),
+                       virtMemMan_GetPhysAddress((void*)(0x50004000 - KB(4))),
+                       KB(4),
+                       MEM_TYPE_WB, MEM_READ | MEM_WRITE, (flags & THREAD_FLAGS_KERNEL)?MEM_KERNEL : MEM_USER);
+
+
+    virtMemMan_MapInst(curThreadInfo->cr3,
+                       stack_vaddr - KB(8),
+                       virtMemMan_GetPhysAddress((void*)(0x50004000 - KB(8))),
+                       KB(4),
+                       MEM_TYPE_WB, MEM_READ | MEM_WRITE, (flags & THREAD_FLAGS_KERNEL)?MEM_KERNEL : MEM_USER);
+
+
+    virtMemMan_MapInst(curThreadInfo->cr3,
+                       stack_vaddr - KB(12),
+                       virtMemMan_GetPhysAddress((void*)(0x50004000 - KB(12))),
+                       KB(4),
+                       MEM_TYPE_WB, MEM_READ | MEM_WRITE, (flags & THREAD_FLAGS_KERNEL)?MEM_KERNEL : MEM_USER);
+
+
+    virtMemMan_MapInst(curThreadInfo->cr3,
+                       stack_vaddr - KB(16),
+                       virtMemMan_GetPhysAddress((void*)(0x50004000 - KB(16))),
+                       KB(4),
+                       MEM_TYPE_WB, MEM_READ | MEM_WRITE, (flags & THREAD_FLAGS_KERNEL)?MEM_KERNEL : MEM_USER);
+
+
+    virtMemMan_MapInst(curThreadInfo->cr3,
+                       stack_vaddr,
+                       virtMemMan_GetPhysAddress((void*)(0x50004000)),
+                       KB(4),
+                       MEM_TYPE_WB, MEM_READ | MEM_WRITE, (flags & THREAD_FLAGS_KERNEL)?MEM_KERNEL : MEM_USER);
+
+
+    virtMemMan_UnMap((void*)(0x50000000), KB(20));
+
+
+    //virtMemMan_SetCurrent(curThreadInfo->cr3);
+    //while(1);
+    //}
+
 
     uint32_t addr = curThreadInfo->FPU_state;
     addr += 64;
     addr -= (addr % 64);
-    asm volatile("xsave (%%eax)" :: "a"(addr));
+    asm volatile("push %%eax\n\t"
+                 "push %%edx\n\t"
+                 "mov $0xffffffff, %%eax\n\t"
+                 "mov $0xffffffff, %%edx\n\t"
+                 "xsave (%%ecx)\n\t"
+                 "pop %%edx\n\t"
+                 "pop %%eax\n\t" :: "c"(addr));
 
-    asm volatile("mov %%ebx, %0" : "=r"(curThreadInfo->regs.unused));
 
     //Store the thread in the queue
     curThreadInfo->next = threads;
@@ -233,29 +337,110 @@ UID ThreadMan_CreateThread(ProcessEntryPoint entry, int argc, char**argv, uint64
     return curThreadInfo->uid;
 }
 
-void ThreadMan_StartThread(UID id)
+void
+ThreadMan_StartThread(UID id)
 {
+    ThreadMan_Lock();
     Thread *thd = threads;
-    while(thd->next != NULL)
+    do
         {
             if(thd->uid == id)break;
             thd = thd->next;
         }
+    while(thd != NULL);
 
     thd->status |= 1;
+    ThreadMan_Unlock();
 }
 
-void ThreadMan_ExitThread(UID id)
+void
+ThreadMan_ExitThread(UID id)
 {
+    ThreadMan_Lock();
+    Thread *thd = threads;
+    do
+        {
+            if(thd->uid == id)break;
+            thd = thd->next;
+        }
+    while(thd != NULL);
 
+    thd->status &= ~1;
+    ThreadMan_Unlock();
 }
 
-void ThreadMan_DeleteThread(UID id)
+void
+ThreadMan_DeleteThread(UID id)
 {
+    if(id == ThreadMan_GetCurThreadID())return; //The current thread object will automatically be cleaned by the kernel
 
+    ThreadMan_Lock();
+    Thread *thd = threads, *prev = NULL;
+    do
+        {
+            if(thd->uid == id)break;
+
+            prev = thd;
+            thd = thd->next;
+        }
+    while(thd != NULL);
+
+    if( (thd->status & 1) == 0)
+        {
+            prev->next = thd->next;
+            virtMemMan_FreeInstance(thd->cr3);
+            kfree(thd);
+        }
+    ThreadMan_Unlock();
 }
 
-void ThreadMan_Yield()
+void
+ThreadMan_Yield(void)
 {
     asm volatile("int $48");
+}
+
+UID
+ThreadMan_GetCurThreadID(void)
+{
+    return curThread->uid;
+}
+
+void*
+ThreadMan_GetCurThreadTLS(void)
+{
+    return curThread->k_tls;
+}
+
+void*
+ThreadMan_GetThreadTLS(UID id)
+{
+    Thread *thd = threads;
+    do
+        {
+            if(thd->uid == id)break;
+            thd = thd->next;
+        }
+    while(thd != NULL);
+    return thd->k_tls;
+}
+
+static uint32_t curCallNum = 0;
+static uint32_t callNumWhereThreadsDisabled = 0;
+void
+ThreadMan_Lock(void)
+{
+    curCallNum++;
+
+    if(!thread_lock)
+        callNumWhereThreadsDisabled = curCallNum;
+
+    thread_lock = TRUE;
+}
+
+void
+ThreadMan_Unlock(void)
+{
+    if(callNumWhereThreadsDisabled == curCallNum--)
+        thread_lock = FALSE;
 }

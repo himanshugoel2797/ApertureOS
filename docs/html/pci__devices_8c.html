@@ -98,7 +98,7 @@ Include dependency graph for pci_devices.c:</div>
 <div class="dyncontent">
 <div class="center"><img src="pci__devices_8c__incl.png" border="0" usemap="#drivers_2pci_2pci__devices_8c" alt=""/></div>
 <map name="drivers_2pci_2pci__devices_8c" id="drivers_2pci_2pci__devices_8c">
-<area shape="rect" id="node2" href="pci_8h.html" title="pci.h" alt="" coords="60,80,111,107"/><area shape="rect" id="node6" href="pci__devices__names_8h.html" title="pci_devices_names.h" alt="" coords="135,80,283,107"/><area shape="rect" id="node3" href="types_8h.html" title="types.h" alt="" coords="53,155,118,181"/></map>
+<area shape="rect" id="node2" href="pci_8h.html" title="pci.h" alt="" coords="107,80,157,107"/><area shape="rect" id="node7" href="pci__devices__names_8h.html" title="pci_devices_names.h" alt="" coords="182,80,330,107"/><area shape="rect" id="node3" href="types_8h.html" title="types.h" alt="" coords="99,155,165,181"/></map>
 </div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
@@ -107,6 +107,10 @@ Functions</h2></td></tr>
 <tr class="separator:a56687b1805497cd96ff22fd1d4917c28"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad960b28cd7afda0c8c7fddae9a29a423"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pci__devices_8c.html#ad960b28cd7afda0c8c7fddae9a29a423">pci_GetPCIClass</a> (long classcode, char **base, char **sub, char **prog)</td></tr>
 <tr class="separator:ad960b28cd7afda0c8c7fddae9a29a423"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:addcb7a7cb1269ad78f9e96b1f66b3400"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pci__devices_8c.html#addcb7a7cb1269ad78f9e96b1f66b3400">pci_GetPCIVendor</a> (uint16_t venID, char **short_name, char **long_name)</td></tr>
+<tr class="separator:addcb7a7cb1269ad78f9e96b1f66b3400"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afcc307a4a7852f0382751f714002d80e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pci__devices_8c.html#afcc307a4a7852f0382751f714002d80e">pci_GetPCIDevice</a> (uint16_t venID, uint16_t devID, char **chip_name, char **chip_desc)</td></tr>
+<tr class="separator:afcc307a4a7852f0382751f714002d80e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="ad960b28cd7afda0c8c7fddae9a29a423"></a>
@@ -186,6 +190,76 @@ Functions</h2></td></tr>
           <td></td>
           <td class="paramtype">char **&#160;</td>
           <td class="paramname"><em>progdesc</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="afcc307a4a7852f0382751f714002d80e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void pci_GetPCIDevice </td>
+          <td>(</td>
+          <td class="paramtype">uint16_t&#160;</td>
+          <td class="paramname"><em>venID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t&#160;</td>
+          <td class="paramname"><em>devID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char **&#160;</td>
+          <td class="paramname"><em>chip_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char **&#160;</td>
+          <td class="paramname"><em>chip_desc</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="addcb7a7cb1269ad78f9e96b1f66b3400"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void pci_GetPCIVendor </td>
+          <td>(</td>
+          <td class="paramtype">uint16_t&#160;</td>
+          <td class="paramname"><em>venID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char **&#160;</td>
+          <td class="paramname"><em>short_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char **&#160;</td>
+          <td class="paramname"><em>long_name</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

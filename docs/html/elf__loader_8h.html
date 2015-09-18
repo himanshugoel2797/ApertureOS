@@ -86,6 +86,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">elf_loader.h File Reference</div>  </div>
@@ -97,27 +98,53 @@ Include dependency graph for elf_loader.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="elf__loader_8h__incl.png" border="0" usemap="#processors_2elf__loader_2elf__loader_8h" alt=""/></div>
 <map name="processors_2elf__loader_2elf__loader_8h" id="processors_2elf__loader_2elf__loader_8h">
-<area shape="rect" id="node2" href="types_8h.html" title="types.h" alt="" coords="53,95,118,121"/></map>
+<area shape="rect" id="node2" href="types_8h.html" title="types.h" alt="" coords="99,95,165,121"/></map>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="elf__loader_8h__dep__incl.png" border="0" usemap="#processors_2elf__loader_2elf__loader_8hdep" alt=""/></div>
 <map name="processors_2elf__loader_2elf__loader_8hdep" id="processors_2elf__loader_2elf__loader_8hdep">
-<area shape="rect" id="node2" href="elf__loader_8c.html" title="processors/elf_loader\l/elf_loader.c" alt="" coords="5,95,152,136"/><area shape="rect" id="node3" href="processors_8h.html" title="processors/processors.h" alt="" coords="176,102,341,129"/></map>
+<area shape="rect" id="node2" href="elf__loader_8c.html" title="processors/elf_loader\l/elf_loader.c" alt="" coords="5,184,152,225"/><area shape="rect" id="node3" href="priv__elf__loader_8h.html" title="processors/elf_loader\l/priv_elf_loader.h" alt="" coords="103,95,249,136"/><area shape="rect" id="node4" href="processors_8h.html" title="processors/processors.h" alt="" coords="273,102,439,129"/><area shape="rect" id="node5" href="crt0_8c.html" title="crt0.c" alt="" coords="191,191,246,218"/><area shape="rect" id="node6" href="process__man_8h.html" title="processors/process\l_manager/process_man.h" alt="" coords="270,184,442,225"/><area shape="rect" id="node8" href="syscall__man_8h.html" title="processors/syscall\l_manager/syscall_man.h" alt="" coords="466,184,633,225"/><area shape="rect" id="node7" href="process__man_8c.html" title="processors/process\l_manager/process_man.c" alt="" coords="270,273,442,315"/><area shape="rect" id="node9" href="syscall__man_8c.html" title="processors/syscall\l_manager/syscall_man.c" alt="" coords="466,273,633,315"/></map>
 </div>
 </div>
 <p><a href="elf__loader_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:ae7755a8ad100d47abc56e130618d5ab0"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="elf__loader_8h.html#ae7755a8ad100d47abc56e130618d5ab0">ELF_FLAGS</a> { <a class="el" href="elf__loader_8h.html#ae7755a8ad100d47abc56e130618d5ab0a32ef8e4a13ce851a0105ee345a697653">ELF_USER</a> = 0, 
+<a class="el" href="elf__loader_8h.html#ae7755a8ad100d47abc56e130618d5ab0a8b45d51cc8cf39045d669cf1e83a77c9">ELF_KERNEL</a> = 1
+ }</td></tr>
+<tr class="separator:ae7755a8ad100d47abc56e130618d5ab0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a4a53070ee4d1b7f951512f44e7327bbb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="elf__loader_8h.html#a4a53070ee4d1b7f951512f44e7327bbb">Elf_Load</a> (const char *path)</td></tr>
-<tr class="separator:a4a53070ee4d1b7f951512f44e7327bbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9591b89e4d7cefe251552d3b6d2f944d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="elf__loader_8h.html#a9591b89e4d7cefe251552d3b6d2f944d">Elf_Start</a> (<a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a> <a class="el" href="process__manager_8c.html#a17d665b03c4f1b180b8b7f01528cdad5">id</a>)</td></tr>
+<tr class="memitem:a044bbcd30a27f2b4ad15c750803289bc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="elf__loader_8h.html#a044bbcd30a27f2b4ad15c750803289bc">Elf_Load</a> (const char *path, <a class="el" href="elf__loader_8h.html#ae7755a8ad100d47abc56e130618d5ab0">ELF_FLAGS</a> perms)</td></tr>
+<tr class="separator:a044bbcd30a27f2b4ad15c750803289bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9591b89e4d7cefe251552d3b6d2f944d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="elf__loader_8h.html#a9591b89e4d7cefe251552d3b6d2f944d">Elf_Start</a> (<a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a> id)</td></tr>
 <tr class="separator:a9591b89e4d7cefe251552d3b6d2f944d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a class="anchor" id="ae7755a8ad100d47abc56e130618d5ab0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="elf__loader_8h.html#ae7755a8ad100d47abc56e130618d5ab0">ELF_FLAGS</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="ae7755a8ad100d47abc56e130618d5ab0a32ef8e4a13ce851a0105ee345a697653"></a>ELF_USER&#160;</td><td class="fielddoc">
+</td></tr>
+<tr><td class="fieldname"><a class="anchor" id="ae7755a8ad100d47abc56e130618d5ab0a8b45d51cc8cf39045d669cf1e83a77c9"></a>ELF_KERNEL&#160;</td><td class="fielddoc">
+</td></tr>
+</table>
+
+</div>
+</div>
 <h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="a4a53070ee4d1b7f951512f44e7327bbb"></a>
+<a class="anchor" id="a044bbcd30a27f2b4ad15c750803289bc"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -125,8 +152,18 @@ Functions</h2></td></tr>
           <td class="memname"><a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a> Elf_Load </td>
           <td>(</td>
           <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>path</em></td><td>)</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="elf__loader_8h.html#ae7755a8ad100d47abc56e130618d5ab0">ELF_FLAGS</a>&#160;</td>
+          <td class="paramname"><em>perms</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">

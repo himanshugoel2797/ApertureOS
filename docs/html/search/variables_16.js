@@ -12,6 +12,7 @@ var searchData=
   ['ven_5fid',['ven_id',['../structpci__vendor__t.html#ad0d8da690a473c42b38f5475634e1d5d',1,'pci_vendor_t::ven_id()'],['../structpci__device__t.html#a7eb52d0052a08f8c0a78057a09729807',1,'pci_device_t::ven_id()']]],
   ['ven_5fname',['ven_name',['../structpci__vendor__t.html#a5ef0978e0401d34bc4b433708b5920a6',1,'pci_vendor_t']]],
   ['vendor',['vendor',['../structHBA__PORT.html#a37a5678037d53efbe3dfccc0e0928dc0',1,'HBA_PORT::vendor()'],['../structHBA__MEM.html#a0770ae421889d04a255f69a66fc49423',1,'HBA_MEM::vendor()']]],
+  ['vendorid',['vendorID',['../structPCI__DeviceFuncs.html#acc2b6a144032983dd7e855e3e70e3cf0',1,'PCI_DeviceFuncs']]],
   ['venfull',['VenFull',['../structPCI__VENTABLE.html#a393224af1dc4a112a50bd8bf8aeb12d2',1,'PCI_VENTABLE']]],
   ['venid',['VenId',['../structPCI__VENTABLE.html#af2917d8b76e763340491a6a38b01dc48',1,'PCI_VENTABLE::VenId()'],['../structPCI__DEVTABLE.html#aa2280cfe649b8fbabcbf07311e2f0ef8',1,'PCI_DEVTABLE::VenId()']]],
   ['venshort',['VenShort',['../structPCI__VENTABLE.html#ad4c44ac5f0d9ed97773e820f485b08b4',1,'PCI_VENTABLE']]],

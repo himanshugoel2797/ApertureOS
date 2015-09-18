@@ -3,6 +3,7 @@ var searchData=
   ['read_5fbuffer_5fcmd',['READ_BUFFER_CMD',['../priv__ata__pio_8h.html#a819a31be0846908c959efda1dbbfd2d2',1,'priv_ata_pio.h']]],
   ['read_5fbuffer_5fdma_5fcmd',['READ_BUFFER_DMA_CMD',['../priv__ata__pio_8h.html#a9065b51071112e4a97514d32faf81534',1,'priv_ata_pio.h']]],
   ['read_5fbuffer_5fdma_5fr_5fcmd',['READ_BUFFER_DMA_R_CMD',['../priv__ata__pio_8h.html#a4020c7c54b2021616ec16318385b1ce6',1,'priv_ata_pio.h']]],
+  ['read_5fbuffer_5fdma_5fr_5fcmd_5fext',['READ_BUFFER_DMA_R_CMD_EXT',['../ahci_8c.html#a4222ced6e8fddab1bb2ff88d99fab51e',1,'ahci.c']]],
   ['read_5fcfg_5fcmd',['READ_CFG_CMD',['../priv__ps2_8h.html#ae45c9044f2102dd974b79330e548b253',1,'priv_ps2.h']]],
   ['read_5flong_5fcmd',['READ_LONG_CMD',['../priv__ata__pio_8h.html#ad21b0b4107e628e691546fbd85873e90',1,'priv_ata_pio.h']]],
   ['read_5flong_5fr_5fcmd',['READ_LONG_R_CMD',['../priv__ata__pio_8h.html#a0e297633b81e2f83997407373036110c',1,'priv_ata_pio.h']]],

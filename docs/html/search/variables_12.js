@@ -29,11 +29,9 @@ var searchData=
   ['resetvalue',['ResetValue',['../structFADT.html#af9ca02451305ba79460fc7ae589eb4cc',1,'FADT']]],
   ['resvd',['resvd',['../structFIS__DMA__SETUP.html#a95267263d73d8b9a51720c0f613b428a',1,'FIS_DMA_SETUP']]],
   ['retry',['retry',['../kmalloc_8c.html#a5c31878e4fdd075652a146ec168ee379',1,'kmalloc.c']]],
-  ['return',['return',['../ahci_8c.html#a9717e7bbecb906637e86cef6da3d83c2',1,'ahci.c']]],
+  ['retval',['retval',['../structgeneric__syscall.html#a22d4fc42eb7f946701e5f4c24e98d044',1,'generic_syscall::retval()'],['../structgeneric__syscall__2.html#aa13134de422fd517cdaef9c6a256bff4',1,'generic_syscall_2::retval()'],['../structgeneric__syscall__3.html#afed8d993fc6b1c13aab3f836d004f06c',1,'generic_syscall_3::retval()']]],
   ['revision',['Revision',['../structRSDPDescriptor.html#a6a22d340d3189067f152e368ab5d79b0',1,'RSDPDescriptor::Revision()'],['../structACPISDTHeader.html#ad710f8bf79ece5cc5e4fe45c7dc56173',1,'ACPISDTHeader::Revision()']]],
   ['rfis',['rfis',['../structHBA__FIS.html#ae83c5af195b9de6dcd1c45e02dc89dae',1,'HBA_FIS']]],
-  ['rootprocess',['rootProcess',['../process__manager_8c.html#a17b0540d6762350391a75f457a49fd2c',1,'process_manager.c']]],
-  ['rootthread',['rootThread',['../process__manager_8c.html#ace5444190ba2eebd4163c4506de96b6b',1,'process_manager.c']]],
   ['rsdp',['rsdp',['../group__acpi__tables.html#ga5d8636a41354e4199c0c468acdfc9488',1,'priv_acpi_tables.h']]],
   ['rsdtaddress',['RsdtAddress',['../structRSDPDescriptor.html#afd354b51da86119158074db8af05c95c',1,'RSDPDescriptor']]],
   ['rsv',['rsv',['../structHBA__MEM.html#a5c687eaec79b29bf5e25c208513a8eda',1,'HBA_MEM::rsv()'],['../structHBA__FIS.html#a96e92bbb5079ed778ee1a55cef77ba4d',1,'HBA_FIS::rsv()'],['../structHBA__CMD__TBL.html#a22a688aa1cd7284679122626e03b6e64',1,'HBA_CMD_TBL::rsv()']]],
@@ -45,5 +43,7 @@ var searchData=
   ['rsv_5fmask',['rsv_mask',['../structModeInfoBlock.html#a3cf33afeea48825716c538de3e68235f',1,'ModeInfoBlock']]],
   ['rsv_5fposition',['rsv_position',['../structModeInfoBlock.html#a0d4bbe8b1474c7bfc1b0894cbb8c5183',1,'ModeInfoBlock']]],
   ['rsvd',['rsvd',['../structFIS__DMA__SETUP.html#a26a1a378a0481c4a16eee3d917496529',1,'FIS_DMA_SETUP']]],
-  ['rsved',['rsved',['../structFIS__DMA__SETUP.html#a02f292c0c97218fbd2272c9cc469e5aa',1,'FIS_DMA_SETUP']]]
+  ['rsved',['rsved',['../structFIS__DMA__SETUP.html#a02f292c0c97218fbd2272c9cc469e5aa',1,'FIS_DMA_SETUP']]],
+  ['rtl8139_5findex',['rtl8139_index',['../rtl8139_8c.html#a6e34a6a8d07352f1264b10e83e640a8b',1,'rtl8139.c']]],
+  ['rtl8139_5fmem_5fbar',['rtl8139_mem_bar',['../rtl8139_8c.html#a07fbece7dfad83f9614813a96c377caf',1,'rtl8139.c']]]
 ];

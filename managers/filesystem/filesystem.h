@@ -18,14 +18,16 @@ typedef enum
     EXT2 = 1
 } SupportedFilesystems;
 
-typedef enum{
-	O_RDONLY = 0,
-	O_RD_WR = 1,
-	O_APPED = 2,
-	O_CREAT = 4
+typedef enum
+{
+    O_RDONLY = 0,
+    O_RD_WR = 1,
+    O_APPED = 2,
+    O_CREAT = 4
 } FILE_IO_FLAGS;
 
-typedef enum{
+typedef enum
+{
     SEEK_SET = 0,
     SEEK_CUR = 1,
     SEEK_END = 2

@@ -1,4 +1,5 @@
 <map id="gdt.h" name="gdt.h">
 <area shape="rect" id="node2" href="$crt0_8c.html" title="crt0.c" alt="" coords="5,80,60,107"/>
 <area shape="rect" id="node3" href="$gdt_8c.html" title="gdt.c" alt="" coords="85,80,135,107"/>
+<area shape="rect" id="node4" href="$threads_8c.html" title="managers/threads/threads.c" alt="" coords="159,80,343,107"/>
 </map>

@@ -3,7 +3,7 @@
 
 #include "utils/common.h"
 
-uint8_t 
+uint8_t
 ACPITables_Initialize(void)
 {
     rsdp = NULL;
@@ -33,7 +33,7 @@ ACPITables_Initialize(void)
     return -1;
 }
 
-uint8_t 
+uint8_t
 ACPITables_ValidateChecksum(ACPISDTHeader *header)
 {
     uint8_t sum = 0;
@@ -46,8 +46,8 @@ ACPITables_ValidateChecksum(ACPISDTHeader *header)
     return sum == 0;
 }
 
-void* 
-ACPITables_FindTable(const char *table_name, 
+void*
+ACPITables_FindTable(const char *table_name,
                      int index)
 {
     if (rsdp == NULL) return NULL;
@@ -66,7 +66,7 @@ ACPITables_FindTable(const char *table_name,
                     if (!strncmp(h->Signature, table_name, 4) && ACPITables_ValidateChecksum(h))
                         {
                             if (cur_index == index)
-                                    return (void *) h;
+                                return (void *) h;
 
                             cur_index++;
                         }
@@ -86,7 +86,7 @@ ACPITables_FindTable(const char *table_name,
                     if (!strncmp(h->Signature, table_name, 4) && ACPITables_ValidateChecksum(h))
                         {
                             if (cur_index == index)
-                                    return (void *) h;
+                                return (void *) h;
 
                             cur_index++;
                         }

@@ -1,5 +1,7 @@
 <map id="managers/filesystem/ext2/ext2_structs.h" name="managers/filesystem/ext2/ext2_structs.h">
-<area shape="rect" id="node2" href="$ext2_8h.html" title="managers/filesystem\l/ext2/ext2.h" alt="" coords="88,95,231,136"/>
-<area shape="rect" id="node3" href="$ext2_8c.html" title="managers/filesystem\l/ext2/ext2.c" alt="" coords="5,184,148,225"/>
-<area shape="rect" id="node4" href="$filesystem_8c.html" title="managers/filesystem\l/filesystem.c" alt="" coords="172,184,315,225"/>
+<area shape="rect" id="node2" href="$ext2_8h.html" title="managers/filesystem\l/ext2/ext2.h" alt="" coords="75,95,217,136"/>
+<area shape="rect" id="node4" href="$priv__ext2_8h.html" title="managers/filesystem\l/ext2/priv_ext2.h" alt="" coords="227,184,369,225"/>
+<area shape="rect" id="node3" href="$ext2_8c.html" title="managers/filesystem\l/ext2/ext2.c" alt="" coords="5,273,148,315"/>
+<area shape="rect" id="node6" href="$filesystem_8c.html" title="managers/filesystem\l/filesystem.c" alt="" coords="60,184,203,225"/>
+<area shape="rect" id="node5" href="$ext2__helpers_8c.html" title="managers/filesystem\l/ext2/ext2_helpers.c" alt="" coords="227,273,369,315"/>
 </map>

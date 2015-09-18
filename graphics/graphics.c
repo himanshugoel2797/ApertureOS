@@ -16,7 +16,7 @@ uint8_t bpp;
 
 char tmpBuf[16] __attribute__((aligned(16)));
 
-void 
+void
 graphics_Initialize(void)
 {
     pitch = global_multiboot_info->framebuffer_pitch / sizeof(uint32_t);
@@ -34,15 +34,15 @@ graphics_Initialize(void)
     frameBufferB = frameBufferB + 0x80;
     frameBufferB -= ((uint32_t)frameBufferB) % 0x80;
 
-    char *vPointer = virtMemMan_FindEmptyAddress (buffer_size, 
-                                                  MEM_KERNEL);
+    char *vPointer = virtMemMan_FindEmptyAddress (buffer_size,
+                     MEM_KERNEL);
 
-    int retVal = virtMemMan_Map ((uint32_t)vPointer, 
+    int retVal = virtMemMan_Map ((uint32_t)vPointer,
                                  (uint64_t)frameBufferA,
-                                buffer_size, 
-                                MEM_TYPE_WC, 
-                                MEM_WRITE, 
-                                MEM_KERNEL);
+                                 buffer_size,
+                                 MEM_TYPE_WC,
+                                 MEM_WRITE,
+                                 MEM_KERNEL);
 
     frameBufferA = vPointer;
 
@@ -53,11 +53,11 @@ graphics_Initialize(void)
     memset (frameBufferB, 0, buffer_size);
 }
 
-void 
+void
 graphics_SwapBuffer(void)
 {
     uint64_t *fbufA = (uint64_t*)frameBufferA, *fbufB = (uint64_t*)frameBufferB;
-    
+
     for (uint32_t a = 0; a < buffer_size; a+=0x80)
         {
             asm volatile ("movdqa (%%ebx), %%xmm0\n\t"
@@ -92,7 +92,7 @@ graphics_SwapBuffer(void)
 
 }
 
-void 
+void
 graphics_Clear(void)
 {
     uint64_t *bbuffer = (uint64_t*)frameBufferB;
@@ -106,9 +106,9 @@ graphics_Clear(void)
         }
 }
 
-void 
-graphics_WriteStr(const char *str, 
-                  int yOff, 
+void
+graphics_WriteStr(const char *str,
+                  int yOff,
                   int xOff)
 {
     uint32_t curBufVal = 0;
@@ -116,28 +116,28 @@ graphics_WriteStr(const char *str,
     for (int i = 0; str[i] != 0; i++)
         {
             for (int b = 0; b < 8; b++)
-            {
-                for (int a = xOff; a < xOff + 13; a++)
-                    {
+                {
+                    for (int a = xOff; a < xOff + 13; a++)
+                        {
 
-                        curBufVal = backBuffer[(yOff + (8 - b) + (a * pitch))];
+                            curBufVal = backBuffer[(yOff + (8 - b) + (a * pitch))];
 
-                        backBuffer[(yOff + (8 - b) + (a * pitch))] =
-                            (1 - ((letters[str[i] - 32][13 - (a - xOff)] >> b) & 1)) *
-                            curBufVal;
+                            backBuffer[(yOff + (8 - b) + (a * pitch))] =
+                                (1 - ((letters[str[i] - 32][13 - (a - xOff)] >> b) & 1)) *
+                                curBufVal;
 
-                        // if(backBuffer[ (yOff+ (8-b) + (a * pitch)) ] == 0)backBuffer =
-                        // curBufVal;
-                    }
+                            // if(backBuffer[ (yOff+ (8-b) + (a * pitch)) ] == 0)backBuffer =
+                            // curBufVal;
+                        }
                 }
             yOff += 8;
         }
 }
 
-void 
-graphics_WriteUInt32(uint32_t val, 
-                     int base, 
-                     int xOff, 
+void
+graphics_WriteUInt32(uint32_t val,
+                     int base,
+                     int xOff,
                      int yOff)
 {
     char str[128];
@@ -150,10 +150,10 @@ graphics_WriteUInt32(uint32_t val,
     graphics_WriteStr(str, xOff, yOff);
 }
 
-void 
-graphics_WriteUInt64(uint64_t val, 
-                     int base, 
-                     int xOff, 
+void
+graphics_WriteUInt64(uint64_t val,
+                     int base,
+                     int xOff,
                      int yOff)
 {
     char str[512];
@@ -166,11 +166,11 @@ graphics_WriteUInt64(uint64_t val,
     graphics_WriteStr(str, xOff, yOff);
 }
 
-void 
-graphics_WriteFloat(float val, 
-                         uint32_t decimalCount, 
-                         int xOff, 
-                         int yOff)
+void
+graphics_WriteFloat(float val,
+                    uint32_t decimalCount,
+                    int xOff,
+                    int yOff)
 {
     char str[256];
     char opts[] = "0123456789";
@@ -202,19 +202,19 @@ graphics_WriteFloat(float val,
     graphics_WriteStr(str, xOff, yOff);
 }
 
-void 
-graphics_SetPixel(uint32_t x, 
-                  uint32_t y, 
+void
+graphics_SetPixel(uint32_t x,
+                  uint32_t y,
                   uint32_t val)
 {
     backBuffer[x + (y * pitch)] = val;
 }
 
-void 
-graphics_DrawBuffer(void* buffer, 
-                    uint32_t x, 
-                    uint32_t y, 
-                    uint32_t w, 
+void
+graphics_DrawBuffer(void* buffer,
+                    uint32_t x,
+                    uint32_t y,
+                    uint32_t w,
                     uint32_t h)
 {
     uint8_t* offset = (uint8_t*)&backBuffer[x+(y*pitch)];
@@ -222,6 +222,9 @@ graphics_DrawBuffer(void* buffer,
 
     uint64_t x0 = 0, y0= 0;
     uint64_t tmp0 = 0, tmp1 = 0;
+
+    if (x > width) x = 0;
+    if (y > height) y = 0;
 
     if (x+w > width) w = width - x;
     if (y+h > height) h = height - y;

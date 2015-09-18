@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <x86intrin.h>
 
 typedef uint64_t UID;
 typedef UID SysID;
