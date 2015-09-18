@@ -7,17 +7,17 @@ ProcessInfo *processes;
 void
 ProcessManager_Initialize(void)
 {
-	//Create the OS process
-	processes = kmalloc(sizeof(ProcessInfo));
-	processes->flags |= PROC_PERM_KERNEL;
-	processes->uid = new_uid();
-	strcpy(processes->name, "kernel");
-	processes->path = NULL;
-	processes->children = NULL;
-	processes->next = NULL;
+    //Create the OS process
+    processes = kmalloc(sizeof(ProcessInfo));
+    processes->flags |= PROC_PERM_KERNEL;
+    processes->uid = new_uid();
+    strcpy(processes->name, "kernel");
+    processes->path = NULL;
+    processes->children = NULL;
+    processes->next = NULL;
 
-	uint32_t* ktls = (uint32_t*)ThreadMan_GetCurThreadTLS();
-	ktls[0] = (uint32_t)processes;	//Store the process pointer in the first uint in the ktls
+    uint32_t* ktls = (uint32_t*)ThreadMan_GetCurThreadTLS();
+    ktls[0] = (uint32_t)processes;	//Store the process pointer in the first uint in the ktls
 
 
 }
@@ -25,13 +25,13 @@ ProcessManager_Initialize(void)
 void
 ProcessManager_BootstrapProcess(int argc, char **argv)
 {
-	//Get the current process ID
-	ProcessInfo* p_inf = ProcessManager_GetCurProcessInfo ();
+    //Get the current process ID
+    ProcessInfo* p_inf = ProcessManager_GetCurProcessInfo ();
 
-	//We would want to copy the args into the KTLS so they can be pulled out later
+    //We would want to copy the args into the KTLS so they can be pulled out later
 
-	UID tmp = Elf_Load(p_inf->path, (p_inf->flags & 2)?ELF_KERNEL:ELF_USER);
-	if(tmp != -1 && tmp != -2)Elf_Start(tmp);
+    UID tmp = Elf_Load(p_inf->path, (p_inf->flags & 2)?ELF_KERNEL:ELF_USER);
+    if(tmp != -1 && tmp != -2)Elf_Start(tmp);
 
 }
 
@@ -43,53 +43,52 @@ ProcessManager_CreateProcess(const char *name,
                              ProcessInfo *parent,
                              uint32_t flags)
 {
-	ThreadMan_Lock();	//Can't have thread switches happening here
-	
-	ProcessInfo *proc = kmalloc(sizeof(ProcessInfo));
+    ThreadMan_Lock();	//Can't have thread switches happening here
 
-	proc->uid = new_uid();
-	proc->flags = flags | PROC_STATUS_RUNNING;
-	memset(proc->name, 
-	       0, 
-	       MAX_PROC_NAME_LEN);
+    ProcessInfo *proc = kmalloc(sizeof(ProcessInfo));
 
-	memcpy(proc->name, 
-	       name, 
-	       (strlen(name) > MAX_PROC_NAME_LEN - 1)?MAX_PROC_NAME_LEN - 1: strlen(name));
+    proc->uid = new_uid();
+    proc->flags = flags | PROC_STATUS_RUNNING;
+    memset(proc->name,
+           0,
+           MAX_PROC_NAME_LEN);
 
-	proc->path = kmalloc(strlen(path) + 1);
-	strcpy(proc->path, path);
+    memcpy(proc->name,
+           name,
+           (strlen(name) > MAX_PROC_NAME_LEN - 1)?MAX_PROC_NAME_LEN - 1: strlen(name));
 
-	//Add to the process tree, all processes are under the kernel
-	if(parent == NULL)parent = processes;
-	proc->parent = parent;
-	if(parent->children == NULL)
-	{
-		parent->children = proc;
-	}
-	else 
-	{
-		proc->next = parent->children->next;
-		parent->children->next = proc;
-	}
+    proc->path = kmalloc(strlen(path) + 1);
+    strcpy(proc->path, path);
 
-	UID tid = ThreadMan_CreateThread(ProcessManager_BootstrapProcess, 
-	                                 argc, 
-	                                 argv, 
-	                                 (flags & 2)?THREAD_FLAGS_KERNEL:THREAD_FLAGS_USER );
+    //Add to the process tree, all processes are under the kernel
+    if(parent == NULL)parent = processes;
+    proc->parent = parent;
+    if(parent->children == NULL)
+        {
+            parent->children = proc;
+        }
+    else
+        {
+            proc->next = parent->children->next;
+            parent->children->next = proc;
+        }
 
-	uint32_t* ktls = (uint32_t*)ThreadMan_GetThreadTLS(tid);
-	ktls[0] = (uint32_t)proc;
+    UID tid = ThreadMan_CreateThread(ProcessManager_BootstrapProcess,
+                                     argc,
+                                     argv,
+                                     (flags & 2)?THREAD_FLAGS_KERNEL:THREAD_FLAGS_USER );
 
-	ThreadMan_Unlock();
-	ThreadMan_StartThread(tid);
+    uint32_t* ktls = (uint32_t*)ThreadMan_GetThreadTLS(tid);
+    ktls[0] = (uint32_t)proc;
+
+    ThreadMan_Unlock();
+    ThreadMan_StartThread(tid);
 }
 
 uint32_t
 ProcessManager_CreateProcess_Syscall(void *param)
 {
-	//TODO setup TLS and allocate a structure in it for the process info pointer
-	//the TLS is used to keep track of the current process info, however this introduces a vulnerability, a thread might overwrite the pointer in its TLS with another pointer, 
+
 }
 
 
@@ -108,18 +107,12 @@ ProcessManager_ForkProcess_Syscall(void *param)
 ProcessInfo*
 ProcessManager_GetCurProcessInfo(void)
 {
-	uint32_t* ktls = (uint32_t*)ThreadMan_GetCurThreadTLS();
-	return (ProcessInfo*)ktls[0];
+    uint32_t* ktls = (uint32_t*)ThreadMan_GetCurThreadTLS();
+    return (ProcessInfo*)ktls[0];
 }
 
 UID
 ProcessManager_GetCurPID(void)
 {
-	return ProcessManager_GetCurProcessInfo()->uid;
-}
-
-uint32_t
-ProcessManager_GetCurPID_Syscall(void *param)
-{
-
+    return ProcessManager_GetCurProcessInfo()->uid;
 }

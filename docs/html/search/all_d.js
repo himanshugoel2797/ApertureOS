@@ -39,6 +39,8 @@ var searchData=
   ['max_5fopen_5fdirs',['MAX_OPEN_DIRS',['../priv__filesystem_8h.html#a277cecfc163ffac62738982c422d9a36',1,'priv_filesystem.h']]],
   ['max_5fopen_5ffiles',['MAX_OPEN_FILES',['../priv__filesystem_8h.html#ae4777ede3ed2173c78fab7798ad6eddb',1,'priv_filesystem.h']]],
   ['max_5fpossible_5fbars',['MAX_POSSIBLE_BARS',['../pci_8h.html#adc4d9180b0fe2596d9e13b8a6ec026e0',1,'pci.h']]],
+  ['max_5fproc_5fname_5flen',['MAX_PROC_NAME_LEN',['../process__man_8h.html#a9d58a262aee8bdb8659c78682a3e4ed3',1,'process_man.h']]],
+  ['max_5fsyscalls',['MAX_SYSCALLS',['../syscall__man_8h.html#a88ef3d98617b4673404cd57e1fa4e516',1,'syscall_man.h']]],
   ['max_5fsystem_5fcount',['MAX_SYSTEM_COUNT',['../system__manager_8h.html#a1ccc16b9f3e50bde818999e45e7c9527',1,'system_manager.h']]],
   ['max_5ftimers',['MAX_TIMERS',['../timer__manager_8h.html#a79fd3eac646964332ed33ec7dd40f208',1,'timer_manager.h']]],
   ['mb',['MB',['../types_8h.html#a44d2b171cc92225ec0a76ef70fc9b531',1,'types.h']]],

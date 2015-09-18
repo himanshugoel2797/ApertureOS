@@ -106,62 +106,91 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="structPCI__DeviceFuncs.html#adb14bb1f30d26dfb5c58c75ed548d23a">   15</a></span>&#160;    uint8_t <a class="code" href="structPCI__DeviceFuncs.html#adb14bb1f30d26dfb5c58c75ed548d23a">classCode</a>;</div>
 <div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="structPCI__DeviceFuncs.html#a1cd08f902bc8d2bbe9d6b82c82435dc8">   16</a></span>&#160;    uint8_t <a class="code" href="structPCI__DeviceFuncs.html#a1cd08f902bc8d2bbe9d6b82c82435dc8">subClassCode</a>;</div>
 <div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="structPCI__DeviceFuncs.html#affdb3f288a161e563c1bf1491cce17ff">   17</a></span>&#160;    uint8_t <a class="code" href="structPCI__DeviceFuncs.html#affdb3f288a161e563c1bf1491cce17ff">progIf</a>;</div>
-<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="structPCI__DeviceFuncs.html#aa1536e3b88e1eb00cae30d6f4e9417c2">   18</a></span>&#160;    uint32_t <a class="code" href="structPCI__DeviceFuncs.html#aa1536e3b88e1eb00cae30d6f4e9417c2">bus</a>;</div>
-<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="structPCI__DeviceFuncs.html#af8e46e6d91eadcba06ec76e03ede7f80">   19</a></span>&#160;    uint32_t <a class="code" href="structPCI__DeviceFuncs.html#af8e46e6d91eadcba06ec76e03ede7f80">device</a>;</div>
-<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="structPCI__DeviceFuncs.html#ad94f63cba21bbcac524b2fec52da1a47">   20</a></span>&#160;    uint32_t <span class="keyword">function</span>;</div>
-<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="structPCI__DeviceFuncs.html#aa0dc38edb7b343260f8e7bc4eac7fd03">   21</a></span>&#160;    uint8_t <a class="code" href="structPCI__DeviceFuncs.html#aa0dc38edb7b343260f8e7bc4eac7fd03">bar_count</a>;</div>
-<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="structPCI__DeviceFuncs.html#afd2b134fd25b23d30cac1a0209d2a621">   22</a></span>&#160;    uint32_t bars[<a class="code" href="pci_8h.html#adc4d9180b0fe2596d9e13b8a6ec026e0">MAX_POSSIBLE_BARS</a>];</div>
-<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="structPCI__DeviceFuncs.html#a57b3eb34e259ca5ad4c353b966c358e1">   23</a></span>&#160;    uint8_t <a class="code" href="structPCI__DeviceFuncs.html#a57b3eb34e259ca5ad4c353b966c358e1">headerType</a>;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;} <a class="code" href="structPCI__DeviceFuncs.html">PCI_DeviceFuncs</a>;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
-<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="pci_8h.html#a0baeea6e624eedbf624ed0c18711c261">   26</a></span>&#160;<a class="code" href="structPCI__DeviceFuncs.html">PCI_DeviceFuncs</a> <a class="code" href="pci_8h.html#a0baeea6e624eedbf624ed0c18711c261">devices</a>[<a class="code" href="pci_8h.html#a70ca23c85c6385ea64dfa919547104f2">MAX_DEVICE_COUNT</a>];</div>
-<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="pci_8h.html#aaccfa7460ea46608b85483e13929f30e">   27</a></span>&#160;uint32_t <a class="code" href="pci_8h.html#aaccfa7460ea46608b85483e13929f30e">pci_deviceCount</a>;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keywordtype">void</span> <a class="code" href="pci_8h.html#add8efc55129d971d131b94a043887d69">pci_writeDWord</a>(</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    uint32_t bus,</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    uint32_t device,</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    uint32_t <span class="keyword">function</span>,</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    uint32_t offset,</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    uint32_t val</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;);</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;uint32_t <a class="code" href="pci_8h.html#a42a8431af0483a8a383dac5f9b8892e0">pci_readDWord</a>(</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    uint32_t bus,</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    uint32_t device,</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    uint32_t <span class="keyword">function</span>,</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    uint32_t offset</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;);</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    </div>
+<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="structPCI__DeviceFuncs.html#a4f01bf12c16893c0fa99f9909d1ad953">   19</a></span>&#160;    uint16_t <a class="code" href="structPCI__DeviceFuncs.html#a4f01bf12c16893c0fa99f9909d1ad953">deviceID</a>;</div>
+<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="structPCI__DeviceFuncs.html#acc2b6a144032983dd7e855e3e70e3cf0">   20</a></span>&#160;    uint16_t <a class="code" href="structPCI__DeviceFuncs.html#acc2b6a144032983dd7e855e3e70e3cf0">vendorID</a>;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="structPCI__DeviceFuncs.html#aa1536e3b88e1eb00cae30d6f4e9417c2">   22</a></span>&#160;    uint32_t <a class="code" href="structPCI__DeviceFuncs.html#aa1536e3b88e1eb00cae30d6f4e9417c2">bus</a>;</div>
+<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="structPCI__DeviceFuncs.html#af8e46e6d91eadcba06ec76e03ede7f80">   23</a></span>&#160;    uint32_t <a class="code" href="structPCI__DeviceFuncs.html#af8e46e6d91eadcba06ec76e03ede7f80">device</a>;</div>
+<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="structPCI__DeviceFuncs.html#ad94f63cba21bbcac524b2fec52da1a47">   24</a></span>&#160;    uint32_t <span class="keyword">function</span>;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    </div>
+<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="structPCI__DeviceFuncs.html#aa0dc38edb7b343260f8e7bc4eac7fd03">   26</a></span>&#160;    uint8_t <a class="code" href="structPCI__DeviceFuncs.html#aa0dc38edb7b343260f8e7bc4eac7fd03">bar_count</a>;</div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="structPCI__DeviceFuncs.html#afd2b134fd25b23d30cac1a0209d2a621">   27</a></span>&#160;    uint32_t bars[<a class="code" href="pci_8h.html#adc4d9180b0fe2596d9e13b8a6ec026e0">MAX_POSSIBLE_BARS</a>];</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    </div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="structPCI__DeviceFuncs.html#a57b3eb34e259ca5ad4c353b966c358e1">   29</a></span>&#160;    uint8_t <a class="code" href="structPCI__DeviceFuncs.html#a57b3eb34e259ca5ad4c353b966c358e1">headerType</a>;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;} <a class="code" href="structPCI__DeviceFuncs.html">PCI_DeviceFuncs</a>;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
+<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="pci_8h.html#a0baeea6e624eedbf624ed0c18711c261">   32</a></span>&#160;<a class="code" href="structPCI__DeviceFuncs.html">PCI_DeviceFuncs</a> <a class="code" href="pci_8h.html#a0baeea6e624eedbf624ed0c18711c261">devices</a>[<a class="code" href="pci_8h.html#a70ca23c85c6385ea64dfa919547104f2">MAX_DEVICE_COUNT</a>];</div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="pci_8h.html#aaccfa7460ea46608b85483e13929f30e">   33</a></span>&#160;uint32_t <a class="code" href="pci_8h.html#aaccfa7460ea46608b85483e13929f30e">pci_deviceCount</a>;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keywordtype">void</span> </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<a class="code" href="pci_8h.html#add8efc55129d971d131b94a043887d69">pci_writeDWord</a>(</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    uint32_t bus,</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    uint32_t device,</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    uint32_t <span class="keyword">function</span>,</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    uint32_t offset,</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    uint32_t val</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;);</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="keywordtype">void</span> <a class="code" href="pci_8h.html#ad960b28cd7afda0c8c7fddae9a29a423">pci_GetPCIClass</a> (</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keywordtype">long</span> classcode,</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordtype">char</span> ** base,</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordtype">char</span> ** sub,</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordtype">char</span> ** prog</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;);</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="keywordtype">void</span> <a class="code" href="pci_8h.html#abf41d8d0c45097bdb1a5d5ef607dda7c">pci_Initialize</a>();</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keywordtype">void</span> <a class="code" href="pci_8h.html#a276525e57110f570606125d6d97bff02">pci_setCommand</a>(uint32_t device_index, uint16_t value);</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* end of include guard: _PCI_DRIVER_H_ */</span><span class="preprocessor"></span></div>
-<div class="ttc" id="pci_8h_html_a276525e57110f570606125d6d97bff02"><div class="ttname"><a href="pci_8h.html#a276525e57110f570606125d6d97bff02">pci_setCommand</a></div><div class="ttdeci">void pci_setCommand(uint32_t device_index, uint16_t value)</div><div class="ttdef"><b>Definition:</b> pci.c:113</div></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;uint32_t </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<a class="code" href="pci_8h.html#a42a8431af0483a8a383dac5f9b8892e0">pci_readDWord</a>(</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    uint32_t bus,</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    uint32_t device,</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    uint32_t <span class="keyword">function</span>,</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    uint32_t offset</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keywordtype">void</span> </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<a class="code" href="pci_8h.html#ad960b28cd7afda0c8c7fddae9a29a423">pci_GetPCIClass</a> (</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordtype">long</span> classcode,</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordtype">char</span> ** base,</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">char</span> ** sub,</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">char</span> ** prog</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<a class="code" href="pci_8h.html#afcc307a4a7852f0382751f714002d80e">pci_GetPCIDevice</a>(uint16_t venID,</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                 uint16_t devID,</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                 <span class="keywordtype">char</span> **chip_name,</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                 <span class="keywordtype">char</span> **chip_desc);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="keywordtype">void</span> </div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<a class="code" href="pci_8h.html#addcb7a7cb1269ad78f9e96b1f66b3400">pci_GetPCIVendor</a>(uint16_t venID,</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                 <span class="keywordtype">char</span> ** short_name,</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                 <span class="keywordtype">char</span> ** long_name);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="keywordtype">void</span> </div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<a class="code" href="pci_8h.html#afea3093fc1c3b0040c37f6cad84a1c57">pci_Initialize</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="keywordtype">void</span> </div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<a class="code" href="pci_8h.html#a276525e57110f570606125d6d97bff02">pci_setCommand</a>(uint32_t device_index, </div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;               uint16_t value);</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* end of include guard: _PCI_DRIVER_H_ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="pci_8h_html_a276525e57110f570606125d6d97bff02"><div class="ttname"><a href="pci_8h.html#a276525e57110f570606125d6d97bff02">pci_setCommand</a></div><div class="ttdeci">void pci_setCommand(uint32_t device_index, uint16_t value)</div><div class="ttdef"><b>Definition:</b> pci.c:142</div></div>
 <div class="ttc" id="types_8h_html"><div class="ttname"><a href="types_8h.html">types.h</a></div></div>
+<div class="ttc" id="pci_8h_html_afea3093fc1c3b0040c37f6cad84a1c57"><div class="ttname"><a href="pci_8h.html#afea3093fc1c3b0040c37f6cad84a1c57">pci_Initialize</a></div><div class="ttdeci">void pci_Initialize(void)</div><div class="ttdef"><b>Definition:</b> pci.c:38</div></div>
 <div class="ttc" id="structPCI__DeviceFuncs_html_adb14bb1f30d26dfb5c58c75ed548d23a"><div class="ttname"><a href="structPCI__DeviceFuncs.html#adb14bb1f30d26dfb5c58c75ed548d23a">PCI_DeviceFuncs::classCode</a></div><div class="ttdeci">uint8_t classCode</div><div class="ttdef"><b>Definition:</b> pci.h:15</div></div>
-<div class="ttc" id="structPCI__DeviceFuncs_html_af8e46e6d91eadcba06ec76e03ede7f80"><div class="ttname"><a href="structPCI__DeviceFuncs.html#af8e46e6d91eadcba06ec76e03ede7f80">PCI_DeviceFuncs::device</a></div><div class="ttdeci">uint32_t device</div><div class="ttdef"><b>Definition:</b> pci.h:19</div></div>
-<div class="ttc" id="pci_8h_html_a42a8431af0483a8a383dac5f9b8892e0"><div class="ttname"><a href="pci_8h.html#a42a8431af0483a8a383dac5f9b8892e0">pci_readDWord</a></div><div class="ttdeci">uint32_t pci_readDWord(uint32_t bus, uint32_t device, uint32_t function, uint32_t offset)</div><div class="ttdef"><b>Definition:</b> pci.c:12</div></div>
-<div class="ttc" id="pci_8h_html_ad960b28cd7afda0c8c7fddae9a29a423"><div class="ttname"><a href="pci_8h.html#ad960b28cd7afda0c8c7fddae9a29a423">pci_GetPCIClass</a></div><div class="ttdeci">void pci_GetPCIClass(long classcode, char **base, char **sub, char **prog)</div><div class="ttdef"><b>Definition:</b> pci_devices.c:38</div></div>
-<div class="ttc" id="pci_8h_html_aaccfa7460ea46608b85483e13929f30e"><div class="ttname"><a href="pci_8h.html#aaccfa7460ea46608b85483e13929f30e">pci_deviceCount</a></div><div class="ttdeci">uint32_t pci_deviceCount</div><div class="ttdef"><b>Definition:</b> pci.h:27</div></div>
+<div class="ttc" id="structPCI__DeviceFuncs_html_a4f01bf12c16893c0fa99f9909d1ad953"><div class="ttname"><a href="structPCI__DeviceFuncs.html#a4f01bf12c16893c0fa99f9909d1ad953">PCI_DeviceFuncs::deviceID</a></div><div class="ttdeci">uint16_t deviceID</div><div class="ttdef"><b>Definition:</b> pci.h:19</div></div>
+<div class="ttc" id="structPCI__DeviceFuncs_html_af8e46e6d91eadcba06ec76e03ede7f80"><div class="ttname"><a href="structPCI__DeviceFuncs.html#af8e46e6d91eadcba06ec76e03ede7f80">PCI_DeviceFuncs::device</a></div><div class="ttdeci">uint32_t device</div><div class="ttdef"><b>Definition:</b> pci.h:23</div></div>
+<div class="ttc" id="pci_8h_html_a42a8431af0483a8a383dac5f9b8892e0"><div class="ttname"><a href="pci_8h.html#a42a8431af0483a8a383dac5f9b8892e0">pci_readDWord</a></div><div class="ttdeci">uint32_t pci_readDWord(uint32_t bus, uint32_t device, uint32_t function, uint32_t offset)</div><div class="ttdef"><b>Definition:</b> pci.c:13</div></div>
+<div class="ttc" id="pci_8h_html_ad960b28cd7afda0c8c7fddae9a29a423"><div class="ttname"><a href="pci_8h.html#ad960b28cd7afda0c8c7fddae9a29a423">pci_GetPCIClass</a></div><div class="ttdeci">void pci_GetPCIClass(long classcode, char **base, char **sub, char **prog)</div><div class="ttdef"><b>Definition:</b> pci_devices.c:39</div></div>
+<div class="ttc" id="pci_8h_html_aaccfa7460ea46608b85483e13929f30e"><div class="ttname"><a href="pci_8h.html#aaccfa7460ea46608b85483e13929f30e">pci_deviceCount</a></div><div class="ttdeci">uint32_t pci_deviceCount</div><div class="ttdef"><b>Definition:</b> pci.h:33</div></div>
 <div class="ttc" id="structPCI__DeviceFuncs_html"><div class="ttname"><a href="structPCI__DeviceFuncs.html">PCI_DeviceFuncs</a></div><div class="ttdef"><b>Definition:</b> pci.h:13</div></div>
 <div class="ttc" id="structPCI__DeviceFuncs_html_a1cd08f902bc8d2bbe9d6b82c82435dc8"><div class="ttname"><a href="structPCI__DeviceFuncs.html#a1cd08f902bc8d2bbe9d6b82c82435dc8">PCI_DeviceFuncs::subClassCode</a></div><div class="ttdeci">uint8_t subClassCode</div><div class="ttdef"><b>Definition:</b> pci.h:16</div></div>
+<div class="ttc" id="pci_8h_html_addcb7a7cb1269ad78f9e96b1f66b3400"><div class="ttname"><a href="pci_8h.html#addcb7a7cb1269ad78f9e96b1f66b3400">pci_GetPCIVendor</a></div><div class="ttdeci">void pci_GetPCIVendor(uint16_t venID, char **short_name, char **long_name)</div><div class="ttdef"><b>Definition:</b> pci_devices.c:56</div></div>
 <div class="ttc" id="pci_8h_html_adc4d9180b0fe2596d9e13b8a6ec026e0"><div class="ttname"><a href="pci_8h.html#adc4d9180b0fe2596d9e13b8a6ec026e0">MAX_POSSIBLE_BARS</a></div><div class="ttdeci">#define MAX_POSSIBLE_BARS</div><div class="ttdef"><b>Definition:</b> pci.h:7</div></div>
-<div class="ttc" id="pci_8h_html_add8efc55129d971d131b94a043887d69"><div class="ttname"><a href="pci_8h.html#add8efc55129d971d131b94a043887d69">pci_writeDWord</a></div><div class="ttdeci">void pci_writeDWord(uint32_t bus, uint32_t device, uint32_t function, uint32_t offset, uint32_t val)</div><div class="ttdef"><b>Definition:</b> pci.c:23</div></div>
-<div class="ttc" id="structPCI__DeviceFuncs_html_a57b3eb34e259ca5ad4c353b966c358e1"><div class="ttname"><a href="structPCI__DeviceFuncs.html#a57b3eb34e259ca5ad4c353b966c358e1">PCI_DeviceFuncs::headerType</a></div><div class="ttdeci">uint8_t headerType</div><div class="ttdef"><b>Definition:</b> pci.h:23</div></div>
-<div class="ttc" id="pci_8h_html_abf41d8d0c45097bdb1a5d5ef607dda7c"><div class="ttname"><a href="pci_8h.html#abf41d8d0c45097bdb1a5d5ef607dda7c">pci_Initialize</a></div><div class="ttdeci">void pci_Initialize()</div><div class="ttdef"><b>Definition:</b> pci.c:35</div></div>
-<div class="ttc" id="structPCI__DeviceFuncs_html_aa1536e3b88e1eb00cae30d6f4e9417c2"><div class="ttname"><a href="structPCI__DeviceFuncs.html#aa1536e3b88e1eb00cae30d6f4e9417c2">PCI_DeviceFuncs::bus</a></div><div class="ttdeci">uint32_t bus</div><div class="ttdef"><b>Definition:</b> pci.h:18</div></div>
-<div class="ttc" id="structPCI__DeviceFuncs_html_aa0dc38edb7b343260f8e7bc4eac7fd03"><div class="ttname"><a href="structPCI__DeviceFuncs.html#aa0dc38edb7b343260f8e7bc4eac7fd03">PCI_DeviceFuncs::bar_count</a></div><div class="ttdeci">uint8_t bar_count</div><div class="ttdef"><b>Definition:</b> pci.h:21</div></div>
+<div class="ttc" id="pci_8h_html_add8efc55129d971d131b94a043887d69"><div class="ttname"><a href="pci_8h.html#add8efc55129d971d131b94a043887d69">pci_writeDWord</a></div><div class="ttdeci">void pci_writeDWord(uint32_t bus, uint32_t device, uint32_t function, uint32_t offset, uint32_t val)</div><div class="ttdef"><b>Definition:</b> pci.c:25</div></div>
+<div class="ttc" id="structPCI__DeviceFuncs_html_a57b3eb34e259ca5ad4c353b966c358e1"><div class="ttname"><a href="structPCI__DeviceFuncs.html#a57b3eb34e259ca5ad4c353b966c358e1">PCI_DeviceFuncs::headerType</a></div><div class="ttdeci">uint8_t headerType</div><div class="ttdef"><b>Definition:</b> pci.h:29</div></div>
+<div class="ttc" id="structPCI__DeviceFuncs_html_aa1536e3b88e1eb00cae30d6f4e9417c2"><div class="ttname"><a href="structPCI__DeviceFuncs.html#aa1536e3b88e1eb00cae30d6f4e9417c2">PCI_DeviceFuncs::bus</a></div><div class="ttdeci">uint32_t bus</div><div class="ttdef"><b>Definition:</b> pci.h:22</div></div>
+<div class="ttc" id="structPCI__DeviceFuncs_html_aa0dc38edb7b343260f8e7bc4eac7fd03"><div class="ttname"><a href="structPCI__DeviceFuncs.html#aa0dc38edb7b343260f8e7bc4eac7fd03">PCI_DeviceFuncs::bar_count</a></div><div class="ttdeci">uint8_t bar_count</div><div class="ttdef"><b>Definition:</b> pci.h:26</div></div>
 <div class="ttc" id="pci_8h_html_a70ca23c85c6385ea64dfa919547104f2"><div class="ttname"><a href="pci_8h.html#a70ca23c85c6385ea64dfa919547104f2">MAX_DEVICE_COUNT</a></div><div class="ttdeci">#define MAX_DEVICE_COUNT</div><div class="ttdef"><b>Definition:</b> pci.h:6</div></div>
-<div class="ttc" id="pci_8h_html_a0baeea6e624eedbf624ed0c18711c261"><div class="ttname"><a href="pci_8h.html#a0baeea6e624eedbf624ed0c18711c261">devices</a></div><div class="ttdeci">PCI_DeviceFuncs devices[MAX_DEVICE_COUNT]</div><div class="ttdef"><b>Definition:</b> pci.h:26</div></div>
+<div class="ttc" id="pci_8h_html_afcc307a4a7852f0382751f714002d80e"><div class="ttname"><a href="pci_8h.html#afcc307a4a7852f0382751f714002d80e">pci_GetPCIDevice</a></div><div class="ttdeci">void pci_GetPCIDevice(uint16_t venID, uint16_t devID, char **chip_name, char **chip_desc)</div><div class="ttdef"><b>Definition:</b> pci_devices.c:76</div></div>
+<div class="ttc" id="pci_8h_html_a0baeea6e624eedbf624ed0c18711c261"><div class="ttname"><a href="pci_8h.html#a0baeea6e624eedbf624ed0c18711c261">devices</a></div><div class="ttdeci">PCI_DeviceFuncs devices[MAX_DEVICE_COUNT]</div><div class="ttdef"><b>Definition:</b> pci.h:32</div></div>
+<div class="ttc" id="structPCI__DeviceFuncs_html_acc2b6a144032983dd7e855e3e70e3cf0"><div class="ttname"><a href="structPCI__DeviceFuncs.html#acc2b6a144032983dd7e855e3e70e3cf0">PCI_DeviceFuncs::vendorID</a></div><div class="ttdeci">uint16_t vendorID</div><div class="ttdef"><b>Definition:</b> pci.h:20</div></div>
 <div class="ttc" id="structPCI__DeviceFuncs_html_affdb3f288a161e563c1bf1491cce17ff"><div class="ttname"><a href="structPCI__DeviceFuncs.html#affdb3f288a161e563c1bf1491cce17ff">PCI_DeviceFuncs::progIf</a></div><div class="ttdeci">uint8_t progIf</div><div class="ttdef"><b>Definition:</b> pci.h:17</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

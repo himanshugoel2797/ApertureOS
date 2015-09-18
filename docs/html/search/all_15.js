@@ -10,7 +10,7 @@ var searchData=
   ['ucompact',['ucompact',['../umalloc_8c.html#ad825a546cbea8f948dd865a48975e490',1,'ucompact():&#160;umalloc.c'],['../umalloc_8h.html#ad825a546cbea8f948dd865a48975e490',1,'ucompact():&#160;umalloc.c']]],
   ['ufis',['ufis',['../structHBA__FIS.html#adc63196eb3cc13147cbbb1fd58fe1d71',1,'HBA_FIS']]],
   ['ufree',['ufree',['../umalloc_8c.html#af3248cfbb21bb989ac0cdcdd4b24e0a0',1,'ufree(void *addr):&#160;umalloc.c'],['../umalloc_8h.html#af3248cfbb21bb989ac0cdcdd4b24e0a0',1,'ufree(void *addr):&#160;umalloc.c']]],
-  ['uid',['uid',['../structEXT2__Inode.html#a34a774ef0cfbe16e0de4fb954c34d158',1,'EXT2_Inode::uid()'],['../structUID__Entry.html#ad051cdbc6bf3b12bbfaa676347386cb5',1,'UID_Entry::uid()'],['../structThread.html#a31f7bc93b398a186a986c8b9476df24c',1,'Thread::uid()'],['../types_8h.html#a83aa1253e238763a389f784ff78d569e',1,'UID():&#160;types.h']]],
+  ['uid',['uid',['../structEXT2__Inode.html#a34a774ef0cfbe16e0de4fb954c34d158',1,'EXT2_Inode::uid()'],['../structUID__Entry.html#ad051cdbc6bf3b12bbfaa676347386cb5',1,'UID_Entry::uid()'],['../structThread.html#a31f7bc93b398a186a986c8b9476df24c',1,'Thread::uid()'],['../structProcessInfo.html#a0276689f5359acb05f07c061dd96b036',1,'ProcessInfo::uid()'],['../types_8h.html#a83aa1253e238763a389f784ff78d569e',1,'UID():&#160;types.h']]],
   ['uid_5fentry',['UID_Entry',['../structUID__Entry.html',1,'']]],
   ['uid_5fllist',['UID_LList',['../structUID__LList.html',1,'']]],
   ['uid_5freserved_5fblocks',['uid_reserved_blocks',['../structEXT2__SuperBlock.html#afbf76868584952c0a72407b3c5b0ed6d',1,'EXT2_SuperBlock']]],

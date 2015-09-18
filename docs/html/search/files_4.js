@@ -5,5 +5,6 @@ var searchData=
   ['elf_5floader_2eh',['elf_loader.h',['../elf__loader_8h.html',1,'']]],
   ['ext2_2ec',['ext2.c',['../ext2_8c.html',1,'']]],
   ['ext2_2eh',['ext2.h',['../ext2_8h.html',1,'']]],
+  ['ext2_5fhelpers_2ec',['ext2_helpers.c',['../ext2__helpers_8c.html',1,'']]],
   ['ext2_5fstructs_2eh',['ext2_structs.h',['../ext2__structs_8h.html',1,'']]]
 ];

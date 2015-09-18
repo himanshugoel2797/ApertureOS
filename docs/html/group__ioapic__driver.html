@@ -110,9 +110,11 @@ Functions</h2></td></tr>
 <tr class="separator:gad157f506506fbfa003f9374d2bc416db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga8372078d6ae0621377a30d25d52771cb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ioapic__driver.html#ga8372078d6ae0621377a30d25d52771cb">IOAPIC_VirtualizeAll</a> (void)</td></tr>
 <tr class="separator:ga8372078d6ae0621377a30d25d52771cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga18dba16062705f4fc4f4b5db679a760d"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ioapic__driver.html#ga18dba16062705f4fc4f4b5db679a760d">IOAPIC_Read</a> (uint32_t *io_apic_baseAddr, uint32_t <a class="el" href="ext2_8c.html#a750b5d744c39a06bfb13e6eb010e35d0">index</a>)</td></tr>
+<tr class="memitem:ga18dba16062705f4fc4f4b5db679a760d"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ioapic__driver.html#ga18dba16062705f4fc4f4b5db679a760d">IOAPIC_Read</a> (uint32_t *io_apic_baseAddr, uint32_t index)</td></tr>
+<tr class="memdesc:ga18dba16062705f4fc4f4b5db679a760d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read an IOAPIC configuration register.  <a href="#ga18dba16062705f4fc4f4b5db679a760d">More...</a><br /></td></tr>
 <tr class="separator:ga18dba16062705f4fc4f4b5db679a760d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gabc17d90580cf30f31f54a10b7a7dfbb6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ioapic__driver.html#gabc17d90580cf30f31f54a10b7a7dfbb6">IOAPIC_Write</a> (uint32_t *io_apic_baseAddr, uint32_t <a class="el" href="ext2_8c.html#a750b5d744c39a06bfb13e6eb010e35d0">index</a>, uint32_t val)</td></tr>
+<tr class="memitem:gabc17d90580cf30f31f54a10b7a7dfbb6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ioapic__driver.html#gabc17d90580cf30f31f54a10b7a7dfbb6">IOAPIC_Write</a> (uint32_t *io_apic_baseAddr, uint32_t index, uint32_t val)</td></tr>
+<tr class="memdesc:gabc17d90580cf30f31f54a10b7a7dfbb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write an IOAPIC configuration register.  <a href="#gabc17d90580cf30f31f54a10b7a7dfbb6">More...</a><br /></td></tr>
 <tr class="separator:gabc17d90580cf30f31f54a10b7a7dfbb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -268,6 +270,16 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Read an IOAPIC configuration register. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">io_apic_baseAddr</td><td>the base address of the IO APIC MMIO space </td></tr>
+    <tr><td class="paramname">index</td><td>the register index to read </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the value of the register </dd></dl>
+
 </div>
 </div>
 <a class="anchor" id="gac5221e30605a6c6af53ca229ebf31075"></a>
@@ -341,6 +353,16 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Write an IOAPIC configuration register. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">io_apic_baseAddr</td><td>the base address of the IO APIC MMIO space </td></tr>
+    <tr><td class="paramname">index</td><td>the register index to read </td></tr>
+    <tr><td class="paramname">val</td><td>the register value </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

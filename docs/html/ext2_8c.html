@@ -86,7 +86,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
@@ -94,6 +93,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="ext2_8h_source.html">ext2.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="priv__ext2_8h_source.html">priv_ext2.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="common_8h_source.html">utils/common.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="kmalloc_8h_source.html">kmalloc.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
@@ -101,33 +101,18 @@ Include dependency graph for ext2.c:</div>
 <div class="dyncontent">
 <div class="center"><img src="ext2_8c__incl.png" border="0" usemap="#managers_2filesystem_2ext2_2ext2_8c" alt=""/></div>
 <map name="managers_2filesystem_2ext2_2ext2_8c" id="managers_2filesystem_2ext2_2ext2_8c">
-<area shape="rect" id="node2" href="ext2_8h.html" title="ext2.h" alt="" coords="1463,95,1521,121"/><area shape="rect" id="node25" href="kmalloc_8h.html" title="kmalloc.h" alt="" coords="2665,415,2743,442"/><area shape="rect" id="node35" href="common_8h.html" title="utils/common.h" alt="" coords="267,415,378,442"/><area shape="rect" id="node3" href="types_8h.html" title="types.h" alt="" coords="1381,647,1446,673"/><area shape="rect" id="node6" href="managers_8h.html" title="managers.h" alt="" coords="811,244,901,271"/><area shape="rect" id="node39" href="priv__filesystem_8h.html" title="../priv_filesystem.h" alt="" coords="1484,169,1617,196"/><area shape="rect" id="node40" href="ext2__structs_8h.html" title="ext2_structs.h" alt="" coords="2779,244,2885,271"/><area shape="rect" id="node7" href="msg__types_8h.html" title="msg_manager/msg_types.h" alt="" coords="1070,497,1253,524"/><area shape="rect" id="node8" href="filesystem_8h.html" title="filesystem/filesystem.h" alt="" coords="1472,326,1629,353"/><area shape="rect" id="node26" href="process__manager_8h.html" title="process/process_manager.h" alt="" coords="5,326,192,353"/><area shape="rect" id="node27" href="virt__mem__manager_8h.html" title="virt_mem_manager/virt\l_mem_manager.h" alt="" coords="88,408,243,449"/><area shape="rect" id="node28" href="keyboard_8h.html" title="keyboard/keyboard.h" alt="" coords="454,415,597,442"/><area shape="rect" id="node29" href="interrupt__manager_8h.html" title="interrupt/interrupt\l_manager.h" alt="" coords="552,319,672,360"/><area shape="rect" id="node31" href="threads_8h.html" title="threads/threads.h" alt="" coords="696,326,819,353"/><area shape="rect" id="node32" href="timer__manager_8h.html" title="timer/timer_manager.h" alt="" coords="795,415,947,442"/><area shape="rect" id="node33" href="phys__mem__manager_8h.html" title="phys_mem_manager/phys\l_mem_manager.h" alt="" coords="894,319,1069,360"/><area shape="rect" id="node34" href="bootstrap__mem__pool_8h.html" title="bootstrap_mem_pool\l/bootstrap_mem_pool.h" alt="" coords="318,319,477,360"/><area shape="rect" id="node37" href="msg__manager_8h.html" title="msg_manager/msg_manager.h" alt="" coords="1145,326,1346,353"/><area shape="rect" id="node38" href="system__manager_8h.html" title="../system_manager/system\l_manager.h" alt="" coords="1021,408,1203,449"/><area shape="rect" id="node9" href="drivers_8h.html" title="drivers.h" alt="" coords="1831,415,1903,442"/><area shape="rect" id="node10" href="acpi__tables_8h.html" title="acpi_tables/acpi_tables.h" alt="" coords="2043,572,2213,599"/><area shape="rect" id="node11" href="ahci_8h.html" title="ahci/ahci.h" alt="" coords="2164,497,2249,524"/><area shape="rect" id="node13" href="apic_8h.html" title="apic/apic.h" alt="" coords="2415,497,2500,524"/><area shape="rect" id="node15" href="cmos_8h.html" title="cmos/cmos.h" alt="" coords="2592,572,2693,599"/><area shape="rect" id="node16" href="fpu_8h.html" title="fpu/fpu.h" alt="" coords="1273,572,1346,599"/><area shape="rect" id="node17" href="hpet_8h.html" title="hpet/hpet.h" alt="" coords="1370,572,1457,599"/><area shape="rect" id="node18" href="pic_8h.html" title="pic/pic.h" alt="" coords="1481,572,1551,599"/><area shape="rect" id="node19" href="pit_8h.html" title="pit/pit.h" alt="" coords="1643,497,1709,524"/><area shape="rect" id="node20" href="pci_8h.html" title="pci/pci.h" alt="" coords="1733,497,1803,524"/><area shape="rect" id="node21" href="ps2_8h.html" title="ps2/ps2.h" alt="" coords="1827,497,1906,524"/><area shape="rect" id="node24" href="COM_8h.html" title="serial/COM.h" alt="" coords="1944,497,2043,524"/><area shape="rect" id="node12" href="priv__ahci_8h.html" title="priv_ahci.h" alt="" coords="2288,572,2373,599"/><area shape="rect" id="node14" href="io__apic_8h.html" title="io_apic/io_apic.h" alt="" coords="2398,572,2517,599"/><area shape="rect" id="node22" href="ps2__keyboard_8h.html" title="ps2_keyboard.h" alt="" coords="1677,572,1792,599"/><area shape="rect" id="node23" href="ps2__mouse_8h.html" title="ps2_mouse.h" alt="" coords="1817,572,1917,599"/><area shape="rect" id="node30" href="idt_8h.html" title="idt.h" alt="" coords="673,415,719,442"/></map>
+<area shape="rect" id="node2" href="ext2_8h.html" title="ext2.h" alt="" coords="2346,169,2404,196"/><area shape="rect" id="node26" href="kmalloc_8h.html" title="kmalloc.h" alt="" coords="804,490,882,517"/><area shape="rect" id="node35" href="common_8h.html" title="utils/common.h" alt="" coords="1484,490,1594,517"/><area shape="rect" id="node41" href="priv__ext2_8h.html" title="priv_ext2.h" alt="" coords="2372,95,2458,121"/><area shape="rect" id="node3" href="types_8h.html" title="types.h" alt="" coords="1456,721,1521,748"/><area shape="rect" id="node7" href="managers_8h.html" title="managers.h" alt="" coords="1976,319,2067,345"/><area shape="rect" id="node39" href="priv__filesystem_8h.html" title="../priv_filesystem.h" alt="" coords="1100,244,1234,271"/><area shape="rect" id="node40" href="ext2__structs_8h.html" title="ext2_structs.h" alt="" coords="2645,244,2750,271"/><area shape="rect" id="node8" href="msg__types_8h.html" title="msg_manager/msg_types.h" alt="" coords="1830,572,2013,599"/><area shape="rect" id="node9" href="filesystem_8h.html" title="filesystem/filesystem.h" alt="" coords="1026,401,1183,427"/><area shape="rect" id="node27" href="keyboard_8h.html" title="keyboard/keyboard.h" alt="" coords="2137,490,2280,517"/><area shape="rect" id="node28" href="interrupt__manager_8h.html" title="interrupt/interrupt\l_manager.h" alt="" coords="2248,393,2368,435"/><area shape="rect" id="node30" href="threads_8h.html" title="threads/threads.h" alt="" coords="2392,401,2515,427"/><area shape="rect" id="node31" href="timer__manager_8h.html" title="timer/timer_manager.h" alt="" coords="2478,490,2630,517"/><area shape="rect" id="node32" href="phys__mem__manager_8h.html" title="phys_mem_manager/phys\l_mem_manager.h" alt="" coords="1492,393,1666,435"/><area shape="rect" id="node33" href="virt__mem__manager_8h.html" title="virt_mem_manager/virt\l_mem_manager.h" alt="" coords="1691,393,1846,435"/><area shape="rect" id="node34" href="bootstrap__mem__pool_8h.html" title="bootstrap_mem_pool\l/bootstrap_mem_pool.h" alt="" coords="1309,393,1468,435"/><area shape="rect" id="node37" href="msg__manager_8h.html" title="msg_manager/msg_manager.h" alt="" coords="1921,401,2122,427"/><area shape="rect" id="node38" href="system__manager_8h.html" title="../system_manager/system\l_manager.h" alt="" coords="1931,483,2112,524"/><area shape="rect" id="node10" href="drivers_8h.html" title="drivers.h" alt="" coords="907,490,979,517"/><area shape="rect" id="node11" href="acpi__tables_8h.html" title="acpi_tables/acpi_tables.h" alt="" coords="926,647,1096,673"/><area shape="rect" id="node12" href="ahci_8h.html" title="ahci/ahci.h" alt="" coords="1062,572,1147,599"/><area shape="rect" id="node14" href="apic_8h.html" title="apic/apic.h" alt="" coords="1251,572,1336,599"/><area shape="rect" id="node16" href="cmos_8h.html" title="cmos/cmos.h" alt="" coords="30,647,131,673"/><area shape="rect" id="node17" href="fpu_8h.html" title="fpu/fpu.h" alt="" coords="156,647,229,673"/><area shape="rect" id="node18" href="hpet_8h.html" title="hpet/hpet.h" alt="" coords="253,647,340,673"/><area shape="rect" id="node19" href="pic_8h.html" title="pic/pic.h" alt="" coords="364,647,434,673"/><area shape="rect" id="node20" href="pit_8h.html" title="pit/pit.h" alt="" coords="537,572,602,599"/><area shape="rect" id="node21" href="pci_8h.html" title="pci/pci.h" alt="" coords="640,572,710,599"/><area shape="rect" id="node22" href="ps2_8h.html" title="ps2/ps2.h" alt="" coords="741,572,820,599"/><area shape="rect" id="node25" href="COM_8h.html" title="serial/COM.h" alt="" coords="848,572,947,599"/><area shape="rect" id="node13" href="priv__ahci_8h.html" title="priv_ahci.h" alt="" coords="1171,647,1256,673"/><area shape="rect" id="node15" href="io__apic_8h.html" title="io_apic/io_apic.h" alt="" coords="1332,647,1450,673"/><area shape="rect" id="node23" href="ps2__keyboard_8h.html" title="ps2_keyboard.h" alt="" coords="560,647,675,673"/><area shape="rect" id="node24" href="ps2__mouse_8h.html" title="ps2_mouse.h" alt="" coords="700,647,800,673"/><area shape="rect" id="node29" href="idt_8h.html" title="idt.h" alt="" coords="2356,490,2402,517"/></map>
 </div>
 </div><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
-Macros</h2></td></tr>
-<tr class="memitem:aa2ac54564b3514084afd2c5dafe9d232"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ext2_8c.html#aa2ac54564b3514084afd2c5dafe9d232">POOL_SIZE</a>&#160;&#160;&#160;<a class="el" href="types_8h.html#a44d2b171cc92225ec0a76ef70fc9b531">MB</a>(2)</td></tr>
-<tr class="separator:aa2ac54564b3514084afd2c5dafe9d232"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a90a60652796f9e93531becd27f709501"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ext2_8c.html#a90a60652796f9e93531becd27f709501">_EXT2_ReadToAddr</a> (FileDescriptor *desc, uint64_t addr, uint32_t len, uint8_t *target)</td></tr>
-<tr class="separator:a90a60652796f9e93531becd27f709501"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a55353c97226d811d6bfd666c493def6f"><td class="memItemLeft" align="right" valign="top">uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ext2_8c.html#a55353c97226d811d6bfd666c493def6f">_EXT2_ReadAddr</a> (FileDescriptor *desc, uint64_t addr, uint32_t len)</td></tr>
-<tr class="separator:a55353c97226d811d6bfd666c493def6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a29907750e43125295eb12e385905b8c2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structEXT2__BlockGroupDescriptor.html">EXT2_BlockGroupDescriptor</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ext2_8c.html#a29907750e43125295eb12e385905b8c2">_EXT2_GetBlockGroup</a> (FileDescriptor *desc, uint32_t block_index)</td></tr>
-<tr class="separator:a29907750e43125295eb12e385905b8c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa0fbd337c67aa11d3289baf4eb370d60"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structEXT2__Inode.html">EXT2_Inode</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ext2_8c.html#aa0fbd337c67aa11d3289baf4eb370d60">_EXT2_GetInode</a> (FileDescriptor *desc, uint32_t inode_i)</td></tr>
-<tr class="separator:aa0fbd337c67aa11d3289baf4eb370d60"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae3fdcf6f2d1f76ae7b8c931a5679fbb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structEXT2__FD.html">EXT2_FD</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ext2_8c.html#aae3fdcf6f2d1f76ae7b8c931a5679fbb">_EXT2_FindFDFromID</a> (uint32_t <a class="el" href="process__manager_8c.html#a17d665b03c4f1b180b8b7f01528cdad5">id</a>)</td></tr>
+<tr class="memitem:aae3fdcf6f2d1f76ae7b8c931a5679fbb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structEXT2__FD.html">EXT2_FD</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ext2_8c.html#aae3fdcf6f2d1f76ae7b8c931a5679fbb">_EXT2_FindFDFromID</a> (uint32_t id)</td></tr>
 <tr class="separator:aae3fdcf6f2d1f76ae7b8c931a5679fbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a97514cc80dd217f54bd48b3d488a219f"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ext2_8c.html#a97514cc80dd217f54bd48b3d488a219f">_EXT2_Initialize</a> (FileDescriptor *desc)</td></tr>
 <tr class="separator:a97514cc80dd217f54bd48b3d488a219f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed33975db21f0fdd3bc2e530d8e0507c"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ext2_8c.html#aed33975db21f0fdd3bc2e530d8e0507c">_EXT2_Filesystem_OpenFile</a> (FileDescriptor *desc, const char *filename, int flags, int perms)</td></tr>
 <tr class="separator:aed33975db21f0fdd3bc2e530d8e0507c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad6ef20c8524469da6c3d3811b27419be"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ext2_8c.html#ad6ef20c8524469da6c3d3811b27419be">_EXT2_ReadBlockData</a> (FileDescriptor *desc, uint32_t block_index, uint32_t offset, uint8_t *dest, size_t size)</td></tr>
-<tr class="separator:ad6ef20c8524469da6c3d3811b27419be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae24f6ced8b07efcf731d4e18486b9bd"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ext2_8c.html#aae24f6ced8b07efcf731d4e18486b9bd">_EXT2_Filesystem_ReadFile</a> (FileDescriptor *desc, <a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a> <a class="el" href="process__manager_8c.html#a17d665b03c4f1b180b8b7f01528cdad5">id</a>, uint8_t *buffer, size_t size)</td></tr>
+<tr class="memitem:aae24f6ced8b07efcf731d4e18486b9bd"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ext2_8c.html#aae24f6ced8b07efcf731d4e18486b9bd">_EXT2_Filesystem_ReadFile</a> (FileDescriptor *desc, <a class="el" href="types_8h.html#a83aa1253e238763a389f784ff78d569e">UID</a> id, uint8_t *buffer, size_t size)</td></tr>
 <tr class="separator:aae24f6ced8b07efcf731d4e18486b9bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f7fe962070eefdbc66b63396275704d"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ext2_8c.html#a5f7fe962070eefdbc66b63396275704d">_EXT2_Filesystem_SeekFile</a> (FileDescriptor *desc, uint32_t <a class="el" href="ext2_8c.html#ada6ba1a7aa61d2fd3517a683750ba6e4">fd</a>, uint64_t offset, int whence)</td></tr>
 <tr class="separator:a5f7fe962070eefdbc66b63396275704d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -150,28 +135,11 @@ Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a750b5d744c39a06bfb13e6eb010e35d0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ext2_8c.html#a750b5d744c39a06bfb13e6eb010e35d0">index</a> = 0</td></tr>
-<tr class="separator:a750b5d744c39a06bfb13e6eb010e35d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a49a5a41af6da1696861662ffd9c12c32"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ext2_8c.html#a49a5a41af6da1696861662ffd9c12c32">base_id</a> = 0</td></tr>
-<tr class="separator:a49a5a41af6da1696861662ffd9c12c32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada6ba1a7aa61d2fd3517a683750ba6e4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structEXT2__FD.html">EXT2_FD</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ext2_8c.html#ada6ba1a7aa61d2fd3517a683750ba6e4">fd</a></td></tr>
 <tr class="separator:ada6ba1a7aa61d2fd3517a683750ba6e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f2745d74c8631f6d6cc5b8671cf92dd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structEXT2__FD.html">EXT2_FD</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ext2_8c.html#a9f2745d74c8631f6d6cc5b8671cf92dd">last_fd</a></td></tr>
 <tr class="separator:a9f2745d74c8631f6d6cc5b8671cf92dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Macro Definition Documentation</h2>
-<a class="anchor" id="aa2ac54564b3514084afd2c5dafe9d232"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define POOL_SIZE&#160;&#160;&#160;<a class="el" href="types_8h.html#a44d2b171cc92225ec0a76ef70fc9b531">MB</a>(2)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="a7159a712f1e6e87ad4421fc294ce0a40"></a>
 <div class="memitem">
@@ -523,58 +491,6 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a29907750e43125295eb12e385905b8c2"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structEXT2__BlockGroupDescriptor.html">EXT2_BlockGroupDescriptor</a>* _EXT2_GetBlockGroup </td>
-          <td>(</td>
-          <td class="paramtype">FileDescriptor *&#160;</td>
-          <td class="paramname"><em>desc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>block_index</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="aa0fbd337c67aa11d3289baf4eb370d60"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structEXT2__Inode.html">EXT2_Inode</a>* _EXT2_GetInode </td>
-          <td>(</td>
-          <td class="paramtype">FileDescriptor *&#160;</td>
-          <td class="paramname"><em>desc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>inode_i</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a class="anchor" id="a97514cc80dd217f54bd48b3d488a219f"></a>
 <div class="memitem">
 <div class="memproto">
@@ -591,151 +507,13 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a55353c97226d811d6bfd666c493def6f"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint8_t* _EXT2_ReadAddr </td>
-          <td>(</td>
-          <td class="paramtype">FileDescriptor *&#160;</td>
-          <td class="paramname"><em>desc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint64_t&#160;</td>
-          <td class="paramname"><em>addr</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>len</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="ad6ef20c8524469da6c3d3811b27419be"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint32_t _EXT2_ReadBlockData </td>
-          <td>(</td>
-          <td class="paramtype">FileDescriptor *&#160;</td>
-          <td class="paramname"><em>desc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>block_index</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>offset</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t *&#160;</td>
-          <td class="paramname"><em>dest</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>size</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a90a60652796f9e93531becd27f709501"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint32_t _EXT2_ReadToAddr </td>
-          <td>(</td>
-          <td class="paramtype">FileDescriptor *&#160;</td>
-          <td class="paramname"><em>desc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint64_t&#160;</td>
-          <td class="paramname"><em>addr</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>len</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t *&#160;</td>
-          <td class="paramname"><em>target</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <h2 class="groupheader">Variable Documentation</h2>
-<a class="anchor" id="a49a5a41af6da1696861662ffd9c12c32"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int base_id = 0</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a class="anchor" id="ada6ba1a7aa61d2fd3517a683750ba6e4"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="structEXT2__FD.html">EXT2_FD</a>* fd</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a750b5d744c39a06bfb13e6eb010e35d0"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int index = 0</td>
         </tr>
       </table>
 </div><div class="memdoc">

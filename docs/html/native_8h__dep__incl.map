@@ -4,15 +4,16 @@
 <area shape="rect" id="node4" href="$priv__ata__pio_8h.html" title="drivers/ata_pio/priv\l_ata_pio.h" alt="" coords="237,80,369,121"/>
 <area shape="rect" id="node5" href="$ata__pio_8c.html" title="drivers/ata_pio/ata\l_pio.c" alt="" coords="291,169,420,211"/>
 <area shape="rect" id="node6" href="$cmos_8c.html" title="drivers/cmos/cmos.c" alt="" coords="445,87,589,114"/>
-<area shape="rect" id="node7" href="$pci_8c.html" title="drivers/pci/pci.c" alt="" coords="613,87,727,114"/>
-<area shape="rect" id="node8" href="$pic_8c.html" title="drivers/pic/pic.c" alt="" coords="751,87,866,114"/>
-<area shape="rect" id="node9" href="$pit_8c.html" title="drivers/pit/pit.c" alt="" coords="891,87,999,114"/>
-<area shape="rect" id="node10" href="$ps2_8c.html" title="drivers/ps2/ps2.c" alt="" coords="1023,87,1146,114"/>
-<area shape="rect" id="node11" href="$ps2__keyboard_8c.html" title="drivers/ps2/ps2_keyboard.c" alt="" coords="1171,87,1353,114"/>
-<area shape="rect" id="node12" href="$ps2__mouse_8c.html" title="drivers/ps2/ps2_mouse.c" alt="" coords="1378,87,1546,114"/>
-<area shape="rect" id="node13" href="$COM_8c.html" title="drivers/serial/COM.c" alt="" coords="1571,87,1713,114"/>
-<area shape="rect" id="node14" href="$kmalloc_8c.html" title="kmalloc/kmalloc.c" alt="" coords="1737,87,1864,114"/>
-<area shape="rect" id="node15" href="$virt__mem__manager_8c.html" title="managers/virt_mem_manager\l/virt_mem_manager.c" alt="" coords="1889,80,2083,121"/>
-<area shape="rect" id="node16" href="$umalloc_8c.html" title="processors/umalloc\l/umalloc.c" alt="" coords="2108,80,2243,121"/>
-<area shape="rect" id="node17" href="$native_8c.html" title="utils/native.c" alt="" coords="2267,87,2363,114"/>
+<area shape="rect" id="node7" href="$rtl8139_8c.html" title="drivers/network/rtl8139\l/rtl8139.c" alt="" coords="613,80,767,121"/>
+<area shape="rect" id="node8" href="$pci_8c.html" title="drivers/pci/pci.c" alt="" coords="791,87,906,114"/>
+<area shape="rect" id="node9" href="$pic_8c.html" title="drivers/pic/pic.c" alt="" coords="930,87,1045,114"/>
+<area shape="rect" id="node10" href="$pit_8c.html" title="drivers/pit/pit.c" alt="" coords="1069,87,1177,114"/>
+<area shape="rect" id="node11" href="$ps2_8c.html" title="drivers/ps2/ps2.c" alt="" coords="1202,87,1325,114"/>
+<area shape="rect" id="node12" href="$ps2__keyboard_8c.html" title="drivers/ps2/ps2_keyboard.c" alt="" coords="1349,87,1532,114"/>
+<area shape="rect" id="node13" href="$ps2__mouse_8c.html" title="drivers/ps2/ps2_mouse.c" alt="" coords="1557,87,1725,114"/>
+<area shape="rect" id="node14" href="$COM_8c.html" title="drivers/serial/COM.c" alt="" coords="1749,87,1892,114"/>
+<area shape="rect" id="node15" href="$kmalloc_8c.html" title="kmalloc/kmalloc.c" alt="" coords="1916,87,2043,114"/>
+<area shape="rect" id="node16" href="$virt__mem__manager_8c.html" title="managers/virt_mem_manager\l/virt_mem_manager.c" alt="" coords="2067,80,2262,121"/>
+<area shape="rect" id="node17" href="$umalloc_8c.html" title="processors/umalloc\l/umalloc.c" alt="" coords="2287,80,2421,121"/>
+<area shape="rect" id="node18" href="$native_8c.html" title="utils/native.c" alt="" coords="2446,87,2542,114"/>
 </map>

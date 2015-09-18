@@ -18,6 +18,7 @@ var searchData=
   ['k_5fmul',['k_mul',['../structPS2__ScanCodes__2__.html#a875ab6847af4d941efca32476c7616fc',1,'PS2_ScanCodes_2_']]],
   ['k_5fpages_5fbase_5faddr',['k_pages_base_addr',['../kmalloc_8c.html#ad4cd4d32f16b203846296cbb4e3a47a3',1,'kmalloc.c']]],
   ['k_5fsub',['k_sub',['../structPS2__ScanCodes__2__.html#ab128158deb1fd26ed521d235d496e094',1,'PS2_ScanCodes_2_']]],
+  ['k_5ftls',['k_tls',['../structThread.html#a29ae9c843835d8aa95d0ff68048fe1f2',1,'Thread']]],
   ['kb',['KB',['../types_8h.html#a5c723c0cc71b83224ead557db3ab74dd',1,'types.h']]],
   ['kb4_5fblocks_5fbitmap',['KB4_Blocks_Bitmap',['../priv__phys__mem__manager_8h.html#af78445c88520652bae14ab8a5b6b161e',1,'priv_phys_mem_manager.h']]],
   ['kb4_5fblocks_5fcount',['KB4_Blocks_Count',['../priv__phys__mem__manager_8h.html#af3ad1c95655adb9835e1f85dd07996c5',1,'priv_phys_mem_manager.h']]],
@@ -56,5 +57,6 @@ var searchData=
   ['kmalloc_5finit',['kmalloc_init',['../group__kmalloc.html#ga5333a86fa531afe56c03b5a5efe51805',1,'kmalloc_init():&#160;kmalloc.c'],['../group__kmalloc.html#ga5333a86fa531afe56c03b5a5efe51805',1,'kmalloc_init():&#160;kmalloc.c']]],
   ['kmem_5fend',['KMEM_END',['../priv__virt__mem__manager_8h.html#a1e6e57121271dd49a6112af10442dc36',1,'priv_virt_mem_manager.h']]],
   ['kmem_5fsize',['KMEM_SIZE',['../priv__virt__mem__manager_8h.html#a47b87b62c935a5de32cd90c2ee7c1e33',1,'priv_virt_mem_manager.h']]],
-  ['kmem_5fstart',['KMEM_START',['../priv__virt__mem__manager_8h.html#a3d1d9a5581a280bbb8ddc10c47da90b9',1,'priv_virt_mem_manager.h']]]
+  ['kmem_5fstart',['KMEM_START',['../priv__virt__mem__manager_8h.html#a3d1d9a5581a280bbb8ddc10c47da90b9',1,'priv_virt_mem_manager.h']]],
+  ['kstack',['kstack',['../structThread.html#abb55e32c7faa8aea5ff15f5d55e12e6d',1,'Thread']]]
 ];

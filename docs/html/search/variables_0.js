@@ -22,5 +22,6 @@ var searchData=
   ['_5fh_5ffilesystem_5frenamefile',['_H_Filesystem_RenameFile',['../structFilesystem__Driver.html#a79debf488fa736d0d98e0ea23ec69896',1,'Filesystem_Driver']]],
   ['_5fh_5ffilesystem_5fseekfile',['_H_Filesystem_SeekFile',['../structFilesystem__Driver.html#a1aab985dfd31e93e324dd3cc776343bb',1,'Filesystem_Driver']]],
   ['_5fh_5finitialize',['_H_Initialize',['../structFilesystem__Driver.html#a7ddf8f9019f03edeaa23199a5dc1542e',1,'Filesystem_Driver']]],
-  ['_5fregion_5fkernel_5fend_5f',['_region_kernel_end_',['../globals_8h.html#a2a3275242f06bef221b9c41a1d6e22d0',1,'globals.h']]]
+  ['_5fregion_5fkernel_5fend_5f',['_region_kernel_end_',['../globals_8h.html#a2a3275242f06bef221b9c41a1d6e22d0',1,'globals.h']]],
+  ['_5fregion_5fkernel_5fstart_5f',['_region_kernel_start_',['../globals_8h.html#a593d17c9c370571fbce89df340446a07',1,'globals.h']]]
 ];

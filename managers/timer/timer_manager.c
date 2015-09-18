@@ -46,9 +46,9 @@ uint32_t timers_Initialize()
 
     //Determine if the APIC is available and initialize its timer too
     if(Interrupts_IsAPICEnabled())
-    {
-        //TODO callibrate APIC timer
-    }
+        {
+            //TODO callibrate APIC timer
+        }
 
 
     //APIC_SetTimerMode(APIC_TIMER_PERIODIC);
@@ -74,38 +74,38 @@ uint8_t timers_messageHandler(Message *msg)
 void timer_handler(Registers *regs)
 {
     for(int i = 0; i < MAX_TIMERS; i++)
-    {
-        if(timer_entries[i].ticks != 0)
         {
-            timer_entries[i].curTicks--;
-            COM_WriteStr("%d\r\n", timer_entries[i].curTicks);
-            if(timer_entries[i].curTicks == 0)
-            {
-                if(timer_entries[i].handler != NULL) timer_entries[i].handler();
-                if(timer_entries[i].periodic)
+            if(timer_entries[i].ticks != 0)
                 {
-                    timer_entries[i].curTicks = timer_entries[i].ticks;
+                    timer_entries[i].curTicks--;
+                    COM_WriteStr("%d\r\n", timer_entries[i].curTicks);
+                    if(timer_entries[i].curTicks == 0)
+                        {
+                            if(timer_entries[i].handler != NULL) timer_entries[i].handler();
+                            if(timer_entries[i].periodic)
+                                {
+                                    timer_entries[i].curTicks = timer_entries[i].ticks;
+                                }
+                        }
                 }
-            }
         }
-    }
 }
 
 UID Timers_CreateNew(uint32_t ticks, bool periodic, TickHandler handler)
 {
     UID id = 0x80000000;
     for(int i = 0; i < MAX_TIMERS; i++)
-    {
-        if(timer_entries[i].ticks == 0)
         {
-            id += i;
-            timer_entries[i].ticks = ticks;
-            timer_entries[i].curTicks = ticks;
-            timer_entries[i].periodic = periodic;
-            timer_entries[i].handler = handler;
-            return id;
+            if(timer_entries[i].ticks == 0)
+                {
+                    id += i;
+                    timer_entries[i].ticks = ticks;
+                    timer_entries[i].curTicks = ticks;
+                    timer_entries[i].periodic = periodic;
+                    timer_entries[i].handler = handler;
+                    return id;
+                }
         }
-    }
     return -1;
 }
 
@@ -113,17 +113,17 @@ void Timers_Delete(UID uid)
 {
     uint32_t i = (uid - 0x80000000);
     if(i < MAX_TIMERS)
-    {
-        timer_entries[i].ticks = 0;
-        timer_entries[i].curTicks = 0;
-    }
+        {
+            timer_entries[i].ticks = 0;
+            timer_entries[i].curTicks = 0;
+        }
 }
 
 void Timers_StartTimer(UID uid)
 {
     uint32_t i = (uid - 0x80000000);
     if(i < MAX_TIMERS && timer_entries[i].ticks != 0)
-    {
-        PIT_SetEnableMode(ENABLE);
-    }
+        {
+            PIT_SetEnableMode(ENABLE);
+        }
 }

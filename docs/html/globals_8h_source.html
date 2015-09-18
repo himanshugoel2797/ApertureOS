@@ -97,10 +97,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="globals_8h.html#aa0fdc9ec091434257282ed514e7326e2">   10</a></span>&#160;multiboot_memory_map_t *<a class="code" href="globals_8h.html#aa0fdc9ec091434257282ed514e7326e2">global_memory_map</a>;</div>
 <div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="globals_8h.html#a16e41be609b9a390b9e00c2425a21f12">   11</a></span>&#160;<span class="keywordtype">size_t</span> <a class="code" href="globals_8h.html#a16e41be609b9a390b9e00c2425a21f12">global_memory_map_size</a>;</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code" href="globals_8h.html#a2a3275242f06bef221b9c41a1d6e22d0">_region_kernel_end_</a>;</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="globals_8h.html#acea7bfe1bac29b7c03a538a73c946b76">   14</a></span>&#160;<span class="preprocessor">#define LOAD_ADDRESS MB(16)</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* end of include guard: _GLOBALS_H_ */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code" href="globals_8h.html#a593d17c9c370571fbce89df340446a07">_region_kernel_start_</a>;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
+<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="globals_8h.html#acea7bfe1bac29b7c03a538a73c946b76">   15</a></span>&#160;<span class="preprocessor">#define LOAD_ADDRESS (uint32_t)&amp;_region_kernel_start_</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="globals_8h.html#aced0cd65148cf7b2fd40da9bdb895131">   16</a></span>&#160;<span class="preprocessor">#define NETWORK_DRIVER_COUNT 1</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* end of include guard: _GLOBALS_H_ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="structVbeInfoBlock_html"><div class="ttname"><a href="structVbeInfoBlock.html">VbeInfoBlock</a></div><div class="ttdef"><b>Definition:</b> multiboot.h:24</div></div>
 <div class="ttc" id="types_8h_html"><div class="ttname"><a href="types_8h.html">types.h</a></div></div>
 <div class="ttc" id="globals_8h_html_a432172c9bbe523b32b1a135330263a61"><div class="ttname"><a href="globals_8h.html#a432172c9bbe523b32b1a135330263a61">global_multiboot_info</a></div><div class="ttdeci">multiboot_info_t * global_multiboot_info</div><div class="ttdef"><b>Definition:</b> globals.h:9</div></div>
@@ -111,6 +113,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="ttc" id="multiboot_8h_html"><div class="ttname"><a href="multiboot_8h.html">multiboot.h</a></div></div>
 <div class="ttc" id="globals_8h_html_a14aa95e8195a1f479b7836e418b80e71"><div class="ttname"><a href="globals_8h.html#a14aa95e8195a1f479b7836e418b80e71">global_mode_info</a></div><div class="ttdeci">ModeInfoBlock * global_mode_info</div><div class="ttdef"><b>Definition:</b> globals.h:8</div></div>
 <div class="ttc" id="structModeInfoBlock_html"><div class="ttname"><a href="structModeInfoBlock.html">ModeInfoBlock</a></div><div class="ttdef"><b>Definition:</b> multiboot.h:34</div></div>
+<div class="ttc" id="globals_8h_html_a593d17c9c370571fbce89df340446a07"><div class="ttname"><a href="globals_8h.html#a593d17c9c370571fbce89df340446a07">_region_kernel_start_</a></div><div class="ttdeci">void _region_kernel_start_</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

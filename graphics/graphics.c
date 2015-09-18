@@ -59,36 +59,36 @@ graphics_SwapBuffer(void)
     uint64_t *fbufA = (uint64_t*)frameBufferA, *fbufB = (uint64_t*)frameBufferB;
 
     for (uint32_t a = 0; a < buffer_size; a+=0x80)
-    {
-        asm volatile ("movdqa (%%ebx), %%xmm0\n\t"
-                      "movdqa +0x10(%%ebx), %%xmm1\n\t"
-                      "movdqa +0x20(%%ebx), %%xmm2\n\t"
-                      "movdqa +0x30(%%ebx), %%xmm3\n\t"
-                      "movdqa +0x40(%%ebx), %%xmm4\n\t"
-                      "movdqa +0x50(%%ebx), %%xmm5\n\t"
-                      "movdqa +0x60(%%ebx), %%xmm6\n\t"
-                      "movdqa +0x70(%%ebx), %%xmm7\n\t"
-                      "shufps $0xE4, %%xmm0,  %%xmm0\n\t"
-                      "shufps $0xE4, %%xmm1,  %%xmm1\n\t"
-                      "shufps $0xE4, %%xmm2,  %%xmm2\n\t"
-                      "shufps $0xE4, %%xmm3,  %%xmm3\n\t"
-                      "shufps $0xE4, %%xmm4,  %%xmm4\n\t"
-                      "shufps $0xE4, %%xmm5,  %%xmm5\n\t"
-                      "shufps $0xE4, %%xmm6,  %%xmm6\n\t"
-                      "shufps $0xE4, %%xmm7,  %%xmm7\n\t"
-                      "movntdq %%xmm0, (%%eax)\n\t"
-                      "movntdq %%xmm1, +0x10(%%eax)\n\t"
-                      "movntdq %%xmm2, +0x20(%%eax)\n\t"
-                      "movntdq %%xmm3, +0x30(%%eax)\n\t"
-                      "movntdq %%xmm4, +0x40(%%eax)\n\t"
-                      "movntdq %%xmm5, +0x50(%%eax)\n\t"
-                      "movntdq %%xmm6, +0x60(%%eax)\n\t"
-                      "movntdq %%xmm7, +0x70(%%eax)\n\t"
-                      :: "a" (fbufA), "b" (fbufB) : "%xmm0","%xmm1","%xmm2","%xmm3","%xmm4","%xmm5","%xmm6","%xmm7", "%eax","%ebx");
+        {
+            asm volatile ("movdqa (%%ebx), %%xmm0\n\t"
+                          "movdqa +0x10(%%ebx), %%xmm1\n\t"
+                          "movdqa +0x20(%%ebx), %%xmm2\n\t"
+                          "movdqa +0x30(%%ebx), %%xmm3\n\t"
+                          "movdqa +0x40(%%ebx), %%xmm4\n\t"
+                          "movdqa +0x50(%%ebx), %%xmm5\n\t"
+                          "movdqa +0x60(%%ebx), %%xmm6\n\t"
+                          "movdqa +0x70(%%ebx), %%xmm7\n\t"
+                          "shufps $0xE4, %%xmm0,  %%xmm0\n\t"
+                          "shufps $0xE4, %%xmm1,  %%xmm1\n\t"
+                          "shufps $0xE4, %%xmm2,  %%xmm2\n\t"
+                          "shufps $0xE4, %%xmm3,  %%xmm3\n\t"
+                          "shufps $0xE4, %%xmm4,  %%xmm4\n\t"
+                          "shufps $0xE4, %%xmm5,  %%xmm5\n\t"
+                          "shufps $0xE4, %%xmm6,  %%xmm6\n\t"
+                          "shufps $0xE4, %%xmm7,  %%xmm7\n\t"
+                          "movntdq %%xmm0, (%%eax)\n\t"
+                          "movntdq %%xmm1, +0x10(%%eax)\n\t"
+                          "movntdq %%xmm2, +0x20(%%eax)\n\t"
+                          "movntdq %%xmm3, +0x30(%%eax)\n\t"
+                          "movntdq %%xmm4, +0x40(%%eax)\n\t"
+                          "movntdq %%xmm5, +0x50(%%eax)\n\t"
+                          "movntdq %%xmm6, +0x60(%%eax)\n\t"
+                          "movntdq %%xmm7, +0x70(%%eax)\n\t"
+                          :: "a" (fbufA), "b" (fbufB) : "%xmm0","%xmm1","%xmm2","%xmm3","%xmm4","%xmm5","%xmm6","%xmm7", "%eax","%ebx");
 
-        fbufB+=0x80/sizeof(uint64_t);
-        fbufA+=0x80/sizeof(uint64_t);
-    }
+            fbufB+=0x80/sizeof(uint64_t);
+            fbufA+=0x80/sizeof(uint64_t);
+        }
 
 }
 
@@ -99,11 +99,11 @@ graphics_Clear(void)
     memset (tmpBuf, 0xff, 16);
 
     for (uint32_t a = 0; a < buffer_size; a+=16)
-    {
-        asm volatile ("movdqa (%0), %%xmm1" :: "a" (tmpBuf));
-        asm volatile ("movntdq %%xmm1, (%0)":: "b" (bbuffer));
-        bbuffer+=2;
-    }
+        {
+            asm volatile ("movdqa (%0), %%xmm1" :: "a" (tmpBuf));
+            asm volatile ("movntdq %%xmm1, (%0)":: "b" (bbuffer));
+            bbuffer+=2;
+        }
 }
 
 void
@@ -114,24 +114,24 @@ graphics_WriteStr(const char *str,
     uint32_t curBufVal = 0;
 
     for (int i = 0; str[i] != 0; i++)
-    {
-        for (int b = 0; b < 8; b++)
         {
-            for (int a = xOff; a < xOff + 13; a++)
-            {
+            for (int b = 0; b < 8; b++)
+                {
+                    for (int a = xOff; a < xOff + 13; a++)
+                        {
 
-                curBufVal = backBuffer[(yOff + (8 - b) + (a * pitch))];
+                            curBufVal = backBuffer[(yOff + (8 - b) + (a * pitch))];
 
-                backBuffer[(yOff + (8 - b) + (a * pitch))] =
-                    (1 - ((letters[str[i] - 32][13 - (a - xOff)] >> b) & 1)) *
-                    curBufVal;
+                            backBuffer[(yOff + (8 - b) + (a * pitch))] =
+                                (1 - ((letters[str[i] - 32][13 - (a - xOff)] >> b) & 1)) *
+                                curBufVal;
 
-                // if(backBuffer[ (yOff+ (8-b) + (a * pitch)) ] == 0)backBuffer =
-                // curBufVal;
-            }
+                            // if(backBuffer[ (yOff+ (8-b) + (a * pitch)) ] == 0)backBuffer =
+                            // curBufVal;
+                        }
+                }
+            yOff += 8;
         }
-        yOff += 8;
-    }
 }
 
 void
@@ -180,10 +180,10 @@ graphics_WriteFloat(float val,
 
     int pos = 0;
     do
-    {
-        str[pos++] = opts[val_L2 % 10];
-        val_L2 /= 10;
-    }
+        {
+            str[pos++] = opts[val_L2 % 10];
+            val_L2 /= 10;
+        }
     while (val_L2 != 0);
 
     str[pos] = 0;
@@ -191,10 +191,10 @@ graphics_WriteFloat(float val,
     str[pos++] = '.';
 
     do
-    {
-        str[pos++] = opts[val_L % 10];
-        val_L /= 10;
-    }
+        {
+            str[pos++] = opts[val_L % 10];
+            val_L /= 10;
+        }
     while (val_L != 0);
 
     str[pos] = 0;
@@ -230,24 +230,24 @@ graphics_DrawBuffer(void* buffer,
     if (y+h > height) h = height - y;
 
     while (y0 < h)
-    {
-        offset[0] = src[2];
-        offset[1] = src[1];
-        offset[2] = src[0];
-        offset[3] = src[3];
-
-        //asm volatile ("movaps (%%ebx), %%xmm0\n\t"
-        //              "movaps %%xmm0, (%%eax)" : "=a" (offset): "b" (src));
-
-        offset+=4;
-        x0+=1;
-        src+=4;
-        if(x0 >= w)
         {
-            x0 = 0;
-            y0++;
-            offset = (uint64_t*)&backBuffer[x + ((y+y0)*pitch)];
-        }
+            offset[0] = src[2];
+            offset[1] = src[1];
+            offset[2] = src[0];
+            offset[3] = src[3];
 
-    }
+            //asm volatile ("movaps (%%ebx), %%xmm0\n\t"
+            //              "movaps %%xmm0, (%%eax)" : "=a" (offset): "b" (src));
+
+            offset+=4;
+            x0+=1;
+            src+=4;
+            if(x0 >= w)
+                {
+                    x0 = 0;
+                    y0++;
+                    offset = (uint64_t*)&backBuffer[x + ((y+y0)*pitch)];
+                }
+
+        }
 }

@@ -1,8 +1,8 @@
 <map id="drivers/ps2/ps2.c" name="drivers/ps2/ps2.c">
 <area shape="rect" id="node2" href="$ps2_8h.html" title="ps2.h" alt="" coords="188,155,243,181"/>
-<area shape="rect" id="node8" href="$priv__ps2_8h.html" title="priv_ps2.h" alt="" coords="260,80,342,107"/>
-<area shape="rect" id="node9" href="$native_8h.html" title="utils/native.h" alt="" coords="341,155,437,181"/>
+<area shape="rect" id="node9" href="$priv__ps2_8h.html" title="priv_ps2.h" alt="" coords="260,80,342,107"/>
+<area shape="rect" id="node10" href="$native_8h.html" title="utils/native.h" alt="" coords="341,155,437,181"/>
 <area shape="rect" id="node3" href="$types_8h.html" title="types.h" alt="" coords="183,304,248,331"/>
-<area shape="rect" id="node6" href="$ps2__keyboard_8h.html" title="ps2_keyboard.h" alt="" coords="26,229,141,256"/>
-<area shape="rect" id="node7" href="$ps2__mouse_8h.html" title="ps2_mouse.h" alt="" coords="166,229,266,256"/>
+<area shape="rect" id="node7" href="$ps2__keyboard_8h.html" title="ps2_keyboard.h" alt="" coords="26,229,141,256"/>
+<area shape="rect" id="node8" href="$ps2__mouse_8h.html" title="ps2_mouse.h" alt="" coords="166,229,266,256"/>
 </map>

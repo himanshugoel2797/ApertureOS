@@ -5,7 +5,7 @@
 
 ELF_Info *e_info = NULL, *last_e_info = NULL;
 
-UID 
+UID
 Elf_Load(const char *path, ELF_FLAGS perms)
 {
     //Open the file
@@ -17,10 +17,10 @@ Elf_Load(const char *path, ELF_FLAGS perms)
     Filesystem_SeekFile(fd, 0, SEEK_SET);
 
     if(file_size > MB(2))
-    {
-        Filesystem_CloseFile(fd);
-        return -2;
-    }
+        {
+            Filesystem_CloseFile(fd);
+            return -2;
+        }
 
     uint8_t *elf_temp = kmalloc(file_size);
     Filesystem_ReadFile(fd, elf_temp, file_size);
@@ -39,37 +39,37 @@ Elf_Load(const char *path, ELF_FLAGS perms)
 
     //Don't support relocations for now
     if(hdr->e_type == ET_EXEC)
-    {
-        Elf32_Phdr *phdr = (Elf32_Phdr*)(elf_temp + hdr->e_phoff);	//Find the program header
-
-        for(int i = 0; i < hdr->e_phnum; i++)
         {
-            if(phdr->p_type == 1)
-            {
-                //Allocate the associated physical memory and map it into the address space
-                uint32_t page_count = (phdr->p_memsz - 1)/KB(4) + 1;
-                uint64_t p_addr = 0;
-                uint32_t v_addr = phdr->p_vaddr;
+            Elf32_Phdr *phdr = (Elf32_Phdr*)(elf_temp + hdr->e_phoff);	//Find the program header
 
-                for(int j = 0; j < page_count; j++)
+            for(int i = 0; i < hdr->e_phnum; i++)
                 {
-                    p_addr = physMemMan_Alloc();
-                    virtMemMan_Map(v_addr, p_addr, KB(4), MEM_TYPE_WB, MEM_WRITE | MEM_READ | MEM_EXEC, MEM_USER);
+                    if(phdr->p_type == 1)
+                        {
+                            //Allocate the associated physical memory and map it into the address space
+                            uint32_t page_count = (phdr->p_memsz - 1)/KB(4) + 1;
+                            uint64_t p_addr = 0;
+                            uint32_t v_addr = phdr->p_vaddr;
 
-                    v_addr += KB(4);
+                            for(int j = 0; j < page_count; j++)
+                                {
+                                    p_addr = physMemMan_Alloc();
+                                    virtMemMan_Map(v_addr, p_addr, KB(4), MEM_TYPE_WB, MEM_WRITE | MEM_READ | MEM_EXEC, MEM_USER);
+
+                                    v_addr += KB(4);
+                                }
+
+                            v_addr = phdr->p_vaddr;
+                            memset(v_addr, 0, phdr->p_memsz);
+                            memcpy(v_addr, elf_temp + phdr->p_offset, phdr->p_filesz);
+                            COM_WriteStr("TEST:%x\r\n", file_size);
+
+                        }
+
+                    phdr = (Elf32_Phdr*)((uint8_t*)phdr + hdr->e_phentsize);
                 }
 
-                v_addr = phdr->p_vaddr;
-                memset(v_addr, 0, phdr->p_memsz);
-                memcpy(v_addr, elf_temp + phdr->p_offset, phdr->p_filesz);
-                COM_WriteStr("TEST:%x\r\n", file_size);
-
-            }
-
-            phdr = (Elf32_Phdr*)((uint8_t*)phdr + hdr->e_phentsize);
         }
-
-    }
     else goto error;
 
     kfree(elf_temp);
@@ -80,15 +80,15 @@ Elf_Load(const char *path, ELF_FLAGS perms)
     elf_info_tmp->flags = perms;
 
     if(e_info == NULL)
-    {
-        e_info = elf_info_tmp;
-        last_e_info = e_info;
-    }
+        {
+            e_info = elf_info_tmp;
+            last_e_info = e_info;
+        }
     else
-    {
-        last_e_info->next = elf_info_tmp;
-        last_e_info = last_e_info->next;
-    }
+        {
+            last_e_info->next = elf_info_tmp;
+            last_e_info = last_e_info->next;
+        }
 
     return elf_info_tmp->id;
 
@@ -98,42 +98,45 @@ error:
     return -2;
 }
 
-void 
+void
 Elf_Start(UID id)
 {
     ELF_Info *inf = e_info;
-    do{
-        if(inf->id == id)break;
-        inf = inf->next;
-    }while(inf != NULL);
+    do
+        {
+            if(inf->id == id)break;
+            inf = inf->next;
+        }
+    while(inf != NULL);
 
     if(inf == NULL)return;
 
     if(inf->flags & ELF_KERNEL == ELF_KERNEL)
-    {
-        inf->elf_main();
-    }else
-    {
+        {
+            inf->elf_main();
+        }
+    else
+        {
             asm volatile(
-        "cli \n\t"
-        "mov $0x23, %ax\n\t"
-        "mov %ax, %ds\n\t"
-        "mov %ax, %es\n\t"
-        "mov %ax, %fs\n\t"
-        "mov %ax, %gs\n\t"
-        "mov %esp, %eax\n\t"
-        "pushl $0x23\n\t"
-        "pushl %eax\n\t"
-        "pushf\n\t"
-        "pop %eax\n\t"
-        "or $512, %eax\n\t"
-        "push %eax\n\t"
-        "pushl $0x1B\n\t"
-        "push $0x80000000\n\t"
-        "iret\n\t"
-        "t_main_user: \n\t"
-    );
+                "cli \n\t"
+                "mov $0x23, %ax\n\t"
+                "mov %ax, %ds\n\t"
+                "mov %ax, %es\n\t"
+                "mov %ax, %fs\n\t"
+                "mov %ax, %gs\n\t"
+                "mov %esp, %eax\n\t"
+                "pushl $0x23\n\t"
+                "pushl %eax\n\t"
+                "pushf\n\t"
+                "pop %eax\n\t"
+                "or $512, %eax\n\t"
+                "push %eax\n\t"
+                "pushl $0x1B\n\t"
+                "push $0x80000000\n\t"
+                "iret\n\t"
+                "t_main_user: \n\t"
+            );
 
-    }
+        }
 
 }

@@ -9,22 +9,22 @@
 
 typedef enum
 {
-	PROC_PERM_USER = 0,
-	PROC_PERM_SUPERUSER = 1,
-	PROC_PERM_KERNEL = 3,
-	PROC_STATUS_RUNNING = 4
-}PROC_FLAGS;
+    PROC_PERM_USER = 0,
+    PROC_PERM_SUPERUSER = 1,
+    PROC_PERM_KERNEL = 3,
+    PROC_STATUS_RUNNING = 4
+} PROC_FLAGS;
 
 typedef struct ProcessInfo
 {
-	uint32_t flags;
-	UID uid;
-	const char name[MAX_PROC_NAME_LEN];
-	const char *path;
-	struct ProcessInfo *parent;
-	struct ProcessInfo *children;
-	struct ProcessInfo *next;
-}ProcessInfo;
+    uint32_t flags;
+    UID uid;
+    const char name[MAX_PROC_NAME_LEN];
+    const char *path;
+    struct ProcessInfo *parent;
+    struct ProcessInfo *children;
+    struct ProcessInfo *next;
+} ProcessInfo;
 
 void
 ProcessManager_Initialize(void);
@@ -52,8 +52,7 @@ ProcessManager_GetCurProcessInfo(void);
 UID
 ProcessManager_GetCurPID(void);
 
-uint32_t
-ProcessManager_GetCurPID_Syscall(void *param);
+
 
 
 #endif

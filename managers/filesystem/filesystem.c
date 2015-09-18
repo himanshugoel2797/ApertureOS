@@ -56,9 +56,9 @@ filesystem_Initialize(void)
 
     //Setup the first boot disk as the specified type of FS
     if(Filesystem_RegisterDescriptor("/", AHCI_0_Read, AHCI_0_Write, BOOT_FS) == 0)
-    {
-        initialized = TRUE;
-    }
+        {
+            initialized = TRUE;
+        }
     descriptors = lastDescriptor;
 
     return 0;
@@ -82,7 +82,7 @@ Filesystem_OpenFile(const char *filename,
     COM_WriteStr("TESTING FILE OPEN!!! %s,%x\r\n", filename, desc);
     uint32_t result = desc->driver->_H_Filesystem_OpenFile(desc, filename, flags, perms);
 
-    return result | (desc->id << 32); 
+    return result | (desc->id << 32);
 }
 
 uint8_t
@@ -203,21 +203,21 @@ UID Filesystem_RegisterDescriptor(
 {
     FileDescriptor *descriptor = descriptors;
     while(descriptor != NULL && descriptor->next != NULL)
-    {
-        if(strncmp(descriptor->path, target, strlen(target)) == 0)
         {
-            return -1;	//This path has already been hooked
+            if(strncmp(descriptor->path, target, strlen(target)) == 0)
+                {
+                    return -1;	//This path has already been hooked
+                }
+            descriptor = descriptor->next;
         }
-        descriptor = descriptor->next;
-    }
 
     //Find the filesystem driver
     Filesystem_Driver *driver = fs_drivers;
     while(driver != NULL && driver->next != NULL)
-    {
-        if(driver->filesystem == fs)break;
-        driver = driver->next;
-    }
+        {
+            if(driver->filesystem == fs)break;
+            driver = driver->next;
+        }
     if(driver->next == NULL && driver->filesystem != fs)return -2;	//Invalid FS
 
     //Add this entry to the last descriptor
@@ -248,21 +248,21 @@ Filesystem_UnregisterDescriptor(UID id)
 {
     FileDescriptor *driver = descriptors, *prev_driver = NULL;
     while(driver != NULL && driver->next != NULL)
-    {
-        if(driver->id == id)break;
-        prev_driver = driver;
-        driver = driver->next;
-    }
+        {
+            if(driver->id == id)break;
+            prev_driver = driver;
+            driver = driver->next;
+        }
     if(driver->next == NULL && driver->id != id)return -2;	//Invalid FS
 
     if(prev_driver == NULL)
-    {
-        descriptors = driver->next;
-    }
+        {
+            descriptors = driver->next;
+        }
     else
-    {
-        prev_driver->next = driver->next;
-    }
+        {
+            prev_driver->next = driver->next;
+        }
 
     if(driver->next == NULL)lastDriver = prev_driver;
 
@@ -277,18 +277,18 @@ Filesystem_FindDescriptorFromPath(const char *path)
 
     FileDescriptor *descriptor = descriptors;
     while(descriptor != NULL && descriptor->next != NULL)
-    {
-        if(strncmp(descriptor->path, path, strlen(descriptor->path)) == 0)
+        {
+            if(strncmp(descriptor->path, path, strlen(descriptor->path)) == 0)
+                {
+                    return descriptor;	//This path has already been hooked
+                }
+            descriptor = descriptor->next;
+        }
+
+    if(descriptor != NULL && strncmp(descriptor->path, path, strlen(descriptor->path)) == 0)
         {
             return descriptor;	//This path has already been hooked
         }
-        descriptor = descriptor->next;
-    }
-
-    if(descriptor != NULL && strncmp(descriptor->path, path, strlen(descriptor->path)) == 0)
-    {
-        return descriptor;	//This path has already been hooked
-    }
 
     return NULL;
 }
@@ -300,18 +300,18 @@ Filesystem_FindDescriptorFromUID(const UID id)
     FileDescriptor *descriptor = descriptors;
     UID s_id = id >> 32;
     while(descriptor != NULL && descriptor->next != NULL)
-    {
-        if( descriptor->id == s_id)
         {
-            return descriptor;	//This path has already been hooked
+            if( descriptor->id == s_id)
+                {
+                    return descriptor;	//This path has already been hooked
+                }
+            descriptor = descriptor->next;
         }
-        descriptor = descriptor->next;
-    }
 
     if( descriptor->id == s_id)
-    {
-        return descriptor;  //This path has already been hooked
-    }
+        {
+            return descriptor;  //This path has already been hooked
+        }
     return NULL;
 }
 

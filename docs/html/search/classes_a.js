@@ -1,7 +1,8 @@
 var searchData=
 [
-  ['socketconnectiondesc',['SocketConnectionDesc',['../structSocketConnectionDesc.html',1,'']]],
-  ['socketdesc',['SocketDesc',['../structSocketDesc.html',1,'']]],
-  ['socketinfo',['SocketInfo',['../structSocketInfo.html',1,'']]],
-  ['systemdata',['SystemData',['../structSystemData.html',1,'']]]
+  ['registers',['Registers',['../structRegisters.html',1,'']]],
+  ['rsdpdescriptor',['RSDPDescriptor',['../structRSDPDescriptor.html',1,'']]],
+  ['rsdpdescriptor20',['RSDPDescriptor20',['../structRSDPDescriptor20.html',1,'']]],
+  ['rsdt',['RSDT',['../structRSDT.html',1,'']]],
+  ['rtc_5ftime',['RTC_Time',['../structRTC__Time.html',1,'']]]
 ];

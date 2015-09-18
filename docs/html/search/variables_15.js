@@ -8,7 +8,7 @@ var searchData=
   ['u_5fpages_5fbase_5faddr',['u_pages_base_addr',['../umalloc_8c.html#aef95adb5093062d7cc595b057086b569',1,'umalloc.c']]],
   ['u_5fretry',['u_retry',['../umalloc_8c.html#ac2dd3724a1cb1320e51b56571370b77c',1,'umalloc.c']]],
   ['ufis',['ufis',['../structHBA__FIS.html#adc63196eb3cc13147cbbb1fd58fe1d71',1,'HBA_FIS']]],
-  ['uid',['uid',['../structEXT2__Inode.html#a34a774ef0cfbe16e0de4fb954c34d158',1,'EXT2_Inode::uid()'],['../structUID__Entry.html#ad051cdbc6bf3b12bbfaa676347386cb5',1,'UID_Entry::uid()'],['../structThread.html#a31f7bc93b398a186a986c8b9476df24c',1,'Thread::uid()']]],
+  ['uid',['uid',['../structEXT2__Inode.html#a34a774ef0cfbe16e0de4fb954c34d158',1,'EXT2_Inode::uid()'],['../structUID__Entry.html#ad051cdbc6bf3b12bbfaa676347386cb5',1,'UID_Entry::uid()'],['../structThread.html#a31f7bc93b398a186a986c8b9476df24c',1,'Thread::uid()'],['../structProcessInfo.html#a0276689f5359acb05f07c061dd96b036',1,'ProcessInfo::uid()']]],
   ['uid_5freserved_5fblocks',['uid_reserved_blocks',['../structEXT2__SuperBlock.html#afbf76868584952c0a72407b3c5b0ed6d',1,'EXT2_SuperBlock']]],
   ['uidbase',['uidBase',['../threads_8c.html#ada3874ceefc4272920bee95294c129c7',1,'threads.c']]],
   ['uids',['uids',['../system__manager_8c.html#a3aaf36bc5ad8d0cc7058c3d86f1c4b7a',1,'system_manager.c']]],

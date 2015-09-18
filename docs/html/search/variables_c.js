@@ -39,5 +39,6 @@ var searchData=
   ['ln',['ln',['../COM_8c.html#accee38f3ab1694807a1f9e71db1cd32b',1,'COM.c']]],
   ['load_5faddr',['load_addr',['../structmultiboot__header.html#a99de1cf326c46c76c6039f317b7a1ef2',1,'multiboot_header']]],
   ['load_5fend_5faddr',['load_end_addr',['../structmultiboot__header.html#ac9efc1a4c3cd18f286b2fd50ff052e31',1,'multiboot_header']]],
-  ['local_5fcontroller_5faddr',['local_controller_addr',['../structMADT.html#aae54cf730fb0136f75451edfda6bd7c0',1,'MADT']]]
+  ['local_5fcontroller_5faddr',['local_controller_addr',['../structMADT.html#aae54cf730fb0136f75451edfda6bd7c0',1,'MADT']]],
+  ['lock_5fnum',['lock_num',['../threads_8c.html#a71c7f521d9315a728148fd629b6b2781',1,'threads.c']]]
 ];

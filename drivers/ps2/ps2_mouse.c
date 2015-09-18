@@ -10,10 +10,10 @@ uint8_t PS2Mouse_Initialize()
 
     int res = 0;
     while(res != 0xAA)
-    {
-        WAIT_DATA_AVL;
-        res = inb(DATA_PORT);
-    }
+        {
+            WAIT_DATA_AVL;
+            res = inb(DATA_PORT);
+        }
 
     inb(DATA_PORT);
 

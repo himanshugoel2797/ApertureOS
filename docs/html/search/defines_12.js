@@ -7,6 +7,7 @@ var searchData=
   ['write_5fcfg_5fcmd',['WRITE_CFG_CMD',['../priv__ps2_8h.html#a02a911317fadcafcae511c529915f764',1,'priv_ps2.h']]],
   ['write_5fdma_5fcmd',['WRITE_DMA_CMD',['../priv__ata__pio_8h.html#a56c40e47e6c5ca50da04b19fbeb1c190',1,'priv_ata_pio.h']]],
   ['write_5fdma_5fr_5fcmd',['WRITE_DMA_R_CMD',['../priv__ata__pio_8h.html#a47ea40e49531c17cb00277f2518c9be7',1,'priv_ata_pio.h']]],
+  ['write_5fdma_5fr_5fcmd_5fext',['WRITE_DMA_R_CMD_EXT',['../ahci_8c.html#ae3e89f85cf8a0e24a59feefb695293e2',1,'ahci.c']]],
   ['write_5flong_5fcmd',['WRITE_LONG_CMD',['../priv__ata__pio_8h.html#a58aeb3f581c0df49f3c48ddce0e6dbe6',1,'priv_ata_pio.h']]],
   ['write_5flong_5fr_5fcmd',['WRITE_LONG_R_CMD',['../priv__ata__pio_8h.html#a50cd9bef7c7936259b66ddbdedfc5519',1,'priv_ata_pio.h']]],
   ['write_5fmultiple_5fcmd',['WRITE_MULTIPLE_CMD',['../priv__ata__pio_8h.html#a512079fde3925b0760c6511174059287',1,'priv_ata_pio.h']]],

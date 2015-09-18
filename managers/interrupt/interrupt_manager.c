@@ -30,10 +30,10 @@ void Interrupts_Setup()
 void Interrupts_Virtualize()
 {
     if(using_apic)
-    {
-        APIC_Virtualize();
-        IOAPIC_VirtualizeAll();
-    }
+        {
+            APIC_Virtualize();
+            IOAPIC_VirtualizeAll();
+        }
 }
 
 uint32_t interrupts_Initialize()
@@ -48,9 +48,9 @@ uint32_t interrupts_Initialize()
     memset(int_handlers, 0, sizeof(InterruptHandler) * INTERRUPT_COUNT * INTERRUPT_HANDLER_SLOTS);
 
     for(uint32_t i = 0; i < INTERRUPT_COUNT; i++)
-    {
-        IDT_RegisterHandler((uint8_t)i, interrupts_IDTHandler);
-    }
+        {
+            IDT_RegisterHandler((uint8_t)i, interrupts_IDTHandler);
+        }
 
 
     //Register custom handler for GPF
@@ -63,14 +63,14 @@ void interrupts_IDTHandler(Registers *Regs)
 {
     bool handled = FALSE;
     for(int i = 0; i < INTERRUPT_HANDLER_SLOTS + 1; i++)
-    {
-        if(int_handlers[Regs->int_no][i] != NULL)
         {
-            handled = TRUE;
-            uint32_t res = int_handlers[Regs->int_no][i](Regs);
-            if(res) break;
+            if(int_handlers[Regs->int_no][i] != NULL)
+                {
+                    handled = TRUE;
+                    uint32_t res = int_handlers[Regs->int_no][i](Regs);
+                    if(res) break;
+                }
         }
-    }
 
     if(!handled)COM_WriteStr("Unhandled Int#%x\r\n", Regs->int_no);
 
@@ -81,18 +81,18 @@ void interrupts_IDTHandler(Registers *Regs)
 void interrupts_callback(uint32_t res)
 {
     if(res == -1)
-    {
+        {
 
-        Message msg;
-        strcpy(msg.message, "Neither PIC nor APIC could be initialized");
-        msg.system_id = int_sys->sys_id;
-        msg.src_id = int_sys->sys_id;
-        msg.msg_id = MI_INITIALIZATION_FAILURE;
-        msg.msg_type = MT_ERROR;
-        msg.msg_priority = MP_CRITICAL;
+            Message msg;
+            strcpy(msg.message, "Neither PIC nor APIC could be initialized");
+            msg.system_id = int_sys->sys_id;
+            msg.src_id = int_sys->sys_id;
+            msg.msg_id = MI_INITIALIZATION_FAILURE;
+            msg.msg_type = MT_ERROR;
+            msg.msg_priority = MP_CRITICAL;
 
-        MessageMan_Add(&msg);
-    }
+            MessageMan_Add(&msg);
+        }
 }
 
 uint8_t interrupts_messageHandler(Message *msg)
@@ -122,25 +122,25 @@ void Interrupts_EmptySlot(uint8_t intrpt, uint8_t slot)
 void Interrupts_GetHandler(uint8_t intrpt, uint8_t slot, InterruptHandler* o_handler)
 {
     if(slot < INTERRUPT_HANDLER_SLOTS)
-    {
-        *o_handler = int_handlers[intrpt][slot];
-    }
+        {
+            *o_handler = int_handlers[intrpt][slot];
+        }
 }
 
 void Interrupts_SetInterruptEnableMode(uint8_t intrpt, bool enabled)
 {
     if(intrpt >= 32)
-    {
-        if(using_apic)
         {
-            IOAPIC_SetEnableMode(intrpt, enabled);
+            if(using_apic)
+                {
+                    IOAPIC_SetEnableMode(intrpt, enabled);
+                }
+            else
+                {
+                    if(!enabled) PIC_MaskIRQ(intrpt);
+                    else PIC_UnMaskIRQ(intrpt);
+                }
         }
-        else
-        {
-            if(!enabled) PIC_MaskIRQ(intrpt);
-            else PIC_UnMaskIRQ(intrpt);
-        }
-    }
 }
 
 SysID Interrupts_GetSysID()
@@ -162,9 +162,9 @@ void Interrupts_Lock()
 
     asm volatile ("pushf\n\tpop %%eax" : "=a" (flags));
     if((flags & (1<<9)) == (1<<9))   //Check if interrupts are enabled
-    {
-        callNumWhereIntsEnabled = curCallNum;
-    }
+        {
+            callNumWhereIntsEnabled = curCallNum;
+        }
 
     asm volatile ("cli");
 }
@@ -172,9 +172,9 @@ void Interrupts_Lock()
 void Interrupts_Unlock()
 {
     if(callNumWhereIntsEnabled == curCallNum--)
-    {
-        asm volatile ("sti");
-    }
+        {
+            asm volatile ("sti");
+        }
 }
 
 void Interrupts_GPF_Handler(Registers *regs)

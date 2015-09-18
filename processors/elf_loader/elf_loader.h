@@ -3,10 +3,11 @@
 
 #include "types.h"
 
-typedef enum{
-	ELF_USER = 0,
-	ELF_KERNEL = 1
-}ELF_FLAGS;
+typedef enum
+{
+    ELF_USER = 0,
+    ELF_KERNEL = 1
+} ELF_FLAGS;
 
 UID Elf_Load(const char *path, ELF_FLAGS perms);
 void Elf_Start(UID id);

@@ -95,22 +95,24 @@ Include dependency graph for globals.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="globals_8h__incl.png" border="0" usemap="#globals_8h" alt=""/></div>
 <map name="globals_8h" id="globals_8h">
-<area shape="rect" id="node2" href="types_8h.html" title="types.h" alt="" coords="53,155,118,181"/><area shape="rect" id="node5" href="multiboot_8h.html" title="multiboot.h" alt="" coords="83,80,170,107"/></map>
+<area shape="rect" id="node2" href="types_8h.html" title="types.h" alt="" coords="99,155,165,181"/><area shape="rect" id="node6" href="multiboot_8h.html" title="multiboot.h" alt="" coords="130,80,217,107"/></map>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="globals_8h__dep__incl.png" border="0" usemap="#globals_8hdep" alt=""/></div>
 <map name="globals_8hdep" id="globals_8hdep">
-<area shape="rect" id="node2" href="crt0_8c.html" title="crt0.c" alt="" coords="5,87,60,114"/><area shape="rect" id="node3" href="graphics_8c.html" title="graphics/graphics.c" alt="" coords="84,87,219,114"/><area shape="rect" id="node4" href="phys__mem__manager_8c.html" title="managers/phys_mem_manager\l/phys_mem_manager.c" alt="" coords="243,80,447,121"/><area shape="rect" id="node5" href="virt__mem__manager_8c.html" title="managers/virt_mem_manager\l/virt_mem_manager.c" alt="" coords="471,80,666,121"/></map>
+<area shape="rect" id="node2" href="crt0_8c.html" title="crt0.c" alt="" coords="5,87,60,114"/><area shape="rect" id="node3" href="network_8c.html" title="drivers/network/network.c" alt="" coords="84,87,256,114"/><area shape="rect" id="node4" href="graphics_8c.html" title="graphics/graphics.c" alt="" coords="280,87,415,114"/><area shape="rect" id="node5" href="phys__mem__manager_8c.html" title="managers/phys_mem_manager\l/phys_mem_manager.c" alt="" coords="439,80,643,121"/><area shape="rect" id="node6" href="virt__mem__manager_8c.html" title="managers/virt_mem_manager\l/virt_mem_manager.c" alt="" coords="667,80,862,121"/></map>
 </div>
 </div>
 <p><a href="globals_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:acea7bfe1bac29b7c03a538a73c946b76"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="globals_8h.html#acea7bfe1bac29b7c03a538a73c946b76">LOAD_ADDRESS</a>&#160;&#160;&#160;<a class="el" href="types_8h.html#a44d2b171cc92225ec0a76ef70fc9b531">MB</a>(16)</td></tr>
+<tr class="memitem:acea7bfe1bac29b7c03a538a73c946b76"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="globals_8h.html#acea7bfe1bac29b7c03a538a73c946b76">LOAD_ADDRESS</a>&#160;&#160;&#160;(uint32_t)&amp;<a class="el" href="globals_8h.html#a593d17c9c370571fbce89df340446a07">_region_kernel_start_</a></td></tr>
 <tr class="separator:acea7bfe1bac29b7c03a538a73c946b76"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aced0cd65148cf7b2fd40da9bdb895131"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="globals_8h.html#aced0cd65148cf7b2fd40da9bdb895131">NETWORK_DRIVER_COUNT</a>&#160;&#160;&#160;1</td></tr>
+<tr class="separator:aced0cd65148cf7b2fd40da9bdb895131"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -126,6 +128,8 @@ Variables</h2></td></tr>
 <tr class="separator:a16e41be609b9a390b9e00c2425a21f12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a3275242f06bef221b9c41a1d6e22d0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="globals_8h.html#a2a3275242f06bef221b9c41a1d6e22d0">_region_kernel_end_</a></td></tr>
 <tr class="separator:a2a3275242f06bef221b9c41a1d6e22d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a593d17c9c370571fbce89df340446a07"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="globals_8h.html#a593d17c9c370571fbce89df340446a07">_region_kernel_start_</a></td></tr>
+<tr class="separator:a593d17c9c370571fbce89df340446a07"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a class="anchor" id="acea7bfe1bac29b7c03a538a73c946b76"></a>
@@ -133,7 +137,19 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define LOAD_ADDRESS&#160;&#160;&#160;<a class="el" href="types_8h.html#a44d2b171cc92225ec0a76ef70fc9b531">MB</a>(16)</td>
+          <td class="memname">#define LOAD_ADDRESS&#160;&#160;&#160;(uint32_t)&amp;<a class="el" href="globals_8h.html#a593d17c9c370571fbce89df340446a07">_region_kernel_start_</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="aced0cd65148cf7b2fd40da9bdb895131"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define NETWORK_DRIVER_COUNT&#160;&#160;&#160;1</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -147,6 +163,18 @@ Variables</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">void _region_kernel_end_</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a593d17c9c370571fbce89df340446a07"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void _region_kernel_start_</td>
         </tr>
       </table>
 </div><div class="memdoc">

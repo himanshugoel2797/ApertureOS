@@ -19,10 +19,10 @@ APIC_LocalInitialize(void)
 
     //Register the APIC interrupt handlers
     for(int i = 32; i < IDT_ENTRY_COUNT; i++)
-    {
-        APIC_FillHWInterruptHandler(idt_handlers[i], i, i - 32);
-        IDT_SetEntry(i, (uint32_t)idt_handlers[i], 0x08, 0x8E);
-    }
+        {
+            APIC_FillHWInterruptHandler(idt_handlers[i], i, i - 32);
+            IDT_SetEntry(i, (uint32_t)idt_handlers[i], 0x08, 0x8E);
+        }
 
     uint64_t apic_base_msr = rdmsr(IA32_APIC_BASE);
     apic_base_addr = (uint32_t*)((uint32_t)apic_base_msr & 0xfffff000);
@@ -129,10 +129,10 @@ APIC_SetTimerDivisor(uint8_t divisor)
     uint8_t val = 0;
     //Convert the divisor into the code to be written
     if (divisor > 16)
-    {
-        val |= (1<<3);
-        divisor /= 16;
-    }
+        {
+            val |= (1<<3);
+            divisor /= 16;
+        }
 
     if (divisor == 16) val |= 3;
     else if (divisor == 1) val = (1<<3)|3;
@@ -238,9 +238,9 @@ APIC_SendEOI(uint8_t int_num)
     uint32_t isr_msr = APIC_ISR_BASE + ((int_num / 32) * 0x10);
     uint32_t val = APIC_Read(isr_msr);
     if( CHECK_BIT(val, (int_num % 32)) )
-    {
-        APIC_Write(APIC_EOI, 0xDEADBEEF);
-    }
+        {
+            APIC_Write(APIC_EOI, 0xDEADBEEF);
+        }
 }
 
 void

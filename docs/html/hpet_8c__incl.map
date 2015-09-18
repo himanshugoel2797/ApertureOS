@@ -1,8 +1,8 @@
 <map id="drivers/hpet/hpet.c" name="drivers/hpet/hpet.c">
 <area shape="rect" id="node2" href="$hpet_8h.html" title="hpet.h" alt="" coords="5,162,64,189"/>
-<area shape="rect" id="node6" href="$priv__hpet_8h.html" title="priv_hpet.h" alt="" coords="81,80,167,107"/>
-<area shape="rect" id="node8" href="$acpi__tables_8h.html" title="acpi_tables/acpi_tables.h" alt="" coords="191,80,361,107"/>
-<area shape="rect" id="node9" href="$common_8h.html" title="utils/common.h" alt="" coords="385,80,495,107"/>
+<area shape="rect" id="node7" href="$priv__hpet_8h.html" title="priv_hpet.h" alt="" coords="81,80,167,107"/>
+<area shape="rect" id="node9" href="$acpi__tables_8h.html" title="acpi_tables/acpi_tables.h" alt="" coords="191,80,361,107"/>
+<area shape="rect" id="node10" href="$common_8h.html" title="utils/common.h" alt="" coords="385,80,495,107"/>
 <area shape="rect" id="node3" href="$types_8h.html" title="types.h" alt="" coords="178,244,243,271"/>
-<area shape="rect" id="node7" href="$priv__acpi__tables_8h.html" title="acpi_tables/priv_acpi\l_tables.h" alt="" coords="139,155,283,196"/>
+<area shape="rect" id="node8" href="$priv__acpi__tables_8h.html" title="acpi_tables/priv_acpi\l_tables.h" alt="" coords="139,155,283,196"/>
 </map>
