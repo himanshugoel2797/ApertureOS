@@ -44,7 +44,7 @@ POST_INIT=processors/elf_loader/elf_loader.o \
 
 OUTDISK=sdb
 
-QEMU_OPTS=-enable-kvm -m 4096M -cpu Haswell,+xsave -d cpu_reset,guest_errors -drive id=disk,file=flash.img,if=none -device ahci,id=ahci -device ide-drive,drive=disk,bus=ahci.0 -netdev user,id=mynet0 -device rtl8139,netdev=mynet0
+QEMU_OPTS=-enable-kvm -m 4096M -cpu Haswell,+xsave -d int,cpu_reset,guest_errors -drive id=disk,file=flash.img,if=none -device ahci,id=ahci -device ide-drive,drive=disk,bus=ahci.0 -netdev user,id=mynet0 -device rtl8139,netdev=mynet0
 
 BOOT_FS=EXT2
 
@@ -76,7 +76,7 @@ stageA:CFLAGS=-mno-sse -O0 $(CFLAGS_A)
 post_init:CFLAGS=-ftree-vectorize -O3 $(CFLAGS_A)
 ASM=$(PLATFORM)-elf-gcc -DDEBUG -ffreestanding -march=i686
 
-TEST_CMD=qemu-system-x86_64 $(QEMU_OPTS)
+TEST_CMD=qemu-system-x86_64 -s -S $(QEMU_OPTS)
 
 ANALYZE=clang-check -analyze
 

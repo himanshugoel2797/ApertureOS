@@ -96,7 +96,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
 
 void t_main(int argc, char **argv)
 {
-
+    while(1);
     Filesystem_Setup();
 
     //Filesystem_DeleteFile("/root/test.data");
@@ -114,9 +114,12 @@ void t_main(int argc, char **argv)
         //COM_WriteStr("%s\r\n", entry.dir_name);
     }
 
-    id = Elf_Load("/test.elf");
-    COM_WriteStr("FD: %x\r\n", id);
-    Elf_Start(id);
+    ProcessManager_Initialize();
+    ProcessManager_CreateProcess("test", "/test.elf", 0, NULL, NULL, PROC_PERM_SUPERUSER);
+
+    //id = Elf_Load("/test.elf", ELF_USER);
+    //COM_WriteStr("FD: %x\r\n", id);
+    //Elf_Start(id);
     while(1);
 
 

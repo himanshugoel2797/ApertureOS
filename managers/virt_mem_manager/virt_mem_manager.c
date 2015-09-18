@@ -120,7 +120,9 @@ VirtMemMan_Instance virtMemMan_CreateInstance()
     return instance;  //The rest should be setup later
 }
 
-void virtMemMan_Fork(VirtMemMan_Instance dst, VirtMemMan_Instance src)
+void 
+virtMemMan_Fork(VirtMemMan_Instance dst, 
+                VirtMemMan_Instance src)
 {
 
     memcpy( (dst[1] & ~1), (src[1] & ~1), KB(4));
@@ -128,12 +130,16 @@ void virtMemMan_Fork(VirtMemMan_Instance dst, VirtMemMan_Instance src)
     memcpy( (dst[3] & ~1), (src[3] & ~1), KB(4));
 }
 
-void virtMemMan_ForkCurrent(VirtMemMan_Instance dst)
+void 
+virtMemMan_ForkCurrent(VirtMemMan_Instance dst)
 {
     virtMemMan_Fork(dst, curInstance_virt);
 }
 
-void* virtMemMan_FindEmptyAddress(size_t size, MEM_SECURITY_PERMS privLevel)
+void* 
+virtMemMan_FindEmptyAddressInst(VirtMemMan_Instance curInstance, 
+                                size_t size, 
+                                MEM_SECURITY_PERMS privLevel)
 {
     if(size == 0) return NULL;
 
@@ -192,13 +198,20 @@ void* virtMemMan_FindEmptyAddress(size_t size, MEM_SECURITY_PERMS privLevel)
     return NULL;
 }
 
-uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, MEM_TYPES type, MEM_ACCESS_PERMS perms, MEM_SECURITY_PERMS privLevel)
+uint32_t 
+virtMemMan_MapInst(VirtMemMan_Instance curInstance_virt, 
+                   uint32_t v_address, 
+                   uint64_t phys_address, 
+                   size_t size, 
+                   MEM_TYPES type, 
+                   MEM_ACCESS_PERMS perms, 
+                   MEM_SECURITY_PERMS privLevel)
 {
     if(size == 0) return -1;
 
     uint32_t virtAddr = (uint32_t)v_address;
     uint64_t physAddr = (uint64_t)phys_address;
-
+    COM_WriteStr("physAddr : %0#16x", physAddr);
     //Check requested permissions to make sure they match up with the virtual address
     //if(virtAddr < KMEM_END && privLevel != MEM_KERNEL) return -2;                 //Make sure permissions match
     //if(virtAddr >= KMEM_END && privLevel != MEM_USER) return -2;
@@ -313,10 +326,16 @@ uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, 
             }
         }
     }
+    uint32_t ra = 0;
+    asm volatile("mov +4(%%ebp), %0" : "=r"(ra));
+    COM_WriteStr("TEST PAGEING! %x\r\n", ra);
     return 0;
 }
 
-void virtMemMan_UnMap(void* v_address, size_t size)
+void 
+virtMemMan_UnMapInst(VirtMemMan_Instance curInstance_virt,
+                     void* v_address, 
+                     size_t size)
 {
     if(size == 0) return;
 
@@ -341,7 +360,8 @@ void virtMemMan_UnMap(void* v_address, size_t size)
             pd_pse[pd_i + i].addr = 0;
 
             //Flush the TLB
-            asm volatile ("invlpg (%0)" :: "r" ( (pdpt_i * GB(1)) + (pd_i + i)*MB(2)));
+            asm volatile("invlpg (%0)" :: "r"(virtAddr));
+            virtAddr += MB(2);
         }
     }
     else
@@ -355,12 +375,15 @@ void virtMemMan_UnMap(void* v_address, size_t size)
 
         if(pd_pse[pd_i].page_size == 0)
         {
-            PT_Entry *pt = (PT_Entry*)(pd_u64[pd_i].addr * MB(2));
+            PT_Entry *pt = (PT_Entry*)(pd_u64[pd_i].addr * KB(4));
 
             for(int i = 0; i < seg_cnt && pt_i + i < 512; i++)
             {
                 pt[pt_i + i].present = 0;
                 pt[pt_i + i].addr = 0;
+
+                asm volatile("invlpg (%0)" :: "r"(virtAddr));
+                virtAddr += KB(4);
             }
         }
         else
@@ -370,7 +393,9 @@ void virtMemMan_UnMap(void* v_address, size_t size)
     }
 }
 
-uint64_t virtMemMan_GetPhysAddress(void *virt_addr)
+uint64_t 
+virtMemMan_GetPhysAddressInst(VirtMemMan_Instance curInstance_virt,
+                                       void *virt_addr)
 {
     uint32_t v_addr = (uint32_t)virt_addr;
     //Round down to 4kb boundary
@@ -493,7 +518,57 @@ uint32_t virtMemMan_PageFaultHandler(Registers *regs)
     }
 
     COM_WriteStr("\r\n");
-
+    COM_WriteStr("EAX: %x\t", regs->eax);
+    COM_WriteStr("EBX: %x\t", regs->ebx);
+    COM_WriteStr("ECX: %x\t", regs->ecx);
+    COM_WriteStr("EDX: %x\r\n", regs->edx);
+    COM_WriteStr("EIP: %x\t", regs->eip);
+    COM_WriteStr("ESI: %x\t", regs->esi);
+    COM_WriteStr("EDI: %x\t\r\n", regs->edi);
+    COM_WriteStr("CS: %x\t", regs->cs);
+    COM_WriteStr("SS: %x\t", regs->ss);
+    COM_WriteStr("DS: %x\t\r\n", regs->ds);
+    COM_WriteStr("EFLAGS: %b\t\r\n", regs->eflags);
+    COM_WriteStr("USERESP: %x\t", regs->useresp);
+    COM_WriteStr("EBP: %x\t", regs->ebp);
     while(1);
     return 0;
+}
+
+
+uint64_t 
+virtMemMan_GetPhysAddress(void *virt_addr)
+{
+    return virtMemMan_GetPhysAddressInst(curInstance_virt, virt_addr);
+}
+
+void* 
+virtMemMan_FindEmptyAddress(size_t size, 
+                            MEM_SECURITY_PERMS privLevel)
+{
+    return virtMemMan_FindEmptyAddressInst(curInstance_virt, size, privLevel);
+}
+
+uint32_t 
+virtMemMan_Map(uint32_t v_address, 
+               uint64_t phys_address, 
+               size_t size, 
+               MEM_TYPES type, 
+               MEM_ACCESS_PERMS perms, 
+               MEM_SECURITY_PERMS privLevel)
+{
+    return virtMemMan_MapInst(curInstance_virt,
+                              v_address,
+                              phys_address,
+                              size,
+                              type,
+                              perms,
+                              privLevel);
+}
+
+void 
+virtMemMan_UnMap(void* v_address, 
+                 size_t size)
+{
+    virtMemMan_UnMapInst(curInstance_virt, v_address, size);
 }

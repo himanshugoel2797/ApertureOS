@@ -30,16 +30,68 @@ typedef enum
 
 typedef uint64_t* VirtMemMan_Instance;
 
-void virtMemMan_Setup();
-VirtMemMan_Instance virtMemMan_SetCurrent(VirtMemMan_Instance instance);
-VirtMemMan_Instance virtMemMan_GetCurrent();
-VirtMemMan_Instance virtMemMan_CreateInstance();
-void virtMemMan_Fork(VirtMemMan_Instance dst, VirtMemMan_Instance src);
-void virtMemMan_ForkCurrent(VirtMemMan_Instance dst);
-void* virtMemMan_FindEmptyAddress(size_t size, MEM_SECURITY_PERMS privLevel);
-uint32_t virtMemMan_Map(uint32_t v_address, uint64_t phys_address, size_t size, MEM_TYPES type, MEM_ACCESS_PERMS perms, MEM_SECURITY_PERMS privLevel);
-void virtMemMan_UnMap(void* v_address, size_t size);
-void virtMemMan_FreeInstance(VirtMemMan_Instance inst);
-uint64_t virtMemMan_GetPhysAddress(void *virt_addr);
+void 
+virtMemMan_Setup(void);
+
+VirtMemMan_Instance 
+virtMemMan_SetCurrent(VirtMemMan_Instance instance);
+
+VirtMemMan_Instance 
+virtMemMan_GetCurrent(void);
+
+VirtMemMan_Instance 
+virtMemMan_CreateInstance(void);
+
+void 
+virtMemMan_Fork(VirtMemMan_Instance dst, 
+                VirtMemMan_Instance src);
+
+void 
+virtMemMan_ForkCurrent(VirtMemMan_Instance dst);
+
+void* 
+virtMemMan_FindEmptyAddress(size_t size, 
+                            MEM_SECURITY_PERMS privLevel);
+
+uint32_t 
+virtMemMan_Map(uint32_t v_address, 
+               uint64_t phys_address, 
+               size_t size, 
+               MEM_TYPES type, 
+               MEM_ACCESS_PERMS perms, 
+               MEM_SECURITY_PERMS privLevel);
+
+void 
+virtMemMan_UnMap(void* v_address, 
+                 size_t size);
+
+void 
+virtMemMan_FreeInstance(VirtMemMan_Instance inst);
+
+uint64_t 
+virtMemMan_GetPhysAddress(void *virt_addr);
+
+uint64_t 
+virtMemMan_GetPhysAddressInst(VirtMemMan_Instance curInstance_virt, 
+                              void *virt_addr);
+
+void* 
+virtMemMan_FindEmptyAddressInst(VirtMemMan_Instance curInstance_virt, 
+                                size_t size, 
+                                MEM_SECURITY_PERMS privLevel);
+
+uint32_t 
+virtMemMan_MapInst(VirtMemMan_Instance curInstance_virt, 
+                   uint32_t v_address, 
+                   uint64_t phys_address, 
+                   size_t size, 
+                   MEM_TYPES type, 
+                   MEM_ACCESS_PERMS perms, 
+                   MEM_SECURITY_PERMS privLevel);
+
+void 
+virtMemMan_UnMapInst(VirtMemMan_Instance curInstance_virt, 
+                     void* v_address, 
+                     size_t size);
 
 #endif /* end of include guard: _VIRT_MEM_MAN_H_ */

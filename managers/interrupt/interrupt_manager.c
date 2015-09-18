@@ -153,8 +153,8 @@ bool Interrupts_IsAPICEnabled()
     return using_apic;
 }
 
-uint32_t curCallNum = 0;
-uint32_t callNumWhereIntsEnabled = 0;
+static uint32_t curCallNum = 0;
+static uint32_t callNumWhereIntsEnabled = 0;
 void Interrupts_Lock()
 {
     uint16_t flags = 0;

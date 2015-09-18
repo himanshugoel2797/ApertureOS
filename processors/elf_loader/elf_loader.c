@@ -6,7 +6,7 @@
 ELF_Info *e_info = NULL, *last_e_info = NULL;
 
 UID 
-Elf_Load(const char *path)
+Elf_Load(const char *path, ELF_FLAGS perms)
 {
     //Open the file
     UID fd = Filesystem_OpenFile(path, O_RDONLY, 0777);
@@ -78,6 +78,7 @@ Elf_Load(const char *path)
     ELF_Info *elf_info_tmp = kmalloc(sizeof(ELF_Info));
     elf_info_tmp->id = new_uid();
     elf_info_tmp->elf_main = (void(*)(void))hdr->e_entry;
+    elf_info_tmp->flags = perms;
 
     if(e_info == NULL)
     {

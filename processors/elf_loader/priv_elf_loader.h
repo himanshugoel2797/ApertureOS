@@ -4,11 +4,7 @@
 #include "managers.h"
 #include "elf.h"
 #include "types.h"
-
-typedef enum{
-	ELF_USER = 0,
-	ELF_KERNEL = 1
-}ELF_FLAGS;
+#include "elf_loader.h"
 
 typedef struct ELF_Info_T
 {

@@ -11,7 +11,8 @@ typedef enum
 {
 	PROC_PERM_USER = 0,
 	PROC_PERM_SUPERUSER = 1,
-	PROC_PERM_KERNEL = 3
+	PROC_PERM_KERNEL = 3,
+	PROC_STATUS_RUNNING = 4
 }PROC_FLAGS;
 
 typedef struct ProcessInfo
@@ -20,6 +21,7 @@ typedef struct ProcessInfo
 	UID uid;
 	const char name[MAX_PROC_NAME_LEN];
 	const char *path;
+	struct ProcessInfo *parent;
 	struct ProcessInfo *children;
 	struct ProcessInfo *next;
 }ProcessInfo;
@@ -44,6 +46,8 @@ ProcessManager_ForkProcess(UID to_fork);
 uint32_t
 ProcessManager_ForkProcess_Syscall(void *param);
 
+ProcessInfo*
+ProcessManager_GetCurProcessInfo(void);
 
 UID
 ProcessManager_GetCurPID(void);
