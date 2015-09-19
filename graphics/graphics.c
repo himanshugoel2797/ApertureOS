@@ -56,6 +56,9 @@ graphics_Initialize(void)
 void
 graphics_SwapBuffer(void)
 {
+    memcpy(frameBufferA, frameBufferB, buffer_size);
+    return;
+
     uint64_t *fbufA = (uint64_t*)frameBufferA, *fbufB = (uint64_t*)frameBufferB;
 
     for (uint32_t a = 0; a < buffer_size; a+=0x80)
@@ -95,6 +98,9 @@ graphics_SwapBuffer(void)
 void
 graphics_Clear(void)
 {
+    memset(frameBufferB, 0, buffer_size);
+    return;
+
     uint64_t *bbuffer = (uint64_t*)frameBufferB;
     memset (tmpBuf, 0xff, 16);
 
@@ -124,7 +130,7 @@ graphics_WriteStr(const char *str,
 
                             backBuffer[(yOff + (8 - b) + (a * pitch))] =
                                 (1 - ((letters[str[i] - 32][13 - (a - xOff)] >> b) & 1)) *
-                                curBufVal;
+                                -1;//curBufVal;
 
                             // if(backBuffer[ (yOff+ (8-b) + (a * pitch)) ] == 0)backBuffer =
                             // curBufVal;
@@ -250,4 +256,20 @@ graphics_DrawBuffer(void* buffer,
                 }
 
         }
+}
+
+void
+graphics_Write(const char *fmt, 
+               uint32_t x, 
+               uint32_t y,
+               ...)
+{
+
+    char str[1024];
+    int index = 0;
+    va_list vl;
+    va_start(vl, fmt);
+    vsnprintf(str, fmt, vl);
+    va_end(vl);
+    graphics_WriteStr(str, x, y);
 }

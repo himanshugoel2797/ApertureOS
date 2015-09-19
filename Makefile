@@ -20,6 +20,7 @@ PRE_FPU_BOOT=crt0.o gdt.o idt.o cpuid.o \
 
 SOURCES=graphics/graphics.o	\
 				managers/filesystem/filesystem.o \
+				managers/filesystem/gpt/gpt.o managers/filesystem/mbr/mbr.o \
 				managers/filesystem/ext2/ext2.o managers/filesystem/ext2/ext2_helpers.o \
 				managers/keyboard/keyboard.o	\
 				managers/phys_mem_manager/phys_mem_manager.o \
@@ -44,7 +45,7 @@ POST_INIT=processors/elf_loader/elf_loader.o \
 
 OUTDISK=sdb
 
-QEMU_OPTS=-enable-kvm -m 4096M -cpu Haswell,+xsave -d int,cpu_reset,guest_errors -drive id=disk,file=flash.img,if=none -device ahci,id=ahci -device ide-drive,drive=disk,bus=ahci.0 -netdev user,id=mynet0 -device rtl8139,netdev=mynet0
+QEMU_OPTS=-enable-kvm -m 4096M -cpu host -d int,cpu_reset,guest_errors -drive id=disk,file=/dev/sda8,if=none -device ahci,id=ahci -device ide-drive,drive=disk,bus=ahci.0 -netdev user,id=mynet0 -device rtl8139,netdev=mynet0
 
 BOOT_FS=EXT2
 

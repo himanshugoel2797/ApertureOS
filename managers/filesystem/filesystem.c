@@ -1,7 +1,8 @@
 #include "filesystem.h"
 #include "priv_filesystem.h"
 #include "utils/common.h"
-
+#include "gpt/gpt.h"
+#include "mbr/mbr.h"
 #include "ext2/ext2.h"
 
 
@@ -13,6 +14,12 @@ FileDescriptor *descriptors = NULL, *lastDescriptor = NULL;
 Filesystem_Driver *fs_drivers = NULL, *lastDriver = NULL;
 
 bool initialized = FALSE;
+
+int retVal = 0;
+int GetRetval()
+{
+    return retVal;
+}
 
 void
 Filesystem_Setup(void)
@@ -34,6 +41,7 @@ filesystem_Initialize(void)
 {
     //Register all filesystem fs_drivers
     fs_drivers = kmalloc(sizeof(Filesystem_Driver));
+
     fs_drivers->filesystem = EXT2;
     fs_drivers->next = NULL;
     fs_drivers->_H_Initialize = _EXT2_Initialize;
@@ -49,19 +57,37 @@ filesystem_Initialize(void)
     fs_drivers->_H_Filesystem_CloseDir = _EXT2_Filesystem_CloseDir;
     fs_drivers->_H_Filesystem_MakeDir = _EXT2_Filesystem_MakeDir;
     fs_drivers->_H_Filesystem_DeleteDir = _EXT2_Filesystem_DeleteDir;
+    fs_drivers->sector_size = 512;  //Default to a sector size of 512 bytes
 
     lastDriver = fs_drivers;
 
+    retVal = 0xFFFF;
+    //Attempt to setup with MBR
+    retVal = MBR_Setup(AHCI_0_Read, AHCI_0_Write); 
+
+    if(retVal >= 0)
+        goto success_ret;
 
 
+    //Try again with GPT
+    retVal = GPT_Setup(AHCI_0_Read, AHCI_0_Write, &fs_drivers->sector_size);
+
+    if(retVal >= 0)
+        goto success_ret;
+
+    //Last attempt, just try directly
     //Setup the first boot disk as the specified type of FS
-    if(Filesystem_RegisterDescriptor("/", AHCI_0_Read, AHCI_0_Write, BOOT_FS) == 0)
-        {
-            initialized = TRUE;
-        }
-    descriptors = lastDescriptor;
+    retVal = Filesystem_RegisterDescriptor("/", AHCI_0_Read, AHCI_0_Write, BOOT_FS);
 
-    return 0;
+    if(retVal  == 0)
+        goto success_ret;
+
+    //Fail
+    return -1;
+
+    success_ret:
+        descriptors = lastDescriptor;
+        return retVal;
 }
 
 uint8_t
@@ -79,8 +105,12 @@ Filesystem_OpenFile(const char *filename,
     if(!initialized)return -1;
     //Determine the descriptor based on the filename, call the appropriate function and convert it's returned ID into a UID
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromPath(filename);
-    COM_WriteStr("TESTING FILE OPEN!!! %s,%x\r\n", filename, desc);
+    graphics_Write("TESTING FILE OPEN!!! %s,%x", 0, 600, filename, desc);
+    graphics_SwapBuffer();
+    //if(desc == NULL)return -1;
     uint32_t result = desc->driver->_H_Filesystem_OpenFile(desc, filename, flags, perms);
+    graphics_Write("TEST2", 0, 620);
+    graphics_SwapBuffer();
 
     return result | (desc->id << 32);
 }
@@ -197,8 +227,8 @@ Filesystem_Close(UID fd)
 
 UID Filesystem_RegisterDescriptor(
     const char *target,
-    ReadFunc *read,
-    WriteFunc *write,
+    ReadFunc read,
+    WriteFunc write,
     SupportedFilesystems fs)
 {
     FileDescriptor *descriptor = descriptors;
@@ -224,8 +254,13 @@ UID Filesystem_RegisterDescriptor(
     FileDescriptor *desc = kmalloc(sizeof(FileDescriptor));
     if(lastDescriptor != NULL)lastDescriptor->next = desc;
     lastDescriptor = desc;
+    if(descriptors == NULL)descriptors = lastDescriptor;
+
+    graphics_Write("lolo!!!!", 700,700);
+    graphics_SwapBuffer();
 
     desc->path = kmalloc(strlen(target) + 1);
+    memset(desc->path, 0, strlen(target) + 1);
     strcpy(desc->path, target);
 
     desc->read = read;
@@ -238,7 +273,12 @@ UID Filesystem_RegisterDescriptor(
 
     uint32_t ret = driver->_H_Initialize(desc); //Tell the filesystem driver to check this device
 
+
     if(ret != 0)return -3;
+
+    graphics_Write("Initialized!!!!", 800, 800);
+    graphics_SwapBuffer();
+    initialized = TRUE;
 
     return 0;
 }
@@ -276,8 +316,12 @@ Filesystem_FindDescriptorFromPath(const char *path)
 {
 
     FileDescriptor *descriptor = descriptors;
+    uint32_t j = 0;
     while(descriptor != NULL && descriptor->next != NULL)
         {
+            graphics_Write(descriptor->path, 500, j);
+            j+=30;
+
             if(strncmp(descriptor->path, path, strlen(descriptor->path)) == 0)
                 {
                     return descriptor;	//This path has already been hooked
@@ -285,10 +329,17 @@ Filesystem_FindDescriptorFromPath(const char *path)
             descriptor = descriptor->next;
         }
 
+    if(descriptor != NULL){
+        graphics_Write(descriptor->path, 600,600);
+    }else graphics_Write("NULLOLO", 600,600);
+    graphics_SwapBuffer();
     if(descriptor != NULL && strncmp(descriptor->path, path, strlen(descriptor->path)) == 0)
         {
-            return descriptor;	//This path has already been hooked
+            return descriptor;  //This path has already been hooked
         }
+
+        graphics_Write("NO MATCH", 500, 500);
+        graphics_SwapBuffer();
 
     return NULL;
 }

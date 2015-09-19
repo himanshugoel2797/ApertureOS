@@ -8,6 +8,7 @@
 
 uint32_t ahci_memory_base = 0;
 uint32_t ahci_controller_index = 0;
+uint8_t port_count, cmd_count;
 HBA_MEM *hba_mem;
 uint8_t disks[32];
 
@@ -66,6 +67,9 @@ AHCI_Initialize(void)
 
     hba_mem = (HBA_MEM*)ahci_memory_base;
 
+    port_count = (hba_mem->cap & 0x0F) + 1;
+    cmd_count = (hba_mem->cap >> 8) & 0x0F + 1;
+
     AHCI_Reset();
 
     COM_WriteStr ("AHCI Version: %d%d.%d%d\r\n",
@@ -78,16 +82,17 @@ AHCI_Initialize(void)
 
     //Find the index of the first port that is an ATA Disk
     uint32_t drives_found = FALSE;
-    for (uint32_t i = 0; i < 32; i++)
+    for (uint32_t i = 0; i < port_count; i++)
         {
+            graphics_Write("trying %d", 0, 200, i);
             if (((hba_mem->pi >> i) & 1) == 1 &&
                     AHCI_CheckDeviceType(&hba_mem->ports[i]) == AHCI_DEV_SATA)
                 {
                     COM_WriteStr("Using port #%d\r\n", i);
 
                     uint32_t ahci_base_addr = bootstrap_malloc(KB(512));
-                    ahci_base_addr += 1000;
-                    ahci_base_addr -= (ahci_base_addr % 1000);
+                    ahci_base_addr += 1024;
+                    ahci_base_addr -= (ahci_base_addr % 1024);
 
                     AHCI_RebasePort(&hba_mem->ports[i], ahci_base_addr, i);
 
@@ -119,6 +124,30 @@ AHCI_Reset(void)
         ThreadMan_Yield();
 
     hba_mem->ghc |= (1 << 31);  //Re-enable AHCI
+    hba_mem->ghc &= ~(1 << 1);  //Disable interrupts
+
+    for(uint32_t i = 0; i < port_count; i++)
+    {
+        if(hba_mem->pi >> i)
+        {
+            HBA_PORT *port = &hba_mem->ports[i];
+            AHCI_StopCMD(port);
+            port->serr = ~0;
+            port->cmd |= 2;
+            port->cmd |= 4;
+            for(int n = 0; n < 1000; n++);
+            port->is = ~0;
+            port->ie = 0;
+            port->cmd &= ~((1 << 27) | (1 << 26));
+            port->sctl |= 1;
+            for(int n = 0; n < 1000; n++);
+            port->sctl &= ~1;
+            port->is = ~0;
+            port->ie = 0;
+            AHCI_StartCMD(port);
+            port->serr = ~0;
+        }
+    }
 }
 
 uint8_t
@@ -213,7 +242,7 @@ AHCI_SendIOCommand(HBA_PORT *port,
     cmdheader->prdtl = (uint16_t)((count-1)>>3) + 1;    // PRDT entries count
 
     HBA_CMD_TBL *cmd_tbl = (HBA_CMD_TBL*)cmdheader->ctba;
-    memset(cmd_tbl, 0, sizeof(HBA_CMD_TBL) + sizeof(HBA_PRDT_ENTRY) * (count - 1));
+    //memset(cmd_tbl, 0, sizeof(HBA_CMD_TBL) + sizeof(HBA_PRDT_ENTRY) * (count - 1));
 
     FIS_REG_H2D *fis = (FIS_REG_H2D*)cmd_tbl->cfis;
 
@@ -237,7 +266,7 @@ AHCI_SendIOCommand(HBA_PORT *port,
     int i = 0;
     for (; i < cmdheader->prdtl - 1; i++)
         {
-            cmd_tbl->prdt_entry[i].dba = (uint32_t)virtMemMan_GetPhysAddress(buf);
+            cmd_tbl->prdt_entry[i].dba = (uint32_t)virtMemMan_GetPhysAddress(buf, NULL);
             cmd_tbl->prdt_entry[i].dbau = 0;
             cmd_tbl->prdt_entry[i].rsv0 = 0;
             cmd_tbl->prdt_entry[i].dbc = KB(4) - 1;
@@ -246,9 +275,10 @@ AHCI_SendIOCommand(HBA_PORT *port,
 
             buf = ((uint32_t)buf) + KB(4);
             count -= 8;
+
         }
 
-    cmd_tbl->prdt_entry[i].dba = (uint32_t)virtMemMan_GetPhysAddress(buf);
+    cmd_tbl->prdt_entry[i].dba = (uint32_t)virtMemMan_GetPhysAddress(buf, NULL);
     cmd_tbl->prdt_entry[i].dbau = 0;
     cmd_tbl->prdt_entry[i].rsv0 = 0;
     cmd_tbl->prdt_entry[i].dbc = (count * 512) - 1;
@@ -300,7 +330,7 @@ AHCI_FindCMDSlot(HBA_PORT *port)
 {
     // If not set in SACT and CI, the slot is free
     uint32_t slots = (port->sact | port->ci);
-    for (int i=0; i<32; i++)
+    for (int i=0; i<cmd_count; i++)
         {
             if ((slots&1) == 0)
                 return i;
@@ -335,7 +365,7 @@ AHCI_RebasePort(HBA_PORT *port,
     // Command table offset: 40K + 8K*portno
     // Command table size = 256*32 = 8K per port
     HBA_CMD_HEADER *cmdheader = (HBA_CMD_HEADER*)(port->clb);
-    for (int i=0; i<32; i++)
+    for (int i=0; i<cmd_count; i++)
         {
             cmdheader[i].prdtl = 8; // 8 prdt entries per command table
             // 256 bytes per command table, 64+16+48+16*8

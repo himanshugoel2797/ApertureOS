@@ -14,6 +14,7 @@ void Interrupts_GPF_Handler(Registers *regs);
 
 uint8_t using_apic = 0;
 InterruptHandler int_handlers[INTERRUPT_COUNT][INTERRUPT_HANDLER_SLOTS + 1];
+int i2 = 0;
 
 void Interrupts_Setup()
 {
@@ -61,6 +62,9 @@ uint32_t interrupts_Initialize()
 
 void interrupts_IDTHandler(Registers *Regs)
 {
+        graphics_Write("Int#%x", 0, 1000, Regs->int_no);
+        graphics_Write("#%x", 0, 1020, i2++);
+        graphics_SwapBuffer();
     bool handled = FALSE;
     for(int i = 0; i < INTERRUPT_HANDLER_SLOTS + 1; i++)
         {
@@ -72,7 +76,10 @@ void interrupts_IDTHandler(Registers *Regs)
                 }
         }
 
-    if(!handled)COM_WriteStr("Unhandled Int#%x\r\n", Regs->int_no);
+    if(!handled)
+        {
+            COM_WriteStr("Unhandled Int#%x\r\n", Regs->int_no);
+        }
 
     if(using_apic) APIC_SendEOI(Regs->int_no);
     else PIC_SendEOI(Regs->int_no);
@@ -179,6 +186,7 @@ void Interrupts_Unlock()
 
 void Interrupts_GPF_Handler(Registers *regs)
 {
+    graphics_Write("General Protection Fault (%x): Register Dump\r\n", 0, 500, regs->err_code);
     COM_WriteStr("General Protection Fault (%x): Register Dump\r\n", regs->err_code);
     COM_WriteStr("EAX: %x\t", regs->eax);
     COM_WriteStr("EBX: %x\t", regs->ebx);

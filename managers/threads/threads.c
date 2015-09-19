@@ -89,7 +89,7 @@ threadMan_InterruptHandler(Registers *regs)
                  "push %%edx\n\t"
                  "mov $0xffffffff, %%eax\n\t"
                  "mov $0xffffffff, %%edx\n\t"
-                 "xsave (%%ecx)\n\t"
+                 "fxsave (%%ecx)\n\t"
                  "pop %%edx\n\t"
                  "pop %%eax\n\t" :: "c"(addr));
 
@@ -107,7 +107,7 @@ threadMan_InterruptHandler(Registers *regs)
                  "push %%edx\n\t"
                  "mov $0xffffffff, %%eax\n\t"
                  "mov $0xffffffff, %%edx\n\t"
-                 "xrstor (%%ecx)\n\t"
+                 "fxrstor (%%ecx)\n\t"
                  "pop %%edx\n\t"
                  "pop %%eax\n\t" :: "c"(addr));
     sys_tss.esp0 = nxThread->kstack;
@@ -196,7 +196,7 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
         }
     //TODO setup the remaining registers to suit, set the args for the function too
     memset(&curThreadInfo->regs, 0, sizeof(Registers));
-    //memset(curThreadInfo->FPU_state, 0, 4096 + 64);
+    memset(curThreadInfo->FPU_state, 0, KB(1));
 
     curThreadInfo->regs.eip = entry;
 
@@ -274,35 +274,35 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
 
     virtMemMan_MapInst(curThreadInfo->cr3,
                        stack_vaddr - KB(4),
-                       virtMemMan_GetPhysAddress((void*)(0x50004000 - KB(4))),
+                       virtMemMan_GetPhysAddress((void*)(0x50004000 - KB(4)), NULL),
                        KB(4),
                        MEM_TYPE_WB, MEM_READ | MEM_WRITE, (flags & THREAD_FLAGS_KERNEL)?MEM_KERNEL : MEM_USER);
 
 
     virtMemMan_MapInst(curThreadInfo->cr3,
                        stack_vaddr - KB(8),
-                       virtMemMan_GetPhysAddress((void*)(0x50004000 - KB(8))),
+                       virtMemMan_GetPhysAddress((void*)(0x50004000 - KB(8)), NULL),
                        KB(4),
                        MEM_TYPE_WB, MEM_READ | MEM_WRITE, (flags & THREAD_FLAGS_KERNEL)?MEM_KERNEL : MEM_USER);
 
 
     virtMemMan_MapInst(curThreadInfo->cr3,
                        stack_vaddr - KB(12),
-                       virtMemMan_GetPhysAddress((void*)(0x50004000 - KB(12))),
+                       virtMemMan_GetPhysAddress((void*)(0x50004000 - KB(12)), NULL),
                        KB(4),
                        MEM_TYPE_WB, MEM_READ | MEM_WRITE, (flags & THREAD_FLAGS_KERNEL)?MEM_KERNEL : MEM_USER);
 
 
     virtMemMan_MapInst(curThreadInfo->cr3,
                        stack_vaddr - KB(16),
-                       virtMemMan_GetPhysAddress((void*)(0x50004000 - KB(16))),
+                       virtMemMan_GetPhysAddress((void*)(0x50004000 - KB(16)), NULL),
                        KB(4),
                        MEM_TYPE_WB, MEM_READ | MEM_WRITE, (flags & THREAD_FLAGS_KERNEL)?MEM_KERNEL : MEM_USER);
 
 
     virtMemMan_MapInst(curThreadInfo->cr3,
                        stack_vaddr,
-                       virtMemMan_GetPhysAddress((void*)(0x50004000)),
+                       virtMemMan_GetPhysAddress((void*)(0x50004000), NULL),
                        KB(4),
                        MEM_TYPE_WB, MEM_READ | MEM_WRITE, (flags & THREAD_FLAGS_KERNEL)?MEM_KERNEL : MEM_USER);
 
@@ -322,7 +322,7 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
                  "push %%edx\n\t"
                  "mov $0xffffffff, %%eax\n\t"
                  "mov $0xffffffff, %%edx\n\t"
-                 "xsave (%%ecx)\n\t"
+                 "fxsave (%%ecx)\n\t"
                  "pop %%edx\n\t"
                  "pop %%eax\n\t" :: "c"(addr));
 

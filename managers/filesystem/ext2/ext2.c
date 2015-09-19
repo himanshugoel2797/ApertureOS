@@ -29,7 +29,7 @@ _EXT2_Initialize(FileDescriptor *desc)
 
     EXT2_SuperBlock *s_blk = &memory_pool[0];
 
-    if(s_blk->ext2_sig != EXT2_SIG)return -1;
+    if(s_blk->ext2_sig != EXT2_SIG)return -3;
 
     EXT2_DriverData *data = kmalloc(sizeof(EXT2_DriverData));
     desc->data = data;

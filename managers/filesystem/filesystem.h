@@ -61,8 +61,8 @@ uint8_t Filesystem_Close(UID fd);
 
 UID Filesystem_RegisterDescriptor(
     const char *target,
-    ReadFunc *read,
-    WriteFunc *write,
+    ReadFunc read,
+    WriteFunc write,
     SupportedFilesystems fs);
 
 uint8_t Filesystem_UnregisterDescriptor(UID id);

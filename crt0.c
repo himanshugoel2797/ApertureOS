@@ -25,6 +25,8 @@
 #include "graphics/graphics.h"
 #include "processors.h"
 
+#include "managers/filesystem/gpt/priv_gpt.h"
+
 int temp = 0, temp2 = 0;
 char *tmp;
 
@@ -81,6 +83,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     tmp -= ((uint32_t)tmp) % KB(4);
     memset(tmp, 0xff, 1920*1080*4);
 
+
     COM_WriteStr("Kernel Size: %x MiB\r\n", ((uint32_t)&_region_kernel_end_ - LOAD_ADDRESS)/(1024 * 1024));
 
 
@@ -90,31 +93,74 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     UID tid = ThreadMan_CreateThread( t_main, 50, 51, THREAD_FLAGS_USER);
     ThreadMan_StartThread(tid);
 
+
+            graphics_WriteUInt64(temp2, 2, 0, 16);
+
+                                    char *base, *sub, *prog;
+                                    char *vendor_short, *vendor_long;
+                                    char *chip_name, *chip_desc;
+for(uint32_t i = 0; i < pci_deviceCount; i++)
+            {
+
+
+                                            pci_GetPCIClass(pci_readDWord(devices[i].bus, 
+                                                            devices[i].device, 
+                                                            devices[i].function, 8),
+                                                            &base, &sub, &prog);
+
+                                            pci_GetPCIDevice(devices[i].vendorID,
+                                                             devices[i].deviceID,
+                                                             &chip_name,
+                                                             &chip_desc);
+
+                                            pci_GetPCIVendor(devices[i].vendorID,
+                                                             &vendor_short,
+                                                             &vendor_long);
+
+                graphics_Write("%s %s %s : %s %s", 0, (i + 6) * 16,
+                                                         sub, prog, base,
+                                                         vendor_short,
+                                                         chip_name);
+
+            }
+
+    graphics_SwapBuffer();
+
+
+
     Interrupts_Unlock();
+
     while(1);
 }
 
 void t_main(int argc, char **argv)
 {
+    Interrupts_Lock();
     Filesystem_Setup();
+    graphics_SwapBuffer();
 
     //Filesystem_DeleteFile("/root/test.data");
-    UID fd = Filesystem_OpenFile("/home/hgoel/test.data", 0, 0);
+    UID fd = Filesystem_OpenFile("/inori-yuzuriha-guilty-crown-14361.data", 0, 0);
+    graphics_SwapBuffer();
 
-    Interrupts_Lock();
+    temp = (1 << 10) - 1;
+
     if(fd != -1)Filesystem_ReadFile(fd, tmp, 1920*1080*4);
+    graphics_SwapBuffer();
     Interrupts_Unlock();
     //tmp = buf;
 
-    UID id = Filesystem_OpenDir("/home/hgoel/");
-    Filesystem_DirEntry entry;
-    while(!Filesystem_ReadDir(id, &entry))
-        {
-            //COM_WriteStr("%s\r\n", entry.dir_name);
-        }
+    temp = (1 << 20) - 1;
 
-    ProcessManager_Initialize();
-    ProcessManager_CreateProcess("test", "/test.elf", 0, NULL, NULL, PROC_PERM_KERNEL);
+    //UID id = Filesystem_OpenDir("/home/hgoel/");
+    //Filesystem_DirEntry entry;
+    //while(!Filesystem_ReadDir(id, &entry))
+    //    {
+            //COM_WriteStr("%s\r\n", entry.dir_name);
+    //    }
+
+    //ProcessManager_Initialize();
+    //ProcessManager_CreateProcess("test", "/test.elf", 0, NULL, NULL, PROC_PERM_KERNEL);
 
     //id = Elf_Load("/test.elf", ELF_USER);
     //COM_WriteStr("FD: %x\r\n", id);
@@ -137,16 +183,46 @@ void kernel_main(int argc, char** isKernelMode)
 {
     while(1)
         {
-            graphics_Clear();
+            //graphics_Clear();
             graphics_DrawBuffer(tmp, 0, 0, 1920, 1080);
 
             RTC_Time t;
             CMOS_GetRTCTime(&t);
 
             graphics_WriteUInt64(temp, 2, 0, 16);
-            graphics_WriteUInt32(temp2, 16, 0, 32);
+            graphics_WriteUInt32(sizeof(GPT_Entry), 16, 0, 32);
             graphics_WriteUInt32(t.seconds, 10, 0, 48);
-            graphics_WriteUInt32(sizeof(HBA_FIS), 16, 0, 64);
+            graphics_WriteUInt32(GetRetval(), 16, 0, 64);
+
+
+                                    char *base, *sub, *prog;
+                                    char *vendor_short, *vendor_long;
+                                    char *chip_name, *chip_desc;
+
+            for(uint32_t i = 0; i < pci_deviceCount; i++)
+            {
+
+
+                                            pci_GetPCIClass(pci_readDWord(devices[i].bus, 
+                                                            devices[i].device, 
+                                                            devices[i].function, 8),
+                                                            &base, &sub, &prog);
+
+                                            pci_GetPCIDevice(devices[i].vendorID,
+                                                             devices[i].deviceID,
+                                                             &chip_name,
+                                                             &chip_desc);
+
+                                            pci_GetPCIVendor(devices[i].vendorID,
+                                                             &vendor_short,
+                                                             &vendor_long);
+
+                graphics_Write("%s %s %s : %s %s", 0, (i + 6) * 16,
+                                                         sub, prog, base,
+                                                         vendor_short,
+                                                         chip_name);
+
+            }
 
             graphics_SwapBuffer();
         }

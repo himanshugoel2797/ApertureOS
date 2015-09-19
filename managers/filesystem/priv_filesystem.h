@@ -30,6 +30,7 @@ typedef struct Filesystem_Driver_T
     uint8_t(*_H_Filesystem_MakeDir)(FileDescriptor *desc, const char *path);
     uint8_t(*_H_Filesystem_DeleteDir)(FileDescriptor *desc, const char *path);
 
+    uint32_t sector_size;
     SupportedFilesystems filesystem;
     struct Filesystem_Driver_T *next;
 } Filesystem_Driver;

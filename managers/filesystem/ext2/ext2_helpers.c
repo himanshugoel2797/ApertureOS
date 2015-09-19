@@ -328,6 +328,8 @@ _EXT2_GetBlockFromInode(FileDescriptor *desc,
         }
 }
 
+uint32_t lolzi = 0;
+
 uint8_t
 _EXT2_GetFileInfo(FileDescriptor *desc,
                   const char *filename,
@@ -342,12 +344,13 @@ _EXT2_GetFileInfo(FileDescriptor *desc,
     uint64_t size = 0;
     uint32_t prev_inode = 0;
 
+            EXT2_Inode inode;
     //Maake sure the path is a directory
     while(fname != NULL)
         {
             memset(dir_name, 0, 256);
             uint32_t index = (uint32_t)strchr(fname + 1, '/') - (uint32_t)fname - 1;
-
+            COM_WriteStr("index %d\r\n", index);
             if(index == 0)
                 break;
 
@@ -361,16 +364,18 @@ _EXT2_GetFileInfo(FileDescriptor *desc,
                     return -1;
                 }
 
-            EXT2_Inode inode;
             memcpy(&inode, _EXT2_GetInode(desc, inode_i), sizeof(EXT2_Inode));
 
+            COM_WriteStr("dir_name %s\r\n", dir_name);
             if(inode.hard_link_count == 0)return -1;
+
+            COM_WriteStr("fname %s\r\n", fname);
 
             size = (((uint64_t)inode.size_hi) << 32 | inode.size_lo);
 
             if(inode.type_perm >> 12 == EXT2_INODE_DIR)
                 {
-
+                    COM_WriteStr("IS DIR!!\r\n");
                     for(int i = 0; i < size/data->block_size; i++)
                         {
 
@@ -378,19 +383,26 @@ _EXT2_GetFileInfo(FileDescriptor *desc,
                             if(dir == NULL)
                                 break;
 
-                            char entry_name[256];
+                            char entry_name[257];
 
                             while(dir->name_len != 0)
                                 {
-                                    memset(entry_name, 0, 256);
-                                    memcpy(entry_name, dir->name, 256);
+                                    memset(entry_name, 0, 257);
+                                    memcpy(entry_name, dir->name, dir->name_len);
+
+                                    graphics_Write(entry_name, 700 + (lolzi * 20)/1000 * 140, (300 + (lolzi * 20)) % 1000);
+                                    graphics_SwapBuffer();
+                                    lolzi++;
+                                    COM_WriteStr("entry_name %s\r\n", entry_name);
 
                                     prev_inode = inode_i;
-                                    if(strncmp(entry_name, dir_name, strlen(dir_name)) == 0)
+                                    if( strncmp(entry_name, dir_name, strlen(dir_name)) == 0)
                                         {
                                             inode_i = dir->inode_index;
+                                            COM_WriteStr("MATCH FOUND %s %d\r\n", dir_name, inode_i);
                                             if(strchr(fname + 1, '/') == NULL)
-                                                {
+                                                {   
+                                                    COM_WriteStr("REACHED HERE!\r\n");
                                                     if(inode_num != NULL)*inode_num = inode_i;
                                                     if(is_dir != NULL)*is_dir = (dir->type == 2);
                                                     i = size;

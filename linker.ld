@@ -34,9 +34,9 @@ SECTIONS
 	/* Read-write data (uninitialized) and stack */
 	.bss ALIGN(4K) : AT(ADDR(.bss))
 	{
+		*(.bootstrap_stack)
 		*(COMMON)
 		*(.bss)
-		*(.bootstrap_stack)
 	}
 
 	/* The compiler may produce other sections, by default it will put them in

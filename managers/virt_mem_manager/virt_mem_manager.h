@@ -69,11 +69,13 @@ void
 virtMemMan_FreeInstance(VirtMemMan_Instance inst);
 
 uint64_t
-virtMemMan_GetPhysAddress(void *virt_addr);
+virtMemMan_GetPhysAddress(void *virt_addr,
+                          bool *large_page);
 
 uint64_t
 virtMemMan_GetPhysAddressInst(VirtMemMan_Instance curInstance_virt,
-                              void *virt_addr);
+                              void *virt_addr,
+                              bool *large_page);
 
 void*
 virtMemMan_FindEmptyAddressInst(VirtMemMan_Instance curInstance_virt,

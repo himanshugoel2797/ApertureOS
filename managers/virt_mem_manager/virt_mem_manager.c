@@ -128,6 +128,9 @@ virtMemMan_Fork(VirtMemMan_Instance dst,
     memcpy( (dst[1] & ~1), (src[1] & ~1), KB(4));
     memcpy( (dst[2] & ~1), (src[2] & ~1), KB(4));
     memcpy( (dst[3] & ~1), (src[3] & ~1), KB(4));
+
+    //Search the src tree, duplicating all allocations
+
 }
 
 void
@@ -391,7 +394,7 @@ virtMemMan_UnMapInst(VirtMemMan_Instance curInstance_virt,
 
 uint64_t
 virtMemMan_GetPhysAddressInst(VirtMemMan_Instance curInstance_virt,
-                              void *virt_addr)
+                              void *virt_addr, bool *large_page)
 {
     uint32_t v_addr = (uint32_t)virt_addr;
     //Round down to 4kb boundary
@@ -411,11 +414,14 @@ virtMemMan_GetPhysAddressInst(VirtMemMan_Instance curInstance_virt,
         {
             PT_Entry *pt = (PT_Entry*)(pd_u64[pd_i] & 0xfffff000);
             COM_WriteStr("%x\r\n", pt[pt_i].addr);
+
+            if(large_page)*large_page = FALSE;
             return (pt[pt_i].addr * KB(4)) + ((uint32_t)virt_addr - v_addr);
 
         }
     else    //If this is a 2MB page
         {
+            if(large_page)*large_page = TRUE;
             //Address is part of a 2MB page so read the address and adjust it
             return pd_pse[pd_i].addr * MB(2) + ( (uint32_t)virt_addr - (pdpt_i * GB(1) + pd_i * MB(2)) );
         }
@@ -472,6 +478,10 @@ uint32_t virtMemMan_PageFaultHandler(Registers *regs)
     uint32_t cr2 = 0;
     asm volatile("mov %%cr2, %%eax" : "=a"(cr2));
     COM_WriteStr("Page Fault! @ %x Details: ", cr2);
+    graphics_Write("Page Fault! @ %x Details: ", 600, 0, cr2);
+    graphics_Write("EIP: %x", 600, 20, regs->eip);
+    graphics_Write("EBP: %x", 600, 40, regs->ebp);
+    graphics_SwapBuffer();
 
     if(regs->err_code & 1)
         {
@@ -536,9 +546,9 @@ uint32_t virtMemMan_PageFaultHandler(Registers *regs)
 
 
 uint64_t
-virtMemMan_GetPhysAddress(void *virt_addr)
+virtMemMan_GetPhysAddress(void *virt_addr, bool *large_page)
 {
-    return virtMemMan_GetPhysAddressInst(curInstance_virt, virt_addr);
+    return virtMemMan_GetPhysAddressInst(curInstance_virt, virt_addr, large_page);
 }
 
 void*
