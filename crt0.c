@@ -159,8 +159,8 @@ void t_main(int argc, char **argv)
             //COM_WriteStr("%s\r\n", entry.dir_name);
     //    }
 
-    //ProcessManager_Initialize();
-    //ProcessManager_CreateProcess("test", "/test.elf", 0, NULL, NULL, PROC_PERM_KERNEL);
+    ProcessManager_Initialize();
+    ProcessManager_CreateProcess("test", "/test.elf", 0, NULL, NULL, PROC_PERM_KERNEL);
 
     //id = Elf_Load("/test.elf", ELF_USER);
     //COM_WriteStr("FD: %x\r\n", id);

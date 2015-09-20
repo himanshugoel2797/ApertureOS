@@ -15,9 +15,9 @@ _EXT2_ReadAddr(FileDescriptor *desc,
         }
     else
         {
-            if(desc->read(addr/512, POOL_SIZE, (uint16_t*)mem_pool) == 0)return NULL;
-            mem_pool += addr % 512;
-            data->last_read_addr = (addr/512) * 512;
+            if(desc->read(addr/desc->driver->sector_size, POOL_SIZE, (uint16_t*)mem_pool) == 0)return NULL;
+            mem_pool += addr % desc->driver->sector_size;
+            data->last_read_addr = (addr/desc->driver->sector_size) * desc->driver->sector_size;
         }
 
     return mem_pool;
@@ -30,7 +30,7 @@ _EXT2_CommitChanges(FileDescriptor *desc)
 
     if(desc->write != NULL)
         {
-            if(desc->write(data->last_read_addr/512, POOL_SIZE, data->memory_pool) == 0)
+            if(desc->write(data->last_read_addr/desc->driver->sector_size, POOL_SIZE, data->memory_pool) == 0)
                 return -1;
         }
     return 0;
@@ -47,10 +47,10 @@ _EXT2_WriteAddr(FileDescriptor *desc,
     EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
 
     //Read from this part in memory
-    desc->read(addr/512, POOL_SIZE, data->memory_pool);
+    desc->read(addr/desc->driver->sector_size, POOL_SIZE, data->memory_pool);
 
     //Calculate the offset we should place the data at to write to the specified address
-    uint32_t actualReadAddress = (addr/512) * 512;
+    uint32_t actualReadAddress = (addr/desc->driver->sector_size) * desc->driver->sector_size;
     uint32_t offset = addr - actualReadAddress;
 
     //Setup the write
@@ -59,7 +59,7 @@ _EXT2_WriteAddr(FileDescriptor *desc,
     //Push the data back to disk
     if(desc->write != NULL)
         {
-            if(desc->write(addr/512, len, data->memory_pool) == 0)
+            if(desc->write(addr/desc->driver->sector_size, len, data->memory_pool) == 0)
                 {
                     //Cleanup the buffers if the write failed and force a read from disk for the next read
                     data->last_read_addr = 0;

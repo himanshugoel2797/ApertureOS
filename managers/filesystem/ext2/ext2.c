@@ -25,7 +25,7 @@ _EXT2_Initialize(FileDescriptor *desc)
     uint8_t *memory_pool = bootstrap_malloc(POOL_SIZE);
     if(memory_pool == NULL)return -1;
 
-    if(desc->read(1024/512, POOL_SIZE, (uint16_t*)memory_pool) == 0)return -2;
+    if(desc->read(1024/desc->driver->sector_size, POOL_SIZE, (uint16_t*)memory_pool) == 0)return -2;
 
     EXT2_SuperBlock *s_blk = &memory_pool[0];
 
@@ -304,7 +304,7 @@ _EXT2_Filesystem_ReadDir(FileDescriptor *desc,
             //Check the block entries
             uint64_t address = inode.direct_block[i] * data->block_size;
 
-            EXT2_DirectoryEntry *dir = 	_EXT2_ReadAddr(desc, address, 512);
+            EXT2_DirectoryEntry *dir = 	_EXT2_ReadAddr(desc, address, desc->driver->sector_size);
 
             uint32_t traversed_size = 0;
 
