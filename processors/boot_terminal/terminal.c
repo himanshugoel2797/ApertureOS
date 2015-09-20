@@ -22,12 +22,12 @@ Terminal_Start(void)
     memset(term_buffer, 0, term_buf_len);
 
     UID kbd_thread = ThreadMan_CreateThread(Terminal_KeyboardThread, 0, NULL, THREAD_FLAGS_KERNEL);
-    UID render_thread = ThreadMan_CreateThread(Terminal_DisplayThread, 0, NULL, THREAD_FLAGS_KERNEL);
+    UID render_thread = Timers_CreateNew(20000/60, TRUE, Terminal_DisplayThread);
 
     Terminal_Write("[himanshu@localhost]$", 21);
 
     ThreadMan_StartThread(kbd_thread);
-    ThreadMan_StartThread(render_thread);
+    Timers_StartTimer(render_thread);
 
     while(1);
 }
@@ -67,18 +67,14 @@ Terminal_KeyboardThread(int argc,
 }
 
 void
-Terminal_DisplayThread(int argc,
-                       char **argv)
+Terminal_DisplayThread(void)
 {
-    while(1)
-        {
             //Update the display based on the buffer
             graphics_Clear();
 
             if(term_buf_locked_id != ThreadMan_GetCurThreadID() && term_buf_locked_id != 0)
                 {
-                    while(term_buf_locked_id != 0)
-                        ThreadMan_Yield();
+                    while(term_buf_locked_id != 0);
                 }
 
             term_buf_locked_id = ThreadMan_GetCurThreadID();
@@ -126,7 +122,7 @@ Terminal_DisplayThread(int argc,
                 }
 
             term_draw_count++;
-            if(term_draw_count % 10 == 0)
+            if(term_draw_count % 10 > 3)
             {
                 term_draw_count = 0;
                 graphics_WriteStr("_", x * 8, y * 16);
@@ -136,5 +132,4 @@ Terminal_DisplayThread(int argc,
 
             term_buf_locked_id = 0;
             graphics_SwapBuffer();
-        }
 }

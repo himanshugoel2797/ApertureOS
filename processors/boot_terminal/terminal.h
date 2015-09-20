@@ -16,7 +16,6 @@ Terminal_KeyboardThread(int argc,
                         char **argv);
 
 void
-Terminal_DisplayThread(int argc,
-                       char **argv);
+Terminal_DisplayThread(void);
 
 #endif

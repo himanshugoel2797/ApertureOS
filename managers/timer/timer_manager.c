@@ -7,6 +7,7 @@ typedef struct
 {
     uint32_t ticks;
     uint32_t curTicks;
+    UID id;
     bool periodic;
     TickHandler handler;
 } TimerData;
@@ -16,6 +17,7 @@ uint32_t timers_Initialize();
 void timers_callback(uint32_t res);
 uint8_t timers_messageHandler(Message *msg);
 TimerData timer_entries[MAX_TIMERS];
+UID id_base = 0;
 
 
 void timer_handler(Registers *regs);
@@ -37,7 +39,6 @@ void Timers_Setup()
 
 uint32_t timers_Initialize()
 {
-
     Interrupts_RegisterHandler(IRQ(0), 0, timer_handler);
     memset(timer_entries, 0, sizeof(timer_entries));
     //Initialize the PIT
@@ -57,6 +58,12 @@ uint32_t timers_Initialize()
 
     //APIC_SetVector(APIC_TIMER, 34);
     //APIC_SetEnableInterrupt(APIC_TIMER, 1);
+
+    for(int i = 0; i < MAX_TIMERS; i++)
+        {
+            timer_entries[i].id = new_uid();
+        }
+    id_base = timer_entries[0].id;
 
     return 0;
 }
@@ -93,17 +100,15 @@ void timer_handler(Registers *regs)
 
 UID Timers_CreateNew(uint32_t ticks, bool periodic, TickHandler handler)
 {
-    UID id = 0x80000000;
     for(int i = 0; i < MAX_TIMERS; i++)
         {
             if(timer_entries[i].ticks == 0)
                 {
-                    id += i;
                     timer_entries[i].ticks = ticks;
                     timer_entries[i].curTicks = ticks;
                     timer_entries[i].periodic = periodic;
                     timer_entries[i].handler = handler;
-                    return id;
+                    return timer_entries[i].id;
                 }
         }
     return -1;
@@ -111,7 +116,7 @@ UID Timers_CreateNew(uint32_t ticks, bool periodic, TickHandler handler)
 
 void Timers_Delete(UID uid)
 {
-    uint32_t i = (uid - 0x80000000);
+    uint32_t i = (uid - id_base);
     if(i < MAX_TIMERS)
         {
             timer_entries[i].ticks = 0;
@@ -121,7 +126,7 @@ void Timers_Delete(UID uid)
 
 void Timers_StartTimer(UID uid)
 {
-    uint32_t i = (uid - 0x80000000);
+    uint32_t i = (uid - id_base);
     if(i < MAX_TIMERS && timer_entries[i].ticks != 0)
         {
             PIT_SetEnableMode(ENABLE);
