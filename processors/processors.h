@@ -5,5 +5,6 @@
 #include "syscall_manager/syscall_man.h"
 #include "process_manager/process_man.h"
 #include "socket/socket.h"
+#include "boot_terminal/terminal.h"
 
 #endif

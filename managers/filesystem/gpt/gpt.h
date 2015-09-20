@@ -10,19 +10,19 @@
 //* /param write The function to write to the disk
 //* /return 0 if GPT not found, else number of partitions found
 int32_t
-GPT_Setup(ReadFunc read, 
-          WriteFunc write, 
+GPT_Setup(ReadFunc read,
+          WriteFunc write,
           uint32_t *sector_size);
 
 
 bool
 GPT_0_Write(uint64_t start,
-             uint32_t count,
-             uint16_t *buf);
+            uint32_t count,
+            uint16_t *buf);
 
 bool
 GPT_0_Read(uint64_t start,
-            uint32_t count,
-            uint16_t *buf);
+           uint32_t count,
+           uint16_t *buf);
 
 #endif

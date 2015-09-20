@@ -127,27 +127,27 @@ AHCI_Reset(void)
     hba_mem->ghc &= ~(1 << 1);  //Disable interrupts
 
     for(uint32_t i = 0; i < port_count; i++)
-    {
-        if(hba_mem->pi >> i)
         {
-            HBA_PORT *port = &hba_mem->ports[i];
-            AHCI_StopCMD(port);
-            port->serr = ~0;
-            port->cmd |= 2;
-            port->cmd |= 4;
-            for(int n = 0; n < 1000; n++);
-            port->is = ~0;
-            port->ie = 0;
-            port->cmd &= ~((1 << 27) | (1 << 26));
-            port->sctl |= 1;
-            for(int n = 0; n < 1000; n++);
-            port->sctl &= ~1;
-            port->is = ~0;
-            port->ie = 0;
-            AHCI_StartCMD(port);
-            port->serr = ~0;
+            if(hba_mem->pi >> i)
+                {
+                    HBA_PORT *port = &hba_mem->ports[i];
+                    AHCI_StopCMD(port);
+                    port->serr = ~0;
+                    port->cmd |= 2;
+                    port->cmd |= 4;
+                    for(int n = 0; n < 1000; n++);
+                    port->is = ~0;
+                    port->ie = 0;
+                    port->cmd &= ~((1 << 27) | (1 << 26));
+                    port->sctl |= 1;
+                    for(int n = 0; n < 1000; n++);
+                    port->sctl &= ~1;
+                    port->is = ~0;
+                    port->ie = 0;
+                    AHCI_StartCMD(port);
+                    port->serr = ~0;
+                }
         }
-    }
 }
 
 uint8_t

@@ -63,7 +63,7 @@ filesystem_Initialize(void)
 
     retVal = 0xFFFF;
     //Attempt to setup with MBR
-    retVal = MBR_Setup(AHCI_0_Read, AHCI_0_Write); 
+    retVal = MBR_Setup(AHCI_0_Read, AHCI_0_Write);
 
     if(retVal >= 0)
         goto success_ret;
@@ -85,9 +85,9 @@ filesystem_Initialize(void)
     //Fail
     return -1;
 
-    success_ret:
-        descriptors = lastDescriptor;
-        return retVal;
+success_ret:
+    descriptors = lastDescriptor;
+    return retVal;
 }
 
 uint8_t
@@ -329,17 +329,19 @@ Filesystem_FindDescriptorFromPath(const char *path)
             descriptor = descriptor->next;
         }
 
-    if(descriptor != NULL){
-        graphics_Write(descriptor->path, 600,600);
-    }else graphics_Write("NULLOLO", 600,600);
+    if(descriptor != NULL)
+        {
+            graphics_Write(descriptor->path, 600,600);
+        }
+    else graphics_Write("NULLOLO", 600,600);
     graphics_SwapBuffer();
     if(descriptor != NULL && strncmp(descriptor->path, path, strlen(descriptor->path)) == 0)
         {
             return descriptor;  //This path has already been hooked
         }
 
-        graphics_Write("NO MATCH", 500, 500);
-        graphics_SwapBuffer();
+    graphics_Write("NO MATCH", 500, 500);
+    graphics_SwapBuffer();
 
     return NULL;
 }

@@ -145,7 +145,7 @@ threadMan_Initialize(void)
     //Enable the APIc timer
     APIC_SetTimerMode(APIC_TIMER_PERIODIC);
 
-    APIC_SetTimerValue(1 << 20);
+    APIC_SetTimerValue(1 << 22);
 
 
     threads = kmalloc(sizeof(Thread));
@@ -160,8 +160,6 @@ threadMan_Initialize(void)
 
     APIC_SetVector(APIC_TIMER, 48);
     APIC_SetEnableInterrupt(APIC_TIMER, 1);
-
-    //Create the new thread to continue exectuon
 
     return 0;
 }

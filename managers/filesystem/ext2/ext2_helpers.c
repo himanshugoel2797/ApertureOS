@@ -344,7 +344,7 @@ _EXT2_GetFileInfo(FileDescriptor *desc,
     uint64_t size = 0;
     uint32_t prev_inode = 0;
 
-            EXT2_Inode inode;
+    EXT2_Inode inode;
     //Maake sure the path is a directory
     while(fname != NULL)
         {
@@ -401,7 +401,7 @@ _EXT2_GetFileInfo(FileDescriptor *desc,
                                             inode_i = dir->inode_index;
                                             COM_WriteStr("MATCH FOUND %s %d\r\n", dir_name, inode_i);
                                             if(strchr(fname + 1, '/') == NULL)
-                                                {   
+                                                {
                                                     COM_WriteStr("REACHED HERE!\r\n");
                                                     if(inode_num != NULL)*inode_num = inode_i;
                                                     if(is_dir != NULL)*is_dir = (dir->type == 2);

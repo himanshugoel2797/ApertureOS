@@ -22,9 +22,9 @@ SyscallManager_SyscallRaised(Registers *regs)
         {
             //Make sure the proper number of arguments has been provided
             uint32_t *size = (uint32_t*)regs->ecx;
-            if(syscalls[regs->ebx].arg_count != VAR_SYSCALL_ARGS && 
-               *size != (syscalls[regs->ebx].arg_count + 1) * sizeof(uint64_t) + sizeof(uint32_t))
-               return 0;	//Just return since we have no idea where the retval should be
+            if(syscalls[regs->ebx].arg_count != VAR_SYSCALL_ARGS &&
+                    *size != (syscalls[regs->ebx].arg_count + 1) * sizeof(uint64_t) + sizeof(uint32_t))
+                return 0;	//Just return since we have no idea where the retval should be
 
             syscalls[regs->ebx].handler((void*)regs->ecx);
         }
@@ -66,9 +66,11 @@ SyscallManager_RegisterAppendSyscall(SyscallHandler handler,
     while(syscalls[curIndex].handler != NULL && curIndex < MAX_SYSCALLS)
         curIndex++;
 
+
     if(syscalls[curIndex].handler != NULL)return ERROR_NO_FREE_SLOTS;
 
     syscalls[curIndex].handler = handler;
     syscalls[curIndex].arg_count = argc;
     curIndex++;
 }
+

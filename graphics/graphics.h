@@ -100,8 +100,8 @@ graphics_DrawBuffer(void* buffer,
                     uint32_t height);
 
 
-void 
-graphics_Write(const char *str, uint32_t x, uint32_t y, 
+void
+graphics_Write(const char *str, uint32_t x, uint32_t y,
                ...);
 
 /**@}*/
