@@ -24,6 +24,8 @@ Terminal_Start(void)
     UID kbd_thread = ThreadMan_CreateThread(Terminal_KeyboardThread, 0, NULL, THREAD_FLAGS_KERNEL);
     UID render_thread = ThreadMan_CreateThread(Terminal_DisplayThread, 0, NULL, THREAD_FLAGS_KERNEL);
 
+    Terminal_Write("[himanshu@localhost]$", 21);
+
     ThreadMan_StartThread(kbd_thread);
     ThreadMan_StartThread(render_thread);
 

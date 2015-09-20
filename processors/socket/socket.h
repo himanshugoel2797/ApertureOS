@@ -17,9 +17,10 @@ typedef enum
     SOCK_ERROR_UNKNOWN = 1 << 0,				//!< Unknown error
     SOCK_ERROR_NO_FREE_CONNECTIONS = 1 << 1,	//!< There are no free connections on this socket
     SOCK_ERROR_NO_PERMS = 1 << 2,				//!< The calling thread doesn't have the permissions
-    SOCK_ERROR_FAILED_BUSY = 1 << 3,			//!< The socket is busy
-    SOCK_ERROR_EXISTS = 1 << 4,					//!< The socket already exists
-    SOCK_ERROR_NOT_EXIST = 1 << 5,				//!< The socket does not exist
+    SOCK_ERROR_FAILED_BUSY = 1 << 3,            //!< The socket is busy
+    SOCK_ERROR_EXISTS = 1 << 4,                 //!< The socket or connection already exists
+    SOCK_ERROR_NOT_EXIST = 1 << 5,              //!< The socket does not exist
+    SOCK_ERROR_FEAT_UNAVAILABLE = 1 << 6        //!< One of the requested features isn't available
 } SOCK_ERROR;
 
 //! Socket features
@@ -54,7 +55,7 @@ typedef struct
 {
     uint32_t size;								//! The size of the struct. must be sizeof(SocketConnectionDesc)
 
-    SOCK_FEATURES requested_features;			//! Features requested from the socket
+    SOCK_FEATURES flags;			//! Features requested from the socket
 } SocketConnectionDesc;
 
 uint32_t
@@ -75,52 +76,73 @@ Socket_Create(const char *name,
 
 //! \param name The name of the socket to connect to
 //! \param desc The description of the requested connection
-//! \param id 	The UID identifying the connection
 //! \return An error code describing the result of the operation
 //! \sa SOCK_ERROR, Socket_Disconnect()
 SOCK_ERROR
 Socket_Connect(const char *name,
-               SocketConnectionDesc *desc,
-               UID *id);
+               SocketConnectionDesc *desc);
 
 
-//! Attempt to disconnect from the socket
+//! Attempt to disconnect from the socket connection on the current thread
 
-//! Note: Disconnection may fail if the socket is busy
-//! \param id 	The UID identifying the connection
+//! \param name The name of the socket
 //! \return An error code describing the result of the operation
 //! \sa Socket_Connect(), SOCK_ERROR
 SOCK_ERROR
-Socket_Disconnect(UID id);
+Socket_Disconnect(const char *name);
 
 
 //! Send a command to the socket 
 
 //! The socket is required to notify through the message pump with the SOCK_NOTIFICATION_COMPLETE flag set on completion of this request.
 
-//! \param id 	The UID identifying the connection
+//! \param name The name of the socket
 //! \param cmd The command to send
 //! \param params The command specific parameters to send
+//! \param param_size The size of the parameters data received
 //! \return An error code describing the result of the operation
 //! \sa Socket_Connect(), Socket_ReadMessage(), SOCK_NOTIFICATIONS
 SOCK_ERROR
-Socket_WriteCommand(UID id,
+Socket_WriteCommand(const char *name,
                     uint32_t cmd,
-                    void *params);
+                    void *params,
+                    uint16_t param_size);
+
+
+//! Send a message to the client socket from the server 
+
+//! Send a message to the client socket from the server
+
+//! \param name The name of the socket
+//! \param tid The thread ID of the connection to send the message to, '0' to send to all
+//! \param cmd The command to send
+//! \param params The command specific parameters to send
+//! \param param_size The size of the parameters data sent
+//! \return An error code describing the result of the operation
+//! \sa Socket_Connect(), Socket_ReadMessage(), SOCK_NOTIFICATIONS
+SOCK_ERROR
+Socket_WriteMessage(const char *name,
+                    UID tid,
+                    uint32_t cmd,
+                    void *params,
+                    uint16_t param_size);
+
 
 //! Poll the socket for pending messages
 
 //! The socket communicates through messages, the socket server polls its message queue for commands, the socket clients poll their message queues for notifications
 
-//! \param id The UID identifying the connection 
+//! \param name The name of the socket 
 //! \param cmd The command received
-//! \param params The command specific parameters received
+//! \param params The command specific parameters received, this must be a 64KiB buffer to be able to store all the parameters
+//! \param param_size The size of the parameters data received
 //! \return An error code describing the result of the operation
 //! \sa Socket_Connect(), Socket_WriteCommand()
 SOCK_ERROR
-Socket_ReadMessage(UID id, 
+Socket_ReadMessage(const char *name, 
                    uint32_t *cmd, 
-                   void **params);
+                   void *params,
+                   uint16_t *param_size);
 
 /**@}*/
 
