@@ -4,6 +4,7 @@
 #include "types.h"
 #include "managers.h"
 
-uint8_t KeyboardProc_Initialize();
+uint8_t 
+KeyboardProc_Initialize(void);
 
 #endif

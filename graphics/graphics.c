@@ -231,17 +231,17 @@ graphics_DrawBuffer(void* buffer,
 
     while (y0 < h)
         {
-            offset[0] = src[2];
-            offset[1] = src[1];
-            offset[2] = src[0];
-            offset[3] = src[3];
+            //offset[0] = src[2];
+            //offset[1] = src[1];
+            //offset[2] = src[0];
+            //offset[3] = src[3];
 
-            //asm volatile ("movaps (%%ebx), %%xmm0\n\t"
-            //              "movaps %%xmm0, (%%eax)" : "=a" (offset): "b" (src));
+            asm volatile ("movaps (%%ebx), %%xmm0\n\t"
+                          "movaps %%xmm0, (%%eax)" :: "a" (offset), "b" (src));
 
-            offset+=4;
-            x0+=1;
-            src+=4;
+            offset+=4 * 4;
+            x0+=4;
+            src+=4 * 4;
             if(x0 >= w)
                 {
                     x0 = 0;

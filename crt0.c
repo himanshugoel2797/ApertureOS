@@ -81,6 +81,7 @@ void kernel_main(int argc, char** isKernelMode)
 {
     Filesystem_Setup();
     ProcessManager_Initialize();
+    Socket_Initialize();
     Terminal_Start();
     while(1);
 }

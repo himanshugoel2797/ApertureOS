@@ -36,7 +36,7 @@ void keyboard_test(Registers *regs)
     //COM_WriteStr("Keyboard Input Recieved! %x\r\n");
     Keyboard_ProcessInput(inb(0x60));
 
-    while(inb(0x64) & 1) inb(0x60);
+    //while(inb(0x64) & 1) inb(0x60);
     memset(keys, 0, sizeof(uint64_t) * 8);
 }
 

@@ -60,7 +60,7 @@ Terminal_KeyboardThread(int argc,
     //Read input from the socket
     while(1)
     {
-        
+
     }
 }
 
@@ -68,17 +68,8 @@ void
 Terminal_DisplayThread(int argc,
                        char **argv)
 {
-    char t = 0x20;
     while(1)
         {
-    //while(1)
-    {
-
-        char str[] = {t++, '\f', 0};
-        t = (t % (0x20 - 0x7F)) + 0x20;
-        Terminal_Write(str, strlen(str));
-
-    }
             //Update the display based on the buffer
             graphics_Clear();
 
@@ -118,9 +109,11 @@ Terminal_DisplayThread(int argc,
                         }
                     else
                         {
-                            graphics_Write("%c", x * 8, y * 16, term_buffer[char_pos]);
+                            char tmp_str[2] = {term_buffer[char_pos], 0};
+                            graphics_Write(tmp_str, x * 8, y * 16);
                             x++;
                         }
+
                     if(x >= term_char_pitch)
                         {
                             y++;
@@ -129,13 +122,14 @@ Terminal_DisplayThread(int argc,
                     if(y >= term_char_rows)break;
 
                 }
-                
+
             term_draw_count++;
-            if(term_draw_count == 2)
+            if(term_draw_count % 10 == 0)
             {
                 term_draw_count = 0;
-                for(int z = 0; z < 16; z++) 
-                    graphics_Write("_", x * 8, y * 16 - z);
+                graphics_WriteStr("_", x * 8, y * 16);
+                graphics_WriteStr("_", x * 8, y * 16 - 1);
+                graphics_WriteStr("_", x * 8, y * 16 - 2);
             }
 
             term_buf_locked_id = 0;
