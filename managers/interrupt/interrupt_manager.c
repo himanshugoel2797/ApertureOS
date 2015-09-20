@@ -62,9 +62,6 @@ uint32_t interrupts_Initialize()
 
 void interrupts_IDTHandler(Registers *Regs)
 {
-        graphics_Write("Int#%x", 0, 1000, Regs->int_no);
-        graphics_Write("#%x", 0, 1020, i2++);
-        graphics_SwapBuffer();
     bool handled = FALSE;
     for(int i = 0; i < INTERRUPT_HANDLER_SLOTS + 1; i++)
         {
@@ -78,6 +75,9 @@ void interrupts_IDTHandler(Registers *Regs)
 
     if(!handled)
         {
+            graphics_Write("Int#%x", 0, 1000, Regs->int_no);
+            graphics_Write("#%x", 0, 1020, i2++);
+            graphics_SwapBuffer();
             COM_WriteStr("Unhandled Int#%x\r\n", Regs->int_no);
         }
 

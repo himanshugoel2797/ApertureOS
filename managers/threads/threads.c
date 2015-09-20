@@ -184,8 +184,6 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
     curThreadInfo->uid = new_uid();
     curThreadInfo->flags = flags;
     curThreadInfo->k_tls = kmalloc(256);
-    //curThreadInfo->FPU_state = kmalloc(4096 + 64);
-    //COM_WriteStr("%x\r\n", curThreadInfo->k_tls);
     curThreadInfo->status = 0;
 
     //Setup the paging structures for the thread
@@ -203,10 +201,6 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
     //Allocate a kernel mode stack for each thread
     curThreadInfo->kstack = kmalloc(KB(16));
 
-    //uint64_t* prev = virtMemMan_SetCurrent(curThreadInfo->cr3);
-
-    //if((flags & THREAD_FLAGS_KERNEL) == 0){
-
     //Map the stack into another place for now
 
     curThreadInfo->regs.unused = 0x50004000; //Stack ptr
@@ -215,10 +209,6 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
     virtMemMan_Map(curThreadInfo->regs.unused - KB(12), physMemMan_Alloc(), KB(4), MEM_TYPE_WB, MEM_READ | MEM_WRITE, (flags & THREAD_FLAGS_KERNEL)?MEM_KERNEL : MEM_USER);
     virtMemMan_Map(curThreadInfo->regs.unused - KB(16), physMemMan_Alloc(), KB(4), MEM_TYPE_WB, MEM_READ | MEM_WRITE, (flags & THREAD_FLAGS_KERNEL)?MEM_KERNEL : MEM_USER);
     virtMemMan_Map(curThreadInfo->regs.unused, physMemMan_Alloc(), KB(4), MEM_TYPE_WB, MEM_READ | MEM_WRITE, (flags & THREAD_FLAGS_KERNEL)?MEM_KERNEL : MEM_USER);
-
-    //}else{
-    //    curThreadInfo->regs.unused = kmalloc(KB(16)) + KB(16);
-    //}
 
     curThreadInfo->regs.ebp = curThreadInfo->regs.unused;
 
@@ -261,10 +251,6 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
     );
     asm volatile("mov %%ebx, %0\n\t" : "=r"(curThreadInfo->regs.unused));
 
-    //virtMemMan_SetCurrent(prev);
-
-    //Everything's setup, now setup the address space with the stack without setting it as current
-    //if((flags & THREAD_FLAGS_KERNEL) == 0){
 
     //Map the stack into another place for now
     uint32_t stack_vaddr = 0x40004000;
@@ -308,11 +294,6 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
 
 
     virtMemMan_UnMap((void*)(0x50000000), KB(20));
-
-
-    //virtMemMan_SetCurrent(curThreadInfo->cr3);
-    //while(1);
-    //}
 
 
     uint32_t addr = curThreadInfo->FPU_state;
