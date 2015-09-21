@@ -96,6 +96,8 @@ uint32_t Keyboard_ProcessInput(uint8_t input)
 
 }
 
+
+
 uint32_t kbd_Initialize()
 {
     memset(keys, 0, sizeof(uint64_t) * 8);

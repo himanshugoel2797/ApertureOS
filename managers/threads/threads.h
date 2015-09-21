@@ -5,6 +5,8 @@
 #include "managers.h"
 #include "idt.h"
 
+#define MAX_K_SEMAPHORE_COUNT 2048
+
 typedef struct Thread
 {
     struct Thread *next;
@@ -40,6 +42,12 @@ void
 ThreadMan_StartThread(UID id);
 
 void
+ThreadMan_SuspendThread(UID id);
+
+void
+ThreadMan_ResumeThread(UID id);
+
+void
 ThreadMan_ExitThread(UID id);
 
 void
@@ -62,5 +70,21 @@ ThreadMan_Unlock(void);
 
 void*
 ThreadMan_GetThreadTLS(UID id);
+
+
+UID
+ThreadMan_CreateSemaphore(uint32_t count);
+
+bool
+ThreadMan_TryAcquireSemaphore(UID id);
+
+bool
+ThreadMan_WaitAcqureSemaphore(UID id);
+
+void
+ThreadMan_ReleaseSemaphore(UID id);
+
+uint32_t
+ThreadMan_DeleteSemaphore(UID id);
 
 #endif /* end of include guard: _THREAD_MANAGER_H_ */

@@ -15,8 +15,10 @@ void Interrupts_GPF_Handler(Registers *regs);
 uint8_t using_apic = 0;
 InterruptHandler int_handlers[INTERRUPT_COUNT][INTERRUPT_HANDLER_SLOTS + 1];
 int i2 = 0;
+bool inInterruptHandler;
 
-void Interrupts_Setup()
+void 
+Interrupts_Setup(void)
 {
     int_sys = SysMan_RegisterSystem();
     strcpy(int_sys->sys_name, "interruptMan");
@@ -28,7 +30,8 @@ void Interrupts_Setup()
     SysMan_StartSystem(int_sys->sys_id);
 }
 
-void Interrupts_Virtualize()
+void 
+Interrupts_Virtualize(void)
 {
     if(using_apic)
         {
@@ -37,8 +40,10 @@ void Interrupts_Virtualize()
         }
 }
 
-uint32_t interrupts_Initialize()
+uint32_t 
+interrupts_Initialize(void)
 {
+    inInterruptHandler = FALSE;
     int32_t pic_res = PIC_Initialize(); //Initialize the PIC
     int32_t apic_res = APIC_Initialize();  //Initialize the APIC
 
@@ -60,9 +65,11 @@ uint32_t interrupts_Initialize()
     return 0;
 }
 
-void interrupts_IDTHandler(Registers *Regs)
+void 
+interrupts_IDTHandler(Registers *Regs)
 {
     bool handled = FALSE;
+    inInterruptHandler = TRUE;
     for(int i = 0; i < INTERRUPT_HANDLER_SLOTS + 1; i++)
         {
             if(int_handlers[Regs->int_no][i] != NULL)
@@ -83,9 +90,11 @@ void interrupts_IDTHandler(Registers *Regs)
 
     if(using_apic) APIC_SendEOI(Regs->int_no);
     else PIC_SendEOI(Regs->int_no);
+    inInterruptHandler = FALSE;
 }
 
-void interrupts_callback(uint32_t res)
+void 
+interrupts_callback(uint32_t res)
 {
     if(res == -1)
         {
@@ -102,31 +111,41 @@ void interrupts_callback(uint32_t res)
         }
 }
 
-uint8_t interrupts_messageHandler(Message *msg)
+uint8_t 
+interrupts_messageHandler(Message *msg)
 {
     if(msg->msg_id == MI_INITIALIZATION_FAILURE) return 1;
 
     return 0;
 }
 
-void Interrupts_RegisterHandler(uint8_t intrpt, uint8_t slot, InterruptHandler handler)
+void 
+Interrupts_RegisterHandler(uint8_t intrpt, 
+                           uint8_t slot, 
+                           InterruptHandler handler)
 {
     int_handlers[intrpt][slot] = handler;
 }
 
-uint8_t Interrupts_GetFreeSlot(uint8_t intrpt)
+uint8_t 
+Interrupts_GetFreeSlot(uint8_t intrpt)
 {
     uint8_t free_slot = 0;
     while(free_slot < INTERRUPT_HANDLER_SLOTS && int_handlers[intrpt][free_slot++] != NULL) ;
     return free_slot - 1;
 }
 
-void Interrupts_EmptySlot(uint8_t intrpt, uint8_t slot)
+void 
+Interrupts_EmptySlot(uint8_t intrpt, 
+                     uint8_t slot)
 {
     if(slot < INTERRUPT_HANDLER_SLOTS) int_handlers[intrpt][slot] = NULL;
 }
 
-void Interrupts_GetHandler(uint8_t intrpt, uint8_t slot, InterruptHandler* o_handler)
+void 
+Interrupts_GetHandler(uint8_t intrpt, 
+                      uint8_t slot, 
+                      InterruptHandler* o_handler)
 {
     if(slot < INTERRUPT_HANDLER_SLOTS)
         {
@@ -134,7 +153,9 @@ void Interrupts_GetHandler(uint8_t intrpt, uint8_t slot, InterruptHandler* o_han
         }
 }
 
-void Interrupts_SetInterruptEnableMode(uint8_t intrpt, bool enabled)
+void 
+Interrupts_SetInterruptEnableMode(uint8_t intrpt, 
+                                  bool enabled)
 {
     if(intrpt >= 32)
         {
@@ -150,19 +171,20 @@ void Interrupts_SetInterruptEnableMode(uint8_t intrpt, bool enabled)
         }
 }
 
-SysID Interrupts_GetSysID()
+SysID Interrupts_GetSysID(void)
 {
     return int_sys->sys_id;
 }
 
-bool Interrupts_IsAPICEnabled()
+bool Interrupts_IsAPICEnabled(void)
 {
     return using_apic;
 }
 
 static uint32_t curCallNum = 0;
 static uint32_t callNumWhereIntsEnabled = 0;
-void Interrupts_Lock()
+void 
+Interrupts_Lock(void)
 {
     uint16_t flags = 0;
     curCallNum++;
@@ -176,7 +198,8 @@ void Interrupts_Lock()
     asm volatile ("cli");
 }
 
-void Interrupts_Unlock()
+void 
+Interrupts_Unlock(void)
 {
     if(callNumWhereIntsEnabled == curCallNum--)
         {
@@ -184,9 +207,9 @@ void Interrupts_Unlock()
         }
 }
 
-void Interrupts_GPF_Handler(Registers *regs)
+void 
+Interrupts_GPF_Handler(Registers *regs)
 {
-    graphics_Write("General Protection Fault (%x): Register Dump\r\n", 0, 500, regs->err_code);
     COM_WriteStr("General Protection Fault (%x): Register Dump\r\n", regs->err_code);
     COM_WriteStr("EAX: %x\t", regs->eax);
     COM_WriteStr("EBX: %x\t", regs->ebx);
@@ -202,4 +225,10 @@ void Interrupts_GPF_Handler(Registers *regs)
     COM_WriteStr("USERESP: %x\t", regs->useresp);
     COM_WriteStr("EBP: %x\t", regs->ebp);
     asm volatile("hlt");
+}
+
+bool
+Interrupts_IsInHandler(void)
+{
+    return inInterruptHandler;
 }

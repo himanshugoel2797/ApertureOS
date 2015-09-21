@@ -1,4 +1,5 @@
 #include "threads.h"
+#include "priv_semaphore.h"
 #include "drivers.h"
 #include "managers.h"
 #include "utils/common.h"
@@ -138,6 +139,7 @@ threadMan_Initialize(void)
     //TODO create a new thread and resume remaining work on that by calling another function, this lets us keep things clean
     curThread = NULL;
     threads = NULL;
+    ThreadMan_SemaphoreInitialize();
 
     //Force override the IDT entry for this!
     IDT_SetEntry(48, (uint32_t)threadMan_IDTHandler, 0x08, 0x8E);

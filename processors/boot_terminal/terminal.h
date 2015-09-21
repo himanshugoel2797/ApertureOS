@@ -12,8 +12,7 @@ Terminal_Write(char *str,
                size_t len);
 
 void
-Terminal_KeyboardThread(int argc,
-                        char **argv);
+Terminal_KeyboardThread(void);
 
 void
 Terminal_DisplayThread(void);

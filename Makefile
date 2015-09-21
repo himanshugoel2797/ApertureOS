@@ -25,6 +25,7 @@ SOURCES=graphics/graphics.o	\
 				managers/keyboard/keyboard.o	\
 				managers/phys_mem_manager/phys_mem_manager.o \
 				managers/threads/threads.o	\
+				managers/threads/semaphore.o \
 				managers/timer/timer_manager.o \
 				managers/virt_mem_manager/virt_mem_manager.o \
 				drivers/hpet/hpet.o \
@@ -42,7 +43,8 @@ POST_INIT=processors/elf_loader/elf_loader.o \
 		  processors/socket/socket.o \
 		  processors/syscall_manager/syscall_man.o \
 		  processors/process_manager/process_man.o \
-		  processors/boot_terminal/terminal.o 
+		  processors/boot_terminal/terminal.o \
+		  processors/keyboard_proc/keyboard_proc.o 
 
 OUTDISK=sdb
 
