@@ -4,6 +4,7 @@
 #include "types.h"
 
 #define MAX_TIMERS 2048
+#define FREQ(x) (19886/x)
 
 typedef void (*TickHandler)();
 

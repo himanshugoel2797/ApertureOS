@@ -46,6 +46,8 @@ typedef enum
     AP_SPACE = 33,
     AP_SUPER = 34,
     AP_DELETE = 35,
+    AP_BACKSPACE = 36,
+    AP_ENTER = 37,
     AP_0 = 40 + 0,
     AP_1 = 40 + 1,
     AP_2 = 40 + 2,
@@ -56,6 +58,10 @@ typedef enum
     AP_7 = 40 + 7,
     AP_8 = 40 + 8,
     AP_9 = 40 + 9,
+    AP_UP = 50,
+    AP_DOWN = 51,
+    AP_LEFT = 52,
+    AP_RIGHT = 53
 
 } AOS_SCANCODES;
 

@@ -1,6 +1,7 @@
 #include "terminal.h"
 #include "utils/common.h"
 #include "globals.h"
+#include "keyboard_proc/keyboard_proc.h"
 
 char *term_buffer = NULL;
 UID term_buf_locked_id = 0;
@@ -21,15 +22,15 @@ Terminal_Start(void)
     term_buffer = kmalloc(term_buf_len);
     memset(term_buffer, 0, term_buf_len);
 
-    UID kbd_thread = Timers_CreateNew(20000/30, TRUE, Terminal_KeyboardThread);
-    UID render_thread = Timers_CreateNew(20000/60, TRUE, Terminal_DisplayThread);
+    UID kbd_thread = Timers_CreateNew(FREQ(60), TRUE, Terminal_KeyboardThread);
+    UID render_thread = Timers_CreateNew(FREQ(60), TRUE, Terminal_DisplayThread);
 
     Terminal_Write("[himanshu@localhost]$", 21);
 
     Timers_StartTimer(kbd_thread);
     Timers_StartTimer(render_thread);
 
-    while(1);
+    ThreadMan_SuspendThread(ThreadMan_GetCurThreadID());
 }
 
 void
@@ -59,7 +60,54 @@ void
 Terminal_KeyboardThread(void)
 {
     //Read input from the socket
+    AOS_SCANCODES key = KeyboardProc_ReadKey();
+    COM_WriteStr("Poll!!!!\r\n");
+    if(key == AP_A)Terminal_Write("a", 1);
+    if(key == AP_B)Terminal_Write("b", 1);
+    if(key == AP_C)Terminal_Write("c", 1);
+    if(key == AP_D)Terminal_Write("d", 1);
+    if(key == AP_E)Terminal_Write("e", 1);
+    if(key == AP_F)Terminal_Write("f", 1);
+    if(key == AP_G)Terminal_Write("g", 1);
+    if(key == AP_H)Terminal_Write("h", 1);
+    if(key == AP_I)Terminal_Write("i", 1);
+    if(key == AP_J)Terminal_Write("j", 1);
+    if(key == AP_K)Terminal_Write("k", 1);
+    if(key == AP_L)Terminal_Write("l", 1);
+    if(key == AP_M)Terminal_Write("m", 1);
+    if(key == AP_N)Terminal_Write("n", 1);
+    if(key == AP_O)Terminal_Write("o", 1);
+    if(key == AP_P)Terminal_Write("p", 1);
+    if(key == AP_Q)Terminal_Write("q", 1);
+    if(key == AP_R)Terminal_Write("r", 1);
+    if(key == AP_S)Terminal_Write("s", 1);
+    if(key == AP_T)Terminal_Write("t", 1);
+    if(key == AP_U)Terminal_Write("u", 1);
+    if(key == AP_V)Terminal_Write("v", 1);
+    if(key == AP_W)Terminal_Write("w", 1);
+    if(key == AP_X)Terminal_Write("x", 1);
+    if(key == AP_Y)Terminal_Write("y", 1);
+    if(key == AP_Z)Terminal_Write("z", 1);
+    
+    if(key == AP_0)Terminal_Write("0", 1);
+    if(key == AP_1)Terminal_Write("1", 1);
+    if(key == AP_2)Terminal_Write("2", 1);
+    if(key == AP_3)Terminal_Write("3", 1);
+    if(key == AP_4)Terminal_Write("4", 1);
+    if(key == AP_5)Terminal_Write("5", 1);
+    if(key == AP_6)Terminal_Write("6", 1);
+    if(key == AP_7)Terminal_Write("7", 1);
+    if(key == AP_8)Terminal_Write("8", 1);
+    if(key == AP_9)Terminal_Write("9", 1);
+    
+    if(key == AP_SPACE)Terminal_Write("\b", 1);
+    if(key == AP_BACKSPACE)Terminal_Write("\b", 1);
+    if(key == AP_ENTER)Terminal_Write("\r\n", 2);
 
+    if(key == AP_UP)term_buffer_pos -= term_char_pitch;
+    if(key == AP_DOWN)term_buffer_pos += term_char_pitch;
+    if(key == AP_RIGHT)term_buffer_pos++;
+    if(key == AP_LEFT)term_buffer_pos--;
 }
 
 void
@@ -77,7 +125,7 @@ Terminal_DisplayThread(void)
 
     //The buffer is locked for graphics stuff
     int x = 0, y = 0;
-    for(int char_pos = 0; char_pos < term_buffer_pos; char_pos++)
+    for(int char_pos = 0; char_pos < term_buf_len; char_pos++)
         {
             if(term_buffer[char_pos] < 0x20 || term_buffer[char_pos] > 0x7F)
                 {
@@ -86,6 +134,9 @@ Terminal_DisplayThread(void)
                     if(term_buffer[char_pos] == 0x00)break;
                     if(term_buffer[char_pos] == 0x08)
                         {
+                            term_buffer[char_pos - 1] = 1;
+                            term_buffer[char_pos] = 1;
+                            term_buffer_pos -=2;
                             x--;
                             if(x < 0)
                                 {
@@ -122,6 +173,8 @@ Terminal_DisplayThread(void)
     if(term_draw_count % 10 > 3)
         {
             term_draw_count = 0;
+            x = term_buffer_pos % term_char_pitch;
+            y = term_buffer_pos / term_char_pitch;
             graphics_WriteStr("_", x * 8, y * 16);
             graphics_WriteStr("_", x * 8, y * 16 - 1);
             graphics_WriteStr("_", x * 8, y * 16 - 2);

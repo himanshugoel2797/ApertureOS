@@ -172,6 +172,14 @@ threadMan_messageHandler(Message *msg)
 
 }
 
+void
+threadMan_endThread(void)
+{
+    COM_WriteStr("THREAD ENDED!!!!");
+    ThreadMan_ExitThread(ThreadMan_GetCurThreadID());
+    ThreadMan_DeleteThread(ThreadMan_GetCurThreadID());
+}
+
 UID
 ThreadMan_CreateThread(ProcessEntryPoint entry,
                        int argc,
@@ -215,6 +223,14 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
 
     //Push args onto the stack by temporarily switching stacks and pushing the stuff
     asm volatile(
+                 "xchg %%ebx, %%esp\n\t"
+                 "push %%eax\n\t"
+                 "xchg %%esp, %%ebx\n\t"
+                 :
+                 : "b"(curThreadInfo->regs.unused), "a"(threadMan_endThread)
+                 );
+    asm volatile(
+        //"add $4, %%ebx\n\t"
         "xchg %%ebx, %%esp\n\t"
 
         //Push parameters
@@ -351,6 +367,18 @@ ThreadMan_ExitThread(UID id)
 }
 
 void
+ThreadMan_SuspendThread(UID id)
+{
+    ThreadMan_ExitThread(id);
+}
+
+void
+ThreadMan_ResumeThread(UID id)
+{
+    ThreadMan_StartThread(id);
+}
+
+void
 ThreadMan_DeleteThread(UID id)
 {
     if(id == ThreadMan_GetCurThreadID())return; //The current thread object will automatically be cleaned by the kernel
@@ -369,7 +397,12 @@ ThreadMan_DeleteThread(UID id)
     if( (thd->status & 1) == 0)
         {
             prev->next = thd->next;
+            for(uint32_t i = 0x40004000; i >= 0x4000000; i -= KB(4))
+            {
+                physMemMan_Free(virtMemMan_GetPhysAddressInst(thd->cr3, i, FALSE));
+            }
             virtMemMan_FreeInstance(thd->cr3);
+            kfree(thd->k_tls);
             kfree(thd);
         }
     ThreadMan_Unlock();

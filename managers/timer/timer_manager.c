@@ -76,6 +76,14 @@ static uint8_t timers_messageHandler(Message *msg)
     return -1;  //We shouldn't be recieving any messages
 }
 
+static void timer_call(int argc, char **argv)
+{
+    timer_entries[argc].handler();
+    ThreadMan_ExitThread(ThreadMan_GetCurThreadID());
+    ThreadMan_DeleteThread(ThreadMan_GetCurThreadID());
+    ThreadMan_Yield();
+}
+
 static void timer_callHandlers(int argc, char **argv)
 {
     while(1)
@@ -84,7 +92,9 @@ static void timer_callHandlers(int argc, char **argv)
                 {
                     if(timer_entries[i].ticks != 0 && timer_entries[i].curTicks == 0)
                         {
-                            if(timer_entries[i].handler != NULL) timer_entries[i].handler();
+                            if(timer_entries[i].handler != NULL){
+                                timer_entries[i].handler();
+                            }
                             if(timer_entries[i].periodic)
                                 {
                                     timer_entries[i].curTicks = timer_entries[i].ticks;
@@ -92,7 +102,6 @@ static void timer_callHandlers(int argc, char **argv)
                             //COM_WriteStr("TEST!!!");
                         }
                 }
-                ThreadMan_Yield();
         }
 }
 

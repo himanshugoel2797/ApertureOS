@@ -413,7 +413,6 @@ virtMemMan_GetPhysAddressInst(VirtMemMan_Instance curInstance_virt,
     if(pd_pse[pd_i].page_size == 0) //If this is a 4KB page
         {
             PT_Entry *pt = (PT_Entry*)(pd_u64[pd_i] & 0xfffff000);
-            COM_WriteStr("%x\r\n", pt[pt_i].addr);
 
             if(large_page)*large_page = FALSE;
             return (pt[pt_i].addr * KB(4)) + ((uint32_t)virt_addr - v_addr);

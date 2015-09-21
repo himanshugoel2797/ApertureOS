@@ -21,6 +21,7 @@ void
 KeyboardProc_WriteKey(AOS_SCANCODES scancode,
                       bool press)
 {
+            COM_WriteStr("Recieved!!!\r\n");
     if(ThreadMan_WaitAcquireSemaphore(kbd_semaphore))
         {
             key_presses[key_buf_write_pos++] = scancode | ((press & 1) << 31);

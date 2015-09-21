@@ -70,6 +70,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     Timers_Setup();
 
     Keyboard_Setup();
+    KeyboardProc_Initialize();
     SyscallManager_Initialize();
     Interrupts_Unlock();
 
