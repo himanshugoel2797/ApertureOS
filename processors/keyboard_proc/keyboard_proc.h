@@ -10,6 +10,7 @@
 
 typedef enum
 {
+	AP_NONE = 0,
 	AP_A = 1,
 	AP_B = 2,
 	AP_C = 3,
@@ -64,5 +65,8 @@ KeyboardProc_Initialize(void);
 void
 KeyboardProc_WriteKey(AOS_SCANCODES scancode, 
                       bool press);
+
+AOS_SCANCODES
+KeyboardProc_ReadKey(void);
 
 #endif
