@@ -28,17 +28,19 @@ Socket_Create(const char *name,
 
     //Make sure a socket by this name doesn't already exist
     SocketInfo *sock = sockets;
-    do{
-        if(sock->name != NULL && strncmp(sock->name, name, strlen(name)) == 0)
-            return SOCK_ERROR_EXISTS;
-        sock = sock->next;
-    }while(sock != NULL);
+    do
+        {
+            if(sock->name != NULL && strncmp(sock->name, name, strlen(name)) == 0)
+                return SOCK_ERROR_EXISTS;
+            sock = sock->next;
+        }
+    while(sock != NULL);
 
     //Check the parameters and make sure they're all valid
     if(desc->flags & SOCK_FEAT_NOTIFICATION)
-    {
-        sock->notifications = desc->notifications;
-    }
+        {
+            sock->notifications = desc->notifications;
+        }
     else if(desc->notifications != 0)
         return SOCK_ERROR_UNKNOWN;
 
@@ -69,14 +71,16 @@ Socket_Connect(const char *name,
                SocketConnectionDesc *desc)
 {
     if(name == NULL | desc == NULL)return SOCK_ERROR_UNKNOWN;
-    
+
     //Find the socket
     SocketInfo *sock = sockets;
-    do{
-        if(sock->name != NULL && strncmp(sock->name, name, strlen(name)) == 0)
-            break;
-        sock = sock->next;
-    }while(sock != NULL);
+    do
+        {
+            if(sock->name != NULL && strncmp(sock->name, name, strlen(name)) == 0)
+                break;
+            sock = sock->next;
+        }
+    while(sock != NULL);
     if(sock == NULL)return SOCK_ERROR_NOT_EXIST;
 
     //Check if connections are available
@@ -89,12 +93,14 @@ Socket_Connect(const char *name,
 
     //Ensure this thread doesn't already have an existing open connection
     IntSocketConDesc *e_cons = sock->connections;
-    do{
-        if(e_cons != NULL && e_cons->tid == ThreadMan_GetCurThreadID())
-            return SOCK_ERROR_EXISTS;
+    do
+        {
+            if(e_cons != NULL && e_cons->tid == ThreadMan_GetCurThreadID())
+                return SOCK_ERROR_EXISTS;
 
-        e_cons = e_cons->next;
-    }while(e_cons != NULL);
+            e_cons = e_cons->next;
+        }
+    while(e_cons != NULL);
 
 
     //Initialize the connections description
@@ -123,21 +129,25 @@ Socket_Disconnect(const char *name)
     if(name == NULL)return SOCK_ERROR_UNKNOWN;
 
     SocketInfo *sock = sockets;
-    do{
-        if(sock->name != NULL && strncmp(sock->name, name, strlen(name)) == 0)
-            break;
-        sock = sock->next;
-    }while(sock != NULL);
+    do
+        {
+            if(sock->name != NULL && strncmp(sock->name, name, strlen(name)) == 0)
+                break;
+            sock = sock->next;
+        }
+    while(sock != NULL);
     if(sock == NULL)return SOCK_ERROR_NOT_EXIST;
 
 
     IntSocketConDesc *e_cons = sock->connections, *prev_con = NULL;
-    do{
-        if(e_cons != NULL && e_cons->tid == ThreadMan_GetCurThreadID())
-            break;
-        prev_con = e_cons;
-        e_cons = e_cons->next;
-    }while(e_cons != NULL);
+    do
+        {
+            if(e_cons != NULL && e_cons->tid == ThreadMan_GetCurThreadID())
+                break;
+            prev_con = e_cons;
+            e_cons = e_cons->next;
+        }
+    while(e_cons != NULL);
     if(e_cons == NULL)return SOCK_ERROR_NOT_EXIST;
 
     //Disconnect
@@ -146,14 +156,16 @@ Socket_Disconnect(const char *name)
 
     //Free the entire message queue
     SocketMessage *msgs = e_cons->clientMessageStream, *next = NULL;
-    do{
-        if(msgs != NULL)
+    do
         {
-            next = msgs->next;
-            kfree(msgs);
+            if(msgs != NULL)
+                {
+                    next = msgs->next;
+                    kfree(msgs);
+                }
+            msgs = next;
         }
-        msgs = next;
-    }while(msgs != NULL);
+    while(msgs != NULL);
 
     //Now free the socket connection
     kfree(e_cons);
@@ -171,19 +183,23 @@ Socket_WriteMessage(const char *name,
 
     //Find the relevant socket and connection
     SocketInfo *sock = sockets;
-    do{
-        if(sock->name != NULL && strncmp(sock->name, name, strlen(name)) == 0)
-            break;
-        sock = sock->next;
-    }while(sock != NULL);
+    do
+        {
+            if(sock->name != NULL && strncmp(sock->name, name, strlen(name)) == 0)
+                break;
+            sock = sock->next;
+        }
+    while(sock != NULL);
     if(sock == NULL)return SOCK_ERROR_NOT_EXIST;
 
     IntSocketConDesc *e_cons = sock->connections;
-    do{
-        if(e_cons != NULL && e_cons->tid == tid)
-            break;
-        e_cons = e_cons->next;
-    }while(e_cons != NULL);
+    do
+        {
+            if(e_cons != NULL && e_cons->tid == tid)
+                break;
+            e_cons = e_cons->next;
+        }
+    while(e_cons != NULL);
     if(e_cons == NULL)return SOCK_ERROR_NOT_EXIST;
 
     //Create the message and append it to the message queue
@@ -202,22 +218,24 @@ Socket_WriteCommand(const char *name,
 
     //Find the relevant socket and connection
     SocketInfo *sock = sockets;
-    do{
-        if(sock->name != NULL && strncmp(sock->name, name, strlen(name)) == 0)
-            break;
-        sock = sock->next;
-    }while(sock != NULL);
+    do
+        {
+            if(sock->name != NULL && strncmp(sock->name, name, strlen(name)) == 0)
+                break;
+            sock = sock->next;
+        }
+    while(sock != NULL);
     if(sock == NULL)return SOCK_ERROR_NOT_EXIST;
 
     //Create the message and append it to the message queue
-    
+
 
     return SOCK_ERROR_NONE;
 }
 
 SOCK_ERROR
-Socket_ReadMessage(const char *name, 
-                   uint32_t *cmd, 
+Socket_ReadMessage(const char *name,
+                   uint32_t *cmd,
                    void *params,
                    uint16_t *param_size)
 {

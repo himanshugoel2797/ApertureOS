@@ -12,15 +12,17 @@ typedef struct
     TickHandler handler;
 } TimerData;
 
-SystemData *timer_sys = NULL;
-uint32_t timers_Initialize();
-void timers_callback(uint32_t res);
-uint8_t timers_messageHandler(Message *msg);
-TimerData timer_entries[MAX_TIMERS];
-UID id_base = 0;
+static SystemData *timer_sys = NULL;
+static uint32_t timers_Initialize();
+static void timers_callback(uint32_t res);
+static uint8_t timers_messageHandler(Message *msg);
+static TimerData timer_entries[MAX_TIMERS];
+static UID id_base = 0;
+static uint64_t timer_ticks;
 
 
-void timer_handler(Registers *regs);
+static void timer_handler(Registers *regs);
+static void timer_callHandlers(int argc, char **argv);
 
 void Timers_Setup()
 {
@@ -37,8 +39,9 @@ void Timers_Setup()
     SysMan_StartSystem(timer_sys->sys_id);
 }
 
-uint32_t timers_Initialize()
+static uint32_t timers_Initialize()
 {
+    timer_ticks = 0;
     Interrupts_RegisterHandler(IRQ(0), 0, timer_handler);
     memset(timer_entries, 0, sizeof(timer_entries));
     //Initialize the PIT
@@ -51,49 +54,56 @@ uint32_t timers_Initialize()
             //TODO callibrate APIC timer
         }
 
-
-    //APIC_SetTimerMode(APIC_TIMER_PERIODIC);
-
-    //APIC_SetTimerValue(1 << 25);
-
-    //APIC_SetVector(APIC_TIMER, 34);
-    //APIC_SetEnableInterrupt(APIC_TIMER, 1);
-
     for(int i = 0; i < MAX_TIMERS; i++)
         {
             timer_entries[i].id = new_uid();
         }
     id_base = timer_entries[0].id;
 
+    UID timer_thread = ThreadMan_CreateThread(timer_callHandlers, 0, NULL, THREAD_FLAGS_KERNEL);
+    ThreadMan_StartThread(timer_thread);
+
     return 0;
 }
 
-void timers_callback(uint32_t res)
+static void timers_callback(uint32_t res)
 {
 
 }
 
-uint8_t timers_messageHandler(Message *msg)
+static uint8_t timers_messageHandler(Message *msg)
 {
-    return -1;  //We hould't be recieving any messages
+    return -1;  //We shouldn't be recieving any messages
 }
 
-void timer_handler(Registers *regs)
+static void timer_callHandlers(int argc, char **argv)
 {
-    for(int i = 0; i < MAX_TIMERS; i++)
+    while(1)
         {
-            if(timer_entries[i].ticks != 0)
+            for(int i = 0; i < MAX_TIMERS; i++)
                 {
-                    timer_entries[i].curTicks--;
-                    COM_WriteStr("%d\r\n", timer_entries[i].curTicks);
-                    if(timer_entries[i].curTicks == 0)
+                    if(timer_entries[i].ticks != 0 && timer_entries[i].curTicks == 0)
                         {
                             if(timer_entries[i].handler != NULL) timer_entries[i].handler();
                             if(timer_entries[i].periodic)
                                 {
                                     timer_entries[i].curTicks = timer_entries[i].ticks;
                                 }
+                            //COM_WriteStr("TEST!!!");
                         }
+                }
+                ThreadMan_Yield();
+        }
+}
+
+static void timer_handler(Registers *regs)
+{
+    timer_ticks++;
+    for(int i = 0; i < MAX_TIMERS; i++)
+        {
+            if(timer_entries[i].ticks != 0)
+                {
+                    if(timer_entries[i].curTicks != 0)timer_entries[i].curTicks--;
                 }
         }
 }

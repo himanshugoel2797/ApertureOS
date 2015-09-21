@@ -59,73 +59,74 @@ void
 Terminal_KeyboardThread(void)
 {
     //Read input from the socket
-    
+
 }
 
 void
 Terminal_DisplayThread(void)
 {
-            //Update the display based on the buffer
-            graphics_Clear();
+    //Update the display based on the buffer
+    graphics_Clear();
 
-            if(term_buf_locked_id != ThreadMan_GetCurThreadID() && term_buf_locked_id != 0)
+    if(term_buf_locked_id != ThreadMan_GetCurThreadID() && term_buf_locked_id != 0)
+        {
+            while(term_buf_locked_id != 0);
+        }
+
+    term_buf_locked_id = ThreadMan_GetCurThreadID();
+
+    //The buffer is locked for graphics stuff
+    int x = 0, y = 0;
+    for(int char_pos = 0; char_pos < term_buffer_pos; char_pos++)
+        {
+            if(term_buffer[char_pos] < 0x20 || term_buffer[char_pos] > 0x7F)
                 {
-                    while(term_buf_locked_id != 0);
-                }
-
-            term_buf_locked_id = ThreadMan_GetCurThreadID();
-
-            //The buffer is locked for graphics stuff
-            int x = 0, y = 0;
-            for(int char_pos = 0; char_pos < term_buffer_pos; char_pos++)
-                {
-                    if(term_buffer[char_pos] < 0x20 || term_buffer[char_pos] > 0x7F)
+                    if(term_buffer[char_pos] == 0x0A)y++;
+                    if(term_buffer[char_pos] == 0x0D)x=0;
+                    if(term_buffer[char_pos] == 0x00)break;
+                    if(term_buffer[char_pos] == 0x08)
                         {
-                            if(term_buffer[char_pos] == 0x0A)y++;
-                            if(term_buffer[char_pos] == 0x0D)x=0;
-                            if(term_buffer[char_pos] == 0x00)break;
-                            if(term_buffer[char_pos] == 0x08)
-                            {
-                                x--;
-                                if(x < 0){
+                            x--;
+                            if(x < 0)
+                                {
                                     y--;
                                     x = term_char_pitch - 1;
                                 }
-                            }
-                            if(term_buffer[char_pos] == 0x09)x += (x % 4);
-                            if(term_buffer[char_pos] == 0x0B)y += (y % 4);
-                            if(term_buffer[char_pos] == 0x0C)
-                            {
-                                y = 0;
-                                x = 0;
-                                graphics_Clear();
-                            }
                         }
-                    else
+                    if(term_buffer[char_pos] == 0x09)x += (x % 4);
+                    if(term_buffer[char_pos] == 0x0B)y += (y % 4);
+                    if(term_buffer[char_pos] == 0x0C)
                         {
-                            char tmp_str[2] = {term_buffer[char_pos], 0};
-                            graphics_Write(tmp_str, x * 8, y * 16);
-                            x++;
-                        }
-
-                    if(x >= term_char_pitch)
-                        {
-                            y++;
+                            y = 0;
                             x = 0;
+                            graphics_Clear();
                         }
-                    if(y >= term_char_rows)break;
-
+                }
+            else
+                {
+                    char tmp_str[2] = {term_buffer[char_pos], 0};
+                    graphics_Write(tmp_str, x * 8, y * 16);
+                    x++;
                 }
 
-            term_draw_count++;
-            if(term_draw_count % 10 > 3)
-            {
-                term_draw_count = 0;
-                graphics_WriteStr("_", x * 8, y * 16);
-                graphics_WriteStr("_", x * 8, y * 16 - 1);
-                graphics_WriteStr("_", x * 8, y * 16 - 2);
-            }
+            if(x >= term_char_pitch)
+                {
+                    y++;
+                    x = 0;
+                }
+            if(y >= term_char_rows)break;
 
-            term_buf_locked_id = 0;
-            graphics_SwapBuffer();
+        }
+
+    term_draw_count++;
+    if(term_draw_count % 10 > 3)
+        {
+            term_draw_count = 0;
+            graphics_WriteStr("_", x * 8, y * 16);
+            graphics_WriteStr("_", x * 8, y * 16 - 1);
+            graphics_WriteStr("_", x * 8, y * 16 - 2);
+        }
+
+    term_buf_locked_id = 0;
+    graphics_SwapBuffer();
 }

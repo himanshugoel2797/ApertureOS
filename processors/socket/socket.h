@@ -92,7 +92,7 @@ SOCK_ERROR
 Socket_Disconnect(const char *name);
 
 
-//! Send a command to the socket 
+//! Send a command to the socket
 
 //! The socket is required to notify through the message pump with the SOCK_NOTIFICATION_COMPLETE flag set on completion of this request.
 
@@ -109,7 +109,7 @@ Socket_WriteCommand(const char *name,
                     uint16_t param_size);
 
 
-//! Send a message to the client socket from the server 
+//! Send a message to the client socket from the server
 
 //! Send a message to the client socket from the server
 
@@ -132,15 +132,15 @@ Socket_WriteMessage(const char *name,
 
 //! The socket communicates through messages, the socket server polls its message queue for commands, the socket clients poll their message queues for notifications
 
-//! \param name The name of the socket 
+//! \param name The name of the socket
 //! \param cmd The command received
 //! \param params The command specific parameters received, this must be a 64KiB buffer to be able to store all the parameters
 //! \param param_size The size of the parameters data received
 //! \return An error code describing the result of the operation
 //! \sa Socket_Connect(), Socket_WriteCommand()
 SOCK_ERROR
-Socket_ReadMessage(const char *name, 
-                   uint32_t *cmd, 
+Socket_ReadMessage(const char *name,
+                   uint32_t *cmd,
                    void *params,
                    uint16_t *param_size);
 

@@ -66,8 +66,8 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     AHCI_Initialize();
 
     kmalloc_init();
-    Timers_Setup();
     ThreadMan_Setup();
+    Timers_Setup();
 
     Keyboard_Setup();
     SyscallManager_Initialize();
