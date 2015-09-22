@@ -7,6 +7,11 @@
 
 #define MAX_K_SEMAPHORE_COUNT 2048
 
+typedef struct{
+    void *proc_info;
+    void *sock_info;
+}K_TLS;
+
 typedef struct Thread
 {
     struct Thread *next;
@@ -16,7 +21,7 @@ typedef struct Thread
     uint32_t status;
     UID uid;
     uint32_t flags;
-    uint8_t k_tls[256];
+    K_TLS k_tls;
     char FPU_state[768]; //Allocate extra space for alignment
 } __attribute__((packed)) Thread;
 
@@ -27,7 +32,7 @@ typedef enum
     THREAD_FLAGS_KERNEL = 1,
     THREAD_FLAGS_FORK = 2,
     THREAD_FLAGS_VM86 = 4
-};
+}THREAD_FLAGS;
 
 void
 ThreadMan_Setup(void);
@@ -56,7 +61,7 @@ ThreadMan_DeleteThread(UID id);
 UID
 ThreadMan_GetCurThreadID(void);
 
-void*
+K_TLS*
 ThreadMan_GetCurThreadTLS(void);
 
 void
@@ -68,7 +73,7 @@ ThreadMan_Lock(void);
 void
 ThreadMan_Unlock(void);
 
-void*
+K_TLS*
 ThreadMan_GetThreadTLS(UID id);
 
 

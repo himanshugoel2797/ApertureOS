@@ -11,9 +11,8 @@ Socket_Initialize(void)
     lastSocket = sockets;
 
     sockets->name = NULL;
-    sockets->max_connections = 1;
-    sockets->cur_connections = 1;
-    sockets->notifications = ~0;
+    sockets->max_connections = 0;
+    sockets->cur_connections = 0;
     sockets->flags = ~0;
     sockets->next = NULL;
 
@@ -36,14 +35,6 @@ Socket_Create(const char *name,
         }
     while(sock != NULL);
 
-    //Check the parameters and make sure they're all valid
-    if(desc->flags & SOCK_FEAT_NOTIFICATION)
-        {
-            sock->notifications = desc->notifications;
-        }
-    else if(desc->notifications != 0)
-        return SOCK_ERROR_UNKNOWN;
-
 
     //Register the socket into the table
     sock = kmalloc(sizeof(SocketInfo));
@@ -51,8 +42,6 @@ Socket_Create(const char *name,
 
     sock->max_connections = desc->max_connections;
     sock->cur_connections = 0;
-    sock->connections = NULL;
-    sock->lastConnection = NULL;
     sock->flags = desc->flags;
 
     sock->name = kmalloc(strlen(name) + 1);
@@ -63,6 +52,13 @@ Socket_Create(const char *name,
 
     lastSocket->next = sock;
     lastSocket = sock;
+    
+    //Connect the current thread to the socket
+    SocketConnectionDesc connection;
+    connection.size = sizeof(SocketConnectionDesc);
+    connection.flags = desc->flags;
+    Socket_Connect(name, &connection);
+
     return SOCK_ERROR_NONE;
 }
 
@@ -91,31 +87,19 @@ Socket_Connect(const char *name,
     if ((sock->flags & desc->flags) != desc->flags)
         return SOCK_ERROR_FEAT_UNAVAILABLE;
 
-    //Ensure this thread doesn't already have an existing open connection
-    IntSocketConDesc *e_cons = sock->connections;
-    do
+
+    SocketConnection *cons = (SocketConnection*)kmalloc(sizeof(SocketConnection));
+    cons->socket = sock;
+    cons->flags = desc->flags;
+    cons->next = NULL;
+
+    if(ThreadMan_GetCurThreadTLS()->sock_info == NULL)ThreadMan_GetCurThreadTLS()->sock_info = cons;
+    else 
         {
-            if(e_cons != NULL && e_cons->tid == ThreadMan_GetCurThreadID())
-                return SOCK_ERROR_EXISTS;
-
-            e_cons = e_cons->next;
+            uint32_t *addr = (uint32_t*)((SocketConnection*)ThreadMan_GetCurThreadTLS()->sock_info)->next;
+            ((SocketConnection*)ThreadMan_GetCurThreadTLS()->sock_info)->next = cons;
+            cons->next = addr;
         }
-    while(e_cons != NULL);
-
-
-    //Initialize the connections description
-    IntSocketConDesc *con = kmalloc(sizeof(IntSocketConDesc));
-    memset(con, 0, sizeof(IntSocketConDesc));
-
-    con->flags = desc->flags;
-    con->tid = ThreadMan_GetCurThreadID();
-    con->clientMessageStream = NULL;
-    con->client_queued_message_count = 0;
-    con->next = NULL;
-
-    if(sock->lastConnection != NULL)sock->lastConnection->next = con;
-    sock->lastConnection = con;
-    if(sock->connections == NULL)sock->connections = sock->lastConnection;
 
     sock->cur_connections++;
 
@@ -128,118 +112,113 @@ Socket_Disconnect(const char *name)
     //Check if a connection to said socket exists from the current thread
     if(name == NULL)return SOCK_ERROR_UNKNOWN;
 
-    SocketInfo *sock = sockets;
+    SocketInfo *sock = sockets, *prev_sock = NULL;
     do
         {
             if(sock->name != NULL && strncmp(sock->name, name, strlen(name)) == 0)
                 break;
+            prev_sock = sock;
             sock = sock->next;
         }
     while(sock != NULL);
     if(sock == NULL)return SOCK_ERROR_NOT_EXIST;
 
 
-    IntSocketConDesc *e_cons = sock->connections, *prev_con = NULL;
-    do
-        {
-            if(e_cons != NULL && e_cons->tid == ThreadMan_GetCurThreadID())
-                break;
-            prev_con = e_cons;
-            e_cons = e_cons->next;
-        }
-    while(e_cons != NULL);
-    if(e_cons == NULL)return SOCK_ERROR_NOT_EXIST;
+    //Find the connection info in the socket
+    SocketConnection *cons = (SocketConnection*)ThreadMan_GetCurThreadTLS()->sock_info, *prev = NULL;
+    do{
+        if(strncmp(name, cons->socket->name, strlen(name)) == 0)break;
+        prev = cons;
+        cons = cons->next;
+    }while(cons != NULL);
+    if(cons == NULL)return SOCK_ERROR_NOT_EXIST;
 
-    //Disconnect
-    prev_con->next = e_cons->next;
-    sock->cur_connections--;
+    //Remove the connection
+    prev->next = cons->next;
+    kfree(cons);
 
-    //Free the entire message queue
-    SocketMessage *msgs = e_cons->clientMessageStream, *next = NULL;
-    do
-        {
-            if(msgs != NULL)
-                {
-                    next = msgs->next;
-                    kfree(msgs);
-                }
-            msgs = next;
-        }
-    while(msgs != NULL);
+    if(sock->cur_connections == 0)
+    {
+        //TODO free all messages from list
 
-    //Now free the socket connection
-    kfree(e_cons);
+        prev_sock->next = sock->next;   //Remove the socket from the list
+        kfree(sock->name);
+        kfree(sock);
+    }
+
     return SOCK_ERROR_NONE;
 }
 
 SOCK_ERROR
 Socket_WriteMessage(const char *name,
                     UID tid,
-                    uint32_t cmd,
                     void *params,
-                    uint16_t param_size)
+                    uint8_t param_size)
 {
     if(name == NULL)return SOCK_ERROR_UNKNOWN;
 
     //Find the relevant socket and connection
-    SocketInfo *sock = sockets;
-    do
-        {
-            if(sock->name != NULL && strncmp(sock->name, name, strlen(name)) == 0)
-                break;
-            sock = sock->next;
-        }
-    while(sock != NULL);
-    if(sock == NULL)return SOCK_ERROR_NOT_EXIST;
+    //Find the connection info in the socket
+    SocketConnection *cons = (SocketConnection*)ThreadMan_GetCurThreadTLS()->sock_info;
+    do{
+        if(strncmp(name, cons->socket->name, strlen(name)) == 0)break;
+        cons = cons->next;
+    }while(cons != NULL);
+    if(cons == NULL)return SOCK_ERROR_NOT_EXIST;
 
-    IntSocketConDesc *e_cons = sock->connections;
-    do
-        {
-            if(e_cons != NULL && e_cons->tid == tid)
-                break;
-            e_cons = e_cons->next;
-        }
-    while(e_cons != NULL);
-    if(e_cons == NULL)return SOCK_ERROR_NOT_EXIST;
+    SocketInfo *sock = cons->socket;
 
     //Create the message and append it to the message queue
+    SocketMessage *msg = (SocketMessage*)kmalloc(sizeof(SocketMessage));
+    memcpy(msg->params, params, (uint32_t)param_size + 1);
 
+    msg->param_size = param_size;
+    msg->tid = ThreadMan_GetCurThreadID();
+    msg->pid = ProcessManager_GetCurPID();
+    msg->next = NULL;
+    msg->prev = NULL;
 
-    return SOCK_ERROR_NONE;
-}
-
-SOCK_ERROR
-Socket_WriteCommand(const char *name,
-                    uint32_t cmd,
-                    void *params,
-                    uint16_t param_size)
-{
-    if(name == NULL)return SOCK_ERROR_UNKNOWN;
-
-    //Find the relevant socket and connection
-    SocketInfo *sock = sockets;
-    do
-        {
-            if(sock->name != NULL && strncmp(sock->name, name, strlen(name)) == 0)
-                break;
-            sock = sock->next;
-        }
-    while(sock != NULL);
-    if(sock == NULL)return SOCK_ERROR_NOT_EXIST;
-
-    //Create the message and append it to the message queue
-
+    if(sock->messages == NULL)sock->messages = sock->lastMessage = msg;
+    else {
+        sock->lastMessage->next = msg;
+        msg->prev = sock->lastMessage;
+        sock->lastMessage = msg;
+    }
 
     return SOCK_ERROR_NONE;
 }
 
 SOCK_ERROR
 Socket_ReadMessage(const char *name,
-                   uint32_t *cmd,
+                   UID *src_pid,
+                   UID *src_tid,
                    void *params,
-                   uint16_t *param_size)
+                   uint8_t *param_size)
 {
-    if(name == NULL)return SOCK_ERROR_UNKNOWN;
+    if(name == NULL | params == NULL | param_size == NULL)return SOCK_ERROR_UNKNOWN;
+
+    //Find the relevant socket and connection
+    //Find the connection info in the socket
+    SocketConnection *cons = (SocketConnection*)ThreadMan_GetCurThreadTLS()->sock_info;
+    do{
+        if(strncmp(name, cons->socket->name, strlen(name)) == 0)break;
+        cons = cons->next;
+    }while(cons != NULL);
+    if(cons == NULL)return SOCK_ERROR_NOT_EXIST;
+
+    SocketInfo *sock = cons->socket;
+
+
+    //Fetch the next message from the list
+    SocketMessage *msg = sock->lastMessage;
+
+    sock->lastMessage = msg->prev;
+    sock->lastMessage->next = NULL;
+
+    memcpy(params, msg->params, (uint32_t)msg->param_size + 1);
+    *param_size = msg->param_size;
+
+    kfree(msg);
 
     return SOCK_ERROR_NONE;
 }

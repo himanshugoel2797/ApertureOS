@@ -161,12 +161,9 @@ Keyboard_ProcessInput(uint8_t input)
 
                     keys_down[key_index] &= ~((uint64_t)1 << (uint64_t)key_offset);
                 }
-            //COM_WriteStr("Key Press: %x \r\n", input);
-            //COM_WriteStr("%d, %d\r\n %b \r\n", (uint32_t)key_index, (uint32_t)key_offset, (uint32_t)keys_down[key_index]);
 
 
             key_flags = 1 << 2; //Mark key input as present
-            Keyboard_PushInput();
         }
     return 0;
 
@@ -191,7 +188,7 @@ kbd_Initialize(void)
     PS2_Initialize();
     PS2Keyboard_Initialize();
     UID kbd_timer = Timers_CreateNew(FREQ(12000), TRUE, Keyboard_PushInput);
-    //Timers_StartTimer(kbd_timer);
+    Timers_StartTimer(kbd_timer);
 }
 
 static void 

@@ -206,7 +206,7 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
     curThreadInfo->regs.eip = entry;
 
     //Allocate a kernel mode stack for each thread
-    if((flags & THREAD_FLAGS_KERNEL))curThreadInfo->kstack = kmalloc(KB(16));
+    if((flags & THREAD_FLAGS_KERNEL))curThreadInfo->kstack = kmalloc(KB(8));
 
     //Map the stack into another place for now
 
@@ -401,7 +401,6 @@ ThreadMan_DeleteThread(UID id)
                 physMemMan_Free(virtMemMan_GetPhysAddressInst(thd->cr3, i, FALSE));
             }
             virtMemMan_FreeInstance(thd->cr3);
-            kfree(thd->k_tls);
             kfree(thd);
         }
     ThreadMan_Unlock();
@@ -419,13 +418,13 @@ ThreadMan_GetCurThreadID(void)
     return curThread->uid;
 }
 
-void*
+K_TLS*
 ThreadMan_GetCurThreadTLS(void)
 {
-    return curThread->k_tls;
+    return &curThread->k_tls;
 }
 
-void*
+K_TLS*
 ThreadMan_GetThreadTLS(UID id)
 {
     Thread *thd = threads;
@@ -435,7 +434,7 @@ ThreadMan_GetThreadTLS(UID id)
             thd = thd->next;
         }
     while(thd != NULL);
-    return thd->k_tls;
+    return &thd->k_tls;
 }
 
 static uint32_t curCallNum = 0;

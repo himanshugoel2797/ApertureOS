@@ -9,36 +9,29 @@
 
 typedef struct SocketMessage
 {
-    uint32_t cmd;
-    void *params;
-    uint16_t param_size;
-    UID tid;
+    uint8_t params[256];
+    uint8_t param_size;
+    UID tid, pid;
     struct SocketMessage *next;
+    struct SocketMessage *prev;
 } SocketMessage;
-
-typedef struct IntSocketConDesc
-{
-    SOCK_FEATURES flags;	//Requested features
-    UID tid;
-    SocketMessage *clientMessageStream;
-    uint32_t client_queued_message_count;
-    struct IntSocketConDesc *next;
-} IntSocketConDesc;
 
 typedef struct SocketInfo
 {
     SOCK_FEATURES flags;
-    SOCK_NOTIFICATIONS notifications;
     uint32_t max_connections;
     uint32_t cur_connections;
 
-    SocketMessage *serverMessageStream;
-    uint32_t server_queued_message_count;
-
-    IntSocketConDesc *connections, *lastConnection;
+    SocketMessage *messages, *lastMessage;
 
     char *name;
     struct SocketInfo *next;
 } SocketInfo;
+
+typedef struct SocketConnection{
+    SOCK_FEATURES flags;
+    SocketInfo *socket;
+    struct SocketConnection *next;
+} SocketConnection;
 
 #endif
