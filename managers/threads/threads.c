@@ -189,9 +189,10 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
     //Entering critical section, disable all interrupts
     Interrupts_Lock();
     Thread *curThreadInfo = kmalloc(sizeof(Thread));
+    COM_WriteStr("ERRORO!!!!! %x\r\n", curThreadInfo);
+    memset(curThreadInfo, 0, sizeof(Thread));
     curThreadInfo->uid = new_uid();
     curThreadInfo->flags = flags;
-    curThreadInfo->k_tls = kmalloc(256);
     curThreadInfo->status = 0;
 
     //Setup the paging structures for the thread
@@ -200,14 +201,12 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
         {
             virtMemMan_ForkCurrent(curThreadInfo->cr3);
         }
-    //TODO setup the remaining registers to suit, set the args for the function too
-    memset(&curThreadInfo->regs, 0, sizeof(Registers));
-    memset(curThreadInfo->FPU_state, 0, KB(1));
+    //TODO setup the remaining registers to suit
 
     curThreadInfo->regs.eip = entry;
 
     //Allocate a kernel mode stack for each thread
-    curThreadInfo->kstack = kmalloc(KB(16));
+    if((flags & THREAD_FLAGS_KERNEL))curThreadInfo->kstack = kmalloc(KB(16));
 
     //Map the stack into another place for now
 

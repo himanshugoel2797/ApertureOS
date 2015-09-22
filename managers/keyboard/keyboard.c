@@ -37,6 +37,7 @@ static void
 keyboard_intHandler(Registers *regs)
 {
     Keyboard_ProcessInput(inb(0x60));
+    while(inb(0x64) & 1) inb(0x60);
 }
 
 static void sendKey(uint32_t val, uint64_t bmp, AOS_SCANCODES sc, bool down)
@@ -47,61 +48,63 @@ static void sendKey(uint32_t val, uint64_t bmp, AOS_SCANCODES sc, bool down)
 static void
 Keyboard_PushInput(void)
 {
+    //Keyboard_ProcessInput(inb(0x60));
     if(key_flags & (1 << 2))
     {
-        COM_WriteStr("PROCESSING!!!!\r\n\r\n");
+        //COM_WriteStr("PROCESSING!!!!\r\n\r\n");
         uint64_t diff[8];
         PS2_ScanCodes_2_ *diff_codes = (PS2_ScanCodes_2_*)diff;
-        memset(diff, 0, sizeof(uint64_t) * 8);
+        memset(diff, 0x00, sizeof(uint64_t) * 8);
         
         //determine which keys have changed
         for(int i = 0; i < 8; i++)diff[i] = keys_prev[i] ^ keys_down[i];
 
         #define DIFF_PUSH(a, b) if((diff[(a - 1)/64] >> (uint64_t)((a - 1) % 64)) & 1)KeyboardProc_WriteKey(b, keys_down[(a-1)/64] >> (uint64_t)((a-1) % 64))
+        #define EDIFF_PUSH(a,b) else DIFF_PUSH(a, b)
 
         DIFF_PUSH(0x1C, AP_A);
-        DIFF_PUSH(0x32, AP_B);
-        DIFF_PUSH(0x21, AP_C);
-        DIFF_PUSH(0x23, AP_D);
-        DIFF_PUSH(0x24, AP_E);
-        DIFF_PUSH(0x2B, AP_F);
-        DIFF_PUSH(0x34, AP_G);
-        DIFF_PUSH(0x33, AP_H);
-        DIFF_PUSH(0x43, AP_I);
-        DIFF_PUSH(0x3B, AP_J);
-        DIFF_PUSH(0x42, AP_K);
-        DIFF_PUSH(0x4B, AP_L);
-        DIFF_PUSH(0x3A, AP_M);
-        DIFF_PUSH(0x31, AP_N);
-        DIFF_PUSH(0x44, AP_O);
-        DIFF_PUSH(0x4D, AP_P);
-        DIFF_PUSH(0x15, AP_Q);
-        DIFF_PUSH(0x2D, AP_R);
-        DIFF_PUSH(0x1B, AP_S);
-        DIFF_PUSH(0x2C, AP_T);
-        DIFF_PUSH(0x3C, AP_U);
-        DIFF_PUSH(0x2A, AP_V);
-        DIFF_PUSH(0x1D, AP_W);
-        DIFF_PUSH(0x22, AP_X);
-        DIFF_PUSH(0x35, AP_Y);
-        DIFF_PUSH(0x1A, AP_Z);
-        DIFF_PUSH(0x45, AP_0);
-        DIFF_PUSH(0x16, AP_1);
-        DIFF_PUSH(0x1E, AP_2);
-        DIFF_PUSH(0x26, AP_3);
-        DIFF_PUSH(0x25, AP_4);
-        DIFF_PUSH(0x2E, AP_5);
-        DIFF_PUSH(0x36, AP_6);
-        DIFF_PUSH(0x3D, AP_7);
-        DIFF_PUSH(0x3E, AP_8);
-        DIFF_PUSH(0x46, AP_9);
-        DIFF_PUSH(0x66, AP_BACKSPACE);
-        DIFF_PUSH(0x29, AP_SPACE);
-        DIFF_PUSH(0x5A, AP_ENTER);
-        DIFF_PUSH(0x175, AP_UP);
-        DIFF_PUSH(0x172, AP_DOWN);
-        DIFF_PUSH(0x16B, AP_LEFT);
-        DIFF_PUSH(0x174, AP_RIGHT);
+        EDIFF_PUSH(0x32, AP_B);
+        EDIFF_PUSH(0x21, AP_C);
+        EDIFF_PUSH(0x23, AP_D);
+        EDIFF_PUSH(0x24, AP_E);
+        EDIFF_PUSH(0x2B, AP_F);
+        EDIFF_PUSH(0x34, AP_G);
+        EDIFF_PUSH(0x33, AP_H);
+        EDIFF_PUSH(0x43, AP_I);
+        EDIFF_PUSH(0x3B, AP_J);
+        EDIFF_PUSH(0x42, AP_K);
+        EDIFF_PUSH(0x4B, AP_L);
+        EDIFF_PUSH(0x3A, AP_M);
+        EDIFF_PUSH(0x31, AP_N);
+        EDIFF_PUSH(0x44, AP_O);
+        EDIFF_PUSH(0x4D, AP_P);
+        EDIFF_PUSH(0x15, AP_Q);
+        EDIFF_PUSH(0x2D, AP_R);
+        EDIFF_PUSH(0x1B, AP_S);
+        EDIFF_PUSH(0x2C, AP_T);
+        EDIFF_PUSH(0x3C, AP_U);
+        EDIFF_PUSH(0x2A, AP_V);
+        EDIFF_PUSH(0x1D, AP_W);
+        EDIFF_PUSH(0x22, AP_X);
+        EDIFF_PUSH(0x35, AP_Y);
+        EDIFF_PUSH(0x1A, AP_Z);
+        EDIFF_PUSH(0x45, AP_0);
+        EDIFF_PUSH(0x16, AP_1);
+        EDIFF_PUSH(0x1E, AP_2);
+        EDIFF_PUSH(0x26, AP_3);
+        EDIFF_PUSH(0x25, AP_4);
+        EDIFF_PUSH(0x2E, AP_5);
+        EDIFF_PUSH(0x36, AP_6);
+        EDIFF_PUSH(0x3D, AP_7);
+        EDIFF_PUSH(0x3E, AP_8);
+        EDIFF_PUSH(0x46, AP_9);
+        EDIFF_PUSH(0x66, AP_BACKSPACE);
+        EDIFF_PUSH(0x29, AP_SPACE);
+        EDIFF_PUSH(0x5A, AP_ENTER);
+        EDIFF_PUSH(0x175, AP_UP);
+        EDIFF_PUSH(0x172, AP_DOWN);
+        EDIFF_PUSH(0x16B, AP_LEFT);
+        EDIFF_PUSH(0x174, AP_RIGHT);
 
         key_flags &= ~(1 << 2); //Unset the flag
         memcpy(keys_prev, keys_down, sizeof(uint64_t) * 8);
@@ -159,10 +162,11 @@ Keyboard_ProcessInput(uint8_t input)
                     keys_down[key_index] &= ~((uint64_t)1 << (uint64_t)key_offset);
                 }
             //COM_WriteStr("Key Press: %x \r\n", input);
-            COM_WriteStr("%d, %d\r\n %b \r\n", (uint32_t)key_index, (uint32_t)key_offset, (uint32_t)keys_down[key_index]);
+            //COM_WriteStr("%d, %d\r\n %b \r\n", (uint32_t)key_index, (uint32_t)key_offset, (uint32_t)keys_down[key_index]);
 
 
             key_flags = 1 << 2; //Mark key input as present
+            Keyboard_PushInput();
         }
     return 0;
 
@@ -181,13 +185,13 @@ kbd_Initialize(void)
 
     key_flags = 0;
 
-    //IOAPIC_MapIRQ(1, IRQ(1), APIC_GetID(), 0, 0, APIC_DELIVERY_MODE_FIXED);
+    IOAPIC_MapIRQ(1, IRQ(1), APIC_GetID(), 0, 0, APIC_DELIVERY_MODE_FIXED);
     IOAPIC_SetEnableMode(IRQ(1), ENABLE);
     Interrupts_RegisterHandler(IRQ(1), 0, keyboard_intHandler);
     PS2_Initialize();
     PS2Keyboard_Initialize();
-    UID kbd_timer = Timers_CreateNew(FREQ(1200), TRUE, Keyboard_PushInput);
-    Timers_StartTimer(kbd_timer);
+    UID kbd_timer = Timers_CreateNew(FREQ(12000), TRUE, Keyboard_PushInput);
+    //Timers_StartTimer(kbd_timer);
 }
 
 static void 

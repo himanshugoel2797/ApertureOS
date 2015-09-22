@@ -16,7 +16,7 @@ typedef struct Thread
     uint32_t status;
     UID uid;
     uint32_t flags;
-    void *k_tls;
+    uint8_t k_tls[256];
     char FPU_state[768]; //Allocate extra space for alignment
 } __attribute__((packed)) Thread;
 

@@ -13,8 +13,8 @@ uint8_t PS2Keyboard_Initialize()
     WAIT_DATA_AVL;
     inb(DATA_PORT);
 
-    outb(DATA_PORT, 0xF9);
-    inb(DATA_PORT);
+    outb(DATA_PORT, 0xF3);
+    outb(DATA_PORT, 0x00);
     inb(DATA_PORT);
 
     outb(DATA_PORT, 0xF8);	//Enable make and break codes for all keys

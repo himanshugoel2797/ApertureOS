@@ -7,7 +7,7 @@ typedef struct
 {
     uint32_t ticks;
     uint32_t curTicks;
-    UID id;
+    UID id, tid;
     bool periodic;
     TickHandler handler;
 } TimerData;
@@ -23,6 +23,7 @@ static uint64_t timer_ticks;
 
 static void timer_handler(Registers *regs);
 static void timer_callHandlers(int argc, char **argv);
+static void timer_call(int argc, char **argv);
 
 void Timers_Setup()
 {
@@ -78,10 +79,12 @@ static uint8_t timers_messageHandler(Message *msg)
 
 static void timer_call(int argc, char **argv)
 {
-    timer_entries[argc].handler();
-    ThreadMan_ExitThread(ThreadMan_GetCurThreadID());
+    while(1){
+        timer_entries[argc].handler();
+        ThreadMan_SuspendThread(ThreadMan_GetCurThreadID());
+        ThreadMan_Yield();
+    }
     ThreadMan_DeleteThread(ThreadMan_GetCurThreadID());
-    ThreadMan_Yield();
 }
 
 static void timer_callHandlers(int argc, char **argv)
@@ -93,7 +96,7 @@ static void timer_callHandlers(int argc, char **argv)
                     if(timer_entries[i].ticks != 0 && timer_entries[i].curTicks == 0)
                         {
                             if(timer_entries[i].handler != NULL){
-                                timer_entries[i].handler();
+                                ThreadMan_StartThread(timer_entries[i].tid);
                             }
                             if(timer_entries[i].periodic)
                                 {
@@ -127,6 +130,7 @@ UID Timers_CreateNew(uint32_t ticks, bool periodic, TickHandler handler)
                     timer_entries[i].curTicks = ticks;
                     timer_entries[i].periodic = periodic;
                     timer_entries[i].handler = handler;
+                    if(timer_entries[i].tid == 0)timer_entries[i].tid = ThreadMan_CreateThread(timer_call, i, NULL, THREAD_FLAGS_KERNEL);
                     return timer_entries[i].id;
                 }
         }
