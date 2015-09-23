@@ -22,7 +22,7 @@ Terminal_Start(void)
     term_buffer = kmalloc(term_buf_len);
     memset(term_buffer, 0, term_buf_len);
 
-    UID kbd_thread = Timers_CreateNew(FREQ(19000), TRUE, Terminal_KeyboardThread);
+    UID kbd_thread = Timers_CreateNew(FREQ(60), TRUE, Terminal_KeyboardThread);
     UID render_thread = Timers_CreateNew(FREQ(60), TRUE, Terminal_DisplayThread);
 
     Terminal_Write("[himanshu@localhost]$", 21);

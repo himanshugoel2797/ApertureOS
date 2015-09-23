@@ -59,7 +59,7 @@ Keyboard_PushInput(void)
         memset(diff, 0x00, sizeof(uint64_t) * 8);
         
         //determine which keys have changed
-        for(int i = 0; i < 8; i++)diff[i] = keys_prev[i] ^ keys_down[i];
+        for(int i = 0; i < 8; i++)diff[i] = keys_down[i];
 
         #define DIFF_PUSH(a, b) if((diff[(a - 1)/64] >> (uint64_t)((a - 1) % 64)) & 1)KeyboardProc_WriteKey(b, keys_down[(a-1)/64] >> (uint64_t)((a-1) % 64))
         #define EDIFF_PUSH(a,b) DIFF_PUSH(a, b)
