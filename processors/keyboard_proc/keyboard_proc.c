@@ -2,8 +2,8 @@
 #include "utils/common.h"
 
 AOS_SCANCODES key_presses[KEYBOARD_BUFFER_SIZE];
-uint32_t key_buf_write_pos;
-uint32_t key_buf_read_pos;
+int32_t key_buf_write_pos;
+int32_t key_buf_read_pos;
 bool key_avail;
 
 static UID kbd_semaphore;
@@ -23,32 +23,29 @@ void
 KeyboardProc_WriteKey(AOS_SCANCODES scancode,
                       bool press)
 {
-    //if(!press)return;
-    //        COM_WriteStr("Recieved!!!\r\n");
-    //if(ThreadMan_WaitAcquireSemaphore(kbd_semaphore))
-        {
-            key_presses[key_buf_write_pos++] = scancode | ((!press & 1) << 31);
-            if(key_buf_write_pos >= KEYBOARD_BUFFER_SIZE)key_buf_write_pos = 0;
-            key_avail = TRUE;
-            COM_WriteStr("Keypress: %d\r\n", key_buf_write_pos);
-            //ThreadMan_ReleaseSemaphore(kbd_semaphore);
-        }
+            uint32_t w_pos = key_buf_write_pos;
+            key_presses[w_pos++] = scancode | ((!press & 1) << 31);
+            //COM_WriteStr("Keypress: %x\r\n", key_presses[w_pos - 1]);
+
+            if(w_pos >= KEYBOARD_BUFFER_SIZE)
+            {
+                w_pos = 0;
+                key_buf_read_pos = KEYBOARD_BUFFER_SIZE - 1;
+                memset(key_presses, 0, (KEYBOARD_BUFFER_SIZE - 1) * sizeof(AOS_SCANCODES));
+            }
+
+            key_buf_write_pos = w_pos;
 }
 
 AOS_SCANCODES
 KeyboardProc_ReadKey(void)
 {
-    AOS_SCANCODES toRet = AP_NONE;
-    if(!key_avail)return toRet;
-    //if(ThreadMan_WaitAcquireSemaphore(kbd_semaphore))
+    if(key_buf_read_pos >= KEYBOARD_BUFFER_SIZE)key_buf_read_pos = -1;
+    if(key_presses[key_buf_read_pos] != AP_NONE)
         {
-            if(key_buf_read_pos == key_buf_write_pos)toRet = AP_NONE;
-            else toRet = key_presses[key_buf_read_pos++];
-
-            if(key_buf_read_pos >= KEYBOARD_BUFFER_SIZE)key_buf_read_pos = 0;
-            key_avail = FALSE;
-            COM_WriteStr("Key Read: %d\r\n", key_buf_read_pos);
-      //      ThreadMan_ReleaseSemaphore(kbd_semaphore);
+            //COM_WriteStr("Scancode: %x\r\n", key_presses[key_buf_read_pos]);
+            key_buf_read_pos++;
+            return key_presses[key_buf_read_pos - 1];
         }
-    return toRet;
+    return AP_NONE;
 }

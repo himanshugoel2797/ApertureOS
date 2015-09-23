@@ -11,6 +11,8 @@ static uint8_t kbd_messageHandler(Message *msg);
 
 
 static uint32_t Keyboard_ProcessInput(uint8_t input);
+static void
+Keyboard_PushInput(void);
 
 static uint64_t keys_prev[8], keys_down[8];
 static PS2_ScanCodes_2_ *scancodes_prev, *scancodes_down;
@@ -36,8 +38,8 @@ Keyboard_Setup(void)
 static void 
 keyboard_intHandler(Registers *regs)
 {
-    Keyboard_ProcessInput(inb(0x60));
-    while(inb(0x64) & 1) inb(0x60);
+    while(inb(0x64) & 1) Keyboard_ProcessInput(inb(0x60));
+    Keyboard_PushInput();
 }
 
 static void sendKey(uint32_t val, uint64_t bmp, AOS_SCANCODES sc, bool down)
@@ -60,7 +62,7 @@ Keyboard_PushInput(void)
         for(int i = 0; i < 8; i++)diff[i] = keys_prev[i] ^ keys_down[i];
 
         #define DIFF_PUSH(a, b) if((diff[(a - 1)/64] >> (uint64_t)((a - 1) % 64)) & 1)KeyboardProc_WriteKey(b, keys_down[(a-1)/64] >> (uint64_t)((a-1) % 64))
-        #define EDIFF_PUSH(a,b) else DIFF_PUSH(a, b)
+        #define EDIFF_PUSH(a,b) DIFF_PUSH(a, b)
 
         DIFF_PUSH(0x1C, AP_A);
         EDIFF_PUSH(0x32, AP_B);
@@ -147,16 +149,17 @@ Keyboard_ProcessInput(uint8_t input)
             //keys_prev[key_index] = SET_VAL_BIT(keys_prev[key_index], key_offset, ((~key_flags & 2) >> 1)  );
             if((!(key_flags >> 1))) //Make code
                 {
-                    if(input == 0x7E)PS2Keyboard_SetLEDStatus(1, 1);
-                    if(input == 0x58)PS2Keyboard_SetLEDStatus(2, 1);
+                    COM_WriteStr("%x\r\n", input);
+                    //if(input == 0x7E)PS2Keyboard_SetLEDStatus(1, 1);
+                    //if(input == 0x58)PS2Keyboard_SetLEDStatus(2, 1);
                 //    COM_WriteStr(" Make!\r\n");
 
                     keys_down[key_index] |= (uint64_t)1 << (uint64_t)key_offset;
                 }
             else    //Break code
                 {
-                    if(input == 0x7E)PS2Keyboard_SetLEDStatus(1, 0);
-                    if(input == 0x58)PS2Keyboard_SetLEDStatus(2, 0);
+                    //if(input == 0x7E)PS2Keyboard_SetLEDStatus(1, 0);
+                    //if(input == 0x58)PS2Keyboard_SetLEDStatus(2, 0);
               //      COM_WriteStr(" Break!\r\n");
 
                     keys_down[key_index] &= ~((uint64_t)1 << (uint64_t)key_offset);
@@ -188,7 +191,7 @@ kbd_Initialize(void)
     PS2_Initialize();
     PS2Keyboard_Initialize();
     UID kbd_timer = Timers_CreateNew(FREQ(12000), TRUE, Keyboard_PushInput);
-    Timers_StartTimer(kbd_timer);
+    //Timers_StartTimer(kbd_timer);
 }
 
 static void 

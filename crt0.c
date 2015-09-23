@@ -81,6 +81,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
 void kernel_main(int argc, char** isKernelMode)
 {
     Filesystem_Setup();
+    Socket_Initialize();
     ProcessManager_Initialize();
     Socket_Initialize();
     Terminal_Start();

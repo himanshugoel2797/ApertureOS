@@ -201,7 +201,7 @@ int vsnprintf ( char * str, const char * format, va_list vl )
                                     in_format = 0;
                                     break;
                                 case 'c':
-                                    *str++ = va_arg(vl, int) & 0xFF;
+                                    *str++ = va_arg(vl, char) & 0xFF;
                                     in_format = 0;
                                     break;
                                 case 's':
