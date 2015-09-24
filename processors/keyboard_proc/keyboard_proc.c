@@ -23,18 +23,18 @@ void
 KeyboardProc_WriteKey(AOS_SCANCODES scancode,
                       bool press)
 {
-            uint32_t w_pos = key_buf_write_pos;
-            key_presses[w_pos++] = scancode | ((!press & 1) << 31);
-            //COM_WriteStr("Keypress: %x\r\n", key_presses[w_pos - 1]);
+    uint32_t w_pos = key_buf_write_pos;
+    key_presses[w_pos++] = scancode | ((!press & 1) << 31);
+    //COM_WriteStr("Keypress: %x\r\n", key_presses[w_pos - 1]);
 
-            if(w_pos >= KEYBOARD_BUFFER_SIZE)
-            {
-                w_pos = 0;
-                key_buf_read_pos = KEYBOARD_BUFFER_SIZE - 1;
-                memset(key_presses, 0, (KEYBOARD_BUFFER_SIZE - 1) * sizeof(AOS_SCANCODES));
-            }
+    if(w_pos >= KEYBOARD_BUFFER_SIZE)
+        {
+            w_pos = 0;
+            key_buf_read_pos = KEYBOARD_BUFFER_SIZE - 1;
+            memset(key_presses, 0, (KEYBOARD_BUFFER_SIZE - 1) * sizeof(AOS_SCANCODES));
+        }
 
-            key_buf_write_pos = w_pos;
+    key_buf_write_pos = w_pos;
 }
 
 AOS_SCANCODES

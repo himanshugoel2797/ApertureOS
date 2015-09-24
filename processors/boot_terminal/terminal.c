@@ -62,9 +62,9 @@ Terminal_GetPrevLine(void)
 {
     int32_t i;
     for(i = term_buffer_pos; i >= 0; i--)
-    {
-        if(term_buffer[i] == '\n' && term_buffer[i - 1] == '\r')break;
-    }
+        {
+            if(term_buffer[i] == '\n' && term_buffer[i - 1] == '\r')break;
+        }
     return &term_buffer[i];
 }
 
@@ -106,7 +106,7 @@ Terminal_KeyboardThread(void)
     else if(key == AP_X)Terminal_Write("x", 1);
     else if(key == AP_Y)Terminal_Write("y", 1);
     else if(key == AP_Z)Terminal_Write("z", 1);
-    
+
     else if(key == AP_0)Terminal_Write("0", 1);
     else if(key == AP_1)Terminal_Write("1", 1);
     else if(key == AP_2)Terminal_Write("2", 1);
@@ -117,21 +117,21 @@ Terminal_KeyboardThread(void)
     else if(key == AP_7)Terminal_Write("7", 1);
     else if(key == AP_8)Terminal_Write("8", 1);
     else if(key == AP_9)Terminal_Write("9", 1);
-    
+
     else if(key == AP_SPACE)Terminal_Write(" ", 1);
     else if(key == AP_BACKSPACE)Terminal_Write("\b", 1);
     else if(key == AP_ENTER)
-    {
-        //Read the command and pass it on to the command parser
-        char *prevLine = Terminal_GetPrevLine();
-        if(prevLine != NULL)
         {
-            Terminal_ExecuteCmd(prevLine + 18);
-        }
+            //Read the command and pass it on to the command parser
+            char *prevLine = Terminal_GetPrevLine();
+            if(prevLine != NULL)
+                {
+                    Terminal_ExecuteCmd(prevLine + 18);
+                }
 
-        Terminal_Write("\r\n", 2);
-        Terminal_Write("[user@localhost]#", 17);
-    }
+            Terminal_Write("\r\n", 2);
+            Terminal_Write("[user@localhost]#", 17);
+        }
     else if(key == AP_UP)term_buffer_pos -= term_char_pitch;
     else if(key == AP_DOWN)term_buffer_pos += term_char_pitch;
     else if(key == AP_RIGHT)term_buffer_pos++;
@@ -143,7 +143,7 @@ void
 Terminal_DisplayThread(void)
 {
     //Update the display based on the buffer
-    graphics_Clear();
+    //graphics_Clear();
 
     //if(term_buf_locked_id != ThreadMan_GetCurThreadID() && term_buf_locked_id != 0)
     //    {

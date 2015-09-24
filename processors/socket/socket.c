@@ -52,7 +52,7 @@ Socket_Create(const char *name,
 
     lastSocket->next = sock;
     lastSocket = sock;
-    
+
     //Connect the current thread to the socket
     SocketConnectionDesc connection;
     connection.size = sizeof(SocketConnectionDesc);
@@ -94,7 +94,7 @@ Socket_Connect(const char *name,
     cons->next = NULL;
 
     if(ThreadMan_GetCurThreadTLS()->sock_info == NULL)ThreadMan_GetCurThreadTLS()->sock_info = cons;
-    else 
+    else
         {
             uint32_t *addr = (uint32_t*)((SocketConnection*)ThreadMan_GetCurThreadTLS()->sock_info)->next;
             ((SocketConnection*)ThreadMan_GetCurThreadTLS()->sock_info)->next = cons;
@@ -126,11 +126,13 @@ Socket_Disconnect(const char *name)
 
     //Find the connection info in the socket
     SocketConnection *cons = (SocketConnection*)ThreadMan_GetCurThreadTLS()->sock_info, *prev = NULL;
-    do{
-        if(strncmp(name, cons->socket->name, strlen(name)) == 0)break;
-        prev = cons;
-        cons = cons->next;
-    }while(cons != NULL);
+    do
+        {
+            if(strncmp(name, cons->socket->name, strlen(name)) == 0)break;
+            prev = cons;
+            cons = cons->next;
+        }
+    while(cons != NULL);
     if(cons == NULL)return SOCK_ERROR_NOT_EXIST;
 
     //Remove the connection
@@ -138,13 +140,13 @@ Socket_Disconnect(const char *name)
     kfree(cons);
 
     if(sock->cur_connections == 0)
-    {
-        //TODO free all messages from list
+        {
+            //TODO free all messages from list
 
-        prev_sock->next = sock->next;   //Remove the socket from the list
-        kfree(sock->name);
-        kfree(sock);
-    }
+            prev_sock->next = sock->next;   //Remove the socket from the list
+            kfree(sock->name);
+            kfree(sock);
+        }
 
     return SOCK_ERROR_NONE;
 }
@@ -160,10 +162,12 @@ Socket_WriteMessage(const char *name,
     //Find the relevant socket and connection
     //Find the connection info in the socket
     SocketConnection *cons = (SocketConnection*)ThreadMan_GetCurThreadTLS()->sock_info;
-    do{
-        if(strncmp(name, cons->socket->name, strlen(name)) == 0)break;
-        cons = cons->next;
-    }while(cons != NULL);
+    do
+        {
+            if(strncmp(name, cons->socket->name, strlen(name)) == 0)break;
+            cons = cons->next;
+        }
+    while(cons != NULL);
     if(cons == NULL)return SOCK_ERROR_NOT_EXIST;
 
     SocketInfo *sock = cons->socket;
@@ -179,11 +183,12 @@ Socket_WriteMessage(const char *name,
     msg->prev = NULL;
 
     if(sock->messages == NULL)sock->messages = sock->lastMessage = msg;
-    else {
-        sock->lastMessage->next = msg;
-        msg->prev = sock->lastMessage;
-        sock->lastMessage = msg;
-    }
+    else
+        {
+            sock->lastMessage->next = msg;
+            msg->prev = sock->lastMessage;
+            sock->lastMessage = msg;
+        }
 
     return SOCK_ERROR_NONE;
 }
@@ -200,10 +205,12 @@ Socket_ReadMessage(const char *name,
     //Find the relevant socket and connection
     //Find the connection info in the socket
     SocketConnection *cons = (SocketConnection*)ThreadMan_GetCurThreadTLS()->sock_info;
-    do{
-        if(strncmp(name, cons->socket->name, strlen(name)) == 0)break;
-        cons = cons->next;
-    }while(cons != NULL);
+    do
+        {
+            if(strncmp(name, cons->socket->name, strlen(name)) == 0)break;
+            cons = cons->next;
+        }
+    while(cons != NULL);
     if(cons == NULL)return SOCK_ERROR_NOT_EXIST;
 
     SocketInfo *sock = cons->socket;

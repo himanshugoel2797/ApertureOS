@@ -7,10 +7,11 @@
 
 #define MAX_K_SEMAPHORE_COUNT 2048
 
-typedef struct{
+typedef struct
+{
     void *proc_info;
     void *sock_info;
-}K_TLS;
+} K_TLS;
 
 typedef struct Thread
 {
@@ -32,7 +33,7 @@ typedef enum
     THREAD_FLAGS_KERNEL = 1,
     THREAD_FLAGS_FORK = 2,
     THREAD_FLAGS_VM86 = 4
-}THREAD_FLAGS;
+} THREAD_FLAGS;
 
 void
 ThreadMan_Setup(void);

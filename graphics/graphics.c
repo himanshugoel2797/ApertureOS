@@ -9,6 +9,8 @@
 
 char *frameBufferA, *frameBufferB;
 uint32_t *backBuffer;
+static bool dirty_table[BLOCK_GROUP_WIDTH][BLOCK_GROUP_HEIGHT];
+static int block_index_div;
 
 size_t buffer_size;
 uint32_t pitch, width, height;
@@ -19,11 +21,14 @@ char tmpBuf[16] __attribute__((aligned(16)));
 void
 graphics_Initialize(void)
 {
+    memset(dirty_table, 0, BLOCK_GROUP_WIDTH * BLOCK_GROUP_HEIGHT);
+
     pitch = global_multiboot_info->framebuffer_pitch / sizeof(uint32_t);
     width = global_multiboot_info->framebuffer_width;
     height = global_multiboot_info->framebuffer_height;
     bpp = global_multiboot_info->framebuffer_bpp;
 
+    block_index_div = width/BLOCK_GROUP_WIDTH;
     // Determine the graphics resolution if 1920x1080 wasn't available
 
     buffer_size = (pitch * height * sizeof(uint32_t));
@@ -58,38 +63,50 @@ graphics_SwapBuffer(void)
 {
     uint64_t *fbufA = (uint64_t*)frameBufferA, *fbufB = (uint64_t*)frameBufferB;
 
+    int x = 0, y = 0;
+
     for (uint32_t a = 0; a < buffer_size; a+=0x80)
         {
-            asm volatile ("movdqa (%%ebx), %%xmm0\n\t"
-                          "movdqa +0x10(%%ebx), %%xmm1\n\t"
-                          "movdqa +0x20(%%ebx), %%xmm2\n\t"
-                          "movdqa +0x30(%%ebx), %%xmm3\n\t"
-                          "movdqa +0x40(%%ebx), %%xmm4\n\t"
-                          "movdqa +0x50(%%ebx), %%xmm5\n\t"
-                          "movdqa +0x60(%%ebx), %%xmm6\n\t"
-                          "movdqa +0x70(%%ebx), %%xmm7\n\t"
-                          "shufps $0xE4, %%xmm0,  %%xmm0\n\t"
-                          "shufps $0xE4, %%xmm1,  %%xmm1\n\t"
-                          "shufps $0xE4, %%xmm2,  %%xmm2\n\t"
-                          "shufps $0xE4, %%xmm3,  %%xmm3\n\t"
-                          "shufps $0xE4, %%xmm4,  %%xmm4\n\t"
-                          "shufps $0xE4, %%xmm5,  %%xmm5\n\t"
-                          "shufps $0xE4, %%xmm6,  %%xmm6\n\t"
-                          "shufps $0xE4, %%xmm7,  %%xmm7\n\t"
-                          "movntdq %%xmm0, (%%eax)\n\t"
-                          "movntdq %%xmm1, +0x10(%%eax)\n\t"
-                          "movntdq %%xmm2, +0x20(%%eax)\n\t"
-                          "movntdq %%xmm3, +0x30(%%eax)\n\t"
-                          "movntdq %%xmm4, +0x40(%%eax)\n\t"
-                          "movntdq %%xmm5, +0x50(%%eax)\n\t"
-                          "movntdq %%xmm6, +0x60(%%eax)\n\t"
-                          "movntdq %%xmm7, +0x70(%%eax)\n\t"
-                          :: "a" (fbufA), "b" (fbufB) : "%xmm0","%xmm1","%xmm2","%xmm3","%xmm4","%xmm5","%xmm6","%xmm7", "%eax","%ebx");
+            if(dirty_table[x / block_index_div][y / block_index_div])
+                {
+                    asm volatile ("movdqa (%%ebx), %%xmm0\n\t"
+                                  "movdqa +0x10(%%ebx), %%xmm1\n\t"
+                                  "movdqa +0x20(%%ebx), %%xmm2\n\t"
+                                  "movdqa +0x30(%%ebx), %%xmm3\n\t"
+                                  "movdqa +0x40(%%ebx), %%xmm4\n\t"
+                                  "movdqa +0x50(%%ebx), %%xmm5\n\t"
+                                  "movdqa +0x60(%%ebx), %%xmm6\n\t"
+                                  "movdqa +0x70(%%ebx), %%xmm7\n\t"
+                                  "shufps $0xE4, %%xmm0,  %%xmm0\n\t"
+                                  "shufps $0xE4, %%xmm1,  %%xmm1\n\t"
+                                  "shufps $0xE4, %%xmm2,  %%xmm2\n\t"
+                                  "shufps $0xE4, %%xmm3,  %%xmm3\n\t"
+                                  "shufps $0xE4, %%xmm4,  %%xmm4\n\t"
+                                  "shufps $0xE4, %%xmm5,  %%xmm5\n\t"
+                                  "shufps $0xE4, %%xmm6,  %%xmm6\n\t"
+                                  "shufps $0xE4, %%xmm7,  %%xmm7\n\t"
+                                  "movntdq %%xmm0, (%%eax)\n\t"
+                                  "movntdq %%xmm1, +0x10(%%eax)\n\t"
+                                  "movntdq %%xmm2, +0x20(%%eax)\n\t"
+                                  "movntdq %%xmm3, +0x30(%%eax)\n\t"
+                                  "movntdq %%xmm4, +0x40(%%eax)\n\t"
+                                  "movntdq %%xmm5, +0x50(%%eax)\n\t"
+                                  "movntdq %%xmm6, +0x60(%%eax)\n\t"
+                                  "movntdq %%xmm7, +0x70(%%eax)\n\t"
+                                  :: "a" (fbufA), "b" (fbufB) : "%xmm0","%xmm1","%xmm2","%xmm3","%xmm4","%xmm5","%xmm6","%xmm7", "%eax","%ebx");
+                }
 
             fbufB+=0x80/sizeof(uint64_t);
             fbufA+=0x80/sizeof(uint64_t);
+            x += 0x80/sizeof(uint32_t);
+            if(x >= width)
+                {
+                    x = x % width;
+                    y++;
+                }
         }
 
+    memset (dirty_table, 0, BLOCK_GROUP_WIDTH * BLOCK_GROUP_HEIGHT);
 }
 
 void
@@ -97,6 +114,7 @@ graphics_Clear(void)
 {
     uint64_t *bbuffer = (uint64_t*)frameBufferB;
     memset (tmpBuf, 0xff, 16);
+    memset (dirty_table, 1, BLOCK_GROUP_WIDTH * BLOCK_GROUP_HEIGHT);
 
     for (uint32_t a = 0; a < buffer_size; a+=16)
         {
@@ -119,6 +137,11 @@ graphics_WriteStr(const char *str,
                 {
                     for (int a = xOff; a < xOff + 13; a++)
                         {
+
+                            //Mark the relevant blocks as dirty
+                            int dirty_block_x = (yOff + (8 - b))/block_index_div;
+                            int dirty_block_y = (xOff + (13 - a))/block_index_div;
+                            dirty_table[dirty_block_x][dirty_block_y] = TRUE;
 
                             curBufVal = backBuffer[(yOff + (8 - b) + (a * pitch))];
 
@@ -207,6 +230,10 @@ graphics_SetPixel(uint32_t x,
                   uint32_t y,
                   uint32_t val)
 {
+    //Mark the relevant blocks as dirty
+    int dirty_block_x = x/block_index_div;
+    int dirty_block_y = y/block_index_div;
+    dirty_table[dirty_block_x][dirty_block_y] = TRUE;
     backBuffer[x + (y * pitch)] = val;
 }
 
@@ -226,6 +253,9 @@ graphics_DrawBuffer(void* buffer,
     if (x > width) x = 0;
     if (y > height) y = 0;
 
+    x0 = x;
+    y0 = y;
+
     if (x+w > width) w = width - x;
     if (y+h > height) h = height - y;
 
@@ -238,6 +268,12 @@ graphics_DrawBuffer(void* buffer,
 
             asm volatile ("movaps (%%ebx), %%xmm0\n\t"
                           "movaps %%xmm0, (%%eax)" :: "a" (offset), "b" (src));
+
+
+            //Mark the relevant blocks as dirty
+            int dirty_block_x = x+x0/block_index_div;
+            int dirty_block_y = y+y0/block_index_div;
+            dirty_table[dirty_block_x][dirty_block_y] = TRUE;
 
             offset+=4 * 4;
             x0+=4;

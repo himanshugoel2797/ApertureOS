@@ -222,12 +222,12 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
 
     //Push args onto the stack by temporarily switching stacks and pushing the stuff
     asm volatile(
-                 "xchg %%ebx, %%esp\n\t"
-                 "push %%eax\n\t"
-                 "xchg %%esp, %%ebx\n\t"
-                 :
-                 : "b"(curThreadInfo->regs.unused), "a"(threadMan_endThread)
-                 );
+        "xchg %%ebx, %%esp\n\t"
+        "push %%eax\n\t"
+        "xchg %%esp, %%ebx\n\t"
+        :
+        : "b"(curThreadInfo->regs.unused), "a"(threadMan_endThread)
+    );
     asm volatile(
         //"add $4, %%ebx\n\t"
         "xchg %%ebx, %%esp\n\t"
@@ -397,9 +397,9 @@ ThreadMan_DeleteThread(UID id)
         {
             prev->next = thd->next;
             for(uint32_t i = 0x40004000; i >= 0x4000000; i -= KB(4))
-            {
-                physMemMan_Free(virtMemMan_GetPhysAddressInst(thd->cr3, i, FALSE));
-            }
+                {
+                    physMemMan_Free(virtMemMan_GetPhysAddressInst(thd->cr3, i, FALSE));
+                }
             virtMemMan_FreeInstance(thd->cr3);
             kfree(thd);
         }

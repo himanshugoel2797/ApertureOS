@@ -28,7 +28,8 @@ typedef struct SocketInfo
     struct SocketInfo *next;
 } SocketInfo;
 
-typedef struct SocketConnection{
+typedef struct SocketConnection
+{
     SOCK_FEATURES flags;
     SocketInfo *socket;
     struct SocketConnection *next;

@@ -79,11 +79,12 @@ static uint8_t timers_messageHandler(Message *msg)
 
 static void timer_call(int argc, char **argv)
 {
-    while(1){
-        timer_entries[argc].handler();
-        ThreadMan_SuspendThread(ThreadMan_GetCurThreadID());
-        ThreadMan_Yield();
-    }
+    while(1)
+        {
+            timer_entries[argc].handler();
+            ThreadMan_SuspendThread(ThreadMan_GetCurThreadID());
+            ThreadMan_Yield();
+        }
     ThreadMan_DeleteThread(ThreadMan_GetCurThreadID());
 }
 
@@ -95,9 +96,10 @@ static void timer_callHandlers(int argc, char **argv)
                 {
                     if(timer_entries[i].ticks != 0 && timer_entries[i].curTicks == 0)
                         {
-                            if(timer_entries[i].handler != NULL){
-                                ThreadMan_StartThread(timer_entries[i].tid);
-                            }
+                            if(timer_entries[i].handler != NULL)
+                                {
+                                    ThreadMan_StartThread(timer_entries[i].tid);
+                                }
                             if(timer_entries[i].periodic)
                                 {
                                     timer_entries[i].curTicks = timer_entries[i].ticks;

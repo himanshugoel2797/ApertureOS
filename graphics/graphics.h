@@ -9,6 +9,9 @@
  * @{
  */
 
+#define BLOCK_GROUP_WIDTH 16  //!< The width of the dirty block management table
+#define BLOCK_GROUP_HEIGHT 9  //!< The height of the dirty block management table
+
 //! Initialize the graphics library
 
 //! Note: Requires virtual memory management and FPU
