@@ -53,7 +53,6 @@ Keyboard_PushInput(void)
     //Keyboard_ProcessInput(inb(0x60));
     if(key_flags & (1 << 2))
     {
-        //COM_WriteStr("PROCESSING!!!!\r\n\r\n");
         uint64_t diff[8];
         PS2_ScanCodes_2_ *diff_codes = (PS2_ScanCodes_2_*)diff;
         memset(diff, 0x00, sizeof(uint64_t) * 8);
@@ -142,29 +141,12 @@ Keyboard_ProcessInput(uint8_t input)
             int64_t key_offset = (input - 1) % 64;
 
             if(key_flags & 1)
-                {
-                    key_index += 4;
-                }
+                key_index += 4;
 
-            //keys_prev[key_index] = SET_VAL_BIT(keys_prev[key_index], key_offset, ((~key_flags & 2) >> 1)  );
             if((!(key_flags >> 1))) //Make code
-                {
-                    COM_WriteStr("%x\r\n", input);
-                    //if(input == 0x7E)PS2Keyboard_SetLEDStatus(1, 1);
-                    //if(input == 0x58)PS2Keyboard_SetLEDStatus(2, 1);
-                //    COM_WriteStr(" Make!\r\n");
-
-                    keys_down[key_index] |= (uint64_t)1 << (uint64_t)key_offset;
-                }
+                keys_down[key_index] |= (uint64_t)1 << (uint64_t)key_offset;
             else    //Break code
-                {
-                    //if(input == 0x7E)PS2Keyboard_SetLEDStatus(1, 0);
-                    //if(input == 0x58)PS2Keyboard_SetLEDStatus(2, 0);
-              //      COM_WriteStr(" Break!\r\n");
-
-                    keys_down[key_index] &= ~((uint64_t)1 << (uint64_t)key_offset);
-                }
-
+                keys_down[key_index] &= ~((uint64_t)1 << (uint64_t)key_offset);
 
             key_flags = 1 << 2; //Mark key input as present
         }

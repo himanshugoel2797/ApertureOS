@@ -25,7 +25,7 @@ Terminal_Start(void)
     UID kbd_thread = Timers_CreateNew(FREQ(60), TRUE, Terminal_KeyboardThread);
     UID render_thread = Timers_CreateNew(FREQ(60), TRUE, Terminal_DisplayThread);
 
-    Terminal_Write("[himanshu@localhost]$", 21);
+    Terminal_Write("[user@localhost /]#", 17);
 
     //Timers_StartTimer(kbd_thread);
     Timers_StartTimer(render_thread);
@@ -55,6 +55,23 @@ Terminal_Write(char *str,
     term_buffer_pos += len;
     term_buf_locked_id = 0;
     COM_WriteStr(str);
+}
+
+char*
+Terminal_GetPrevLine(void)
+{
+    int32_t i;
+    for(i = term_buffer_pos; i >= 0; i--)
+    {
+        if(term_buffer[i] == '\n' && term_buffer[i - 1] == '\r')break;
+    }
+    return &term_buffer[i];
+}
+
+void
+Terminal_ExecuteCmd(const char *cmd)
+{
+    if(strncmp(cmd, "ls", 2) == 0)Terminal_Write("\r\nList Dir", 10);
 }
 
 void
@@ -103,8 +120,18 @@ Terminal_KeyboardThread(void)
     
     else if(key == AP_SPACE)Terminal_Write(" ", 1);
     else if(key == AP_BACKSPACE)Terminal_Write("\b", 1);
-    else if(key == AP_ENTER)Terminal_Write("\r\n", 2);
+    else if(key == AP_ENTER)
+    {
+        //Read the command and pass it on to the command parser
+        char *prevLine = Terminal_GetPrevLine();
+        if(prevLine != NULL)
+        {
+            Terminal_ExecuteCmd(prevLine + 18);
+        }
 
+        Terminal_Write("\r\n", 2);
+        Terminal_Write("[user@localhost]#", 17);
+    }
     else if(key == AP_UP)term_buffer_pos -= term_char_pitch;
     else if(key == AP_DOWN)term_buffer_pos += term_char_pitch;
     else if(key == AP_RIGHT)term_buffer_pos++;
@@ -175,8 +202,6 @@ Terminal_DisplayThread(void)
     if(term_draw_count % 10 > 3)
         {
             term_draw_count = 0;
-            x = term_buffer_pos % term_char_pitch;
-            y = term_buffer_pos / term_char_pitch;
             graphics_WriteStr("_", x * 8, y * 16);
             graphics_WriteStr("_", x * 8, y * 16 - 1);
             graphics_WriteStr("_", x * 8, y * 16 - 2);
