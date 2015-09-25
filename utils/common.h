@@ -10,6 +10,9 @@
 #define CHECK_BIT(x, index) ((x & (1 << index)) >> index)
 #define SET_VAL_BIT(number, n, x) ( number ^ ((-x ^ number) & (1 << n)))
 
+#define MAX(x, y)  ((x > y)? x : y)
+#define MIN(x, y)  ((x < y)? x : y)
+
 void* memcpy(void *dest, void *src, size_t size);
 void* memset(void *ptr, int val, size_t num);
 void* memmove(void *dst, const void *src, size_t count);

@@ -2,14 +2,16 @@
 #include "utils/common.h"
 #include "globals.h"
 #include "keyboard_proc/keyboard_proc.h"
+#include "drivers.h"
 
-char *term_buffer = NULL;
-UID term_buf_locked_id = 0;
-uint32_t term_buffer_pos = 0;
-uint32_t term_buf_len = 0;
-uint32_t term_char_pitch = 0;
-uint32_t term_char_rows = 0;
-uint32_t term_draw_count = 0;
+static char *term_buffer = NULL;
+static UID term_buf_locked_id = 0;
+static uint32_t term_buffer_pos = 0;
+static uint32_t term_buf_len = 0;
+static uint32_t term_char_pitch = 0;
+static uint32_t term_char_rows = 0;
+static uint32_t term_draw_count = 0;
+static uint32_t line_count = 0;
 
 uint32_t
 Terminal_Start(void)
@@ -22,10 +24,10 @@ Terminal_Start(void)
     term_buffer = kmalloc(term_buf_len);
     memset(term_buffer, 0, term_buf_len);
 
-    UID kbd_thread = Timers_CreateNew(FREQ(60), TRUE, Terminal_KeyboardThread);
+    UID kbd_thread = Timers_CreateNew(FREQ(200), TRUE, Terminal_KeyboardThread);
     UID render_thread = Timers_CreateNew(FREQ(60), TRUE, Terminal_DisplayThread);
 
-    Terminal_Write("[user@localhost /]#", 17);
+    Terminal_Write("[user@localhost /]#", 19);
 
     //Timers_StartTimer(kbd_thread);
     Timers_StartTimer(render_thread);
@@ -37,19 +39,11 @@ void
 Terminal_Write(char *str,
                size_t len)
 {
-    //Keep yielding until the buffer is available
-    //if(term_buf_locked_id != ThreadMan_GetCurThreadID() && term_buf_locked_id != 0)
-    //    {
-    //        while(term_buf_locked_id != 0)
-    //            ThreadMan_Yield();
-    //    }
-
-    //term_buf_locked_id = ThreadMan_GetCurThreadID();
 
     if(term_buffer_pos + len >= term_buf_len)
         {
-            memmove(term_buffer, term_buffer + len, term_buf_len - len);
-            term_buffer_pos -= len;
+            memmove(term_buffer, term_buffer + MAX(len, term_char_pitch), term_buf_len - MAX(len, term_char_pitch));
+            term_buffer_pos -= MAX(len, term_char_pitch);
         }
     memcpy(&term_buffer[term_buffer_pos], str, len);
     term_buffer_pos += len;
@@ -71,7 +65,37 @@ Terminal_GetPrevLine(void)
 void
 Terminal_ExecuteCmd(const char *cmd)
 {
-    if(strncmp(cmd, "ls", 2) == 0)Terminal_Write("\r\nList Dir", 10);
+    if(strlen(cmd) == 2 && strncmp(cmd, "ls", 2) == 0)Terminal_Write("\r\nList Dir", 10);
+    else if(strlen(cmd) == 5 && strncmp(cmd, "lspci", 5) == 0)
+        {
+            Terminal_Write("\r\n", 2);
+            char *base, *sub, *prog;
+            char *vendor_short, *vendor_long;
+            char *chip_name, *chip_desc;
+            for(uint32_t i = 0; i < pci_deviceCount; i++)
+                {
+                    pci_GetPCIClass(pci_readDWord(devices[i].bus,
+                                                  devices[i].device,
+                                                  devices[i].function, 8),
+                                    &base, &sub, &prog);
+
+                    pci_GetPCIDevice(devices[i].vendorID,
+                                     devices[i].deviceID,
+                                     &chip_name,
+                                     &chip_desc);
+
+                    pci_GetPCIVendor(devices[i].vendorID,
+                                     &vendor_short,
+                                     &vendor_long);
+                    char buf[1024];
+                    memset(buf, 0, 1024);
+                    sprintf(buf, "%s %s %s : %s %s\r\n",
+                            sub, prog, base,
+                            vendor_short,
+                            chip_name);
+                    Terminal_Write(buf, strlen(buf));
+                }
+        }
 }
 
 void
@@ -126,11 +150,17 @@ Terminal_KeyboardThread(void)
             char *prevLine = Terminal_GetPrevLine();
             if(prevLine != NULL)
                 {
-                    Terminal_ExecuteCmd(prevLine + 18);
+                    Terminal_ExecuteCmd(prevLine + 20);
                 }
 
+            line_count++;
+            if(line_count >= term_char_rows)
+                {
+                    memmove(term_buffer, term_buffer + term_char_pitch, term_buf_len - term_char_pitch);
+                    line_count--;
+                }
             Terminal_Write("\r\n", 2);
-            Terminal_Write("[user@localhost]#", 17);
+            Terminal_Write("[user@localhost /]#", 19);
         }
     else if(key == AP_UP)term_buffer_pos -= term_char_pitch;
     else if(key == AP_DOWN)term_buffer_pos += term_char_pitch;
@@ -143,7 +173,7 @@ void
 Terminal_DisplayThread(void)
 {
     //Update the display based on the buffer
-    //graphics_Clear();
+    graphics_Clear();
 
     //if(term_buf_locked_id != ThreadMan_GetCurThreadID() && term_buf_locked_id != 0)
     //    {

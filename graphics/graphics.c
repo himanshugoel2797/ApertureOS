@@ -116,11 +116,25 @@ graphics_Clear(void)
     memset (tmpBuf, 0xff, 16);
     memset (dirty_table, 1, BLOCK_GROUP_WIDTH * BLOCK_GROUP_HEIGHT);
 
-    for (uint32_t a = 0; a < buffer_size; a+=16)
+    for (uint32_t a = 0; a < buffer_size; a+=0x80)
         {
+            asm volatile ("movdqa (%0), %%xmm0" :: "a" (tmpBuf));
             asm volatile ("movdqa (%0), %%xmm1" :: "a" (tmpBuf));
-            asm volatile ("movntdq %%xmm1, (%0)":: "b" (bbuffer));
-            bbuffer+=2;
+            asm volatile ("movdqa (%0), %%xmm2" :: "a" (tmpBuf));
+            asm volatile ("movdqa (%0), %%xmm3" :: "a" (tmpBuf));
+            asm volatile ("movdqa (%0), %%xmm4" :: "a" (tmpBuf));
+            asm volatile ("movdqa (%0), %%xmm5" :: "a" (tmpBuf));
+            asm volatile ("movdqa (%0), %%xmm6" :: "a" (tmpBuf));
+            asm volatile ("movdqa (%0), %%xmm7" :: "a" (tmpBuf));
+            asm volatile ("movntdq %%xmm0, (%0)":: "b" (bbuffer));
+            asm volatile ("movntdq %%xmm1, +0x10(%0)":: "b" (bbuffer));
+            asm volatile ("movntdq %%xmm2, +0x20(%0)":: "b" (bbuffer));
+            asm volatile ("movntdq %%xmm3, +0x30(%0)":: "b" (bbuffer));
+            asm volatile ("movntdq %%xmm4, +0x40(%0)":: "b" (bbuffer));
+            asm volatile ("movntdq %%xmm5, +0x50(%0)":: "b" (bbuffer));
+            asm volatile ("movntdq %%xmm6, +0x60(%0)":: "b" (bbuffer));
+            asm volatile ("movntdq %%xmm7, +0x70(%0)":: "b" (bbuffer));
+            bbuffer+=0x80/sizeof(uint64_t);
         }
 }
 
@@ -129,6 +143,9 @@ graphics_WriteStr(const char *str,
                   int yOff,
                   int xOff)
 {
+    if(xOff + 13 > height)return;
+    if(yOff + 8 > width)return;
+
     uint32_t curBufVal = 0;
 
     for (int i = 0; str[i] != 0; i++)
@@ -296,6 +313,7 @@ graphics_Write(const char *fmt,
 {
 
     char str[1024];
+    memset(str, 0, 1024);
     int index = 0;
     va_list vl;
     va_start(vl, fmt);
