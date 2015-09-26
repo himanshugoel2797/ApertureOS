@@ -36,6 +36,7 @@ SOURCES=graphics/graphics.o	\
 				drivers/ata_pio/ata_pio.o \
 				drivers/network/network.o \
 				drivers/network/rtl8139/rtl8139.o \
+				drivers/ihda/ihda.o \
 				kmalloc/kmalloc.o \
 
 POST_INIT=processors/elf_loader/elf_loader.o \

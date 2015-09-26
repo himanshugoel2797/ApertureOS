@@ -7,6 +7,7 @@
 #include "cmos/cmos.h"                //CMOS Time Driver
 #include "fpu/fpu.h"                  //VFPU Driver
 #include "hpet/hpet.h"                //HPET Driver
+#include "ihda/ihda.h"				  //Intel HD Audio Driver
 #include "pic/pic.h"                  //PIC Driver
 #include "pit/pit.h"                  //PIT Driver
 #include "pci/pci.h"                  //PCI Driver

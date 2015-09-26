@@ -50,7 +50,6 @@ static void sendKey(uint32_t val, uint64_t bmp, AOS_SCANCODES sc, bool down)
 static void
 Keyboard_PushInput(void)
 {
-    //Keyboard_ProcessInput(inb(0x60));
     if(key_flags & (1 << 2))
         {
             uint64_t diff[8];
@@ -106,6 +105,7 @@ Keyboard_PushInput(void)
             EDIFF_PUSH(0x172, AP_DOWN);
             EDIFF_PUSH(0x16B, AP_LEFT);
             EDIFF_PUSH(0x174, AP_RIGHT);
+            EDIFF_PUSH(0x4A, AP_FWD_SLASH);
 
             key_flags &= ~(1 << 2); //Unset the flag
             memcpy(keys_prev, keys_down, sizeof(uint64_t) * 8);

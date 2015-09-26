@@ -5,6 +5,7 @@
 #include "drivers.h"
 
 static char *term_buffer = NULL;
+static char *cur_dir = NULL;
 static UID term_buf_locked_id = 0;
 static uint32_t term_buffer_pos = 0;
 static uint32_t term_buf_len = 0;
@@ -12,6 +13,7 @@ static uint32_t term_char_pitch = 0;
 static uint32_t term_char_rows = 0;
 static uint32_t term_draw_count = 0;
 static uint32_t line_count = 0;
+static uint32_t cur_pos_x = 0, cur_pos_y = 0;
 
 uint32_t
 Terminal_Start(void)
@@ -29,7 +31,7 @@ Terminal_Start(void)
 
     Terminal_Write("[user@localhost /]#", 19);
 
-    //Timers_StartTimer(kbd_thread);
+    Timers_StartTimer(kbd_thread);
     Timers_StartTimer(render_thread);
 
     ThreadMan_SuspendThread(ThreadMan_GetCurThreadID());
@@ -65,8 +67,7 @@ Terminal_GetPrevLine(void)
 void
 Terminal_ExecuteCmd(const char *cmd)
 {
-    if(strlen(cmd) == 2 && strncmp(cmd, "ls", 2) == 0)Terminal_Write("\r\nList Dir", 10);
-    else if(strlen(cmd) == 5 && strncmp(cmd, "lspci", 5) == 0)
+    if(strlen(cmd) == 5 && strncmp(cmd, "lspci", 5) == 0)
         {
             Terminal_Write("\r\n", 2);
             char *base, *sub, *prog;
@@ -96,6 +97,24 @@ Terminal_ExecuteCmd(const char *cmd)
                     Terminal_Write(buf, strlen(buf));
                 }
         }
+        else if(strncmp(cmd, "ls", 2) == 0)
+        {
+                char *endPos = strchr(cmd, 0);
+                char cmd_buf[1024];
+                memset(cmd_buf, 0, 1024);
+                memcpy(cmd_buf, cmd, endPos - cmd);
+
+                UID dd = Filesystem_OpenDir(cmd_buf + 3);
+                Filesystem_DirEntry dir;
+                while(!Filesystem_ReadDir(dd, &dir))
+                {
+                    Terminal_Write("\r\n", 2);
+                    Terminal_Write(dir.dir_name, dir.name_len);
+                }
+                Filesystem_CloseDir(dd);
+        }
+        else
+            Terminal_Write("\r\nUnknown Command", 17);
 }
 
 void
@@ -166,6 +185,7 @@ Terminal_KeyboardThread(void)
     else if(key == AP_DOWN)term_buffer_pos += term_char_pitch;
     else if(key == AP_RIGHT)term_buffer_pos++;
     else if(key == AP_LEFT)term_buffer_pos--;
+    else if(key == AP_FWD_SLASH)Terminal_Write("/", 1);
 
 }
 
@@ -181,14 +201,19 @@ Terminal_DisplayThread(void)
     //    }
 
     //term_buf_locked_id = ThreadMan_GetCurThreadID();
-    Terminal_KeyboardThread();
+    //Terminal_KeyboardThread();
     //The buffer is locked for graphics stuff
-    int x = 0, y = 0;
+    int x = 0, y = 0, newlines = 0, newline_pos = 0;
     for(int char_pos = 0; char_pos < term_buf_len; char_pos++)
         {
             if(term_buffer[char_pos] < 0x20 || term_buffer[char_pos] > 0x7F)
                 {
-                    if(term_buffer[char_pos] == 0x0A)y++;
+                    if(term_buffer[char_pos] == 0x0A)
+                    {
+                        y++;
+                        newlines++;
+                        newline_pos += x;
+                    }
                     if(term_buffer[char_pos] == 0x0D)x=0;
                     if(term_buffer[char_pos] == 0x00)break;
                     if(term_buffer[char_pos] == 0x08)
@@ -232,6 +257,9 @@ Terminal_DisplayThread(void)
     if(term_draw_count % 10 > 3)
         {
             term_draw_count = 0;
+            x = (term_buffer_pos - newline_pos) % term_char_pitch;
+            y = term_buffer_pos / term_char_pitch;
+            y += newlines;
             graphics_WriteStr("_", x * 8, y * 16);
             graphics_WriteStr("_", x * 8, y * 16 - 1);
             graphics_WriteStr("_", x * 8, y * 16 - 2);

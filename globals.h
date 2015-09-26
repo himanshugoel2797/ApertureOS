@@ -14,5 +14,6 @@ extern void _region_kernel_start_;
 
 #define LOAD_ADDRESS (uint32_t)&_region_kernel_start_
 #define NETWORK_DRIVER_COUNT 1
+#define PAGE_SIZE KB(4)
 
 #endif /* end of include guard: _GLOBALS_H_ */
