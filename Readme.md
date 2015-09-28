@@ -33,7 +33,6 @@ Address Range            | Use
 # TODO
 -PCI/PCIe support
 -Mouse/Keyboard input (Almost done)
--2D hardware acceleration
 -Audio
 -Networking
 -Hard disk access, ext2 support (Halfway through)
