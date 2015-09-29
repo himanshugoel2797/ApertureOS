@@ -13,20 +13,68 @@
 #define MAX(x, y)  ((x > y)? x : y)
 #define MIN(x, y)  ((x < y)? x : y)
 
-void* memcpy(void *dest, void *src, size_t size);
-void* memset(void *ptr, int val, size_t num);
-void* memmove(void *dst, const void *src, size_t count);
-void strrev(char *str);
-size_t strlen(const char *str);
-char* strcpy ( char * destination, const char * source );
-int strncmp(const char * s1, const char * s2, size_t n);
-int vsnprintf ( char * str, const char * format, va_list vl );
-int sprintf ( char * str, const char * format, ... );
-char* utoa(uint64_t val, char *ostr, int base);
-char* itoa(int64_t val, char *ostr, int base);
-char* strchr(const char *s, int c);
-char* strrchr(const char *s, int c);
+void* 
+memcpy(void *dest, 
+       void *src, 
+       size_t size);
 
-UID new_uid();
+void* 
+memset(void *ptr, 
+       int val, 
+       size_t num);
+
+void* 
+memmove(void *dst, 
+        const void *src, 
+        size_t count);
+
+void 
+strrev(char *str);
+
+size_t 
+strlen(const char *str);
+
+char* 
+strcpy ( char * destination, 
+        const char * source );
+
+int 
+strncmp(const char * s1, 
+        const char * s2, 
+        size_t n);
+
+int 
+vsnprintf ( char * str, 
+           const char * format, 
+           va_list vl );
+
+int 
+sprintf ( char * str, 
+         const char * format, 
+         ... );
+
+char* 
+utoa(uint64_t val, 
+     char *ostr, 
+     int base);
+
+char* 
+itoa(int64_t val, 
+     char *ostr, 
+     int base);
+
+char* 
+strchr(const char *s, 
+       int c);
+
+char* 
+strrchr(const char *s, 
+        int c);
+
+uint32_t 
+find_first_zero(uint32_t bit_array);
+
+UID 
+new_uid(void);
 
 #endif /* end of include guard: _UTILS_COMMON_H_ */

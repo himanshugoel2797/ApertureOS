@@ -23,7 +23,10 @@
  * MA 02111-1307 USA
  */
 /* From glibc-2.14, sysdeps/i386/memcpy.c */
-void* memcpy(void *dest, void *src, size_t size)
+void* 
+memcpy(void *dest, 
+       void *src, 
+       size_t size)
 {
     unsigned long d0, d1, d2;
     asm volatile (
@@ -60,7 +63,10 @@ void* memcpy(void *dest, void *src, size_t size)
  * MA 02111-1307 USA
  */
 /* From glibc-2.14, sysdeps/i386/memset.c */
-void* memset(void *dstpp, int c, size_t len)
+void* 
+memset(void *dstpp, 
+       int c, 
+       size_t len)
 {
     int d0;
     unsigned long int dstp = (unsigned long int) dstpp;
@@ -107,7 +113,10 @@ void* memset(void *dstpp, int c, size_t len)
     return dstpp;
 }
 
-void* memmove(void *dst, const void *src, size_t count)
+void* 
+memmove(void *dst, 
+        const void *src, 
+        size_t count)
 {
     char *a = dst;
     const char *b = src;
@@ -127,7 +136,8 @@ void* memmove(void *dst, const void *src, size_t count)
     return dst;
 }
 
-void strrev(char *str)
+void 
+strrev(char *str)
 {
     char temp, *end_ptr;
 
@@ -148,7 +158,8 @@ void strrev(char *str)
         }
 }
 
-size_t strlen(const char *str)
+size_t 
+strlen(const char *str)
 {
     size_t size = 0;
     while(str[size] != 0)
@@ -158,7 +169,10 @@ size_t strlen(const char *str)
     return size;
 }
 
-int strncmp(const char* s1, const char* s2, size_t n)
+int 
+strncmp(const char* s1, 
+        const char* s2, 
+        size_t n)
 {
     while(n--)
         if(*s1++!=*s2++)
@@ -166,12 +180,16 @@ int strncmp(const char* s1, const char* s2, size_t n)
     return 0;
 }
 
-char * strcpy ( char * destination, const char * source )
+char* 
+strcpy(char* destination, 
+       const char* source)
 {
     return (char*)memcpy(destination, (void*)source, strlen(source));
 }
 
-char *strchr(const char *s, int c)
+char* 
+strchr(const char *s, 
+       int c)
 {
     while (*s != (char)c)
         if (!*s++)
@@ -179,7 +197,9 @@ char *strchr(const char *s, int c)
     return (char *)s;
 }
 
-char *strrchr(const char *s, int c)
+char* 
+strrchr(const char *s, 
+        int c)
 {
     char *e = s + strlen(s);
     while (*e != (char)c)
@@ -188,8 +208,25 @@ char *strrchr(const char *s, int c)
     return (char *)e;
 }
 
-UID uids_base = 0;
-UID new_uid()
+uint32_t 
+find_first_zero(uint32_t bit_array)
+{
+    uint32_t pos = 0;
+    if(bit_array == 0) return 0;
+
+    __asm__("bsfl %1,%0\n\t"
+            "jne 1f\n\t"
+            "movl $32, %0\n"
+            "1:"
+            : "=r" (pos)
+            : "r" (~(bit_array)));
+
+    return (unsigned short) pos;
+}
+
+static UID uids_base = 0;
+UID 
+new_uid(void)
 {
     return (++uids_base & 0xFFFFFFFF);
 }

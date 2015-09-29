@@ -20,7 +20,7 @@ DeviceManager_Initialize(void)
 	free_device_index = 0;
 	memset(msi_vectors, 0, sizeof(uint64_t) * 4);
 
-	//Mark vectors as being taken
+	//Mark initial vectors as being taken
 	msi_vectors[0] |= ((2 << 40) - 1);	//Set first 40 bits 
 }
 
@@ -33,9 +33,11 @@ DeviceManager_RegisterDevice(AOS_Devices *device)
 }
 
 uint32_t
-DeviceManager_RequestMSIVector(uint8_t vector_count)
+DeviceManager_RequestMSIVector(uint8_t vector_count, 
+                               uint8_t *assigned_vector_count)
 {
 	//Find a continuous block of free MSI vectors
+	
 }
 
 void

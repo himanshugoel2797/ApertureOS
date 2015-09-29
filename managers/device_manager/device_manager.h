@@ -46,7 +46,8 @@ UID
 DeviceManager_RegisterDevice(AOS_Devices *device);
 
 uint32_t
-DeviceManager_RequestMSIVector(uint8_t vector_count);
+DeviceManager_RequestMSIVector(uint8_t vector_count,
+                               uint8_t *assigned_vector_count);
 
 void
 DeviceManager_TransitionPowerState(AOS_PowerStates pm_state);

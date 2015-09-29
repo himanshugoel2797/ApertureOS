@@ -125,21 +125,6 @@ void physMemMan_MarkUsed(uint64_t addr, uint64_t size)
     MemMan_MarkKB4Used(addr, size);
 }
 
-uint32_t find_first_zero(uint32_t bit_array)
-{
-    uint32_t pos = 0;
-    if(bit_array == 0) return 0;
-
-    __asm__("bsfl %1,%0\n\t"
-            "jne 1f\n\t"
-            "movl $32, %0\n"
-            "1:"
-            : "=r" (pos)
-            : "r" (~(bit_array)));
-
-    return (unsigned short) pos;
-}
-
 uint64_t physMemMan_Alloc()
 {
 
