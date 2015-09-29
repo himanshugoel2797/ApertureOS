@@ -28,7 +28,8 @@ typedef enum
 }AOS_DeviceTypes;
 
 typedef enum{
-	AOS_DEVICE_PERMS_PCI_BUSMASTER = 1
+	AOS_DEVICE_PERMS_PCI_BUSMASTER = 1,
+	AOS_DEVICE_PERMS_PCI_MSI = 2
 }AOS_DevicePerms;
 
 typedef struct
