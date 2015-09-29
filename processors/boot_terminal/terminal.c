@@ -75,17 +75,17 @@ Terminal_ExecuteCmd(const char *cmd)
             char *chip_name, *chip_desc;
             for(uint32_t i = 0; i < pci_deviceCount; i++)
                 {
-                    pci_GetPCIClass(pci_readDWord(devices[i].bus,
-                                                  devices[i].device,
-                                                  devices[i].function, 8),
+                    pci_GetPCIClass(pci_readDWord(pci_devices[i].bus,
+                                                  pci_devices[i].device,
+                                                  pci_devices[i].function, 8),
                                     &base, &sub, &prog);
 
-                    pci_GetPCIDevice(devices[i].vendorID,
-                                     devices[i].deviceID,
+                    pci_GetPCIDevice(pci_devices[i].vendorID,
+                                     pci_devices[i].deviceID,
                                      &chip_name,
                                      &chip_desc);
 
-                    pci_GetPCIVendor(devices[i].vendorID,
+                    pci_GetPCIVendor(pci_devices[i].vendorID,
                                      &vendor_short,
                                      &vendor_long);
                     char buf[1024];

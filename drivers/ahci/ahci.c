@@ -22,10 +22,10 @@ AHCI_Initialize(void)
     //Search for AHCI compatible controllers in the PCI device list
     for (int i = 0; i < pci_deviceCount; i++)
         {
-            if (devices[i].classCode == PCI_MASS_STORAGE_DEVICE_CLASS &&
-                    devices[i].subClassCode == 0x06)
+            if (pci_devices[i].classCode == PCI_MASS_STORAGE_DEVICE_CLASS &&
+                    pci_devices[i].subClassCode == 0x06)
                 {
-                    if (devices[i].bar_count < 6)
+                    if (pci_devices[i].bar_count < 6)
                         continue;
 
 
@@ -38,7 +38,7 @@ AHCI_Initialize(void)
 
 
     //Check to see if the base address has already been mapped due to the top half mapping scheme
-    if (devices[ahci_controller_index].bars[5] < MEMIO_TOP_BASE)
+    if (pci_devices[ahci_controller_index].bars[5] < MEMIO_TOP_BASE)
         {
             //Map the ahci memory base address into kernel memory
             ahci_memory_base = (uint32_t)virtMemMan_FindEmptyAddress(KB(8), MEM_KERNEL);
@@ -46,10 +46,10 @@ AHCI_Initialize(void)
             if (ahci_memory_base == NULL)
                 return -1;
 
-            physMemMan_MarkUsed(devices[ahci_controller_index].bars[5], KB(8));
+            physMemMan_MarkUsed(pci_devices[ahci_controller_index].bars[5], KB(8));
 
             if (virtMemMan_Map(ahci_memory_base,
-                               devices[ahci_controller_index].bars[5],
+                               pci_devices[ahci_controller_index].bars[5],
                                KB(8),
                                MEM_TYPE_UC,
                                MEM_WRITE | MEM_READ,
@@ -59,7 +59,7 @@ AHCI_Initialize(void)
     else
         {
             ahci_memory_base =
-                VIRTUALIZE_HIGHER_MEM_OFFSET(devices[ahci_controller_index].bars[5]);
+                VIRTUALIZE_HIGHER_MEM_OFFSET(pci_devices[ahci_controller_index].bars[5]);
         }
 
     //Enable PCI busmastering for this device

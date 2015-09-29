@@ -27,6 +27,10 @@ typedef enum
 	AOS_HUMAN_INTERFACE_DEVICE = 5
 }AOS_DeviceTypes;
 
+typedef enum{
+	AOS_DEVICE_PERMS_PCI_BUSMASTER = 1
+}AOS_DevicePerms;
+
 typedef struct
 {
 	char name[256];
@@ -38,6 +42,7 @@ typedef struct
 	void(*RestoreState)(void);
 	UID deviceID;
 	AOS_DeviceTypes deviceType;
+	AOS_DevicePerms devicePerms;
 }AOS_Devices;
 
 

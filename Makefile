@@ -28,6 +28,7 @@ SOURCES=graphics/graphics.o	\
 				managers/threads/semaphore.o \
 				managers/timer/timer_manager.o \
 				managers/virt_mem_manager/virt_mem_manager.o \
+				managers/device_manager/device_manager.o \
 				drivers/hpet/hpet.o \
 				drivers/pci/pci.o	drivers/pci/pci_devices.o \
 				drivers/pit/pit.o \
@@ -36,7 +37,6 @@ SOURCES=graphics/graphics.o	\
 				drivers/ata_pio/ata_pio.o \
 				drivers/network/network.o \
 				drivers/network/rtl8139/rtl8139.o \
-				drivers/ihda/ihda.o \
 				kmalloc/kmalloc.o \
 
 POST_INIT=processors/elf_loader/elf_loader.o \

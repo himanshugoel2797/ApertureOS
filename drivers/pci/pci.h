@@ -29,7 +29,7 @@ typedef struct
     uint8_t headerType;
 } PCI_DeviceFuncs;
 
-PCI_DeviceFuncs devices[MAX_DEVICE_COUNT];
+PCI_DeviceFuncs pci_devices[MAX_DEVICE_COUNT];
 uint32_t pci_deviceCount;
 
 

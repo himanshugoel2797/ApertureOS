@@ -10,9 +10,9 @@ bool
 RTL8139_Detect(uint32_t i)
 {
     //Official IDs
-    if(devices[i].vendorID == 0x10EC)
+    if(pci_devices[i].vendorID == 0x10EC)
         {
-            switch(devices[i].deviceID)
+            switch(pci_devices[i].deviceID)
                 {
                 case 0x8139:
                 case 0x8339:
@@ -20,9 +20,9 @@ RTL8139_Detect(uint32_t i)
                 }
         }
 
-    if(devices[i].vendorID == 0x1904)
+    if(pci_devices[i].vendorID == 0x1904)
         {
-            switch(devices[i].deviceID)
+            switch(pci_devices[i].deviceID)
                 {
                 case 0x8139:
                     return TRUE;
@@ -30,32 +30,32 @@ RTL8139_Detect(uint32_t i)
         }
 
     //Unofficial IDs
-    if(devices[i].vendorID == 0x14EA && devices[i].deviceID == 0xAB06)
+    if(pci_devices[i].vendorID == 0x14EA && pci_devices[i].deviceID == 0xAB06)
         {
             return TRUE;
         }
 
-    if(devices[i].vendorID == 0x1186 && devices[i].deviceID == 0x1300)
+    if(pci_devices[i].vendorID == 0x1186 && pci_devices[i].deviceID == 0x1300)
         {
             return TRUE;
         }
 
-    if(devices[i].vendorID == 0x1065 && devices[i].deviceID == 0x8139)
+    if(pci_devices[i].vendorID == 0x1065 && pci_devices[i].deviceID == 0x8139)
         {
             return TRUE;
         }
 
-    if(devices[i].vendorID == 0x10BD && devices[i].deviceID == 0x8139)
+    if(pci_devices[i].vendorID == 0x10BD && pci_devices[i].deviceID == 0x8139)
         {
             return TRUE;
         }
 
-    if(devices[i].vendorID == 0x1113 && devices[i].deviceID == 0x1211)
+    if(pci_devices[i].vendorID == 0x1113 && pci_devices[i].deviceID == 0x1211)
         {
             return TRUE;
         }
 
-    if(devices[i].vendorID == 0x1259 && devices[i].deviceID == 0x2503)
+    if(pci_devices[i].vendorID == 0x1259 && pci_devices[i].deviceID == 0x2503)
         {
             return TRUE;
         }
@@ -81,9 +81,9 @@ RTL8139_Initialize(uint32_t deviceIndex)
     //Enable bus master
     pci_setCommand(deviceIndex, PCI_BUS_MASTER_CMD);
     rtl8139_index = deviceIndex;
-    rtl8139_mem_bar = devices[rtl8139_index].bars[1] & ~1;	//Use the MMIO interface
+    rtl8139_mem_bar = pci_devices[rtl8139_index].bars[1] & ~1;	//Use the MMIO interface
 
-    COM_WriteStr("IO Base: %x", devices[rtl8139_index].bars[0]);
+    COM_WriteStr("IO Base: %x", pci_devices[rtl8139_index].bars[0]);
 
     if(rtl8139_mem_bar < MEMIO_TOP_BASE)
         {

@@ -39,10 +39,10 @@ pci_Initialize(void)
 {
     COM_WriteStr("\r\nEnumerating PCI devices:\r\n");
 
-    memset(devices, 0, sizeof(PCI_DeviceFuncs) * MAX_DEVICE_COUNT);
+    memset(pci_devices, 0, sizeof(PCI_DeviceFuncs) * MAX_DEVICE_COUNT);
     pci_deviceCount = 0;
 
-    //Enumerate PCI devices
+    //Enumerate PCI pci_devices
     for(int bus = 0; bus < 256; bus++)
         {
             for(int device = 0; device < 32; device++)
@@ -63,51 +63,51 @@ pci_Initialize(void)
                                     if(pci_readDWord(bus, device, f, 0) >> 16 != 0xFFFF)
                                         {
 
-                                            devices[pci_deviceCount].classCode = pci_readDWord(bus, device, f, 8) >> 24;
-                                            devices[pci_deviceCount].subClassCode = pci_readDWord(bus, device, f, 8) >> 16;
-                                            devices[pci_deviceCount].progIf = pci_readDWord(bus, device, f, 8) >> 8;
-                                            devices[pci_deviceCount].bus = bus;
-                                            devices[pci_deviceCount].device = device;
-                                            devices[pci_deviceCount].function = f;
-                                            devices[pci_deviceCount].headerType = (pci_readDWord(bus, device, f, 0x0C) >> 16) & 0xFF;
+                                            pci_devices[pci_deviceCount].classCode = pci_readDWord(bus, device, f, 8) >> 24;
+                                            pci_devices[pci_deviceCount].subClassCode = pci_readDWord(bus, device, f, 8) >> 16;
+                                            pci_devices[pci_deviceCount].progIf = pci_readDWord(bus, device, f, 8) >> 8;
+                                            pci_devices[pci_deviceCount].bus = bus;
+                                            pci_devices[pci_deviceCount].device = device;
+                                            pci_devices[pci_deviceCount].function = f;
+                                            pci_devices[pci_deviceCount].headerType = (pci_readDWord(bus, device, f, 0x0C) >> 16) & 0xFF;
 
-                                            devices[pci_deviceCount].deviceID = pci_readDWord(bus, device, f, 0) >> 16;
-                                            devices[pci_deviceCount].vendorID = pci_readDWord(bus, device, f, 0);
+                                            pci_devices[pci_deviceCount].deviceID = pci_readDWord(bus, device, f, 0) >> 16;
+                                            pci_devices[pci_deviceCount].vendorID = pci_readDWord(bus, device, f, 0);
 
-                                            switch(devices[pci_deviceCount].headerType)
+                                            switch(pci_devices[pci_deviceCount].headerType)
                                                 {
                                                 case 0:
-                                                    devices[pci_deviceCount].bar_count = 6;
+                                                    pci_devices[pci_deviceCount].bar_count = 6;
                                                     break;
                                                 case 1:
-                                                    devices[pci_deviceCount].bar_count = 2;
+                                                    pci_devices[pci_deviceCount].bar_count = 2;
                                                     break;
                                                 }
 
-                                            for(uint8_t bar_index = 0; bar_index < devices[pci_deviceCount].bar_count; bar_index++)
+                                            for(uint8_t bar_index = 0; bar_index < pci_devices[pci_deviceCount].bar_count; bar_index++)
                                                 {
-                                                    devices[pci_deviceCount].bars[bar_index] = pci_readDWord(bus, device, f, 0x10 + (bar_index * 4));
+                                                    pci_devices[pci_deviceCount].bars[bar_index] = pci_readDWord(bus, device, f, 0x10 + (bar_index * 4));
                                                 }
 
 
                                             pci_GetPCIClass(pci_readDWord(bus, device, f, 8),
                                                             &base, &sub, &prog);
 
-                                            pci_GetPCIDevice(devices[pci_deviceCount].vendorID,
-                                                             devices[pci_deviceCount].deviceID,
+                                            pci_GetPCIDevice(pci_devices[pci_deviceCount].vendorID,
+                                                             pci_devices[pci_deviceCount].deviceID,
                                                              &chip_name,
                                                              &chip_desc);
 
-                                            pci_GetPCIVendor(devices[pci_deviceCount].vendorID,
+                                            pci_GetPCIVendor(pci_devices[pci_deviceCount].vendorID,
                                                              &vendor_short,
                                                              &vendor_long);
 
 
                                             COM_WriteStr("\tFound %s %s %s(%d.%d.%d), %s from %s at %d:%d:%d\r\n",
                                                          sub, prog, base,
-                                                         devices[pci_deviceCount - 1].classCode,
-                                                         devices[pci_deviceCount - 1].subClassCode,
-                                                         devices[pci_deviceCount - 1].progIf,
+                                                         pci_devices[pci_deviceCount - 1].classCode,
+                                                         pci_devices[pci_deviceCount - 1].subClassCode,
+                                                         pci_devices[pci_deviceCount - 1].progIf,
                                                          chip_name,
                                                          vendor_short,
                                                          bus, device, f);
@@ -124,7 +124,7 @@ pci_Initialize(void)
 
     if(mcfg == NULL)
         {
-            COM_WriteStr("\r\nFailed to find MCFG table, driver will only support PCI devices!\r\n");
+            COM_WriteStr("\r\nFailed to find MCFG table, driver will only support PCI pci_devices!\r\n");
             return;
         }
 
@@ -143,17 +143,17 @@ pci_setCommand(uint32_t device_index,
                uint16_t value)
 {
     uint32_t reg = pci_readDWord(
-                       devices[device_index].bus,
-                       devices[device_index].device,
-                       devices[device_index].function,
+                       pci_devices[device_index].bus,
+                       pci_devices[device_index].device,
+                       pci_devices[device_index].function,
                        0x04);
 
     //reg &= 0xFFFF0000;
     reg |= value;
     pci_writeDWord(
-        devices[device_index].bus,
-        devices[device_index].device,
-        devices[device_index].function,
+        pci_devices[device_index].bus,
+        pci_devices[device_index].device,
+        pci_devices[device_index].function,
         0x04,
         reg);
 }
