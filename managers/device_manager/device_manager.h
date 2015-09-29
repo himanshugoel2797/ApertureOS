@@ -14,6 +14,8 @@ typedef enum
 	AOS_D1 = 1,		//Lv1 power saving
 	AOS_D2 = 2,		//Lv2 power saving
 	AOS_D3 = 3,		//Lv3 power saving
+	AOS_D4 = 4,		//Sleep mode
+	AOS_D5 = 5		//Power off
 }AOS_PowerStates;
 
 typedef enum

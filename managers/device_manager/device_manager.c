@@ -37,7 +37,35 @@ DeviceManager_RequestMSIVector(uint8_t vector_count,
                                uint8_t *assigned_vector_count)
 {
 	//Find a continuous block of free MSI vectors
-	
+	int score = 0, prevScore = 0, scoreBase = 0, prevScoreBase = 0;
+	for(int i = 0; i < 256; i++)
+	{
+		int index = i / 64;
+		int off = i % 64;
+		if (((msi_vectors[index] >> off) & 1) == 0)
+		{
+			if(score == 0)scoreBase = i;
+			score++;
+
+			if(score >= vector_count)break;
+		}else{
+			prevScore = score;
+			prevScoreBase = scoreBase;
+
+			scoreBase = 0;
+			score = 0;
+		}
+	}
+
+	if(score == 0)
+	{
+		if(assigned_vector_count != NULL)*assigned_vector_count = prevScore;
+		return prevScoreBase;
+	}else
+	{
+		if(assigned_vector_count != NULL)*assigned_vector_count = score;
+		return scoreBase;
+	}
 }
 
 void
@@ -47,7 +75,7 @@ DeviceManager_TransitionPowerState(AOS_PowerStates pm_state)
 }
 
 void*
-DeviceManager_requestDMABlock(uint8_t pageCount)
+DeviceManager_RequestDMABlock(uint8_t pageCount)
 {
 
 }
