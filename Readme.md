@@ -14,7 +14,7 @@ Documentation at http://himanshugoel2797.github.io/ApertureOS/docs/html/
 
 Address Range            | Use
 ------------------------ | ---------------------
-0x00000000 -> 0x00100000 | VM86 mode code
+0x00000000 -> 0x00100000 | v6 mode code
 0x00100000 -> 0x10000000 | Kernel Code Memory
 0x10000000 -> 0x20000000 | MMIO
 0x10000000 -> 0x40000000 | Kernel Data Memory
