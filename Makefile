@@ -43,6 +43,7 @@ POST_INIT=processors/elf_loader/elf_loader.o \
 		  processors/umalloc/umalloc.o \
 		  processors/socket/socket.o \
 		  processors/syscall_manager/syscall_man.o \
+		  processors/syscall_manager/get_info.o \
 		  processors/process_manager/process_man.o \
 		  processors/boot_terminal/terminal.o \
 		  processors/keyboard_proc/keyboard_proc.o 

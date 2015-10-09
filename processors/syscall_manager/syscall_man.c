@@ -1,5 +1,7 @@
 #include "syscall_man.h"
+#include "syscalls.h"
 #include "utils/common.h"
+#include "globals.h"
 #include "idt.h"
 
 typedef struct
@@ -18,8 +20,11 @@ SyscallManager_SyscallRaised(Registers *regs)
     COM_WriteStr("Syscall %d raised!\r\n", regs->ebx);
 #endif
 
+    
     if(regs->ebx < MAX_SYSCALLS && syscalls[regs->ebx].handler != NULL)
         {
+            RET_CHECK_PRIV_ADDR(regs->ecx) 0;   //Check and on failure return 0
+
             //Make sure the proper number of arguments has been provided
             uint32_t *size = (uint32_t*)regs->ecx;
             if(syscalls[regs->ebx].arg_count != VAR_SYSCALL_ARGS &&
@@ -35,6 +40,7 @@ SyscallManager_SyscallRaised(Registers *regs)
             COM_WriteStr("Invalid Syscall!!\r\n");
         }
 #endif
+    return 0;
 }
 
 void
@@ -46,6 +52,7 @@ SyscallManager_Initialize(void)
     curIndex = 0;
 
     //Register all syscalls
+    SyscallManager_RegisterSyscall(GETDATA_SYSCALL_NUM, syscall_GetSysInfo, SYSCALL_GETSYSINFO_ARGC);
 
 }
 

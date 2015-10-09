@@ -16,4 +16,6 @@ extern void _region_kernel_start_;
 #define NETWORK_DRIVER_COUNT 1
 #define PAGE_SIZE KB(4)
 
+#define KERNEL_MEM_END 0x40000000
+
 #endif /* end of include guard: _GLOBALS_H_ */

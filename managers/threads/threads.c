@@ -322,6 +322,7 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
                  "pop %%edx\n\t"
                  "pop %%eax\n\t" :: "c"(addr));
 
+    curThreadInfo->k_tls.proc_info = curThread->k_tls.proc_info;    //The new thread's process is currently the same
 
     //Store the thread in the queue
     curThreadInfo->next = threads;
