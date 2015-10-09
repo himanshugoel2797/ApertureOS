@@ -97,24 +97,24 @@ Terminal_ExecuteCmd(const char *cmd)
                     Terminal_Write(buf, strlen(buf));
                 }
         }
-        else if(strncmp(cmd, "ls", 2) == 0)
+    else if(strncmp(cmd, "ls", 2) == 0)
         {
-                char *endPos = strchr(cmd, 0);
-                char cmd_buf[1024];
-                memset(cmd_buf, 0, 1024);
-                memcpy(cmd_buf, cmd, endPos - cmd);
+            char *endPos = strchr(cmd, 0);
+            char cmd_buf[1024];
+            memset(cmd_buf, 0, 1024);
+            memcpy(cmd_buf, cmd, endPos - cmd);
 
-                UID dd = Filesystem_OpenDir(cmd_buf + 3);
-                Filesystem_DirEntry dir;
-                while(!Filesystem_ReadDir(dd, &dir))
+            UID dd = Filesystem_OpenDir(cmd_buf + 3);
+            Filesystem_DirEntry dir;
+            while(!Filesystem_ReadDir(dd, &dir))
                 {
                     Terminal_Write("\r\n", 2);
                     Terminal_Write(dir.dir_name, dir.name_len);
                 }
-                Filesystem_CloseDir(dd);
+            Filesystem_CloseDir(dd);
         }
-        else
-            Terminal_Write("\r\nUnknown Command", 17);
+    else
+        Terminal_Write("\r\nUnknown Command", 17);
 }
 
 void
@@ -209,11 +209,11 @@ Terminal_DisplayThread(void)
             if(term_buffer[char_pos] < 0x20 || term_buffer[char_pos] > 0x7F)
                 {
                     if(term_buffer[char_pos] == 0x0A)
-                    {
-                        y++;
-                        newlines++;
-                        newline_pos += x;
-                    }
+                        {
+                            y++;
+                            newlines++;
+                            newline_pos += x;
+                        }
                     if(term_buffer[char_pos] == 0x0D)x=0;
                     if(term_buffer[char_pos] == 0x00)break;
                     if(term_buffer[char_pos] == 0x08)

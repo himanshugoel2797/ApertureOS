@@ -12,11 +12,27 @@
 #define BLOCK_GROUP_WIDTH 160  //!< The width of the dirty block management table
 #define BLOCK_GROUP_HEIGHT 90  //!< The height of the dirty block management table
 
+//! Display related information, can be requested by programs
+typedef struct
+{
+    uint32_t size;                 //!< The size of this structure
+    uint32_t width;                //!< The width of the main display
+    uint32_t height;               //!< The height of the main display
+    uint32_t bpp;                  //!< The bytes per pixel
+    uint32_t pitch;
+    uint32_t *framebuffer_addr;    //!< The virtual address in kernel memory of the main framebuffer
+    uint32_t *backbuffer_addr;     //!< The virtual address in kernel memory of the backbuffer
+} DisplayInfo;
+
 //! Initialize the graphics library
 
 //! Note: Requires virtual memory management and FPU
 void
 graphics_Initialize(void);
+
+//! Retrieve a pointer to the DisplayInfo structure
+DisplayInfo*
+graphics_GetDisplayInfoPtr(void);
 
 //! Copy the backbuffer contents to the display buffer
 void
@@ -104,7 +120,9 @@ graphics_DrawBuffer(void* buffer,
 
 
 void
-graphics_Write(const char *str, uint32_t x, uint32_t y,
+graphics_Write(const char *str,
+               uint32_t x,
+               uint32_t y,
                ...);
 
 /**@}*/

@@ -7,14 +7,15 @@
 
 #include "font.h"
 
-char *frameBufferA, *frameBufferB;
-uint32_t *backBuffer;
+static char *frameBufferA, *frameBufferB;
+static uint32_t *backBuffer;
 static bool dirty_table[BLOCK_GROUP_WIDTH][BLOCK_GROUP_HEIGHT];
 static int block_index_div;
+static DisplayInfo disp_info;
 
-size_t buffer_size;
-uint32_t pitch, width, height;
-uint8_t bpp;
+static size_t buffer_size;
+static uint32_t pitch, width, height;
+static uint8_t bpp;
 
 char tmpBuf[16] __attribute__((aligned(16)));
 
@@ -56,6 +57,21 @@ graphics_Initialize(void)
     // Initialize both buffers
     memset (frameBufferA, 0, buffer_size);
     memset (frameBufferB, 0, buffer_size);
+
+    disp_info.size = sizeof(DisplayInfo);
+    disp_info.width = global_multiboot_info->framebuffer_width;
+    disp_info.height = global_multiboot_info->framebuffer_height;
+    disp_info.bpp = global_multiboot_info->framebuffer_bpp;
+    disp_info.pitch = global_multiboot_info->framebuffer_pitch;
+    disp_info.framebuffer_addr = frameBufferA;
+    disp_info.backbuffer_addr = frameBufferB;
+
+}
+
+DisplayInfo*
+graphics_GetDisplayInfoPtr(void)
+{
+  return &disp_info;
 }
 
 void

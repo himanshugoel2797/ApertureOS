@@ -20,7 +20,7 @@ SyscallManager_SyscallRaised(Registers *regs)
     COM_WriteStr("Syscall %d raised!\r\n", regs->ebx);
 #endif
 
-    
+
     if(regs->ebx < MAX_SYSCALLS && syscalls[regs->ebx].handler != NULL)
         {
             RET_CHECK_PRIV_ADDR(regs->ecx) 0;   //Check and on failure return 0

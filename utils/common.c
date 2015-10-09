@@ -23,9 +23,9 @@
  * MA 02111-1307 USA
  */
 /* From glibc-2.14, sysdeps/i386/memcpy.c */
-void* 
-memcpy(void *dest, 
-       void *src, 
+void*
+memcpy(void *dest,
+       void *src,
        size_t size)
 {
     unsigned long d0, d1, d2;
@@ -63,9 +63,9 @@ memcpy(void *dest,
  * MA 02111-1307 USA
  */
 /* From glibc-2.14, sysdeps/i386/memset.c */
-void* 
-memset(void *dstpp, 
-       int c, 
+void*
+memset(void *dstpp,
+       int c,
        size_t len)
 {
     int d0;
@@ -113,9 +113,9 @@ memset(void *dstpp,
     return dstpp;
 }
 
-void* 
-memmove(void *dst, 
-        const void *src, 
+void*
+memmove(void *dst,
+        const void *src,
         size_t count)
 {
     char *a = dst;
@@ -136,7 +136,7 @@ memmove(void *dst,
     return dst;
 }
 
-void 
+void
 strrev(char *str)
 {
     char temp, *end_ptr;
@@ -158,7 +158,7 @@ strrev(char *str)
         }
 }
 
-size_t 
+size_t
 strlen(const char *str)
 {
     size_t size = 0;
@@ -169,9 +169,9 @@ strlen(const char *str)
     return size;
 }
 
-int 
-strncmp(const char* s1, 
-        const char* s2, 
+int
+strncmp(const char* s1,
+        const char* s2,
         size_t n)
 {
     while(n--)
@@ -180,15 +180,15 @@ strncmp(const char* s1,
     return 0;
 }
 
-char* 
-strcpy(char* destination, 
+char*
+strcpy(char* destination,
        const char* source)
 {
     return (char*)memcpy(destination, (void*)source, strlen(source));
 }
 
-char* 
-strchr(const char *s, 
+char*
+strchr(const char *s,
        int c)
 {
     while (*s != (char)c)
@@ -197,8 +197,8 @@ strchr(const char *s,
     return (char *)s;
 }
 
-char* 
-strrchr(const char *s, 
+char*
+strrchr(const char *s,
         int c)
 {
     char *e = s + strlen(s);
@@ -208,7 +208,7 @@ strrchr(const char *s,
     return (char *)e;
 }
 
-uint32_t 
+uint32_t
 find_first_zero(uint32_t bit_array)
 {
     uint32_t pos = 0;
@@ -225,7 +225,7 @@ find_first_zero(uint32_t bit_array)
 }
 
 static UID uids_base = 0;
-UID 
+UID
 new_uid(void)
 {
     return (++uids_base & 0xFFFFFFFF);

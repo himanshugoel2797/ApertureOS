@@ -10,41 +10,42 @@
 
 typedef enum
 {
-	AOS_D0 = 0,		//Normal operation
-	AOS_D1 = 1,		//Lv1 power saving
-	AOS_D2 = 2,		//Lv2 power saving
-	AOS_D3 = 3,		//Lv3 power saving
-	AOS_D4 = 4,		//Sleep mode
-	AOS_D5 = 5		//Power off
-}AOS_PowerStates;
+    AOS_D0 = 0,		//Normal operation
+    AOS_D1 = 1,		//Lv1 power saving
+    AOS_D2 = 2,		//Lv2 power saving
+    AOS_D3 = 3,		//Lv3 power saving
+    AOS_D4 = 4,		//Sleep mode
+    AOS_D5 = 5		//Power off
+} AOS_PowerStates;
 
 typedef enum
 {
-	AOS_CHIPSET_DEVICE = 1,
-	AOS_NETWORK_DEVICE = 2,
-	AOS_STORAGE_DEVICE = 3,
-	AOS_AUDIO_DEVICE = 4,
-	AOS_HUMAN_INTERFACE_DEVICE = 5
-}AOS_DeviceTypes;
+    AOS_CHIPSET_DEVICE = 1,
+    AOS_NETWORK_DEVICE = 2,
+    AOS_STORAGE_DEVICE = 3,
+    AOS_AUDIO_DEVICE = 4,
+    AOS_HUMAN_INTERFACE_DEVICE = 5
+} AOS_DeviceTypes;
 
-typedef enum{
-	AOS_DEVICE_PERMS_PCI_BUSMASTER = 1,
-	AOS_DEVICE_PERMS_PCI_MSI = 2
-}AOS_DevicePerms;
+typedef enum
+{
+    AOS_DEVICE_PERMS_PCI_BUSMASTER = 1,
+    AOS_DEVICE_PERMS_PCI_MSI = 2
+} AOS_DevicePerms;
 
 typedef struct
 {
-	char name[256];
-	uint32_t(*Initialize)(void);
-	uint32_t(*Disable)(void);
-	uint32_t(*Enable)(void);
-	uint32_t(*SetPowerState)(AOS_PowerStates pm_state);
-	void(*SaveState)(void);
-	void(*RestoreState)(void);
-	UID deviceID;
-	AOS_DeviceTypes deviceType;
-	AOS_DevicePerms devicePerms;
-}AOS_Devices;
+    char name[256];
+    uint32_t(*Initialize)(void);
+    uint32_t(*Disable)(void);
+    uint32_t(*Enable)(void);
+    uint32_t(*SetPowerState)(AOS_PowerStates pm_state);
+    void(*SaveState)(void);
+    void(*RestoreState)(void);
+    UID deviceID;
+    AOS_DeviceTypes deviceType;
+    AOS_DevicePerms devicePerms;
+} AOS_Devices;
 
 
 void
@@ -64,7 +65,7 @@ void*
 DeviceManager_RequestDMABlock(uint8_t pageCount);	//Number of pages of DMA space requested
 
 void
-DeviceManager_FreeDMABlock(void *dma_addr, 
+DeviceManager_FreeDMABlock(void *dma_addr,
                            uint8_t pageCount);
 
 #endif

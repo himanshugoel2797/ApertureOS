@@ -5,6 +5,7 @@
 #include "drivers.h"
 #include "managers.h"
 #include "processors.h"
+#include "globals.h"
 
 //! return from function if the address isn't valid for caller's permissions
 #define RET_CHECK_PRIV_ADDR(x) if( !(ProcessManager_GetCurProcessInfo()->flags & 2) && x < KERNEL_MEM_END)return
