@@ -182,10 +182,9 @@ IHDA_WriteVerb(uint32_t verb)
 {
 	while(1)
 	{
-		COM_WriteStr("Data: %b\r\n", IHDA_Read(0x4D));
+		COM_WriteStr("Data: %b\r\n", IHDA_Read(0x4A));
 		uint32_t corb_write_pos = IHDA_Read(0x48);
 		uint32_t corb_read_pos = IHDA_Read(0x4A) & ~(1 << 15);
-		while(IHDA_Read(0x4C) & 2 != 1)IHDA_Write(0x4C, IHDA_Read(0x4C) | 2);	//Start the CORB DMA engine
 
 		if(corb_write_pos == corb_read_pos)	//Make sure that all commands so far have been sent
 		{
@@ -193,6 +192,7 @@ IHDA_WriteVerb(uint32_t verb)
 
 			corb_buf[write_pos] = verb;
 			IHDA_Write(0x48, write_pos);
+			while(IHDA_Read(0x4C) & 2 != 1)IHDA_Write(0x4C, IHDA_Read(0x4C) | 2);	//Start the CORB DMA engine
 			return;
 		}
 	}
