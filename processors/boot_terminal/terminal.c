@@ -113,6 +113,13 @@ Terminal_ExecuteCmd(const char *cmd)
                 }
             Filesystem_CloseDir(dd);
         }
+        else if(strncmp(cmd, "shutdown", 8) == 0)
+        {
+            DeviceManager_TransitionPowerState(AOS_D5);
+        }else if(strncmp(cmd, "sleep", 5) == 0)
+        {
+            DeviceManager_TransitionPowerState(AOS_D4);
+        }
     else
         Terminal_Write("\r\nUnknown Command", 17);
 }

@@ -34,6 +34,9 @@ SOURCES=graphics/graphics.o	\
 				drivers/pit/pit.o \
 				drivers/ps2/ps2.o drivers/ps2/ps2_keyboard.o drivers/ps2/ps2_mouse.o \
 				drivers/ahci/ahci.o \
+				drivers/chipsets/chipset_detect.o \
+				drivers/chipsets/lpc_ctrl/lpc.o \
+				drivers/chipsets/ich9/chipset_driver.o \
 				drivers/ata_pio/ata_pio.o \
 				drivers/network/network.o \
 				drivers/network/rtl8139/rtl8139.o \
@@ -50,7 +53,7 @@ POST_INIT=processors/elf_loader/elf_loader.o \
 
 OUTDISK=sdb
 
-QEMU_OPTS=-enable-kvm -m 4096M -cpu host -d int,cpu_reset,guest_errors -drive id=disk,file=flash.img,if=none -device ahci,id=ahci -device ide-drive,drive=disk,bus=ahci.0 -netdev user,id=mynet0 -device rtl8139,netdev=mynet0 -device intel-hda -device hda-duplex
+QEMU_OPTS=-enable-kvm -m 4096M -machine q35 -cpu host -d int,cpu_reset,guest_errors -drive id=disk,file=flash.img,if=none -device ahci,id=ahci -device ide-drive,drive=disk,bus=ahci.0 -netdev user,id=mynet0 -device rtl8139,netdev=mynet0 -device intel-hda -device hda-duplex
 
 BOOT_FS=EXT2
 

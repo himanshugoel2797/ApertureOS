@@ -13,8 +13,8 @@ typedef enum
     AOS_D0 = 0,		//Normal operation
     AOS_D1 = 1,		//Lv1 power saving
     AOS_D2 = 2,		//Lv2 power saving
-    AOS_D3 = 3,		//Lv3 power saving
-    AOS_D4 = 4,		//Sleep mode
+    AOS_D3 = 3,		//(Suspend) Sleep mode
+    AOS_D4 = 4,		//(Suspend to RAM) Sleep mode
     AOS_D5 = 5		//Power off
 } AOS_PowerStates;
 
@@ -29,6 +29,7 @@ typedef enum
 
 typedef enum
 {
+    AOS_DEVICE_PERMS_NONE = 0,
     AOS_DEVICE_PERMS_PCI_BUSMASTER = 1,
     AOS_DEVICE_PERMS_PCI_MSI = 2
 } AOS_DevicePerms;

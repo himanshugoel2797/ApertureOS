@@ -13,6 +13,6 @@
 #include "bootstrap_mem_pool/bootstrap_mem_pool.h" //Bootstrap memory pool
 #include "msg_manager/msg_manager.h"               //System Error Manaager
 #include "system_manager/system_manager.h"         //System Manager
-
+#include "device_manager/device_manager.h"		   //Device Manager
 
 #endif /* end of include guard: _MANAGERS_H_ */

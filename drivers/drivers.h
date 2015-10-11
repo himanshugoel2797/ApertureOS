@@ -5,6 +5,7 @@
 #include "ahci/ahci.h"				  //AHCI Driver
 #include "apic/apic.h"                //Local APIC Driver
 #include "cmos/cmos.h"                //CMOS Time Driver
+#include "chipsets/chipsets.h"		  //Chipset Drivers
 #include "fpu/fpu.h"                  //VFPU Driver
 #include "hpet/hpet.h"                //HPET Driver
 #include "ihda/ihda.h"				  //Intel HD Audio Driver

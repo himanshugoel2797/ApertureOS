@@ -56,6 +56,9 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     pci_Initialize();
 
     //Once virtual memory management is put in place, ACPI tables become inaccessible, the acpi table will need to be copied
+    DeviceManager_Initialize();
+    Chipset_IdentifyAndRegister();
+    
     physMemMan_Setup();
     virtMemMan_Setup();
 

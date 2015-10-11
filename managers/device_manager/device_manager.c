@@ -28,7 +28,7 @@ UID
 DeviceManager_RegisterDevice(AOS_Devices *device)
 {
     device->deviceID = new_uid();
-    memcpy(&devices[free_device_index], device, sizeof(AOS_Devices));
+    memcpy(&devices[free_device_index++], device, sizeof(AOS_Devices));
     return device->deviceID;
 }
 
@@ -74,7 +74,12 @@ DeviceManager_RequestMSIVector(uint8_t vector_count,
 void
 DeviceManager_TransitionPowerState(AOS_PowerStates pm_state)
 {
-
+    for(uint32_t i = 0; i < free_device_index; i++)
+    {
+        if(pm_state == AOS_D4 && devices[i].SaveState != NULL)devices[i].SaveState();
+        if(devices[i].SetPowerState != NULL)devices[i].SetPowerState(pm_state);
+        if(pm_state == AOS_D4 && devices[i].RestoreState != NULL)devices[i].RestoreState();
+    }
 }
 
 void*

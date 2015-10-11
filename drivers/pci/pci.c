@@ -103,13 +103,15 @@ pci_Initialize(void)
                                                              &vendor_long);
 
 
-                                            COM_WriteStr("\tFound %s %s %s(%d.%d.%d), %s from %s at %d:%d:%d\r\n",
+                                            COM_WriteStr("\tFound %s %s %s(%d.%d.%d), %s(%x) from %s(%x) at %d:%d:%d\r\n",
                                                          sub, prog, base,
                                                          pci_devices[pci_deviceCount - 1].classCode,
                                                          pci_devices[pci_deviceCount - 1].subClassCode,
                                                          pci_devices[pci_deviceCount - 1].progIf,
                                                          chip_name,
+                                                         pci_devices[pci_deviceCount - 1].deviceID,
                                                          vendor_short,
+                                                         pci_devices[pci_deviceCount - 1].vendorID,
                                                          bus, device, f);
 
                                             pci_deviceCount++;
