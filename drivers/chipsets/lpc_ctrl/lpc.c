@@ -10,10 +10,7 @@ LPC_Initialize(void)
 	for(n = 0; n <= pci_deviceCount; n++)
 	{
 		if(n == pci_deviceCount)return 0;
-		if(pci_devices[n].vendorID == 0x8086 && 
-		   ((pci_devices[n].deviceID >> 4) == 0x291 || 
-		    (pci_devices[n].deviceID >> 4) == 0x8C4 || 
-		    (pci_devices[n].deviceID >> 4) == 0x8C5))
+		if(pci_devices[n].classCode == 0x06 && pci_devices[n].subClassCode == 0x01)
 		{
 			break;
 		}

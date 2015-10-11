@@ -90,10 +90,12 @@ Terminal_ExecuteCmd(const char *cmd)
                                      &vendor_long);
                     char buf[1024];
                     memset(buf, 0, 1024);
-                    sprintf(buf, "%s %s %s : %s %s\r\n",
+                    sprintf(buf, "%s %s %s : %s(%x) %s(%x)\r\n",
                             sub, prog, base,
                             vendor_short,
-                            chip_name);
+                            pci_devices[i].vendorID,
+                            chip_name,
+                            pci_devices[i].deviceID);
                     Terminal_Write(buf, strlen(buf));
                 }
         }
