@@ -6,11 +6,11 @@
 #define READ_BUFFER_DMA_R_CMD_EXT 0x25
 #define WRITE_DMA_R_CMD_EXT 0x35
 
-uint32_t ahci_memory_base = 0;
-uint32_t ahci_controller_index = 0;
-uint8_t port_count, cmd_count;
-HBA_MEM *hba_mem;
-uint8_t disks[32];
+static uint32_t ahci_memory_base = 0;
+static uint32_t ahci_controller_index = 0;
+static uint8_t port_count, cmd_count;
+static HBA_MEM *hba_mem;
+static uint8_t disks[32];
 
 
 

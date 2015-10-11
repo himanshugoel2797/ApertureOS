@@ -1,7 +1,7 @@
 #include "lpc.h"
 #include "utils/native.h"
 
-uint16_t acpi_base_address;
+static uint16_t acpi_base_address;
 
 uint32_t
 LPC_Initialize(void)
