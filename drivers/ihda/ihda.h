@@ -27,4 +27,10 @@ IHDA_SetupCORB(void);
 void
 IHDA_SetupRIRB(void);
 
+void
+IHDA_WriteVerb(uint32_t verb);
+
+uint64_t
+IHDA_ReadResponse(void);
+
 #endif

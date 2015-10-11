@@ -1,8 +1,12 @@
 #include "ihda.h"
+#include "utils/common.h"
 
 static uint32_t ihda_bar;
 static uint8_t codec_addresses[16];
 static uint8_t codec_count;
+static uint32_t *corb_buf;
+static uint64_t *rirb_buf; 
+static uint32_t corb_entry_count, rirb_entry_count;
 
 uint32_t
 IHDA_Initialize(void)
@@ -36,7 +40,7 @@ IHDA_Initialize(void)
 				ihda_bar = VIRTUALIZE_HIGHER_MEM_OFFSET(bar);
 			}
 
-			COM_WriteStr("IHDA controller found!");
+    		pci_setCommand(i, PCI_BUS_MASTER_CMD);
 			break;
 		}
 	}
@@ -67,7 +71,7 @@ IHDA_Reset(void)
 {
 	IHDA_Write(0x08, 1);	//Write 1 to the CRST bit, to start the IHDA controller
 
-	while((IHDA_Read(0x08) & 1) != 1);	//Wait until the controller is out of reset
+	while(!(IHDA_Read(0x08) & 1));	//Wait until the controller is out of reset
 	for(int i = 0; i < 10000; i++);		//Wait a little more so the codecs can assert status change signals for codec detection
 }
 
@@ -80,6 +84,7 @@ IHDA_DetectCodecs(void)
 	{
 		if((codecs >> i) & 1)codec_addresses[codec_count++] = i;
 	}
+	COM_WriteStr("Detected Codecs: %b\r\n", codecs);
 }
 
 void
@@ -88,9 +93,9 @@ IHDA_SetupCORB(void)
 	uint32_t corbsize = IHDA_Read(0x4E);	//Read the CORBSIZE register
 	
 	//Determine the largest supported size
-	uint8_t supported_sizes = corbsize >> 4;
-	uint8_t entry_count = 0;
-	uint8_t entry_size = 4;	//One entry is 4 bytes
+	uint32_t supported_sizes = corbsize >> 4;
+	uint32_t entry_count = 256;
+	uint32_t entry_size = 4;	//One entry is 4 bytes
 
 	if((supported_sizes >> 2) & 1)entry_count = 256;
 	else if((supported_sizes >> 1) & 1)entry_count = 16;
@@ -107,6 +112,10 @@ IHDA_SetupCORB(void)
 	uint32_t base_addr = bootstrap_malloc(entry_count * entry_size + KB(1));
 	base_addr += KB(1);
 	base_addr -= (base_addr % KB(1));
+	memset((void*)base_addr, 0, entry_size * entry_count);
+
+	corb_buf = (uint32_t*)base_addr;
+	corb_entry_count = entry_count;
 
 	//Set the base address of the buffer
 	IHDA_Write(0x40, base_addr);
@@ -116,11 +125,11 @@ IHDA_SetupCORB(void)
 	IHDA_Write(0x48, 0);
 
 	//Reset the read pointer
-	while((IHDA_Read(0x4A) >> 15) & 1 == 0)IHDA_Write(0x4A, 1 << 15);	//Wait till the controller has completed
+	while((IHDA_Read(0x4A) >> 15) & 1 == 0)IHDA_Write(0x4A, IHDA_Read(0x4A) | (1 << 15));	//Wait till the controller has completed
 	IHDA_Write(0x4A, 0);					//Reset the bit
 	while((IHDA_Read(0x4A) >> 15) & 1);		//Read back and make sure the bit has been set to 0
 
-	while(IHDA_Read(0x4C) & 2 != 0)IHDA_Write(0x4C, 2);	//Start the CORB DMA engine
+	while(IHDA_Read(0x4C) & 2 != 0)IHDA_Write(0x4C, IHDA_Read(0x4C) | 2);	//Start the CORB DMA engine
 }
 
 void
@@ -129,9 +138,9 @@ IHDA_SetupRIRB(void)
 	uint32_t corbsize = IHDA_Read(0x5E);	//Read the RIRBSIZE register
 	
 	//Determine the largest supported size
-	uint8_t supported_sizes = corbsize >> 4;
-	uint8_t entry_count = 0;
-	uint8_t entry_size = 4;	//One entry is 4 bytes
+	uint32_t supported_sizes = corbsize >> 4;
+	uint32_t entry_count = 0;
+	uint32_t entry_size = 4;	//One entry is 4 bytes
 
 	if((supported_sizes >> 2) & 1)entry_count = 256;
 	else if((supported_sizes >> 1) & 1)entry_count = 16;
@@ -148,18 +157,63 @@ IHDA_SetupRIRB(void)
 	uint32_t base_addr = bootstrap_malloc(entry_count * entry_size + KB(1));
 	base_addr += KB(1);
 	base_addr -= (base_addr % KB(1));
+	memset((void*)base_addr, 0, entry_size * entry_count);
+
+	rirb_buf = (uint64_t*)base_addr;
+	rirb_entry_count = entry_count;
 
 	//Set the base address of the buffer
 	IHDA_Write(0x50, base_addr);
 	IHDA_Write(0x54, 0);
 
-	//Reset the write pointer
-	IHDA_Write(0x58, 0);
-
 	//Reset the read pointer
-	while((IHDA_Read(0x5A) >> 15) & 1 == 0)IHDA_Write(0x5A, 1 << 15);	//Wait till the controller has completed
-	IHDA_Write(0x5A, 0);					//Reset the bit
-	while((IHDA_Read(0x5A) >> 15) & 1);		//Read back and make sure the bit has been set to 0
+	IHDA_Write(0x5A, 0);
 
-	while(IHDA_Read(0x5C) & 2 != 0)IHDA_Write(0x5C, 2);	//Start the RIRB DMA engine
+	//Reset the write pointer
+	while((IHDA_Read(0x58) >> 15) & 1 == 0)IHDA_Write(0x58, IHDA_Read(0x58) | 1 << 15);	//Wait till the controller has completed
+	IHDA_Write(0x58, 0);					//Reset the bit
+	while((IHDA_Read(0x58) >> 15) & 1);		//Read back and make sure the bit has been set to 0
+
+	while(IHDA_Read(0x5C) & 2 != 0)IHDA_Write(0x5C, IHDA_Read(0x5C) | 2);	//Start the RIRB DMA engine
+}
+
+void
+IHDA_WriteVerb(uint32_t verb)
+{
+	while(1)
+	{
+		COM_WriteStr("Data: %b\r\n", IHDA_Read(0x4D));
+		uint32_t corb_write_pos = IHDA_Read(0x48);
+		uint32_t corb_read_pos = IHDA_Read(0x4A) & ~(1 << 15);
+		while(IHDA_Read(0x4C) & 2 != 1)IHDA_Write(0x4C, IHDA_Read(0x4C) | 2);	//Start the CORB DMA engine
+
+		if(corb_write_pos == corb_read_pos)	//Make sure that all commands so far have been sent
+		{
+			uint32_t write_pos = (corb_write_pos + 1) % corb_entry_count;
+
+			corb_buf[write_pos] = verb;
+			IHDA_Write(0x48, write_pos);
+			return;
+		}
+	}
+}
+
+uint64_t
+IHDA_ReadResponse(void)
+{
+	while(1)
+	{
+		while(IHDA_Read(0x5C) & 2 != 1)IHDA_Write(0x5C, IHDA_Read(0x5C) | 2);	//Start the CORB DMA engine
+		uint32_t rirb_write_pos = IHDA_Read(0x58) & ~(1 << 15);
+		uint32_t rirb_read_pos = IHDA_Read(0x5A);
+
+		if(rirb_write_pos > rirb_read_pos)
+		{
+			uint32_t read_pos = (rirb_read_pos + 1) % rirb_entry_count;
+
+			uint64_t resp = rirb_buf[rirb_read_pos];
+			IHDA_Write(0x5A, read_pos);
+			return resp;
+		}
+	}
 }

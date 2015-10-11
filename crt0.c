@@ -69,6 +69,13 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     AHCI_Initialize();
     IHDA_Initialize();
 
+    IHDA_WriteVerb(0xF00 | 4);
+    COM_WriteStr("COMD!!!!!\r\n\r\n");
+    IHDA_WriteVerb(0xF00 | 4);
+    COM_WriteStr("Recieving\r\n");
+    uint64_t a = IHDA_ReadResponse();
+    COM_WriteStr("Reply: %x%x\r\n", (uint32_t)(a >> 32), (uint32_t)(a));
+
     kmalloc_init();
     ThreadMan_Setup();
     Timers_Setup();
