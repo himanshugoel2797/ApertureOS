@@ -109,9 +109,9 @@ IHDA_SetupCORB(void)
 	IHDA_Write(0x4E, corbsize);
 
 	//Allocate the needed size in DMA buffers and make sure it's KB aligned
-	uint32_t base_addr = bootstrap_malloc(entry_count * entry_size + KB(1));
-	base_addr += KB(1);
-	base_addr -= (base_addr % KB(1));
+	uint32_t base_addr = bootstrap_malloc(entry_count * entry_size + 128);
+	base_addr += 128;
+	base_addr -= (base_addr % 128);
 	memset((void*)base_addr, 0, entry_size * entry_count);
 
 	corb_buf = (uint32_t*)base_addr;
@@ -129,7 +129,7 @@ IHDA_SetupCORB(void)
 	IHDA_Write(0x4A, 0);					//Reset the bit
 	while((IHDA_Read(0x4A) >> 15) & 1);		//Read back and make sure the bit has been set to 0
 
-	while(IHDA_Read(0x4C) & 2 != 0)IHDA_Write(0x4C, IHDA_Read(0x4C) | 2);	//Start the CORB DMA engine
+	while(IHDA_Read(0x4C) & 2 != 2)IHDA_Write(0x4C, IHDA_Read(0x4C) | 2);	//Start the CORB DMA engine
 }
 
 void
@@ -154,9 +154,9 @@ IHDA_SetupRIRB(void)
 	IHDA_Write(0x5E, corbsize);
 
 	//Allocate the needed size in DMA buffers and make sure it's KB aligned
-	uint32_t base_addr = bootstrap_malloc(entry_count * entry_size + KB(1));
-	base_addr += KB(1);
-	base_addr -= (base_addr % KB(1));
+	uint32_t base_addr = bootstrap_malloc(entry_count * entry_size + 128);
+	base_addr += 128;
+	base_addr -= (base_addr % 128);
 	memset((void*)base_addr, 0, entry_size * entry_count);
 
 	rirb_buf = (uint64_t*)base_addr;
@@ -174,7 +174,7 @@ IHDA_SetupRIRB(void)
 	IHDA_Write(0x58, 0);					//Reset the bit
 	while((IHDA_Read(0x58) >> 15) & 1);		//Read back and make sure the bit has been set to 0
 
-	while(IHDA_Read(0x5C) & 2 != 0)IHDA_Write(0x5C, IHDA_Read(0x5C) | 2);	//Start the RIRB DMA engine
+	while(IHDA_Read(0x5C) & 2 != 2)IHDA_Write(0x5C, IHDA_Read(0x5C) | 2);	//Start the RIRB DMA engine
 }
 
 void
@@ -192,7 +192,7 @@ IHDA_WriteVerb(uint32_t verb)
 
 			corb_buf[write_pos] = verb;
 			IHDA_Write(0x48, write_pos);
-			while(IHDA_Read(0x4C) & 2 != 1)IHDA_Write(0x4C, IHDA_Read(0x4C) | 2);	//Start the CORB DMA engine
+			while(IHDA_Read(0x4C) & 2 != 2)IHDA_Write(0x4C, IHDA_Read(0x4C) | 2);	//Start the CORB DMA engine
 			return;
 		}
 	}
@@ -203,7 +203,7 @@ IHDA_ReadResponse(void)
 {
 	while(1)
 	{
-		while(IHDA_Read(0x5C) & 2 != 1)IHDA_Write(0x5C, IHDA_Read(0x5C) | 2);	//Start the CORB DMA engine
+		while(IHDA_Read(0x5C) & 2 != 2)IHDA_Write(0x5C, IHDA_Read(0x5C) | 2);	//Start the CORB DMA engine
 		uint32_t rirb_write_pos = IHDA_Read(0x58) & ~(1 << 15);
 		uint32_t rirb_read_pos = IHDA_Read(0x5A);
 
