@@ -56,19 +56,6 @@ IHDA_Initialize(void)
 	return 0;
 }
 
-void 
-IHDA_Write(uint32_t offset, 
-           uint32_t val)
-{
-	*(uint32_t*)(ihda_bar + offset) = val;
-}
-
-uint32_t 
-IHDA_Read(uint32_t offset)
-{
-	return *(uint32_t*)(ihda_bar + offset);
-}
-
 void
 IHDA_Reset(void)
 {
@@ -161,8 +148,8 @@ IHDA_SetupRIRB(void)
 	base_addr -= (base_addr % 128);
 	memset((void*)base_addr, 0, entry_size * entry_count);
 
-	corb_buf = (uint32_t*)base_addr;
-	corb_entry_count = entry_count;
+	rirb_buf = (uint32_t*)base_addr;
+	rirb_entry_count = entry_count;
 
 	//Set the base address of the buffer
 	mmio->rirb.addr_lo = base_addr;
@@ -184,11 +171,11 @@ IHDA_WriteVerb(uint32_t verb)
 {
 	while(1)
 	{
-		while( (IHDA_Read(0x4C) & 2) != 2)
-			IHDA_Write(0x4C, IHDA_Read(0x4C) | 2);	//Start the CORB DMA engine
+		while( (mmio->corb.ctrl & 2) != 2)
+			mmio->corb.ctrl |= 2;	//Start the CORB DMA engine
 
-		uint32_t corb_write_pos = IHDA_Read(0x48) & 0xFF;
-		uint32_t corb_read_pos = IHDA_Read(0x4A) & 0xFF;
+		uint32_t corb_write_pos = mmio->corb.wp & 0xFF;
+		uint32_t corb_read_pos = mmio->corb.rp & 0xFF;
 		COM_WriteStr("Data: %b\r\n", corb_read_pos);
 
 		if(corb_write_pos == corb_read_pos)	//Make sure that all commands so far have been sent
@@ -196,7 +183,7 @@ IHDA_WriteVerb(uint32_t verb)
 			uint32_t write_pos = (corb_write_pos + 1) % corb_entry_count;
 
 			corb_buf[write_pos] = verb;
-			IHDA_Write(0x48, write_pos);
+			mmio->corb.wp = write_pos;
 			return;
 		}
 	}
@@ -207,11 +194,11 @@ IHDA_ReadResponse(void)
 {
 	while(1)
 	{
-		while((IHDA_Read(0x5C) & 2) != 2)
-			IHDA_Write(0x5C, IHDA_Read(0x5C) | 2);	//Start the CORB DMA engine
+		while((mmio->rirb.ctrl & 2) != 2)
+			mmio->rirb.ctrl |= 2;	//Start the CORB DMA engine
 		
-		uint32_t rirb_write_pos = IHDA_Read(0x58) & 0xFF;
-		uint32_t rirb_read_pos = IHDA_Read(0x5A) & 0xFFFF;
+		uint32_t rirb_write_pos = mmio->rirb.wp & 0xFF;
+		uint32_t rirb_read_pos = mmio->rirb.rp & 0xFF;
 		COM_WriteStr("Write Pos: %x\r\n", rirb_write_pos);
 
 		//if(rirb_write_pos != rirb_read_pos)
@@ -220,13 +207,13 @@ IHDA_ReadResponse(void)
 
 			uint64_t resp = rirb_buf[rirb_read_pos];
 
-			while((IHDA_Read(0x5C) & 2) == 2)
-				IHDA_Write(0x5C, IHDA_Read(0x5C) & ~2);	//Start the CORB DMA engine
+			while((mmio->rirb.ctrl & 2) == 2)
+				mmio->rirb.ctrl &= ~2;	//Start the CORB DMA engine
 			
-			IHDA_Write(0x5A, read_pos);
+			mmio->rirb.rp = read_pos;
 
-			while((IHDA_Read(0x5C) & 2) != 2)
-				IHDA_Write(0x5C, IHDA_Read(0x5C) | 2);	//Start the CORB DMA engine
+			while((mmio->rirb.ctrl & 2) != 2)
+				mmio->rirb.ctrl |= 2;	//Start the CORB DMA engine
 			
 			return resp;
 		}

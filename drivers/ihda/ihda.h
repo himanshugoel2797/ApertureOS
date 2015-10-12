@@ -8,13 +8,6 @@
 uint32_t
 IHDA_Initialize(void);
 
-void 
-IHDA_Write(uint32_t offset, 
-           uint32_t val);
-
-uint32_t 
-IHDA_Read(uint32_t offset);
-
 void
 IHDA_Reset(void);
 
