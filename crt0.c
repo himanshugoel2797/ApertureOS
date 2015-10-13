@@ -58,25 +58,18 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     //Once virtual memory management is put in place, ACPI tables become inaccessible, the acpi table will need to be copied
     DeviceManager_Initialize();
     Chipset_IdentifyAndRegister();
-    
+
     physMemMan_Setup();
     virtMemMan_Setup();
 
     Interrupts_Virtualize();
     graphics_Initialize();
+    kmalloc_init();
 
     //Attempt to initialize all PCI drivers here so they can mark their MMIO space as used
     AHCI_Initialize();
     IHDA_Initialize();
 
-    while(1){
-    IHDA_WriteVerb(0xF00 << 8 | 4);
-    COM_WriteStr("Recieving\r\n");
-    uint64_t a = IHDA_ReadResponse();
-    COM_WriteStr("Reply: %x%x\r\n", a);
-}
-
-    kmalloc_init();
     ThreadMan_Setup();
     Timers_Setup();
 

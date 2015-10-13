@@ -71,7 +71,7 @@ graphics_Initialize(void)
 DisplayInfo*
 graphics_GetDisplayInfoPtr(void)
 {
-  return &disp_info;
+    return &disp_info;
 }
 
 void

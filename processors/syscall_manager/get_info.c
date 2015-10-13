@@ -6,9 +6,9 @@ void
 syscall_GetSysInfo(void *args)
 {
     generic_syscall_3 *syscall = (generic_syscall_3*)args;
-    
+
     syscall->retval = -1;
-    
+
     switch(syscall->arg0)
         {
         case APEROS_PROC_DATA:

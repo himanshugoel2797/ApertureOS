@@ -75,11 +75,11 @@ void
 DeviceManager_TransitionPowerState(AOS_PowerStates pm_state)
 {
     for(uint32_t i = 0; i < free_device_index; i++)
-    {
-        if(pm_state == AOS_D4 && devices[i].SaveState != NULL)devices[i].SaveState();
-        if(devices[i].SetPowerState != NULL)devices[i].SetPowerState(pm_state);
-        if(pm_state == AOS_D4 && devices[i].RestoreState != NULL)devices[i].RestoreState();
-    }
+        {
+            if(pm_state == AOS_D4 && devices[i].SaveState != NULL)devices[i].SaveState();
+            if(devices[i].SetPowerState != NULL)devices[i].SetPowerState(pm_state);
+            if(pm_state == AOS_D4 && devices[i].RestoreState != NULL)devices[i].RestoreState();
+        }
 }
 
 void*

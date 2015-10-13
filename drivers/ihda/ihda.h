@@ -5,6 +5,14 @@
 #include "drivers.h"
 #include "managers.h"
 
+typedef struct
+{
+    uint32_t Verb : 20;
+    uint32_t NID : 7;
+    uint32_t IndirectNID : 1;
+    uint32_t CAd : 4;
+} IHDA_Verb;
+
 uint32_t
 IHDA_Initialize(void);
 
@@ -21,9 +29,9 @@ void
 IHDA_SetupRIRB(void);
 
 void
-IHDA_WriteVerb(uint32_t verb);
+IHDA_WriteVerb(IHDA_Verb* verb);
 
-uint64_t
+uint32_t
 IHDA_ReadResponse(void);
 
 #endif

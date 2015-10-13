@@ -4,6 +4,6 @@
 void
 Chipset_IdentifyAndRegister(void)
 {
-	if(ICH9_Detect())return;
-	
+    if(ICH9_Detect())return;
+
 }
