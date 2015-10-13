@@ -224,6 +224,15 @@ find_first_zero(uint32_t bit_array)
     return (unsigned short) pos;
 }
 
+uint32_t
+set_bit_cnt(uint32_t bit_array)
+{
+    uint32_t set_bit = 0;
+    if(bit_array == 0)return 0;
+    __asm__("popcnt %%eax, %%ebx" : "=b"(set_bit) : "a"(bit_array));
+    return set_bit;
+}
+
 static UID uids_base = 0;
 UID
 new_uid(void)

@@ -159,3 +159,112 @@ pci_setCommand(uint32_t device_index,
         0x04,
         reg);
 }
+
+void
+pci_enableMSI(uint32_t device_index)
+{
+    bool msi_64b_cap = FALSE;
+
+    uint32_t reg = pci_readDWord(
+                       pci_devices[device_index].bus,
+                       pci_devices[device_index].device,
+                       pci_devices[device_index].function,
+                       0x04);
+    reg = reg & ~(1<<10);   //Disable legacy interrupts
+    reg |= (1 << 2);        //Enable bus mastering for MSI
+    pci_writeDWord(
+        pci_devices[device_index].bus,
+        pci_devices[device_index].device,
+        pci_devices[device_index].function,
+        0x04,
+        reg);
+
+
+
+    reg = pci_readDWord(
+                       pci_devices[device_index].bus,
+                       pci_devices[device_index].device,
+                       pci_devices[device_index].function,
+                       0x50);
+    reg |= (1 << 16);        //Enable MSI
+    msi_64b_cap = (reg >> 23);
+    pci_writeDWord(
+        pci_devices[device_index].bus,
+        pci_devices[device_index].device,
+        pci_devices[device_index].function,
+        0x50,
+        reg);
+
+
+    uint32_t reg = pci_readDWord(
+                       pci_devices[device_index].bus,
+                       pci_devices[device_index].device,
+                       pci_devices[device_index].function,
+                       0x54);
+    reg = 0xFEEE << 20;   //Set the MSI Address as per x86 specs
+    reg |= APIC_GetID() << 12;  //Set the APIC address
+
+    pci_writeDWord(
+        pci_devices[device_index].bus,
+        pci_devices[device_index].device,
+        pci_devices[device_index].function,
+        0x54,
+        reg);
+
+    uint32_t data_reg_off = 0x58;
+    if(msi_64b_cap)data_reg_off += 4;
+
+    uint32_t reg = pci_readDWord(
+                       pci_devices[device_index].bus,
+                       pci_devices[device_index].device,
+                       pci_devices[device_index].function,
+                       data_reg_off);
+    reg = 0xFEEE << 20;   //Set the MSI Address as per x86 specs
+    reg |= APIC_GetID() << 12;  //Set the APIC address
+
+    pci_writeDWord(
+        pci_devices[device_index].bus,
+        pci_devices[device_index].device,
+        pci_devices[device_index].function,
+        data_reg_off,
+        reg);
+
+}
+
+void
+pci_regMSIVector(uint32_t device_index, 
+                 uint8_t vector)
+{
+
+    uint32_t reg = pci_readDWord(
+                       pci_devices[device_index].bus,
+                       pci_devices[device_index].device,
+                       pci_devices[device_index].function,
+                       0x50);
+    reg |= (1 << 16);        //Enable MSI
+    bool msi_64b_cap = (reg >> 23);
+    pci_writeDWord(
+        pci_devices[device_index].bus,
+        pci_devices[device_index].device,
+        pci_devices[device_index].function,
+        0x50,
+        reg);
+
+
+    uint32_t data_reg_off = 0x58;
+    if(msi_64b_cap)data_reg_off += 4;
+
+    uint32_t reg = pci_readDWord(
+                       pci_devices[device_index].bus,
+                       pci_devices[device_index].device,
+                       pci_devices[device_index].function,
+                       data_reg_off);
+    reg = vector;   //Set the MSI vector as per x86 specs
+
+    pci_writeDWord(
+        pci_devices[device_index].bus,
+        pci_devices[device_index].device,
+        pci_devices[device_index].function,
+        data_reg_off,
+        reg);
+}

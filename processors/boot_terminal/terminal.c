@@ -15,6 +15,8 @@ static uint32_t term_draw_count = 0;
 static uint32_t line_count = 0;
 static uint32_t cur_pos_x = 0, cur_pos_y = 0;
 
+extern bool com_redirect;
+
 uint32_t
 Terminal_Start(void)
 {
@@ -23,8 +25,10 @@ Terminal_Start(void)
     term_buf_len = term_char_rows * term_char_pitch;
     term_buffer_pos = 0;
 
+
     term_buffer = kmalloc(term_buf_len);
     memset(term_buffer, 0, term_buf_len);
+    com_redirect = TRUE;
 
     UID kbd_thread = Timers_CreateNew(FREQ(200), TRUE, Terminal_KeyboardThread);
     UID render_thread = Timers_CreateNew(FREQ(60), TRUE, Terminal_DisplayThread);
@@ -50,7 +54,7 @@ Terminal_Write(char *str,
     memcpy(&term_buffer[term_buffer_pos], str, len);
     term_buffer_pos += len;
     term_buf_locked_id = 0;
-    COM_WriteStr(str);
+    //COM_WriteStr(str);
 }
 
 char*
@@ -67,9 +71,9 @@ Terminal_GetPrevLine(void)
 void
 Terminal_ExecuteCmd(const char *cmd)
 {
-    if(strlen(cmd) == 5 && strncmp(cmd, "lspci", 5) == 0)
+    if(strlen(cmd) != 0)Terminal_Write("\r\n", 2);
+    if(strncmp(cmd, "lspci", 5) == 0)
         {
-            Terminal_Write("\r\n", 2);
             char *base, *sub, *prog;
             char *vendor_short, *vendor_long;
             char *chip_name, *chip_desc;
@@ -90,8 +94,12 @@ Terminal_ExecuteCmd(const char *cmd)
                                      &vendor_long);
                     char buf[1024];
                     memset(buf, 0, 1024);
-                    sprintf(buf, "%s %s %s : %s(%x) %s(%x)\r\n",
-                            sub, prog, base,
+                    sprintf(buf, "%s(%x:%x) %s %s : %s(%x) %s(%x)\r\n",
+                            sub, 
+                            pci_devices[i].classCode,
+                            pci_devices[i].subClassCode,
+                            prog, 
+                            base,
                             vendor_short,
                             pci_devices[i].vendorID,
                             chip_name,
@@ -99,7 +107,7 @@ Terminal_ExecuteCmd(const char *cmd)
                     Terminal_Write(buf, strlen(buf));
                 }
         }
-    else if(strncmp(cmd, "ls", 2) == 0)
+    else if(strncmp(cmd, "ls ", 3) == 0)
         {
             char *endPos = strchr(cmd, 0);
             char cmd_buf[1024];
@@ -123,6 +131,10 @@ Terminal_ExecuteCmd(const char *cmd)
         {
             DeviceManager_TransitionPowerState(AOS_D4);
         }
+    else if(strncmp(cmd, "inithda", 7) == 0)
+    {
+        IHDA_Initialize();
+    }
     else
         Terminal_Write("\r\nUnknown Command", 17);
 }

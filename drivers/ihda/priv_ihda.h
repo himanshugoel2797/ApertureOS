@@ -52,6 +52,7 @@ typedef struct
     uint32_t conn_list_len;
     uint32_t config_defaults;
     uint32_t first_conn_list_entry;
+    uint32_t caps;
 } IHDA_Widget;
 
 typedef struct

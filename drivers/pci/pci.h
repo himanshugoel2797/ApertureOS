@@ -78,4 +78,13 @@ void
 pci_setCommand(uint32_t device_index,
                uint16_t value);
 
+
+void
+pci_regMSIVector(uint32_t device_index, 
+                 uint8_t vector);
+
+void
+pci_enableMSI(uint32_t device_index);
+
+
 #endif /* end of include guard: _PCI_DRIVER_H_ */

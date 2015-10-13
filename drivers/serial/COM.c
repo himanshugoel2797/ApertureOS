@@ -3,8 +3,10 @@
 #include <stdarg.h>
 #include "utils/native.h"
 #include "utils/common.h"
+#include "processors.h"
 
 #define PORT 0x03F8
+bool com_redirect = FALSE;
 
 void COM_Initialize()
 {
@@ -37,6 +39,11 @@ void COM_WriteStr(const char *fmt, ...)
     va_start(vl, fmt);
     vsnprintf(str, fmt, vl);
     va_end(vl);
+    
+    if(com_redirect)
+    {
+        Terminal_Write(str, strlen(str));
+    }
 #if COM_ENABLED == 1
     while(str[index])
         {

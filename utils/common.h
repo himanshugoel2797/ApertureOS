@@ -74,6 +74,9 @@ strrchr(const char *s,
 uint32_t
 find_first_zero(uint32_t bit_array);
 
+uint32_t
+set_bit_cnt(uint32_t bit_array);
+
 UID
 new_uid(void);
 
