@@ -38,7 +38,7 @@ DeviceManager_RequestMSIVector(uint8_t vector_count,
 {
     //Find a continuous block of free MSI vectors
     int score = 0, prevScore = 0, scoreBase = 0, prevScoreBase = 0;
-    for(int i = 0; i < 256; i++)
+    for(int i = 32; i < 256; i++)
         {
             int index = i / 64;
             int off = i % 64;

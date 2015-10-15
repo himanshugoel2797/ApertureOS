@@ -10,7 +10,7 @@ EXT2_FD*
 _EXT2_FindFDFromID(uint32_t id)
 {
     EXT2_FD *cur_fd = fd;
-    while(cur_fd->next != NULL)
+    while(cur_fd != NULL)
         {
             if(cur_fd->id == id)break;
             cur_fd = cur_fd->next;
@@ -170,6 +170,7 @@ _EXT2_Filesystem_SeekFile(FileDescriptor *desc,
     EXT2_FD *cur_fd = _EXT2_FindFDFromID(fd);
 
     if(cur_fd == NULL)return -1;
+            COM_WriteStr("SEEK\r\n");
 
     switch(whence)
         {

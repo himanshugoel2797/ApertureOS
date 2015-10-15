@@ -13,7 +13,6 @@ uint32_t lock_num = 0;
 bool thread_lock = FALSE;
 
 Thread *threads, *curThread, *lastThread;
-UID uidBase = 0;
 
 void kernel_main(int, char**);
 
@@ -151,7 +150,7 @@ threadMan_Initialize(void)
 
 
     threads = kmalloc(sizeof(Thread));
-    threads->uid = uidBase++;
+    threads->uid = new_uid();
     threads->flags = THREAD_FLAGS_KERNEL;
     threads->status = 0;
     threads->next = threads;
@@ -323,6 +322,7 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
                  "pop %%eax\n\t" :: "c"(addr));
 
     curThreadInfo->k_tls.proc_info = curThread->k_tls.proc_info;    //The new thread's process is currently the same
+    curThreadInfo->kstack = kmalloc(KB(4));
 
     //Store the thread in the queue
     curThreadInfo->next = threads;

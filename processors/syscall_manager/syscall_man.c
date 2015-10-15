@@ -26,12 +26,13 @@ SyscallManager_SyscallRaised(Registers *regs)
             RET_CHECK_PRIV_ADDR(regs->ecx) 0;   //Check and on failure return 0
 
             //Make sure the proper number of arguments has been provided
-            uint32_t *size = (uint32_t*)regs->ecx;
-            if(syscalls[regs->ebx].arg_count != VAR_SYSCALL_ARGS &&
-                    *size != (syscalls[regs->ebx].arg_count + 1) * sizeof(uint64_t) + sizeof(uint32_t))
-                return 0;	//Just return since we have no idea where the retval should be
+            uint32_t size = ((generic_syscall*)regs->ecx)->size;
+            if((size == ((syscalls[regs->ebx].arg_count + 1) * sizeof(uint64_t) + sizeof(uint32_t))) | 
+               syscalls[regs->ebx].arg_count == VAR_SYSCALL_ARGS)
+                syscalls[regs->ebx].handler((void*)regs->ecx);
+            else
+                return 0;   //Just return since we have no idea where the retval should be
 
-            syscalls[regs->ebx].handler((void*)regs->ecx);
         }
 
 #ifdef LOG_SYSCALL
@@ -63,6 +64,7 @@ SyscallManager_RegisterSyscall(uint32_t syscall_ID,
 {
     if(syscalls[syscall_ID].handler != NULL)COM_WriteStr("WARNING Syscall overwrite!\r\n");
     syscalls[syscall_ID].handler = handler;
+    syscalls[syscall_ID].arg_count = argc;
 }
 
 SyscallRegisterError

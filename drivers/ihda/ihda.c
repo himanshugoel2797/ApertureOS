@@ -16,7 +16,7 @@ IHDA_Initialize(void)
 {
     int i = 0, largest_i = -1, largest_codec_cnt = 0;
     ihda_bar = (uint32_t)virtMemMan_FindEmptyAddress(KB(4), MEM_KERNEL);
-    
+
     for(; i <= pci_deviceCount; i++)
         {
             if(i == pci_deviceCount)return -1;
@@ -47,40 +47,40 @@ IHDA_Initialize(void)
                     IHDA_Reset();
                     for(int n = 0; n < 10000; n++);
                     COM_WriteStr("Bitcnt: %d, %b\r\n", set_bit_cnt(mmio->statests), mmio->statests);
-                    if(set_bit_cnt(mmio->statests) > largest_codec_cnt)
-                    {
-                        largest_i = i;
-                        largest_codec_cnt = set_bit_cnt(mmio->statests);
-                    }
+                    if(set_bit_cnt(mmio->statests) >= largest_codec_cnt)
+                        {
+                            largest_i = i;
+                            largest_codec_cnt = set_bit_cnt(mmio->statests);
+                        }
                 }
-                if(largest_i != -1 && i == (pci_deviceCount - 1) )break;
+            if(largest_i != -1 && i == (pci_deviceCount - 1) )break;
         }
 
     pci_setCommand(largest_i, PCI_BUS_MASTER_CMD | 2);
 
-                    //Found what is likely an IHDA controller
-                    uint32_t bar = pci_devices[largest_i].bars[0];
-                    //Map the BAR if necessary
+    //Found what is likely an IHDA controller
+    uint32_t bar = (pci_devices[largest_i].bars[0] & ~0xF);
+    //Map the BAR if necessary
 
-                    if(bar < MEMIO_TOP_BASE)
-                        {
-                            physMemMan_MarkUsed(bar, KB(4));
+    if(bar < MEMIO_TOP_BASE)
+        {
+            physMemMan_MarkUsed(bar, KB(4));
 
-                            if(virtMemMan_Map(ihda_bar,
-                                              bar,
-                                              KB(4),
-                                              MEM_TYPE_UC,
-                                              MEM_WRITE | MEM_READ,
-                                              MEM_KERNEL) < 0)
-                                return -1;
-                        }
-                    else
-                        {
-                            ihda_bar = VIRTUALIZE_HIGHER_MEM_OFFSET(bar);
-                        }
+            if(virtMemMan_Map(ihda_bar,
+                              bar,
+                              KB(4),
+                              MEM_TYPE_UC,
+                              MEM_WRITE | MEM_READ,
+                              MEM_KERNEL) < 0)
+                return -1;
+        }
+    else
+        {
+            ihda_bar = VIRTUALIZE_HIGHER_MEM_OFFSET(bar);
+        }
 
-                    mmio = (IHDA_MMIO*)ihda_bar;
-                    IHDA_Reset();
+    mmio = (IHDA_MMIO*)ihda_bar;
+    IHDA_Reset();
 
     memset(codec_addresses, 0xFF, 16);
     IHDA_DetectCodecs();
@@ -99,8 +99,8 @@ IHDA_Initialize(void)
             codecs[i].afgs =
                 kmalloc(codecs[i].afg_count * sizeof(IHDA_AFG_Info));
 
-                COM_WriteStr("AFG Count: %d\r\n", codecs[i].afg_count);
-                COM_WriteStr("Vendor Info: %x\r\n", IHDA_Get(0, i, 1));
+            COM_WriteStr("AFG Count: %d\r\n", codecs[i].afg_count);
+            COM_WriteStr("Vendor Info: %x\r\n", IHDA_Get(0, i, 1));
 
             for(int k = starting_node_num; k < starting_node_num + codecs[i].afg_count; k++)
                 {
@@ -117,9 +117,9 @@ IHDA_Initialize(void)
 
                     codecs[i].afgs[i0].widgets = kmalloc(codecs[i].afgs[i0].sub_node_count * sizeof(IHDA_Widget));
 
-                    COM_WriteStr("NID: %d, Sub Node Start: %d, Sub Node Count: %d\r\n", 
-                                 i0, 
-                                 codecs[i].afgs[i0].start_node, 
+                    COM_WriteStr("NID: %d, Sub Node Start: %d, Sub Node Count: %d\r\n",
+                                 i0,
+                                 codecs[i].afgs[i0].start_node,
                                  codecs[i].afgs[i0].sub_node_count);
 
                     for(int j = codecs[i].afgs[i0].start_node;
@@ -161,13 +161,13 @@ IHDA_Initialize(void)
                                 case 0x1:
                                     COM_WriteStr("Audio Input!\r\n");
                                     break;
-                                    case 0x4:
+                                case 0x4:
                                     COM_WriteStr("Pin Complex!\r\n");
                                     break;
                                 default:
-                                	COM_WriteStr("Unknown Device: %x\r\n", 
-                                	             (codecs[i].afgs[i0].widgets[i1].caps >> 20) & 0xF);
-                                	break;
+                                    COM_WriteStr("Unknown Device: %x\r\n",
+                                                 (codecs[i].afgs[i0].widgets[i1].caps >> 20) & 0xF);
+                                    break;
                                 }
 
                         }
@@ -185,7 +185,7 @@ IHDA_Reset(void)
     mmio->statests = (1 << 16) - 1;
     mmio->gctl = 0;
 
-    for(int n = 0; n < 6000;n++);
+    for(int n = 0; n < 6000; n++);
 
     mmio->gctl = 1;	//Write 1 to the CRST bit, to start the IHDA controller
 
@@ -230,7 +230,7 @@ IHDA_SetupCORB(void)
 
     //Set the size of the CORB buffer
     corbsize &= ~3;
-    
+
     if(entry_count == 16) corbsize |= 1;
     else if(entry_count == 256) corbsize |= 2;
 
@@ -277,10 +277,10 @@ IHDA_SetupRIRB(void)
 
     //Stop the CORB DMA engine
     while( mmio->rirb.ctrl & 2)mmio->rirb.ctrl = 0;
-    
+
     //Set the size of the CORB buffer
     corbsize &= ~3;
-    
+
     if(entry_count == 16) corbsize |= 1;
     else if(entry_count == 256) corbsize |= 2;
 
@@ -290,7 +290,7 @@ IHDA_SetupRIRB(void)
     uint32_t base_addr = bootstrap_malloc(entry_count * entry_size + 128);
     base_addr += 128;
     base_addr -= (base_addr % 128);
-    memset((void*)base_addr, 2, entry_size * entry_count);
+    memset((void*)base_addr, 0x22, entry_size * entry_count);
 
     rirb_buf = (uint32_t*)base_addr;
     rirb_entry_count = entry_count;

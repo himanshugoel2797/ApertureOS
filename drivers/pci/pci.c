@@ -180,86 +180,119 @@ pci_enableMSI(uint32_t device_index)
         reg);
 
 
+    uint32_t cap_list_off = pci_readDWord(
+                                pci_devices[device_index].bus,
+                                pci_devices[device_index].device,
+                                pci_devices[device_index].function,
+                                0x34) & 0xFF;
+
+    uint32_t msi_ctrl_off = cap_list_off << 8;
+    uint32_t msi_ctrl_off_nx = msi_ctrl_off & 0xFFFF;
+
+    while( (msi_ctrl_off_nx & 0xFF) != 0x05)
+        {
+            msi_ctrl_off = msi_ctrl_off_nx;
+
+            msi_ctrl_off_nx = pci_readDWord(
+                                  pci_devices[device_index].bus,
+                                  pci_devices[device_index].device,
+                                  pci_devices[device_index].function,
+                                  msi_ctrl_off >> 8) & 0xFFFF;
+
+        }
+
+    msi_ctrl_off = msi_ctrl_off >> 8;
 
     reg = pci_readDWord(
-                       pci_devices[device_index].bus,
-                       pci_devices[device_index].device,
-                       pci_devices[device_index].function,
-                       0x50);
-    reg |= (1 << 16);        //Enable MSI
-    msi_64b_cap = (reg >> 23);
+              pci_devices[device_index].bus,
+              pci_devices[device_index].device,
+              pci_devices[device_index].function,
+              msi_ctrl_off);
+    COM_WriteStr("MSI Ctrl: %x\r\n Off: %x\r\n", reg, msi_ctrl_off);
+
+    msi_64b_cap = (reg >> 16) >> 7;
+    reg = (1 << 16);        //Enable MSI
+
+
     pci_writeDWord(
         pci_devices[device_index].bus,
         pci_devices[device_index].device,
         pci_devices[device_index].function,
-        0x50,
+        msi_ctrl_off,
         reg);
 
 
-    uint32_t reg = pci_readDWord(
-                       pci_devices[device_index].bus,
-                       pci_devices[device_index].device,
-                       pci_devices[device_index].function,
-                       0x54);
-    reg = 0xFEEE << 20;   //Set the MSI Address as per x86 specs
+    reg = pci_readDWord(
+              pci_devices[device_index].bus,
+              pci_devices[device_index].device,
+              pci_devices[device_index].function,
+              msi_ctrl_off + 4);
+    reg = 0xFEE00000;   //Set the MSI Address as per x86 specs
     reg |= APIC_GetID() << 12;  //Set the APIC address
 
     pci_writeDWord(
         pci_devices[device_index].bus,
         pci_devices[device_index].device,
         pci_devices[device_index].function,
-        0x54,
+        msi_ctrl_off + 4,
         reg);
-
-    uint32_t data_reg_off = 0x58;
-    if(msi_64b_cap)data_reg_off += 4;
-
-    uint32_t reg = pci_readDWord(
-                       pci_devices[device_index].bus,
-                       pci_devices[device_index].device,
-                       pci_devices[device_index].function,
-                       data_reg_off);
-    reg = 0xFEEE << 20;   //Set the MSI Address as per x86 specs
-    reg |= APIC_GetID() << 12;  //Set the APIC address
-
-    pci_writeDWord(
-        pci_devices[device_index].bus,
-        pci_devices[device_index].device,
-        pci_devices[device_index].function,
-        data_reg_off,
-        reg);
-
 }
 
 void
-pci_regMSIVector(uint32_t device_index, 
+pci_regMSIVector(uint32_t device_index,
                  uint8_t vector)
 {
+
+
+    uint32_t cap_list_off = pci_readDWord(
+                                pci_devices[device_index].bus,
+                                pci_devices[device_index].device,
+                                pci_devices[device_index].function,
+                                0x34) & 0xFF;
+
+    uint32_t msi_ctrl_off = cap_list_off << 8;
+    uint32_t msi_ctrl_off_nx = msi_ctrl_off & 0xFFFF;
+
+    while( (msi_ctrl_off_nx & 0xFF) != 0x05)
+        {
+            msi_ctrl_off = msi_ctrl_off_nx;
+
+            msi_ctrl_off_nx = pci_readDWord(
+                                  pci_devices[device_index].bus,
+                                  pci_devices[device_index].device,
+                                  pci_devices[device_index].function,
+                                  msi_ctrl_off >> 8) & 0xFFFF;
+
+        }
+
+    msi_ctrl_off = msi_ctrl_off >> 8;
+
 
     uint32_t reg = pci_readDWord(
                        pci_devices[device_index].bus,
                        pci_devices[device_index].device,
                        pci_devices[device_index].function,
-                       0x50);
-    reg |= (1 << 16);        //Enable MSI
-    bool msi_64b_cap = (reg >> 23);
+                       msi_ctrl_off);
+    bool msi_64b_cap = (reg >> 16) >> 7;
     pci_writeDWord(
         pci_devices[device_index].bus,
         pci_devices[device_index].device,
         pci_devices[device_index].function,
-        0x50,
+        msi_ctrl_off,
         reg);
 
 
-    uint32_t data_reg_off = 0x58;
+    uint32_t data_reg_off = msi_ctrl_off+ 8;
     if(msi_64b_cap)data_reg_off += 4;
 
-    uint32_t reg = pci_readDWord(
-                       pci_devices[device_index].bus,
-                       pci_devices[device_index].device,
-                       pci_devices[device_index].function,
-                       data_reg_off);
-    reg = vector;   //Set the MSI vector as per x86 specs
+    reg = pci_readDWord(
+              pci_devices[device_index].bus,
+              pci_devices[device_index].device,
+              pci_devices[device_index].function,
+              data_reg_off);
+
+    reg &= ~0xFF;
+    reg |= vector;   //Set the MSI vector as per x86 specs
 
     pci_writeDWord(
         pci_devices[device_index].bus,

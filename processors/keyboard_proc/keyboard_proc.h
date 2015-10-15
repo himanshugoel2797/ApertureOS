@@ -63,7 +63,8 @@ typedef enum
     AP_LEFT = 52,
     AP_RIGHT = 53,
     AP_FWD_SLASH = 54,
-    AP_BKD_SLASH = 55
+    AP_BKD_SLASH = 55,
+    AP_PERIOD = 56
 
 } AOS_SCANCODES;
 

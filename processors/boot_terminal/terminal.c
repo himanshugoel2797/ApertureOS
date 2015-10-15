@@ -95,10 +95,10 @@ Terminal_ExecuteCmd(const char *cmd)
                     char buf[1024];
                     memset(buf, 0, 1024);
                     sprintf(buf, "%s(%x:%x) %s %s : %s(%x) %s(%x)\r\n",
-                            sub, 
+                            sub,
                             pci_devices[i].classCode,
                             pci_devices[i].subClassCode,
-                            prog, 
+                            prog,
                             base,
                             vendor_short,
                             pci_devices[i].vendorID,
@@ -132,9 +132,18 @@ Terminal_ExecuteCmd(const char *cmd)
             DeviceManager_TransitionPowerState(AOS_D4);
         }
     else if(strncmp(cmd, "inithda", 7) == 0)
-    {
-        IHDA_Initialize();
-    }
+        {
+            IHDA_Initialize();
+        }
+    else if(strncmp(cmd, "exec ", 5) == 0)
+        {
+            char *endPos = strchr(cmd, 0);
+            char cmd_buf[1024];
+            memset(cmd_buf, 0, 1024);
+            memcpy(cmd_buf, cmd, endPos - cmd);
+
+            UID id = ProcessManager_CreateProcess(cmd_buf + 5, cmd_buf + 5, 0, NULL, NULL, 0);
+        }
     else
         Terminal_Write("\r\nUnknown Command", 17);
 }
@@ -208,7 +217,7 @@ Terminal_KeyboardThread(void)
     else if(key == AP_RIGHT)term_buffer_pos++;
     else if(key == AP_LEFT)term_buffer_pos--;
     else if(key == AP_FWD_SLASH)Terminal_Write("/", 1);
-
+    else if(key == AP_PERIOD)Terminal_Write(".", 1);
 }
 
 void

@@ -105,13 +105,9 @@ Filesystem_OpenFile(const char *filename,
     if(!initialized)return -1;
     //Determine the descriptor based on the filename, call the appropriate function and convert it's returned ID into a UID
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromPath(filename);
-    graphics_Write("TESTING FILE OPEN!!! %s,%x", 0, 600, filename, desc);
-    graphics_SwapBuffer();
-    //if(desc == NULL)return -1;
     uint32_t result = desc->driver->_H_Filesystem_OpenFile(desc, filename, flags, perms);
-    graphics_Write("TEST2", 0, 620);
-    graphics_SwapBuffer();
-
+    
+    COM_WriteStr("FD: %x\r\n", result);
     return result | (desc->id << 32);
 }
 

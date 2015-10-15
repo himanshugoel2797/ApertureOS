@@ -106,6 +106,7 @@ Keyboard_PushInput(void)
             EDIFF_PUSH(0x16B, AP_LEFT);
             EDIFF_PUSH(0x174, AP_RIGHT);
             EDIFF_PUSH(0x4A, AP_FWD_SLASH);
+            EDIFF_PUSH(0x49, AP_PERIOD);
 
             key_flags &= ~(1 << 2); //Unset the flag
             memcpy(keys_prev, keys_down, sizeof(uint64_t) * 8);

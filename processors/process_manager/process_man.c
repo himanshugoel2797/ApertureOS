@@ -43,7 +43,7 @@ ProcessManager_CreateProcess(const char *name,
                              ProcessInfo *parent,
                              uint32_t flags)
 {
-    ThreadMan_Lock();	//Can't have thread switches happening here
+    ThreadMan_Lock();   //Can't have thread switches happening here
 
     ProcessInfo *proc = kmalloc(sizeof(ProcessInfo));
 
@@ -60,6 +60,7 @@ ProcessManager_CreateProcess(const char *name,
     proc->path = kmalloc(strlen(path) + 1);
     strcpy(proc->path, path);
 
+    
     //Add to the process tree, all processes are under the kernel
     if(parent == NULL)parent = processes;
     proc->parent = parent;
@@ -81,8 +82,9 @@ ProcessManager_CreateProcess(const char *name,
     uint32_t* ktls = (uint32_t*)ThreadMan_GetThreadTLS(tid);
     ktls[0] = (uint32_t)proc;
 
-    ThreadMan_Unlock();
+
     ThreadMan_StartThread(tid);
+    ThreadMan_Unlock();
 }
 
 uint32_t

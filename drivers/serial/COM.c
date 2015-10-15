@@ -39,11 +39,11 @@ void COM_WriteStr(const char *fmt, ...)
     va_start(vl, fmt);
     vsnprintf(str, fmt, vl);
     va_end(vl);
-    
+
     if(com_redirect)
-    {
-        Terminal_Write(str, strlen(str));
-    }
+        {
+            Terminal_Write(str, strlen(str));
+        }
 #if COM_ENABLED == 1
     while(str[index])
         {

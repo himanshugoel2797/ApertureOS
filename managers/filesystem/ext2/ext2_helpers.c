@@ -350,11 +350,11 @@ _EXT2_GetFileInfo(FileDescriptor *desc,
         {
             memset(dir_name, 0, 256);
             uint32_t index = (uint32_t)strchr(fname + 1, '/') - (uint32_t)fname - 1;
-            COM_WriteStr("index %d\r\n", index);
+            COM_WriteStr("index %x, %s\r\n", index, fname);
             if(index == 0)
                 break;
 
-            memcpy(dir_name, fname + 1, (index > strlen(fname))?strlen(fname):index);
+            memcpy(dir_name, fname + 1, (index > strlen(fname))?strlen(fname):index - 1);
 
             //Find the directory by traversing the tree
 
@@ -393,10 +393,10 @@ _EXT2_GetFileInfo(FileDescriptor *desc,
                                     graphics_Write(entry_name, 700 + (lolzi * 20)/1000 * 140, (300 + (lolzi * 20)) % 1000);
                                     graphics_SwapBuffer();
                                     lolzi++;
-                                    COM_WriteStr("entry_name %s\r\n", entry_name);
+                                    COM_WriteStr("entry_name %s, %d,%d\r\n", entry_name, strlen(dir_name), strlen(entry_name));
 
                                     prev_inode = inode_i;
-                                    if( strncmp(entry_name, dir_name, strlen(dir_name)) == 0)
+                                    if( strncmp(entry_name, dir_name, strlen(entry_name)) == 0)
                                         {
                                             inode_i = dir->inode_index;
                                             COM_WriteStr("MATCH FOUND %s %d\r\n", dir_name, inode_i);

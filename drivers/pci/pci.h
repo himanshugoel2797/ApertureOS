@@ -80,7 +80,7 @@ pci_setCommand(uint32_t device_index,
 
 
 void
-pci_regMSIVector(uint32_t device_index, 
+pci_regMSIVector(uint32_t device_index,
                  uint8_t vector);
 
 void
