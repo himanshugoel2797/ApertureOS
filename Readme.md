@@ -31,15 +31,14 @@ Address Range            | Use
 0xFFFFFFFF+              | Kernel Managed page heap
 
 # TODO
--PCI/PCIe support
+-PCI/PCIe support (Proper device power management)
 -Mouse/Keyboard input (Almost done)
--Audio
+-Audio (Intel HDA driver CORB and RIRB buffers not working for some reason)
 -Networking
 -Hard disk access, ext2 support (Halfway through)
 -Multicore initialization
--User mode thread scheduler
--ACPI support
 -USB support
 -Fix UEFI boot issues
--Window Manager
--User mode desktop environment
+-Window Manager (see himanshugoel2797/Mana project)
+-User mode desktop environment (see himanshugoel2797/Mana project)
+-Parse symbol table to allow checking values from debug terminal

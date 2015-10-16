@@ -23,6 +23,7 @@ SOURCES=graphics/graphics.o	\
 				managers/filesystem/gpt/gpt.o managers/filesystem/mbr/mbr.o \
 				managers/filesystem/ext2/ext2.o managers/filesystem/ext2/ext2_helpers.o \
 				managers/keyboard/keyboard.o	\
+				managers/mouse/mouse.o 	\
 				managers/phys_mem_manager/phys_mem_manager.o \
 				managers/threads/threads.o	\
 				managers/threads/semaphore.o \

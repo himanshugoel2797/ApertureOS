@@ -72,8 +72,10 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     ThreadMan_Setup();
     Timers_Setup();
 
+    PS2_Initialize();
     Keyboard_Setup();
     KeyboardProc_Initialize();
+    Mouse_Initialize();
     SyscallManager_Initialize();
     Interrupts_Unlock();
 

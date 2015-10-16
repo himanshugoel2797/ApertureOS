@@ -168,13 +168,9 @@ kbd_Initialize(void)
 
     key_flags = 0;
 
-    IOAPIC_MapIRQ(1, IRQ(1), APIC_GetID(), 0, 0, APIC_DELIVERY_MODE_FIXED);
+    //IOAPIC_MapIRQ(1, IRQ(1), APIC_GetID(), 0, 0, APIC_DELIVERY_MODE_FIXED);
     IOAPIC_SetEnableMode(IRQ(1), ENABLE);
     Interrupts_RegisterHandler(IRQ(1), 0, keyboard_intHandler);
-    PS2_Initialize();
-    PS2Keyboard_Initialize();
-    UID kbd_timer = Timers_CreateNew(FREQ(12000), TRUE, Keyboard_PushInput);
-    //Timers_StartTimer(kbd_timer);
 }
 
 static void

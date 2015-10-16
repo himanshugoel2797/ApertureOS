@@ -55,6 +55,16 @@ uint8_t PS2_Initialize()
     if(port1_test_result != 0 && port2_test_result != 0) return -1;
 
 
+    if(port1_test_result == 0)
+        {
+            PS2Keyboard_Initialize();
+        }
+
+    if(port2_test_result == 0)
+        {
+            PS2Mouse_Initialize();
+        }
+
     cfg = PS2_ReadConfig();
     if(port1_test_result == 0)
         {
@@ -72,16 +82,6 @@ uint8_t PS2_Initialize()
             WAIT_CMD_SENT;
         }
     PS2_WriteConfig(cfg);
-
-    if(port1_test_result == 0)
-        {
-            PS2Keyboard_Initialize();
-        }
-
-    if(port2_test_result == 0)
-        {
-            PS2Mouse_Initialize();
-        }
 
     return 0;
 }
