@@ -13,6 +13,26 @@ typedef struct
 uint32_t curIndex;
 SyscallEntry syscalls[MAX_SYSCALLS];
 
+void
+syscall_printf(void *args)
+{
+    generic_syscall_3 *a = (generic_syscall_3*)args;
+
+    char *l = a->arg1;
+
+    for(int i = 0; i < a->arg2; i++)
+    {
+        COM_WriteStr("%c", *l++);
+    }
+}
+
+void
+syscall_exit(void *args)
+{
+    ThreadMan_ExitThread(ThreadMan_GetCurThreadID());
+    asm volatile("sti\n\t" "int $48");
+}
+
 uint32_t
 SyscallManager_SyscallRaised(Registers *regs)
 {
@@ -27,8 +47,8 @@ SyscallManager_SyscallRaised(Registers *regs)
 
             //Make sure the proper number of arguments has been provided
             uint32_t size = ((generic_syscall*)regs->ecx)->size;
-            if((size == ((syscalls[regs->ebx].arg_count + 1) * sizeof(uint64_t) + sizeof(uint32_t))) | 
-               syscalls[regs->ebx].arg_count == VAR_SYSCALL_ARGS)
+            if((size == ((syscalls[regs->ebx].arg_count + 1) * sizeof(uint64_t) + sizeof(uint32_t))) |
+                    syscalls[regs->ebx].arg_count == VAR_SYSCALL_ARGS)
                 syscalls[regs->ebx].handler((void*)regs->ecx);
             else
                 return 0;   //Just return since we have no idea where the retval should be
@@ -54,7 +74,8 @@ SyscallManager_Initialize(void)
 
     //Register all syscalls
     SyscallManager_RegisterSyscall(GETDATA_SYSCALL_NUM, syscall_GetSysInfo, SYSCALL_GETSYSINFO_ARGC);
-
+    SyscallManager_RegisterSyscall(6, syscall_printf, 3);
+    SyscallManager_RegisterSyscall(10, syscall_exit, 1);
 }
 
 void

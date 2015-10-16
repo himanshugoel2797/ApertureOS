@@ -27,7 +27,7 @@ syscall_GetSysInfo(void *args)
                 case APEROS_DISPLAY_INFO:
                     RET_CHECK_PRIV_ADDR(syscall->arg2);
                     DisplayInfo *disp_info = (DisplayInfo*)syscall->arg2;
-                    
+
                     COM_WriteStr("DisplayInfo param: %d\r\n", disp_info->size);
                     if(disp_info->size > sizeof(DisplayInfo))return;
 

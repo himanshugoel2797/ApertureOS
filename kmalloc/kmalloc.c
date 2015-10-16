@@ -121,7 +121,7 @@ void *kmalloc(size_t size)
     //Allocate this block, mark this one as used, append a new block object at the end that contains the remaining free space
     uint32_t addr = GET_ADDR(a_info);
     size_t freeSize = a_info->size - size;
-    COM_WriteStr("Free Space Left: %x K\r\n", freeSize/ 1024);
+    COM_WriteStr("Addr: %x, Free Space Left: %x K\r\n", addr, freeSize/ 1024);
 
     //We need to allocate a new info block only if there is free space
     if(freeSize != 0)

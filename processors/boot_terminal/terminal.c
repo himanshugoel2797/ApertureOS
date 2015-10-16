@@ -26,7 +26,8 @@ Terminal_Start(void)
     term_buffer_pos = 0;
 
 
-    term_buffer = kmalloc(term_buf_len);
+    term_buffer = kmalloc(term_buf_len * 2);
+    COM_WriteStr("term_buffer: %x\r\n", term_buffer + term_buf_len);
     memset(term_buffer, 0, term_buf_len);
     com_redirect = TRUE;
 

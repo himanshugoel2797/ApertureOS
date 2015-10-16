@@ -170,7 +170,7 @@ _EXT2_Filesystem_SeekFile(FileDescriptor *desc,
     EXT2_FD *cur_fd = _EXT2_FindFDFromID(fd);
 
     if(cur_fd == NULL)return -1;
-            COM_WriteStr("SEEK\r\n");
+    COM_WriteStr("SEEK\r\n");
 
     switch(whence)
         {

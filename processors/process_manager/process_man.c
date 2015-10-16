@@ -60,7 +60,7 @@ ProcessManager_CreateProcess(const char *name,
     proc->path = kmalloc(strlen(path) + 1);
     strcpy(proc->path, path);
 
-    
+
     //Add to the process tree, all processes are under the kernel
     if(parent == NULL)parent = processes;
     proc->parent = parent;

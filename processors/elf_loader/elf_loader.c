@@ -26,7 +26,7 @@ Elf_Load(const char *path, ELF_FLAGS perms)
     uint8_t *elf_temp = kmalloc(file_size);
     Filesystem_ReadFile(fd, elf_temp, file_size);
 
-    
+
     //Parse the elf from here
     Elf32_Ehdr *hdr = (Elf32_Ehdr*)elf_temp;
     if(hdr->e_ident[EI_MAG0] != ELFMAG0)goto error;

@@ -3,6 +3,13 @@
 
 #include "types.h"
 
-uint8_t PS2Mouse_Initialize();
+uint8_t
+PS2Mouse_Initialize(void);
+
+bool
+PS2Mouse_IsFiveButton(void);
+
+bool
+PS2Mouse_HasScollWheel(void);
 
 #endif
