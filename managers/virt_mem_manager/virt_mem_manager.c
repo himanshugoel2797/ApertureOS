@@ -476,10 +476,22 @@ uint32_t virtMemMan_PageFaultHandler(Registers *regs)
 {
     uint32_t cr2 = 0;
     asm volatile("mov %%cr2, %%eax" : "=a"(cr2));
+
+    if( (regs->err_code & 5) == 4)
+        {
+            virtMemMan_Map( (cr2/4096) * 4096, 
+                           physMemMan_Alloc(), 
+                           KB(4), 
+                           MEM_TYPE_WB, 
+                           MEM_READ | MEM_WRITE, 
+                           MEM_USER);
+
+            return 0;
+        }
+
     COM_WriteStr("Page Fault! @ %x Details: ", cr2);
     graphics_Write("Page Fault! @ %x Details: ", 600, 0, cr2);
     graphics_Write("EIP: %x", 600, 20, regs->eip);
-    graphics_Write("EBP: %x", 600, 40, regs->ebp);
     graphics_SwapBuffer();
 
     if(regs->err_code & 1)
@@ -540,6 +552,7 @@ uint32_t virtMemMan_PageFaultHandler(Registers *regs)
     COM_WriteStr("USERESP: %x\t", regs->useresp);
     COM_WriteStr("EBP: %x\t", regs->ebp);
     while(1);
+    
     return 0;
 }
 

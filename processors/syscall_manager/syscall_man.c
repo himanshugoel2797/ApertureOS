@@ -20,10 +20,7 @@ syscall_printf(void *args)
 
     char *l = a->arg1;
 
-    for(int i = 0; i < a->arg2; i++)
-    {
-        COM_WriteStr("%c", *l++);
-    }
+    Terminal_Write(l, a->arg2);
 }
 
 void
@@ -68,7 +65,7 @@ void
 SyscallManager_Initialize(void)
 {
     memset(syscalls, 0, sizeof(SyscallEntry) * MAX_SYSCALLS);
-    IDT_SetEntry(0x80, (uint32_t)idt_handlers[0x80], 0x08, 0xEE);
+    IDT_SetEntry(0x80, (uint32_t)idt_handlers[0x80], 0x08, 0xEF);   //Don't automatically disable interrupts for user mode kernel calls
     Interrupts_RegisterHandler(0x80, 0, SyscallManager_SyscallRaised);
     curIndex = 0;
 
