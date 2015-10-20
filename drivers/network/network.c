@@ -5,12 +5,11 @@
 
 NI_DriverInterface ni_drivers[] =
 {
-    {RTL8139_Detect, RTL8139_Initialize, FALSE, FALSE},
-    {NULL, NULL, FALSE, FALSE}
+    {RTL8139_Detect, RTL8139_Initialize, FALSE, FALSE, 0},
+    {NULL, NULL, FALSE, FALSE, 0}
 };
 
-uint8_t *ni_transmitBuffer, *ni_recieveBuffer;
-uint32_t ni_transmitOff, ni_recieveOff, ni_presentDevices;
+uint32_t ni_presentDevices;
 
 void
 NI_Initialize(void)
@@ -19,14 +18,18 @@ NI_Initialize(void)
 
     for(int i = 0; i < pci_deviceCount; i++)
         {
+            if(pci_devices[i].classCode != 0x02)continue;
+
             int j = 0;
             while(ni_drivers[j].detect != NULL)
                 {
                     //Only detect the first instance of each card
-                    if(!ni_drivers[j].present && ni_drivers[j].detect)
+                    if(!ni_drivers[j].present && ni_drivers[j].detect(i))
                         {
                             ni_drivers[j].present = TRUE;
+                            ni_drivers[j].pci_index = i;
                             ni_presentDevices++;
+                            break;
                         }
                     j++;
                 }
@@ -47,5 +50,8 @@ NI_Start(void)
     while(ni_drivers[j].detect != NULL)
         {
             //We will want to prefer wifi devices over ethernet devices, however we want to switch to ethernet if it is plugged in, one way would be to have each device detect if a connection is available
+            if(ni_drivers[j].present)ni_drivers[j].init(ni_drivers[j].pci_index);
+
+            j++;
         }
 }

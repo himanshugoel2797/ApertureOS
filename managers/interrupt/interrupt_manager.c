@@ -4,18 +4,19 @@
 
 #include "utils/common.h"
 
-SystemData *int_sys = NULL;
-uint32_t interrupts_Initialize();
-void interrupts_callback(uint32_t res);
-uint8_t interrupts_messageHandler(Message *msg);
+static SystemData *int_sys = NULL;
+static uint32_t interrupts_Initialize(void);
+static void interrupts_callback(uint32_t res);
+static uint8_t interrupts_messageHandler(Message *msg);
 
-void interrupts_IDTHandler(Registers *Regs);
-void Interrupts_GPF_Handler(Registers *regs);
+static void interrupts_IDTHandler(Registers *Regs);
+static void Interrupts_GPF_Handler(Registers *regs);
 
-uint8_t using_apic = 0;
-InterruptHandler int_handlers[INTERRUPT_COUNT][INTERRUPT_HANDLER_SLOTS + 1];
-int i2 = 0;
-bool inInterruptHandler;
+static uint8_t using_apic = 0;
+static InterruptHandler int_handlers[INTERRUPT_COUNT][INTERRUPT_HANDLER_SLOTS + 1];
+static int i2 = 0;
+static bool inInterruptHandler;
+static InterruptHandler unhandled_int;
 
 void
 Interrupts_Setup(void)
@@ -43,6 +44,7 @@ Interrupts_Virtualize(void)
 uint32_t
 interrupts_Initialize(void)
 {
+    unhandled_int = NULL;
     inInterruptHandler = FALSE;
     int32_t pic_res = PIC_Initialize(); //Initialize the PIC
     int32_t apic_res = APIC_Initialize();  //Initialize the APIC
@@ -58,6 +60,7 @@ interrupts_Initialize(void)
             IDT_RegisterHandler((uint8_t)i, interrupts_IDTHandler);
         }
 
+    for(int i = 16;i < 24; i++)IOAPIC_SetEnableMode(IRQ(i), ENABLE);
 
     //Register custom handler for GPF
     IDT_RegisterHandler(13, Interrupts_GPF_Handler);
@@ -82,6 +85,8 @@ interrupts_IDTHandler(Registers *Regs)
 
     if(!handled)
         {
+            if(unhandled_int != NULL)unhandled_int(Regs);   //Call the unhandled interrupt handler
+
             graphics_Write("Int#%x", 0, 1000, Regs->int_no);
             graphics_Write("#%x", 0, 1020, i2++);
             graphics_SwapBuffer();
@@ -125,6 +130,12 @@ Interrupts_RegisterHandler(uint8_t intrpt,
                            InterruptHandler handler)
 {
     int_handlers[intrpt][slot] = handler;
+}
+
+void
+Interrupts_RaiseOnUnhandled(InterruptHandler handler)
+{
+    unhandled_int = handler;
 }
 
 uint8_t
@@ -190,7 +201,7 @@ Interrupts_Lock(void)
     curCallNum++;
 
     asm volatile ("pushf\n\tpop %%eax" : "=a" (flags));
-    if((flags & (1<<9)) == (1<<9))   //Check if interrupts are enabled
+    if((flags & (1<<9)) == (1<<9))   //Check if interrupts areimplement network stack enabled
         {
             callNumWhereIntsEnabled = curCallNum;
         }

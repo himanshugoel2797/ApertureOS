@@ -55,7 +55,7 @@ POST_INIT=processors/elf_loader/elf_loader.o \
 
 OUTDISK=sdb
 
-QEMU_OPTS=-enable-kvm -m 4096M -machine q35 -cpu host -d int,cpu_reset,guest_errors -drive id=disk,file=flash.img,if=none -device ahci,id=ahci -device ide-drive,drive=disk,bus=ahci.0 -netdev user,id=mynet0 -device rtl8139,netdev=mynet0 -device intel-hda -device hda-duplex
+QEMU_OPTS=-enable-kvm -m 4096M -machine q35 -cpu host -d int,cpu_reset,guest_errors -drive id=disk,file=flash.img,if=none -device ahci,id=ahci -device ide-drive,drive=disk,bus=ahci.0 -net nic,model=rtl8139, -net dump,file=dump.bin -net user -device intel-hda -device hda-duplex
 
 BOOT_FS=EXT2
 

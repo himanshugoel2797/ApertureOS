@@ -83,7 +83,7 @@ void
 pci_regMSIVector(uint32_t device_index,
                  uint8_t vector);
 
-void
+bool
 pci_enableMSI(uint32_t device_index);
 
 

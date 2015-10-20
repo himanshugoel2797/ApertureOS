@@ -16,6 +16,7 @@ typedef struct
 
     bool active;
     bool present;
+    int pci_index;
 } NI_DriverInterface;
 
 //* Request a pointer to the packet transmission ring buffer

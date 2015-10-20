@@ -160,7 +160,7 @@ pci_setCommand(uint32_t device_index,
         reg);
 }
 
-void
+bool
 pci_enableMSI(uint32_t device_index)
 {
     bool msi_64b_cap = FALSE;
@@ -192,13 +192,13 @@ pci_enableMSI(uint32_t device_index)
     while( (msi_ctrl_off_nx & 0xFF) != 0x05)
         {
             msi_ctrl_off = msi_ctrl_off_nx;
+            if(msi_ctrl_off == 0)return FALSE;
 
             msi_ctrl_off_nx = pci_readDWord(
                                   pci_devices[device_index].bus,
                                   pci_devices[device_index].device,
                                   pci_devices[device_index].function,
                                   msi_ctrl_off >> 8) & 0xFFFF;
-
         }
 
     msi_ctrl_off = msi_ctrl_off >> 8;
@@ -236,6 +236,8 @@ pci_enableMSI(uint32_t device_index)
         pci_devices[device_index].function,
         msi_ctrl_off + 4,
         reg);
+
+    return TRUE;
 }
 
 void

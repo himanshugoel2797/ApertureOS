@@ -68,6 +68,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
 
     //Attempt to initialize all PCI drivers here so they can mark their MMIO space as used
     AHCI_Initialize();
+    NI_Initialize();
 
     ThreadMan_Setup();
     Timers_Setup();
@@ -89,6 +90,8 @@ void kernel_main(int argc, char** isKernelMode)
     Socket_Initialize();
     ProcessManager_Initialize();
     Socket_Initialize();
+
+    NI_Start();
     Terminal_Start();
     while(1);
 }

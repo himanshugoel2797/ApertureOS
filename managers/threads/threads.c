@@ -5,16 +5,17 @@
 #include "utils/common.h"
 #include "gdt.h"
 
-SystemData *thread_sys = NULL;
-uint32_t threadMan_Initialize();
-uint8_t threadMan_messageHandler(Message *msg);
+static SystemData *thread_sys = NULL;
+static uint32_t threadMan_Initialize();
+static uint8_t threadMan_messageHandler(Message *msg);
 
-uint32_t lock_num = 0;
+static uint32_t lock_num = 0;
+static uint32_t thread_count, cur_threads; 
 bool thread_lock = FALSE;
 
-Thread *threads, *curThread, *lastThread;
+static Thread *threads, *curThread, *lastThread;
 
-void kernel_main(int, char**);
+static void kernel_main(int, char**);
 
 void
 ThreadMan_Setup(void)
