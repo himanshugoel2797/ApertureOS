@@ -96,4 +96,7 @@ virtMemMan_UnMapInst(VirtMemMan_Instance curInstance_virt,
                      void* v_address,
                      size_t size);
 
+void
+virtMemMan_PageFaultActionAlloc(bool enabled);
+
 #endif /* end of include guard: _VIRT_MEM_MAN_H_ */

@@ -23,7 +23,7 @@ typedef struct Thread
     UID uid;
     uint32_t flags;
     K_TLS k_tls;
-    char FPU_state[768]; //Allocate extra space for alignment
+    char *FPU_state; //Allocate extra space for alignment
 } __attribute__((packed)) Thread;
 
 typedef enum

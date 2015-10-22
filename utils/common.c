@@ -239,3 +239,13 @@ new_uid(void)
 {
     return (++uids_base & 0xFFFFFFFF);
 }
+
+
+uint32_t 
+rand(int seed)
+{
+  uint32_t a = 16807;
+  uint32_t m = 2147483647;
+  seed = (a * seed) % m;
+  return seed / m;
+}

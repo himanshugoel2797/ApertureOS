@@ -4,6 +4,11 @@ PLATFORM=~/opt/cross/bin/i686
 INCLUDES=-I. -Idrivers -Imanagers -Iprocessors -Ikmalloc
 DEFINES=-DLOG_SYSCALL
 
+CHAIN_ALLOCATOR=kmalloc/kmalloc.o
+BLOCK_ALLOCATOR=kmalloc/block_alloc.o
+
+ALLOCATOR=$(BLOCK_ALLOCATOR)
+
 PRE_FPU_BOOT=crt0.o gdt.o idt.o cpuid.o \
 				boot.o \
 				drivers/serial/COM.o	\
@@ -42,7 +47,7 @@ SOURCES=graphics/graphics.o	\
 				drivers/ata_pio/ata_pio.o \
 				drivers/network/network.o \
 				drivers/network/rtl8139/rtl8139.o \
-				kmalloc/kmalloc.o \
+				$(ALLOCATOR) \
 
 POST_INIT=processors/elf_loader/elf_loader.o \
 		  processors/umalloc/umalloc.o \

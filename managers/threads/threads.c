@@ -198,6 +198,7 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
     curThreadInfo->uid = new_uid();
     curThreadInfo->flags = flags;
     curThreadInfo->status = 0;
+    curThreadInfo->FPU_state = kmalloc(768);
 
     //Setup the paging structures for the thread
     curThreadInfo->cr3 = virtMemMan_CreateInstance();

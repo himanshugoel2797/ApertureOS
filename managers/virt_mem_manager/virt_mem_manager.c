@@ -5,22 +5,31 @@
 #include "utils/common.h"
 #include "utils/native.h"
 
-SystemData *vmem_sys = NULL;
-uint32_t virtMemMan_Initialize();
-void virtMemMan_callback(uint32_t res);
-uint8_t virtMemMan_messageHandler(Message *msg);
+static bool pageFaultMalloc;
 
-VirtMemMan_Instance curInstance_virt;
+static SystemData *vmem_sys = NULL;
+
+static uint32_t 
+virtMemMan_Initialize(void);
+
+static void 
+virtMemMan_callback(uint32_t res);
+
+static uint8_t 
+virtMemMan_messageHandler(Message *msg);
+
+static VirtMemMan_Instance curInstance_virt;
 
 //Identity mapped storage for page directories
-uint8_t page_dir_storage[PAGE_DIR_STORAGE_POOL_SIZE] __attribute__((aligned(KB(4))));
+static uint8_t page_dir_storage[PAGE_DIR_STORAGE_POOL_SIZE] __attribute__((aligned(KB(4))));
 
 //Identity mapped storage for unique pdpt entries
-uint64_t pdpt_storage[PDPT_STORAGE_SIZE_U64] __attribute__((aligned(0x20)));
+static uint64_t pdpt_storage[PDPT_STORAGE_SIZE_U64] __attribute__((aligned(0x20)));
 
-PD_Entry_PSE *kernel_main_entry;
+static PD_Entry_PSE *kernel_main_entry;
 
-void virtMemMan_Setup()
+void 
+virtMemMan_Setup(void)
 {
     vmem_sys = SysMan_RegisterSystem();
     strcpy(vmem_sys->sys_name, "virtMemoryMan");
@@ -32,7 +41,8 @@ void virtMemMan_Setup()
     SysMan_StartSystem(vmem_sys->sys_id);
 }
 
-uint32_t virtMemMan_Initialize()
+static uint32_t 
+virtMemMan_Initialize(void)
 {
     //Update the PAT so that PAT4 is WC type allowing us to use the 4 types for pages
     uint64_t pat = 0;
@@ -71,17 +81,20 @@ uint32_t virtMemMan_Initialize()
     return 0;
 }
 
-void virtMemMan_callback(uint32_t res)
+static void 
+virtMemMan_callback(uint32_t res)
 {
 
 }
 
-uint8_t virtMemMan_messageHandler(Message *msg)
+static uint8_t 
+virtMemMan_messageHandler(Message *msg)
 {
-
+    return 0;
 }
 
-VirtMemMan_Instance virtMemMan_SetCurrent(VirtMemMan_Instance instance)
+VirtMemMan_Instance 
+virtMemMan_SetCurrent(VirtMemMan_Instance instance)
 {
     VirtMemMan_Instance prev = curInstance_virt;
     curInstance_virt = instance;
@@ -89,12 +102,15 @@ VirtMemMan_Instance virtMemMan_SetCurrent(VirtMemMan_Instance instance)
     return prev;
 }
 
-VirtMemMan_Instance virtMemMan_GetCurrent()
+VirtMemMan_Instance 
+virtMemMan_GetCurrent(void)
 {
     return curInstance_virt;
 }
 
-VirtMemMan_Instance virtMemMan_CreateInstance()
+
+VirtMemMan_Instance 
+virtMemMan_CreateInstance(void)
 {
     //Identity map up to 0x40000000 assuming virtual memory is enabled
     VirtMemMan_Instance instance = virtMemMan_GetFreePDPTEntry();
@@ -426,7 +442,8 @@ virtMemMan_GetPhysAddressInst(VirtMemMan_Instance curInstance_virt,
         }
 }
 
-uint64_t* virtMemMan_GetFreePDPTEntry()
+static uint64_t* 
+virtMemMan_GetFreePDPTEntry(void)
 {
     for(uint32_t i = 0; i < PDPT_STORAGE_SIZE_U64; i += 4)
         {
@@ -435,7 +452,8 @@ uint64_t* virtMemMan_GetFreePDPTEntry()
     return -1;
 }
 
-PD_Entry_PSE* virtMemMan_GetFreePageDirEntry()
+static PD_Entry_PSE* 
+virtMemMan_GetFreePageDirEntry(void)
 {
     for(uint32_t i = 0; i < PAGE_DIR_STORAGE_POOL_SIZE; i+=KB(4))
         {
@@ -445,7 +463,8 @@ PD_Entry_PSE* virtMemMan_GetFreePageDirEntry()
 }
 
 
-void virtMemMan_FreeInstance(VirtMemMan_Instance inst)
+void 
+virtMemMan_FreeInstance(VirtMemMan_Instance inst)
 {
     //Make sure this isn't current
     if(inst != curInstance_virt)
@@ -472,12 +491,20 @@ void virtMemMan_FreeInstance(VirtMemMan_Instance inst)
         }
 }
 
-uint32_t virtMemMan_PageFaultHandler(Registers *regs)
+void
+virtMemMan_PageFaultActionAlloc(bool enabled)
+{
+    pageFaultMalloc = enabled;
+}
+
+static uint32_t 
+virtMemMan_PageFaultHandler(Registers *regs)
 {
     uint32_t cr2 = 0;
     asm volatile("mov %%cr2, %%eax" : "=a"(cr2));
 
-    if( (regs->err_code & 5) == 4)
+    COM_WriteStr("Page Fault! @ %x \r\n", cr2);
+    if( (regs->err_code & 5) == 4 | pageFaultMalloc)
         {
             virtMemMan_Map( (cr2/4096) * 4096, 
                            physMemMan_Alloc(), 
@@ -489,11 +516,11 @@ uint32_t virtMemMan_PageFaultHandler(Registers *regs)
             return 0;
         }
 
-    COM_WriteStr("Page Fault! @ %x Details: ", cr2);
     graphics_Write("Page Fault! @ %x Details: ", 600, 0, cr2);
     graphics_Write("EIP: %x", 600, 20, regs->eip);
     graphics_SwapBuffer();
 
+    COM_WriteStr("Details: ");
     if(regs->err_code & 1)
         {
             COM_WriteStr("Protection Violation");
@@ -558,7 +585,8 @@ uint32_t virtMemMan_PageFaultHandler(Registers *regs)
 
 
 uint64_t
-virtMemMan_GetPhysAddress(void *virt_addr, bool *large_page)
+virtMemMan_GetPhysAddress(void *virt_addr, 
+                          bool *large_page)
 {
     return virtMemMan_GetPhysAddressInst(curInstance_virt, virt_addr, large_page);
 }

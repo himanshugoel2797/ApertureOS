@@ -201,7 +201,7 @@ Interrupts_Lock(void)
     curCallNum++;
 
     asm volatile ("pushf\n\tpop %%eax" : "=a" (flags));
-    if((flags & (1<<9)) == (1<<9))   //Check if interrupts areimplement network stack enabled
+    if((flags & (1<<9)) == (1<<9))   //Check if interrupts are enabled
         {
             callNumWhereIntsEnabled = curCallNum;
         }
