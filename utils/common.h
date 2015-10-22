@@ -80,7 +80,7 @@ set_bit_cnt(uint32_t bit_array);
 UID
 new_uid(void);
 
-uint32_t 
+uint32_t
 rand(int seed);
 
 #endif /* end of include guard: _UTILS_COMMON_H_ */

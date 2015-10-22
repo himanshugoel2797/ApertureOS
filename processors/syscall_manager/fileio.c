@@ -7,7 +7,7 @@ syscall_open(void *args)
     generic_syscall_2 *syscall = (generic_syscall_2*)args;
     syscall->retval = -1;
 
-    syscall->retval = Filesystem_OpenFile(syscall->arg0, 0, 0) + 3;
+    syscall->retval = (Filesystem_OpenFile(syscall->arg0, 0, 0) + 3);
     return;
 }
 
@@ -16,17 +16,31 @@ syscall_write(void *args)
 {
     generic_syscall_3 *a = (generic_syscall_3*)args;
 
-    if(a->arg0 == 0 || a->arg0 == 1 || a->arg0 == 2)
-    {
-    	char *l = a->arg1;
-    	Terminal_Write(l, a->arg2);
-	}
-	return;
+    if(a->arg0 == 1 || a->arg0 == 2)
+        {
+            char *l = a->arg1;
+            Terminal_Write(l, a->arg2);
+        }
+    return;
+}
+
+void
+syscall_read(void *args)
+{
+    generic_syscall_3 *a = (generic_syscall_3*)args;
+
+    a->retval = 0;
+
+    if(a->arg0 != 0)
+        {
+            a->retval = Filesystem_ReadFile(a->arg0 - 3, a->arg1, a->arg2);
+        }
+    return;
 }
 
 void
 syscall_close(void *args)
 {
-	generic_syscall *syscall = (generic_syscall*)args;
-	if(syscall->arg0 >= 3)Filesystem_CloseFile(syscall->arg0 - 3);
+    generic_syscall *syscall = (generic_syscall*)args;
+    if(syscall->arg0 >= 3)Filesystem_CloseFile(syscall->arg0 - 3);
 }

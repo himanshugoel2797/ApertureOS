@@ -66,6 +66,7 @@ SyscallManager_Initialize(void)
     SyscallManager_RegisterSyscall(4, syscall_open, SYSCALL_OPEN_ARGC);
     SyscallManager_RegisterSyscall(5, syscall_close, SYSCALL_CLOSE_ARGC);
     SyscallManager_RegisterSyscall(6, syscall_write, SYSCALL_WRITE_ARGC);
+    SyscallManager_RegisterSyscall(8, syscall_read, SYSCALL_READ_ARGC);
     SyscallManager_RegisterSyscall(10, syscall_exit, 1);
 }
 
@@ -93,5 +94,7 @@ SyscallManager_RegisterAppendSyscall(SyscallHandler handler,
     syscalls[curIndex].handler = handler;
     syscalls[curIndex].arg_count = argc;
     curIndex++;
+
+    return 0;
 }
 

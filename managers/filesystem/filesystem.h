@@ -48,6 +48,11 @@ uint64_t Filesystem_SeekFile(UID fd, uint64_t offset, int whence);
 uint8_t Filesystem_DeleteFile(const char *file);
 uint8_t Filesystem_RenameFile(const char *orig_name, const char *new_name);
 
+uint64_t
+Filesystem_ReadFile(UID id,
+                    uint8_t *buffer,
+                    size_t size);
+
 UID Filesystem_OpenDir(const char *filename);
 uint8_t Filesystem_ReadDir(UID dd, Filesystem_DirEntry *dir);
 uint8_t Filesystem_CloseDir(UID fd);

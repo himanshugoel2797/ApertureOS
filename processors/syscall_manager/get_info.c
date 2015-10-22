@@ -23,12 +23,12 @@ syscall_GetSysInfo(void *args)
                     syscall->retval = 1;
                     break;
                 case APEROS_PROC_DATA_ARGV:
-                    {
-                        uint8_t* argv = (uint8_t*)0x40004000;
-                        strcpy(argv, "test2");
-                        syscall->retval = 0x40004000;   //The argv data is always placed right after the stack
-                    }
-                    break;
+                {
+                    uint8_t* argv = (uint8_t*)0x40004000;
+                    strcpy(argv, "test2");
+                    syscall->retval = 0x40004000;   //The argv data is always placed right after the stack
+                }
+                break;
                 }
             break;
         case APEROS_ENV_DATA:
@@ -42,9 +42,15 @@ syscall_GetSysInfo(void *args)
                     if(disp_info->size > sizeof(DisplayInfo))return;
 
                     memcpy(disp_info, graphics_GetDisplayInfoPtr(), disp_info->size);
+                    if( (ProcessManager_GetCurProcessInfo()->flags & 1) == 0)
+                        {
+
+                            disp_info->framebuffer_addr = NULL;
+                            disp_info->backbuffer_addr = NULL;
+                        }
                     syscall->retval = 0;
                     break;
-                    case APEROS_ENV_VAR:
+                case APEROS_ENV_VAR:
                     syscall->retval = NULL;
                     break;
                 }

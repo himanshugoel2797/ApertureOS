@@ -83,6 +83,8 @@ uint32_t pmem_Initialize()
             mmap = (multiboot_memory_map_t *)((unsigned int)mmap + mmap->size + sizeof(unsigned int));
         }
 
+        physMemMan_MarkUsed(0, MB(1));
+
     return 0;
 }
 

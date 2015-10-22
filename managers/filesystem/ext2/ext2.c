@@ -4,6 +4,7 @@
 #include "kmalloc.h"
 
 EXT2_FD *fd, *last_fd;
+static uint16_t f_base = 0;
 
 
 EXT2_FD*
@@ -51,7 +52,7 @@ _EXT2_Initialize(FileDescriptor *desc)
     if (data->major_version)
         strcpy(data->vol_name, s_blk->ext.vol_name);
     else
-        sprintf(data->vol_name, "EXT2_%d", new_uid());
+        sprintf(data->vol_name, "EXT2_%d%d", new_uid());
 
     i1_cache = kmalloc(data->block_size);
     i2_1_cache = kmalloc(data->block_size);
@@ -67,7 +68,7 @@ _EXT2_Initialize(FileDescriptor *desc)
 
     fd->inode = 2;
     fd->is_directory = TRUE;
-    fd->id = (uint16_t)new_uid();
+    fd->id = (uint16_t)f_base++;
     fd->prev = NULL;
 
     return 0;
@@ -81,7 +82,7 @@ _EXT2_Filesystem_OpenFile(FileDescriptor *desc,
                           int perms)
 {
     EXT2_FD* fd_n = kmalloc(sizeof(EXT2_FD));
-    fd_n->id = (uint16_t)new_uid();
+    fd_n->id = (uint16_t)f_base++;
     fd_n->is_directory = TRUE;
     fd_n->inode = 0;
     fd_n->next = NULL;
@@ -109,7 +110,7 @@ _EXT2_Filesystem_OpenFile(FileDescriptor *desc,
 }
 
 
-uint8_t
+uint64_t
 _EXT2_Filesystem_ReadFile(FileDescriptor *desc,
                           UID id,
                           uint8_t *buffer,
@@ -129,6 +130,7 @@ _EXT2_Filesystem_ReadFile(FileDescriptor *desc,
     uint32_t block_index = cur_fd->extra_info / data->block_size;
     uint32_t block_offset = cur_fd->extra_info % data->block_size;
 
+    size_t orig_size = size;
 
     if(cur_fd->extra_info + size > cur_fd->more_extra_info)
         size = cur_fd->more_extra_info - cur_fd->extra_info;
@@ -154,8 +156,7 @@ _EXT2_Filesystem_ReadFile(FileDescriptor *desc,
             cur_fd->extra_info += read_size;
             block_index++;
         }
-
-    return 0;
+    return orig_size - size;
 }
 
 uint64_t
@@ -268,7 +269,7 @@ _EXT2_Filesystem_OpenDir(FileDescriptor *desc,
                          const char *filename)
 {
     EXT2_FD* fd_n = kmalloc(sizeof(EXT2_FD));
-    fd_n->id = (uint16_t)new_uid();
+    fd_n->id = (uint16_t)f_base++;
     fd_n->is_directory = FALSE;
     fd_n->inode = 0;
     fd_n->next = NULL;

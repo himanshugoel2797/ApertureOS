@@ -84,7 +84,6 @@ AHCI_Initialize(void)
     uint32_t drives_found = FALSE;
     for (uint32_t i = 0; i < port_count; i++)
         {
-            graphics_Write("trying %d", 0, 200, i);
             if (((hba_mem->pi >> i) & 1) == 1 &&
                     AHCI_CheckDeviceType(&hba_mem->ports[i]) == AHCI_DEV_SATA)
                 {

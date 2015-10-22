@@ -47,10 +47,10 @@ LPC_Initialize(void)
     outl(acpi_base_address + 0x6B, 0x80);
 
     for(int i = 16; i < 24; i++)
-    {
-        IOAPIC_MapIRQ(i, IRQ(i), APIC_GetID(), 0, 0, 0);
-        IOAPIC_SetEnableMode(IRQ(i), ENABLE);
-    }
+        {
+            IOAPIC_MapIRQ(i, IRQ(i), APIC_GetID(), 0, 0, 0);
+            IOAPIC_SetEnableMode(IRQ(i), ENABLE);
+        }
 
     return 1;
 }

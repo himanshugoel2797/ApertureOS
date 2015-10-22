@@ -241,11 +241,11 @@ new_uid(void)
 }
 
 
-uint32_t 
+uint32_t
 rand(int seed)
 {
-  uint32_t a = 16807;
-  uint32_t m = 2147483647;
-  seed = (a * seed) % m;
-  return seed / m;
+    uint32_t a = 16807;
+    uint32_t m = 2147483647;
+    seed = (a * seed) % m;
+    return seed / m;
 }

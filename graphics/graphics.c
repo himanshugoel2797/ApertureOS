@@ -50,6 +50,7 @@ graphics_Initialize(void)
                                  MEM_WRITE,
                                  MEM_KERNEL);
 
+    COM_WriteStr("Graphics Pointer: %x\r\n", frameBufferB);
     frameBufferA = vPointer;
 
     backBuffer = (uint32_t *)frameBufferB;
@@ -178,9 +179,9 @@ graphics_WriteStr(const char *str,
 
                             curBufVal = backBuffer[(yOff + (8 - b) + (a * pitch))];
 
-                            backBuffer[(yOff + (8 - b) + (a * pitch))] = 
+                            backBuffer[(yOff + (8 - b) + (a * pitch))] =
                                 (((letters[str[i] - 32][13 - (a - xOff)] >> b) & 1)) *
-                                (0xDDDDDDDD - curBufVal);
+                                (0xDDDDDDDD);
 
                             // if(backBuffer[ (yOff+ (8-b) + (a * pitch)) ] == 0)backBuffer =
                             // curBufVal;
@@ -294,23 +295,24 @@ graphics_DrawBuffer(void* buffer,
 
     while (y0 < h)
         {
-            //offset[0] = src[2];
-            //offset[1] = src[1];
-            //offset[2] = src[0];
-            //offset[3] = src[3];
+            offset[0] = src[2];
+            offset[1] = src[1];
+            offset[2] = src[0];
+            offset[3] = src[3];
 
-            asm volatile ("movaps (%%ebx), %%xmm0\n\t"
-                          "movaps %%xmm0, (%%eax)" :: "a" (offset), "b" (src));
+            //asm volatile ("movaps (%%ebx), %%xmm0\n\t"
+            //                      "shufps $0xE4, %%xmm0,  %%xmm0\n\t"
+            //              "movaps %%xmm0, (%%eax)" :: "a" (offset), "b" (src));
 
 
             //Mark the relevant blocks as dirty
-            int dirty_block_x = x+x0/block_index_div;
-            int dirty_block_y = y+y0/block_index_div;
+            int dirty_block_x = (x+x0)/block_index_div;
+            int dirty_block_y = (y+y0)/block_index_div;
             dirty_table[dirty_block_x][dirty_block_y] = TRUE;
 
-            offset+=4 * 4;
-            x0+=4;
-            src+=4 * 4;
+            offset+=1 * 4;
+            x0+=1;
+            src+=1 * 4;
             if(x0 >= w)
                 {
                     x0 = 0;

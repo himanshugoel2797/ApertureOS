@@ -40,7 +40,7 @@ NI_Start(void);
 
 
 void
-NI_NotifyPacketRecieved(void *packet, 
+NI_NotifyPacketRecieved(void *packet,
                         uint16_t len);
 
 #endif

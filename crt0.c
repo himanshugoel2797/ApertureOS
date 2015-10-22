@@ -63,8 +63,8 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     virtMemMan_Setup();
 
     Interrupts_Virtualize();
-    graphics_Initialize();
     kmalloc_init();
+    graphics_Initialize();
 
     //Attempt to initialize all PCI drivers here so they can mark their MMIO space as used
     AHCI_Initialize();
@@ -79,8 +79,8 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     Mouse_Initialize();
     SyscallManager_Initialize();
     Interrupts_Unlock();
-
     while(1);
+
 }
 
 //extern "C" /* Use C linkage for kernel_main. */

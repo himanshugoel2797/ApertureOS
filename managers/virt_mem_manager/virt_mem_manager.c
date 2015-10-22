@@ -9,13 +9,13 @@ static bool pageFaultMalloc;
 
 static SystemData *vmem_sys = NULL;
 
-static uint32_t 
+static uint32_t
 virtMemMan_Initialize(void);
 
-static void 
+static void
 virtMemMan_callback(uint32_t res);
 
-static uint8_t 
+static uint8_t
 virtMemMan_messageHandler(Message *msg);
 
 static VirtMemMan_Instance curInstance_virt;
@@ -28,7 +28,7 @@ static uint64_t pdpt_storage[PDPT_STORAGE_SIZE_U64] __attribute__((aligned(0x20)
 
 static PD_Entry_PSE *kernel_main_entry;
 
-void 
+void
 virtMemMan_Setup(void)
 {
     vmem_sys = SysMan_RegisterSystem();
@@ -41,7 +41,7 @@ virtMemMan_Setup(void)
     SysMan_StartSystem(vmem_sys->sys_id);
 }
 
-static uint32_t 
+static uint32_t
 virtMemMan_Initialize(void)
 {
     //Update the PAT so that PAT4 is WC type allowing us to use the 4 types for pages
@@ -61,7 +61,7 @@ virtMemMan_Initialize(void)
     curInstance_virt = virtMemMan_CreateInstance();
 
     //Allocate the VM86 virtual memory space skipping the first page for now
-    //virtMemMan_Map(KB(4), 0x0, MB(1), MEM_TYPE_WB, MEM_READ | MEM_WRITE | MEM_EXEC, MEM_KERNEL);
+    //virtMemMan_Map(0, 0x0, MB(1), MEM_TYPE_WB, MEM_READ | MEM_WRITE | MEM_EXEC, MEM_KERNEL);
 
     //TODO we might want to make this more secure by parsing info from hte elf table and making sections NX appropriately
     virtMemMan_Map(LOAD_ADDRESS, LOAD_ADDRESS, &_region_kernel_end_ - LOAD_ADDRESS, MEM_TYPE_WB, MEM_WRITE | MEM_READ | MEM_EXEC, MEM_KERNEL);
@@ -81,19 +81,19 @@ virtMemMan_Initialize(void)
     return 0;
 }
 
-static void 
+static void
 virtMemMan_callback(uint32_t res)
 {
 
 }
 
-static uint8_t 
+static uint8_t
 virtMemMan_messageHandler(Message *msg)
 {
     return 0;
 }
 
-VirtMemMan_Instance 
+VirtMemMan_Instance
 virtMemMan_SetCurrent(VirtMemMan_Instance instance)
 {
     VirtMemMan_Instance prev = curInstance_virt;
@@ -102,14 +102,14 @@ virtMemMan_SetCurrent(VirtMemMan_Instance instance)
     return prev;
 }
 
-VirtMemMan_Instance 
+VirtMemMan_Instance
 virtMemMan_GetCurrent(void)
 {
     return curInstance_virt;
 }
 
 
-VirtMemMan_Instance 
+VirtMemMan_Instance
 virtMemMan_CreateInstance(void)
 {
     //Identity map up to 0x40000000 assuming virtual memory is enabled
@@ -442,7 +442,7 @@ virtMemMan_GetPhysAddressInst(VirtMemMan_Instance curInstance_virt,
         }
 }
 
-static uint64_t* 
+static uint64_t*
 virtMemMan_GetFreePDPTEntry(void)
 {
     for(uint32_t i = 0; i < PDPT_STORAGE_SIZE_U64; i += 4)
@@ -452,7 +452,7 @@ virtMemMan_GetFreePDPTEntry(void)
     return -1;
 }
 
-static PD_Entry_PSE* 
+static PD_Entry_PSE*
 virtMemMan_GetFreePageDirEntry(void)
 {
     for(uint32_t i = 0; i < PAGE_DIR_STORAGE_POOL_SIZE; i+=KB(4))
@@ -463,7 +463,7 @@ virtMemMan_GetFreePageDirEntry(void)
 }
 
 
-void 
+void
 virtMemMan_FreeInstance(VirtMemMan_Instance inst)
 {
     //Make sure this isn't current
@@ -497,24 +497,24 @@ virtMemMan_PageFaultActionAlloc(bool enabled)
     pageFaultMalloc = enabled;
 }
 
-static uint32_t 
+static uint32_t
 virtMemMan_PageFaultHandler(Registers *regs)
 {
     uint32_t cr2 = 0;
     asm volatile("mov %%cr2, %%eax" : "=a"(cr2));
 
-    COM_WriteStr("Page Fault! @ %x \r\n", cr2);
     if( (regs->err_code & 5) == 4 | pageFaultMalloc)
         {
-            virtMemMan_Map( (cr2/4096) * 4096, 
-                           physMemMan_Alloc(), 
-                           KB(4), 
-                           MEM_TYPE_WB, 
-                           MEM_READ | MEM_WRITE, 
-                           MEM_USER);
+            virtMemMan_Map( (cr2/4096) * 4096,
+                            physMemMan_Alloc(),
+                            KB(4),
+                            MEM_TYPE_WB,
+                            MEM_READ | MEM_WRITE,
+                            MEM_USER);
 
             return 0;
         }
+    COM_WriteStr("Page Fault! @ %x \r\n", cr2);
 
     graphics_Write("Page Fault! @ %x Details: ", 600, 0, cr2);
     graphics_Write("EIP: %x", 600, 20, regs->eip);
@@ -579,13 +579,13 @@ virtMemMan_PageFaultHandler(Registers *regs)
     COM_WriteStr("USERESP: %x\t", regs->useresp);
     COM_WriteStr("EBP: %x\t", regs->ebp);
     while(1);
-    
+
     return 0;
 }
 
 
 uint64_t
-virtMemMan_GetPhysAddress(void *virt_addr, 
+virtMemMan_GetPhysAddress(void *virt_addr,
                           bool *large_page)
 {
     return virtMemMan_GetPhysAddressInst(curInstance_virt, virt_addr, large_page);

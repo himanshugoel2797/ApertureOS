@@ -60,7 +60,7 @@ interrupts_Initialize(void)
             IDT_RegisterHandler((uint8_t)i, interrupts_IDTHandler);
         }
 
-    for(int i = 16;i < 24; i++)IOAPIC_SetEnableMode(IRQ(i), ENABLE);
+    for(int i = 16; i < 24; i++)IOAPIC_SetEnableMode(IRQ(i), ENABLE);
 
     //Register custom handler for GPF
     IDT_RegisterHandler(13, Interrupts_GPF_Handler);

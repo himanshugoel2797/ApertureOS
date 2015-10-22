@@ -10,7 +10,7 @@ static uint32_t threadMan_Initialize();
 static uint8_t threadMan_messageHandler(Message *msg);
 
 static uint32_t lock_num = 0;
-static uint32_t thread_count, cur_threads; 
+static uint32_t thread_count, cur_threads;
 bool thread_lock = FALSE;
 
 static Thread *threads, *curThread, *lastThread;
@@ -77,7 +77,6 @@ threadMan_InterruptHandler(Registers *regs)
 
     Thread *nxThread = curThread->next;
 
-    COM_WriteStr("Thread ID: %d, Status: %x\r\n", (uint32_t)nxThread->uid, nxThread->status);
     int counter = 1;
     while( (nxThread->status & 1) == 0)
         {
@@ -198,8 +197,6 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
     curThreadInfo->flags = flags;
     curThreadInfo->status = 0;
     curThreadInfo->FPU_state = kmalloc(768);
-
-    COM_WriteStr("Thread: UID: %x%x\r\n", (uint32_t)(curThreadInfo->uid >> 32), (uint32_t)curThreadInfo->uid);
 
     //Setup the paging structures for the thread
     curThreadInfo->cr3 = virtMemMan_CreateInstance();

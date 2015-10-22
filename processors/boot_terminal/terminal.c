@@ -15,6 +15,8 @@ static uint32_t term_draw_count = 0;
 static uint32_t line_count = 0;
 static uint32_t cur_pos_x = 0, cur_pos_y = 0;
 
+static uint32_t buffer;
+
 extern bool com_redirect;
 
 uint32_t
@@ -25,19 +27,38 @@ Terminal_Start(void)
     term_buf_len = term_char_rows * term_char_pitch;
     term_buffer_pos = 0;
 
+    buffer = kmalloc(1920 * 1080 * 4);
+    for(int i = 0; i < (1920 * 1080 * 4)/KB(4); i++)
+    {
+        //memset(buffer + i * KB(4), i, KB(4));
+    }
+    UID id = Filesystem_OpenFile("/inori.data", 0, 0);
+    Filesystem_ReadFile(id, buffer, 1920 * 1080 * 4);
 
-    term_buffer = kmalloc(term_buf_len * 2);
+
+    Interrupts_Lock();
+    graphics_Clear();
+    while(1)
+        {
+            graphics_DrawBuffer(buffer, 0, 0, 1920, 1080);
+            //  Interrupts_Lock();
+            graphics_SwapBuffer();
+            //Interrupts_Unlock();
+        }
+    Interrupts_Unlock();
+
+    term_buffer = kmalloc(term_buf_len);
     COM_WriteStr("term_buffer: %x\r\n", term_buffer + term_buf_len);
     memset(term_buffer, 0, term_buf_len);
     //com_redirect = TRUE;
 
-    UID kbd_thread = Timers_CreateNew(FREQ(200), TRUE, Terminal_KeyboardThread);
-    UID render_thread = Timers_CreateNew(FREQ(60), TRUE, Terminal_DisplayThread);
+    //UID kbd_thread = Timers_CreateNew(FREQ(200), TRUE, Terminal_KeyboardThread);
+    //UID render_thread = Timers_CreateNew(FREQ(60), TRUE, Terminal_DisplayThread);
 
     Terminal_Write("[user@localhost /]#", 19);
 
-    Timers_StartTimer(kbd_thread);
-    Timers_StartTimer(render_thread);
+    //Timers_StartTimer(kbd_thread);
+    //Timers_StartTimer(render_thread);
 
     ThreadMan_SuspendThread(ThreadMan_GetCurThreadID());
 }
@@ -143,7 +164,7 @@ Terminal_ExecuteCmd(const char *cmd)
             memset(cmd_buf, 0, 1024);
             memcpy(cmd_buf, cmd, endPos - cmd);
 
-            UID id = ProcessManager_CreateProcess(cmd_buf + 5, cmd_buf + 5, 0, NULL, NULL, 0);
+            UID id = ProcessManager_CreateProcess(cmd_buf + 5, cmd_buf + 5, 0, NULL, NULL, 1);
         }
     else
         Terminal_Write("\r\nUnknown Command", 17);
@@ -224,10 +245,11 @@ Terminal_KeyboardThread(void)
 void
 Terminal_DisplayThread(void)
 {
-    COM_WriteStr("TEST!!");
     //Update the display based on the buffer
     graphics_Clear();
-
+    graphics_DrawBuffer(buffer, 0, 0, 1920, 1080);
+    //graphics_SwapBuffer();
+    //return;
     //if(term_buf_locked_id != ThreadMan_GetCurThreadID() && term_buf_locked_id != 0)
     //    {
     //        while(term_buf_locked_id != 0);

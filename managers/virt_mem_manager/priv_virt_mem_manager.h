@@ -80,13 +80,13 @@ typedef struct
 
 #define PDPT_STORAGE_SIZE_U64  ((PAGE_DIR_STORAGE_POOL_SIZE/KB(12)) * 4)
 
-static uint64_t* 
+static uint64_t*
 virtMemMan_GetFreePDPTEntry(void);
 
-static PD_Entry_PSE* 
+static PD_Entry_PSE*
 virtMemMan_GetFreePageDirEntry(void);
 
-static uint32_t 
+static uint32_t
 virtMemMan_PageFaultHandler(Registers *regs);
 
 #endif /* end of include guard: _PRIV_VIRT_MEM_MANAGER_H_ */

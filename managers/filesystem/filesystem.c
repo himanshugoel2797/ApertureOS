@@ -14,6 +14,7 @@ FileDescriptor *descriptors = NULL, *lastDescriptor = NULL;
 Filesystem_Driver *fs_drivers = NULL, *lastDriver = NULL;
 
 bool initialized = FALSE;
+static uint16_t fs_id_base = 0;
 
 int retVal = 0;
 int GetRetval()
@@ -109,11 +110,11 @@ Filesystem_OpenFile(const char *filename,
 
     uint32_t result = desc->driver->_H_Filesystem_OpenFile(desc, filename, flags, perms);
 
-    COM_WriteStr("FD: %x\r\n", result);
+    COM_WriteStr("FD: %x\r\n", (uint32_t)(result | (desc->id << 16)));
     return (uint32_t)(result | (desc->id << 16));
 }
 
-uint8_t
+uint64_t
 Filesystem_ReadFile(UID id,
                     uint8_t *buffer,
                     size_t size)
@@ -254,9 +255,6 @@ UID Filesystem_RegisterDescriptor(
     lastDescriptor = desc;
     if(descriptors == NULL)descriptors = lastDescriptor;
 
-    graphics_Write("lolo!!!!", 700,700);
-    graphics_SwapBuffer();
-
     desc->path = kmalloc(strlen(target) + 1);
     memset(desc->path, 0, strlen(target) + 1);
     strcpy(desc->path, target);
@@ -267,15 +265,13 @@ UID Filesystem_RegisterDescriptor(
     desc->driver = driver;
     desc->next = NULL;
 
-    desc->id = new_uid();
+    desc->id = fs_id_base++;
 
     uint32_t ret = driver->_H_Initialize(desc); //Tell the filesystem driver to check this device
 
 
     if(ret != 0)return -3;
 
-    graphics_Write("Initialized!!!!", 800, 800);
-    graphics_SwapBuffer();
     initialized = TRUE;
 
     return 0;
@@ -327,19 +323,10 @@ Filesystem_FindDescriptorFromPath(const char *path)
             descriptor = descriptor->next;
         }
 
-    if(descriptor != NULL)
-        {
-            graphics_Write(descriptor->path, 600,600);
-        }
-    else graphics_Write("NULLOLO", 600,600);
-    graphics_SwapBuffer();
     if(descriptor != NULL && strncmp(descriptor->path, path, strlen(descriptor->path)) == 0)
         {
             return descriptor;  //This path has already been hooked
         }
-
-    graphics_Write("NO MATCH", 500, 500);
-    graphics_SwapBuffer();
 
     return NULL;
 }

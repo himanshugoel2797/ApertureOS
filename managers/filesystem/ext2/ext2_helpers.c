@@ -390,8 +390,6 @@ _EXT2_GetFileInfo(FileDescriptor *desc,
                                     memset(entry_name, 0, 257);
                                     memcpy(entry_name, dir->name, dir->name_len);
 
-                                    graphics_Write(entry_name, 700 + (lolzi * 20)/1000 * 140, (300 + (lolzi * 20)) % 1000);
-                                    graphics_SwapBuffer();
                                     lolzi++;
                                     COM_WriteStr("entry_name %s, %d,%d\r\n", entry_name, strlen(dir_name), strlen(entry_name));
 
