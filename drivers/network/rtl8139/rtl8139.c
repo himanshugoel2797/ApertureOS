@@ -222,7 +222,10 @@ RTL8139_Initialize(uint32_t deviceIndex)
     RTL8139_Outw(0x3A, 0);
 
     //Interrupts_RaiseOnUnhandled(detectInterrupt);  //register this handler
+    RTL8139_Outb(0x37, 0x0C);           //Enable the RX and TX engines
 
+    COM_WriteStr("MAC: %x:%x:%x:%x:%x:%x \r\n", 
+                 mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5]);
     //Send a packet through the driver to raise an interrupt in order to detect the interrupt for this NIC
 
     //Interrupts aren't working for now, so lets setup a timer to poll for packets
