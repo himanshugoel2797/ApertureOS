@@ -105,10 +105,12 @@ Filesystem_OpenFile(const char *filename,
     if(!initialized)return -1;
     //Determine the descriptor based on the filename, call the appropriate function and convert it's returned ID into a UID
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromPath(filename);
+
+
     uint32_t result = desc->driver->_H_Filesystem_OpenFile(desc, filename, flags, perms);
 
     COM_WriteStr("FD: %x\r\n", result);
-    return result | (desc->id << 32);
+    return (uint32_t)(result | (desc->id << 16));
 }
 
 uint8_t
@@ -170,7 +172,7 @@ Filesystem_OpenDir(const char *dirname)
     //Determine the descriptor based on the filename, call the appropriate function and convert it's returned ID into a UID
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromPath(dirname);
     uint32_t result = desc->driver->_H_Filesystem_OpenDir(desc, dirname);
-    return result | (desc->id << 32);
+    return (uint32_t)(result | (desc->id << 16));
 }
 
 
@@ -347,7 +349,7 @@ Filesystem_FindDescriptorFromUID(const UID id)
 {
 
     FileDescriptor *descriptor = descriptors;
-    UID s_id = id >> 32;
+    UID s_id = id >> 16;
     while(descriptor != NULL && descriptor->next != NULL)
         {
             if( descriptor->id == s_id)

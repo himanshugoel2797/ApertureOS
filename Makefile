@@ -49,13 +49,15 @@ POST_INIT=processors/elf_loader/elf_loader.o \
 		  processors/socket/socket.o \
 		  processors/syscall_manager/syscall_man.o \
 		  processors/syscall_manager/get_info.o \
+		  processors/syscall_manager/fileio.o \
 		  processors/process_manager/process_man.o \
 		  processors/boot_terminal/terminal.o \
-		  processors/keyboard_proc/keyboard_proc.o 
+		  processors/keyboard_proc/keyboard_proc.o \
+		  network/ipv4/ipv4.o \
 
 OUTDISK=sdb
 
-QEMU_OPTS=-enable-kvm -m 4096M -machine q35 -cpu host -d int,cpu_reset,guest_errors -drive id=disk,file=flash.img,if=none -device ahci,id=ahci -device ide-drive,drive=disk,bus=ahci.0 -netdev user,id=mynet0 -device rtl8139,netdev=mynet0 -device intel-hda -device hda-duplex
+QEMU_OPTS=-enable-kvm -m 4096M -machine q35 -cpu host -d int,cpu_reset,guest_errors -drive id=disk,file=flash.img,if=none -device ahci,id=ahci -device ide-drive,drive=disk,bus=ahci.0 -net nic,model=rtl8139, -net user -device intel-hda -device hda-duplex
 
 BOOT_FS=EXT2
 

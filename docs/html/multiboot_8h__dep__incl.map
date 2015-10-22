@@ -1,9 +1,0 @@
-<map id="multiboot.h" name="multiboot.h">
-<area shape="rect" id="node2" href="$crt0_8c.html" title="crt0.c" alt="" coords="5,162,60,189"/>
-<area shape="rect" id="node3" href="$globals_8h.html" title="globals.h" alt="" coords="270,80,345,107"/>
-<area shape="rect" id="node8" href="$graphics_8h.html" title="graphics/graphics.h" alt="" coords="80,80,215,107"/>
-<area shape="rect" id="node4" href="$network_8c.html" title="drivers/network/network.c" alt="" coords="243,162,415,189"/>
-<area shape="rect" id="node5" href="$graphics_8c.html" title="graphics/graphics.c" alt="" coords="84,162,219,189"/>
-<area shape="rect" id="node6" href="$phys__mem__manager_8c.html" title="managers/phys_mem_manager\l/phys_mem_manager.c" alt="" coords="439,155,643,196"/>
-<area shape="rect" id="node7" href="$virt__mem__manager_8c.html" title="managers/virt_mem_manager\l/virt_mem_manager.c" alt="" coords="667,155,862,196"/>
-</map>

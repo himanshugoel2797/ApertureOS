@@ -10,7 +10,7 @@
 #define MAX_OPEN_FILES 0x10000000
 #define MAX_OPEN_DIRS 0x10000000
 
-#define EXTRACT_ID(n) (n & 0xFFFFFFFF)
+#define EXTRACT_ID(n) (n & 0x0000FFFF)
 
 typedef struct FileDescriptor_T FileDescriptor;
 

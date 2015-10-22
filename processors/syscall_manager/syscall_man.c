@@ -13,24 +13,13 @@ typedef struct
 uint32_t curIndex;
 SyscallEntry syscalls[MAX_SYSCALLS];
 
-void
-syscall_printf(void *args)
-{
-    generic_syscall_3 *a = (generic_syscall_3*)args;
 
-    char *l = a->arg1;
-
-    for(int i = 0; i < a->arg2; i++)
-    {
-        COM_WriteStr("%c", *l++);
-    }
-}
 
 void
 syscall_exit(void *args)
 {
     ThreadMan_ExitThread(ThreadMan_GetCurThreadID());
-    asm volatile("sti\n\t" "int $48");
+    while(1)asm volatile("int $48");
 }
 
 uint32_t
@@ -68,13 +57,15 @@ void
 SyscallManager_Initialize(void)
 {
     memset(syscalls, 0, sizeof(SyscallEntry) * MAX_SYSCALLS);
-    IDT_SetEntry(0x80, (uint32_t)idt_handlers[0x80], 0x08, 0xEE);
+    IDT_SetEntry(0x80, (uint32_t)idt_handlers[0x80], 0x08, 0xEF);   //Don't automatically disable interrupts for user mode kernel calls
     Interrupts_RegisterHandler(0x80, 0, SyscallManager_SyscallRaised);
     curIndex = 0;
 
     //Register all syscalls
     SyscallManager_RegisterSyscall(GETDATA_SYSCALL_NUM, syscall_GetSysInfo, SYSCALL_GETSYSINFO_ARGC);
-    SyscallManager_RegisterSyscall(6, syscall_printf, 3);
+    SyscallManager_RegisterSyscall(4, syscall_open, SYSCALL_OPEN_ARGC);
+    SyscallManager_RegisterSyscall(5, syscall_close, SYSCALL_CLOSE_ARGC);
+    SyscallManager_RegisterSyscall(6, syscall_write, SYSCALL_WRITE_ARGC);
     SyscallManager_RegisterSyscall(10, syscall_exit, 1);
 }
 

@@ -67,7 +67,7 @@ _EXT2_Initialize(FileDescriptor *desc)
 
     fd->inode = 2;
     fd->is_directory = TRUE;
-    fd->id = new_uid();
+    fd->id = (uint16_t)new_uid();
     fd->prev = NULL;
 
     return 0;
@@ -81,7 +81,7 @@ _EXT2_Filesystem_OpenFile(FileDescriptor *desc,
                           int perms)
 {
     EXT2_FD* fd_n = kmalloc(sizeof(EXT2_FD));
-    fd_n->id = new_uid();
+    fd_n->id = (uint16_t)new_uid();
     fd_n->is_directory = TRUE;
     fd_n->inode = 0;
     fd_n->next = NULL;
@@ -93,7 +93,6 @@ _EXT2_Filesystem_OpenFile(FileDescriptor *desc,
     last_fd = last_fd->next;
 
     _EXT2_GetFileInfo(desc, filename, &fd_n->is_directory, &fd_n->inode);
-
 
     if(fd_n->inode != 0 && fd_n->is_directory == 0)
         {
@@ -269,7 +268,7 @@ _EXT2_Filesystem_OpenDir(FileDescriptor *desc,
                          const char *filename)
 {
     EXT2_FD* fd_n = kmalloc(sizeof(EXT2_FD));
-    fd_n->id = new_uid();
+    fd_n->id = (uint16_t)new_uid();
     fd_n->is_directory = FALSE;
     fd_n->inode = 0;
     fd_n->next = NULL;

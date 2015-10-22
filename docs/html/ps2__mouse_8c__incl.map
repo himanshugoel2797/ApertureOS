@@ -1,8 +1,0 @@
-<map id="drivers/ps2/ps2_mouse.c" name="drivers/ps2/ps2_mouse.c">
-<area shape="rect" id="node2" href="$priv__ps2_8h.html" title="priv_ps2.h" alt="" coords="91,80,173,107"/>
-<area shape="rect" id="node10" href="$native_8h.html" title="utils/native.h" alt="" coords="244,155,340,181"/>
-<area shape="rect" id="node3" href="$types_8h.html" title="types.h" alt="" coords="99,304,165,331"/>
-<area shape="rect" id="node7" href="$ps2_8h.html" title="ps2.h" alt="" coords="105,155,159,181"/>
-<area shape="rect" id="node8" href="$ps2__keyboard_8h.html" title="ps2_keyboard.h" alt="" coords="75,229,189,256"/>
-<area shape="rect" id="node9" href="$ps2__mouse_8h.html" title="ps2_mouse.h" alt="" coords="214,229,314,256"/>
-</map>

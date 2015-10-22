@@ -19,6 +19,16 @@ syscall_GetSysInfo(void *args)
                 case APEROS_PROC_ID:
                     syscall->retval = ProcessManager_GetCurPID();
                     break;
+                case APEROS_PROC_DATA_ARGC:
+                    syscall->retval = 1;
+                    break;
+                case APEROS_PROC_DATA_ARGV:
+                    {
+                        uint8_t* argv = (uint8_t*)0x40004000;
+                        strcpy(argv, "test2");
+                        syscall->retval = 0x40004000;   //The argv data is always placed right after the stack
+                    }
+                    break;
                 }
             break;
         case APEROS_ENV_DATA:
@@ -33,6 +43,9 @@ syscall_GetSysInfo(void *args)
 
                     memcpy(disp_info, graphics_GetDisplayInfoPtr(), disp_info->size);
                     syscall->retval = 0;
+                    break;
+                    case APEROS_ENV_VAR:
+                    syscall->retval = NULL;
                     break;
                 }
             break;

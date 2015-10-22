@@ -1,5 +1,0 @@
-<map id="HPET" name="HPET">
-<area shape="rect" id="node2" href="$structpci__vendor__t.html" title="pci_vendor_t" alt="" coords="5,5,101,32"/>
-<area shape="rect" id="node3" href="$structGenericAddressStructure.html" title="Generic ACPI Address structure. " alt="" coords="125,5,293,32"/>
-<area shape="rect" id="node4" href="$structACPISDTHeader.html" title="ACPI Section Descriptor Table header. " alt="" coords="317,5,440,32"/>
-</map>

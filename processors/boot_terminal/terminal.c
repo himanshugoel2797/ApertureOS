@@ -29,7 +29,7 @@ Terminal_Start(void)
     term_buffer = kmalloc(term_buf_len * 2);
     COM_WriteStr("term_buffer: %x\r\n", term_buffer + term_buf_len);
     memset(term_buffer, 0, term_buf_len);
-    com_redirect = TRUE;
+    //com_redirect = TRUE;
 
     UID kbd_thread = Timers_CreateNew(FREQ(200), TRUE, Terminal_KeyboardThread);
     UID render_thread = Timers_CreateNew(FREQ(60), TRUE, Terminal_DisplayThread);
@@ -224,6 +224,7 @@ Terminal_KeyboardThread(void)
 void
 Terminal_DisplayThread(void)
 {
+    COM_WriteStr("TEST!!");
     //Update the display based on the buffer
     graphics_Clear();
 
@@ -289,9 +290,9 @@ Terminal_DisplayThread(void)
     if(term_draw_count % 10 > 3)
         {
             term_draw_count = 0;
-            x = (term_buffer_pos - newline_pos) % term_char_pitch;
-            y = term_buffer_pos / term_char_pitch;
-            y += newlines;
+            //x = (term_buffer_pos - newline_pos) % term_char_pitch;
+            //y = term_buffer_pos / term_char_pitch;
+            //y += newlines;
             graphics_WriteStr("_", x * 8, y * 16);
             graphics_WriteStr("_", x * 8, y * 16 - 1);
             graphics_WriteStr("_", x * 8, y * 16 - 2);

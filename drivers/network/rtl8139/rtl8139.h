@@ -13,4 +13,8 @@ RTL8139_Initialize(uint32_t deviceIndex);
 uint32_t
 RTL8139_Reset(void);
 
+void
+RTL8139_Transmit(void *packet, 
+                 uint16_t len);
+
 #endif

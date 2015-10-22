@@ -13,15 +13,9 @@ Elf_Load(const char *path, ELF_FLAGS perms)
     if(fd <= 0)return -1;
 
     //Get the file length
-    uint64_t file_size = Filesystem_SeekFile(fd, 0, SEEK_END);
+    uint32_t file_size = Filesystem_SeekFile(fd, 0, SEEK_END);
     COM_WriteStr("STARTING\r\n");
     Filesystem_SeekFile(fd, 0, SEEK_SET);
-
-    if(file_size > MB(2))
-        {
-            Filesystem_CloseFile(fd);
-            return -2;
-        }
 
     uint8_t *elf_temp = kmalloc(file_size);
     Filesystem_ReadFile(fd, elf_temp, file_size);
@@ -48,6 +42,7 @@ Elf_Load(const char *path, ELF_FLAGS perms)
                 {
                     if(phdr->p_type == 1)
                         {
+
                             //Allocate the associated physical memory and map it into the address space
                             uint32_t page_count = (phdr->p_memsz - 1)/KB(4) + 1;
                             uint64_t p_addr = 0;
@@ -56,7 +51,7 @@ Elf_Load(const char *path, ELF_FLAGS perms)
                             for(int j = 0; j < page_count; j++)
                                 {
                                     p_addr = physMemMan_Alloc();
-                                    virtMemMan_Map(v_addr, p_addr, KB(4), MEM_TYPE_WB, MEM_WRITE | MEM_READ | MEM_EXEC, MEM_USER);
+                                    virtMemMan_Map(v_addr, p_addr, KB(4), MEM_TYPE_WB, phdr->p_flags, MEM_USER);
 
                                     v_addr += KB(4);
                                 }
@@ -119,24 +114,28 @@ Elf_Start(UID id)
         }
     else
         {
+            uint32_t x = 0x80000074;
+            if((uint32_t)inf->elf_main == 0x80000000)x = 0x80000000;
             asm volatile(
                 "cli \n\t"
-                "mov $0x23, %ax\n\t"
-                "mov %ax, %ds\n\t"
-                "mov %ax, %es\n\t"
-                "mov %ax, %fs\n\t"
-                "mov %ax, %gs\n\t"
-                "mov %esp, %eax\n\t"
+                "mov $0x23, %%ax\n\t"
+                "mov %%ax, %%ds\n\t"
+                "mov %%ax, %%es\n\t"
+                "mov %%ax, %%fs\n\t"
+                "mov %%ax, %%gs\n\t"
+                "push %%ebx\n\t"
+                "mov %%esp, %%eax\n\t"
                 "pushl $0x23\n\t"
-                "pushl %eax\n\t"
+                "pushl %%eax\n\t"
                 "pushf\n\t"
-                "pop %eax\n\t"
-                "or $512, %eax\n\t"
-                "push %eax\n\t"
+                "pop %%eax\n\t"
+                "or $512, %%eax\n\t"
+                "push %%eax\n\t"
                 "pushl $0x1B\n\t"
-                "push $0x80000000\n\t"
+                "mov %%ebx, -0x14(%%esp)\n\t"
+                "push %%ecx\n\t"
                 "iret\n\t"
-                "t_main_user: \n\t"
+                :: "b"(inf->elf_main), "c"(x)
             );
 
         }

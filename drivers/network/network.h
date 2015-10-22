@@ -13,24 +13,14 @@ typedef struct
     uint32_t (*disable)(uint32_t);			//*< Disable the network device
     uint32_t (*set_power_state)(uint32_t, 	//*< Set the power state for the network device
                                 uint32_t);
+    void (*transmit)(void*,					//*< Transmit a packet of data
+                     uint16_t);
 
     bool active;
     bool present;
+    int pci_index;
 } NI_DriverInterface;
 
-//* Request a pointer to the packet transmission ring buffer
-
-//* \return pointer to the packet transmission ring buffer
-//* \sa NI_RequestRecievePointer()
-uint8_t*
-NI_RequestTransmitPointer(void);
-
-//* Request a pointer to the packet recieve ring buffer
-
-//* \return pointer to the packet recieve ring buffer
-//* \sa NI_RequestTransmitPointer()
-uint8_t*
-NI_RequestRecievePointer(void);
 
 //* Initialize the network interface
 
@@ -43,5 +33,14 @@ NI_Initialize(void);
 //* \sa NI_Initialize()
 void
 NI_Start(void);
+
+
+//* Used by drivers to notify the OS that a packet has been recieved, the OS will copy the packet into another buffer
+//* allowing the driver to keep recieving
+
+
+void
+NI_NotifyPacketRecieved(void *packet, 
+                        uint16_t len);
 
 #endif

@@ -5,16 +5,17 @@
 #include "utils/common.h"
 #include "gdt.h"
 
-SystemData *thread_sys = NULL;
-uint32_t threadMan_Initialize();
-uint8_t threadMan_messageHandler(Message *msg);
+static SystemData *thread_sys = NULL;
+static uint32_t threadMan_Initialize();
+static uint8_t threadMan_messageHandler(Message *msg);
 
-uint32_t lock_num = 0;
+static uint32_t lock_num = 0;
+static uint32_t thread_count, cur_threads; 
 bool thread_lock = FALSE;
 
-Thread *threads, *curThread, *lastThread;
+static Thread *threads, *curThread, *lastThread;
 
-void kernel_main(int, char**);
+static void kernel_main(int, char**);
 
 void
 ThreadMan_Setup(void)
@@ -76,9 +77,13 @@ threadMan_InterruptHandler(Registers *regs)
 
     Thread *nxThread = curThread->next;
 
+    int counter = 1;
     while( (nxThread->status & 1) == 0)
         {
+            if(counter == 1000)return;
             nxThread = nxThread->next;
+            COM_WriteStr("Thread ID: %d, Status: %x\r\n", (uint32_t)nxThread->uid, nxThread->status);
+            counter++;
         }
 
 
@@ -382,7 +387,7 @@ void
 ThreadMan_DeleteThread(UID id)
 {
     if(id == ThreadMan_GetCurThreadID())return; //The current thread object will automatically be cleaned by the kernel
-
+    COM_WriteStr("Thread Delete!!\r\n");
     ThreadMan_Lock();
     Thread *thd = threads, *prev = NULL;
     do
@@ -403,12 +408,14 @@ ThreadMan_DeleteThread(UID id)
                 }
             virtMemMan_FreeInstance(thd->cr3);
             kfree(thd);
+
         }
     ThreadMan_Unlock();
 }
 
 void
 ThreadMan_Yield(void)
+
 {
     asm volatile("int $48");
 }

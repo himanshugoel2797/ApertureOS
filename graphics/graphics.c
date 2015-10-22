@@ -129,7 +129,7 @@ void
 graphics_Clear(void)
 {
     uint64_t *bbuffer = (uint64_t*)frameBufferB;
-    memset (tmpBuf, 0xff, 16);
+    memset (tmpBuf, 0x00, 16);
     memset (dirty_table, 1, BLOCK_GROUP_WIDTH * BLOCK_GROUP_HEIGHT);
 
     for (uint32_t a = 0; a < buffer_size; a+=0x80)
@@ -178,9 +178,9 @@ graphics_WriteStr(const char *str,
 
                             curBufVal = backBuffer[(yOff + (8 - b) + (a * pitch))];
 
-                            backBuffer[(yOff + (8 - b) + (a * pitch))] =
-                                (1 - ((letters[str[i] - 32][13 - (a - xOff)] >> b) & 1)) *
-                                curBufVal;
+                            backBuffer[(yOff + (8 - b) + (a * pitch))] = 
+                                (((letters[str[i] - 32][13 - (a - xOff)] >> b) & 1)) *
+                                (0xDDDDDDDD - curBufVal);
 
                             // if(backBuffer[ (yOff+ (8-b) + (a * pitch)) ] == 0)backBuffer =
                             // curBufVal;

@@ -10,6 +10,7 @@ typedef struct ELF_Info_T
 {
     UID id;
     void (*elf_main)(void);
+    void (*initer)(void);
     ELF_FLAGS flags;
     struct ELF_Info_T *next;
 } ELF_Info;
