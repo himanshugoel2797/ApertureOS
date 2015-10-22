@@ -77,12 +77,12 @@ threadMan_InterruptHandler(Registers *regs)
 
     Thread *nxThread = curThread->next;
 
+    COM_WriteStr("Thread ID: %d, Status: %x\r\n", (uint32_t)nxThread->uid, nxThread->status);
     int counter = 1;
     while( (nxThread->status & 1) == 0)
         {
             if(counter == 1000)return;
             nxThread = nxThread->next;
-            COM_WriteStr("Thread ID: %d, Status: %x\r\n", (uint32_t)nxThread->uid, nxThread->status);
             counter++;
         }
 
@@ -193,12 +193,13 @@ ThreadMan_CreateThread(ProcessEntryPoint entry,
     //Entering critical section, disable all interrupts
     Interrupts_Lock();
     Thread *curThreadInfo = kmalloc(sizeof(Thread));
-    COM_WriteStr("ERRORO!!!!! %x\r\n", curThreadInfo);
     memset(curThreadInfo, 0, sizeof(Thread));
     curThreadInfo->uid = new_uid();
     curThreadInfo->flags = flags;
     curThreadInfo->status = 0;
     curThreadInfo->FPU_state = kmalloc(768);
+
+    COM_WriteStr("Thread: UID: %x%x\r\n", (uint32_t)(curThreadInfo->uid >> 32), (uint32_t)curThreadInfo->uid);
 
     //Setup the paging structures for the thread
     curThreadInfo->cr3 = virtMemMan_CreateInstance();

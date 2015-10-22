@@ -25,14 +25,17 @@ int Balloc_Initialize()
 	if (initialized)return 0;
 #if ENGINE_DEBUG
 
-	_largeH_Loc = virtMemMan_FindEmptyAddress(
-				LARGE_HEAP_MEM_SIZE + LARGE_HEAP_BLOCK_COUNT * MEMORY_LEAK_CHECK_BLOCK_SIZE, 
+	uint32_t addr = virtMemMan_FindEmptyAddress(
+				LARGE_HEAP_MEM_SIZE + LARGE_HEAP_BLOCK_COUNT * MEMORY_LEAK_CHECK_BLOCK_SIZE + 
+				SMALL_HEAP_MEM_SIZE + SMALL_HEAP_BLOCK_COUNT * MEMORY_LEAK_CHECK_BLOCK_SIZE, 
 				MEM_KERNEL);	//Make sure to allocate enough room for the memory leak check signature
+
+	_largeH_Loc = addr;
 	_largeH_FreeSize = LARGE_HEAP_MEM_SIZE;
 
-	_smallH_Loc = virtMemMan_FindEmptyAddress(
-				SMALL_HEAP_MEM_SIZE + SMALL_HEAP_BLOCK_COUNT * MEMORY_LEAK_CHECK_BLOCK_SIZE,
-				MEM_KERNEL);	//Make sure to allocate enough room for the memory leak check signature
+	addr += SMALL_HEAP_MEM_SIZE + SMALL_HEAP_BLOCK_COUNT * MEMORY_LEAK_CHECK_BLOCK_SIZE;
+
+	_smallH_Loc = addr;
 	_smallH_FreeSize = SMALL_HEAP_MEM_SIZE;
 
 	//Generate a signature to use to check for memory leaks
@@ -41,10 +44,12 @@ int Balloc_Initialize()
 		leakSig[i] = (char)rand(i);
 	}
 #else
-	_largeH_Loc = virtMemMan_FindEmptyAddress(LARGE_HEAP_MEM_SIZE, MEM_KERNEL);
+	uint32_t addr = virtMemMan_FindEmptyAddress(LARGE_HEAP_MEM_SIZE + SMALL_HEAP_MEM_SIZE, MEM_KERNEL);
+
+	_largeH_Loc = addr;
 	_largeH_FreeSize = LARGE_HEAP_MEM_SIZE;
 
-	_smallH_Loc = virtMemMan_FindEmptyAddress(SMALL_HEAP_MEM_SIZE, MEM_KERNEL);
+	_smallH_Loc = addr + SMALL_HEAP_MEM_SIZE;
 	_smallH_FreeSize = SMALL_HEAP_MEM_SIZE;
 #endif
 	
@@ -227,11 +232,13 @@ void* kmalloc(size_t size)
 	ThreadMan_Lock();
 
 	void *addr = Balloc_GetBaseAddress(Balloc_Alloc(size));
+	COM_WriteStr("Addr: %x, %d\r\n", addr, size);
 	virtMemMan_PageFaultActionAlloc(TRUE);
-	*(uint32_t*)addr = 0;	//Force a write to allocate the page
+	memset(addr, 0, size);
 	virtMemMan_PageFaultActionAlloc(FALSE);	
 
 	ThreadMan_Unlock();
+	return addr;
 }
 
 void kfree(void *addr)
