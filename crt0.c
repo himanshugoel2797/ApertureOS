@@ -25,6 +25,9 @@
 #include "graphics/graphics.h"
 #include "processors.h"
 
+
+extern char *frameBufferA, *frameBufferB;
+
 void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
 {
 
@@ -62,9 +65,10 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     physMemMan_Setup();
     virtMemMan_Setup();
 
+
     Interrupts_Virtualize();
-    kmalloc_init();
     graphics_Initialize();
+    kmalloc_init();
 
     //Attempt to initialize all PCI drivers here so they can mark their MMIO space as used
     AHCI_Initialize();
@@ -76,21 +80,23 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     PS2_Initialize();
     Keyboard_Setup();
     KeyboardProc_Initialize();
+
     Mouse_Initialize();
     SyscallManager_Initialize();
+    
     Interrupts_Unlock();
-    while(1);
 
+    while(1);
 }
 
 //extern "C" /* Use C linkage for kernel_main. */
 void kernel_main(int argc, char** isKernelMode)
 {
+    
     Filesystem_Setup();
-    Socket_Initialize();
     ProcessManager_Initialize();
     Socket_Initialize();
-
+    
     NI_Start();
     Terminal_Start();
     while(1);

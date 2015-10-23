@@ -121,7 +121,7 @@ Filesystem_ReadFile(UID id,
 {
     if(!initialized)return -1;
     FileDescriptor *desc = (FileDescriptor*)Filesystem_FindDescriptorFromUID(id);
-    uint8_t result = desc->driver->_H_Filesystem_ReadFile(desc, EXTRACT_ID(id), buffer, size);
+    uint64_t result = desc->driver->_H_Filesystem_ReadFile(desc, EXTRACT_ID(id), buffer, size);
     return result;
 }
 

@@ -2,6 +2,7 @@
 #include "priv_virt_mem_manager.h"
 #include "managers.h"
 #include "globals.h"
+#include "processors.h"
 #include "utils/common.h"
 #include "utils/native.h"
 
@@ -503,7 +504,9 @@ virtMemMan_PageFaultHandler(Registers *regs)
     uint32_t cr2 = 0;
     asm volatile("mov %%cr2, %%eax" : "=a"(cr2));
 
-    if( (regs->err_code & 5) == 4 | pageFaultMalloc)
+    COM_WriteStr("Page Fault! @ %x \r\n", cr2);
+    if( (regs->err_code & 5) == 4 | pageFaultMalloc | 
+       (ProcessManager_GetCurPID() != 0 && (ProcessManager_GetCurProcessInfo()->flags & PROC_PERM_KERNEL)))
         {
             virtMemMan_Map( (cr2/4096) * 4096,
                             physMemMan_Alloc(),
@@ -514,7 +517,6 @@ virtMemMan_PageFaultHandler(Registers *regs)
 
             return 0;
         }
-    COM_WriteStr("Page Fault! @ %x \r\n", cr2);
 
     graphics_Write("Page Fault! @ %x Details: ", 600, 0, cr2);
     graphics_Write("EIP: %x", 600, 20, regs->eip);

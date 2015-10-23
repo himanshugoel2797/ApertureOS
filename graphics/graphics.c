@@ -7,7 +7,7 @@
 
 #include "font.h"
 
-static char *frameBufferA, *frameBufferB;
+char *frameBufferA, *frameBufferB;
 static uint32_t *backBuffer;
 static bool dirty_table[BLOCK_GROUP_WIDTH][BLOCK_GROUP_HEIGHT];
 static int block_index_div;
@@ -84,7 +84,7 @@ graphics_SwapBuffer(void)
 
     for (uint32_t a = 0; a < buffer_size; a+=0x80)
         {
-            if(dirty_table[x / block_index_div][y / block_index_div])
+            //if(dirty_table[x / block_index_div][y / block_index_div])
                 {
                     asm volatile ("movdqa (%%ebx), %%xmm0\n\t"
                                   "movdqa +0x10(%%ebx), %%xmm1\n\t"

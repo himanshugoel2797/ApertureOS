@@ -11,6 +11,7 @@ static uint8_t threadMan_messageHandler(Message *msg);
 
 static uint32_t lock_num = 0;
 static uint32_t thread_count, cur_threads;
+static bool thread_init = FALSE;
 bool thread_lock = FALSE;
 
 static Thread *threads, *curThread, *lastThread;
@@ -162,9 +163,12 @@ threadMan_Initialize(void)
 
     UID tmp = ThreadMan_CreateThread(kernel_main, 0, NULL, THREAD_FLAGS_KERNEL);
     ThreadMan_StartThread(tmp);
+    threads->FPU_state = threads->next->FPU_state;
 
     APIC_SetVector(APIC_TIMER, 48);
     APIC_SetEnableInterrupt(APIC_TIMER, 1);
+
+    thread_init = TRUE;
 
     return 0;
 }
@@ -416,7 +420,7 @@ void
 ThreadMan_Yield(void)
 
 {
-    asm volatile("int $48");
+    if(thread_init)asm volatile("int $48");
 }
 
 UID

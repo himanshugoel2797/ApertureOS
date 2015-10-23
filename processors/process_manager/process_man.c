@@ -10,7 +10,7 @@ ProcessManager_Initialize(void)
     //Create the OS process
     processes = kmalloc(sizeof(ProcessInfo));
     processes->flags |= PROC_PERM_KERNEL;
-    processes->uid = new_uid();
+    processes->uid = 0;
     strcpy(processes->name, "kernel");
     processes->path = NULL;
     processes->children = NULL;

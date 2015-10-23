@@ -119,7 +119,6 @@ _EXT2_Filesystem_ReadFile(FileDescriptor *desc,
     EXT2_DriverData *data = (EXT2_DriverData*)desc->data;
     EXT2_FD *cur_fd = _EXT2_FindFDFromID(id);
 
-    COM_WriteStr("Blocks Per Group %d\r\n", data->blocks_per_group);
     //Determine the address of the inode
     EXT2_Inode inode;
     memcpy(&inode, _EXT2_GetInode(desc, cur_fd->inode), sizeof(EXT2_Inode));

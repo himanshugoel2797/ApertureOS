@@ -8,6 +8,7 @@ syscall_open(void *args)
     syscall->retval = -1;
 
     syscall->retval = (Filesystem_OpenFile(syscall->arg0, 0, 0) + 3);
+//            COM_WriteStr("OPEN FILE Addr: %x, FD: %x\r\n", (uint32_t)syscall->arg1, (uint32_t)syscall->retval);
     return;
 }
 
@@ -29,11 +30,13 @@ syscall_read(void *args)
 {
     generic_syscall_3 *a = (generic_syscall_3*)args;
 
-    a->retval = 0;
+    a->retval = a->arg2 - 1;
 
     if(a->arg0 != 0)
         {
-            a->retval = Filesystem_ReadFile(a->arg0 - 3, a->arg1, a->arg2);
+//            COM_WriteStr("READ FILE Addr: %x, FD: %x\r\n", (uint32_t)a->arg1, (uint32_t)a->arg0);
+            a->retval = Filesystem_ReadFile((uint32_t)(a->arg0 - 3), (uint32_t)a->arg1, (uint32_t)a->arg2);
+//            COM_WriteStr("Done! read: %d, requested: %d", (uint32_t)a->retval, (uint32_t)a->arg2);
         }
     return;
 }

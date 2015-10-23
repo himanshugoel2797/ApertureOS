@@ -5,7 +5,7 @@
 #include "ext2_structs.h"
 #include "ext2.h"
 
-#define POOL_SIZE MB(2)
+#define POOL_SIZE KB(4)
 
 uint32_t *i1_cache, *i2_1_cache, *i2_2_cache;
 uint32_t i1_prev_index, i2_1_prev_index, i2_2_prev_index;

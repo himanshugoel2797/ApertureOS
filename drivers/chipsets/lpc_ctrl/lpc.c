@@ -36,7 +36,7 @@ LPC_Initialize(void)
     DeviceManager_RegisterDevice(&device);
 
 
-    outl(acpi_base_address + 0x60, 0x80);
+    /*outl(acpi_base_address + 0x60, 0x80);
     outl(acpi_base_address + 0x61, 0x80);
     outl(acpi_base_address + 0x62, 0x80);
     outl(acpi_base_address + 0x63, 0x80);
@@ -51,7 +51,7 @@ LPC_Initialize(void)
             IOAPIC_MapIRQ(i, IRQ(i), APIC_GetID(), 0, 0, 0);
             IOAPIC_SetEnableMode(IRQ(i), ENABLE);
         }
-
+    */
     return 1;
 }
 

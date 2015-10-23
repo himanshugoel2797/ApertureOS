@@ -2,12 +2,12 @@
 
 PLATFORM=~/opt/cross/bin/i686
 INCLUDES=-I. -Idrivers -Imanagers -Iprocessors -Ikmalloc
-DEFINES=-DLOG_SYSCALL
+DEFINES=#-DLOG_SYSCALL
 
 CHAIN_ALLOCATOR=kmalloc/kmalloc.o
 BLOCK_ALLOCATOR=kmalloc/block_alloc.o
 
-ALLOCATOR=$(BLOCK_ALLOCATOR)
+ALLOCATOR=$(CHAIN_ALLOCATOR)
 
 PRE_FPU_BOOT=crt0.o gdt.o idt.o cpuid.o \
 				boot.o \
