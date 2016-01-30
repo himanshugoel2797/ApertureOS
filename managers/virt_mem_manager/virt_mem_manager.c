@@ -505,8 +505,8 @@ virtMemMan_PageFaultHandler(Registers *regs)
     asm volatile("mov %%cr2, %%eax" : "=a"(cr2));
 
     COM_WriteStr("Page Fault! @ %x \r\n", cr2);
-    if( (regs->err_code & 5) == 4 | pageFaultMalloc | 
-       (ProcessManager_GetCurPID() != 0 && (ProcessManager_GetCurProcessInfo()->flags & PROC_PERM_KERNEL)))
+    if( (regs->err_code & 5) == 4 | pageFaultMalloc |
+            (ProcessManager_GetCurPID() != 0 && (ProcessManager_GetCurProcessInfo()->flags & PROC_PERM_KERNEL)))
         {
             virtMemMan_Map( (cr2/4096) * 4096,
                             physMemMan_Alloc(),
