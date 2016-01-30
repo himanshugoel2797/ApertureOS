@@ -2,7 +2,6 @@
 #define _DRIVERS_ALL_H_
 
 #include "acpi_tables/acpi_tables.h"  //ACPI Tables Parser
-#include "ahci/ahci.h"				  //AHCI Driver
 #include "apic/apic.h"                //Local APIC Driver
 #include "cmos/cmos.h"                //CMOS Time Driver
 #include "chipsets/chipsets.h"		  //Chipset Drivers

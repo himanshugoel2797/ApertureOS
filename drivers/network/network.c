@@ -3,13 +3,15 @@
 #include "drivers.h"
 #include "utils/common.h"
 
+static
 NI_DriverInterface ni_drivers[] =
 {
     {RTL8139_Detect, RTL8139_Initialize, NULL, NULL, NULL, RTL8139_Transmit ,FALSE, FALSE, 0},
     {NULL, NULL, FALSE, FALSE, 0}
 };
 
-uint32_t ni_presentDevices;
+static uint32_t ni_presentDevices;
+static uint32_t ni_index;
 
 void
 NI_Initialize(void)
@@ -50,8 +52,20 @@ NI_Start(void)
     while(ni_drivers[j].detect != NULL)
         {
             //We will want to prefer wifi devices over ethernet devices, however we want to switch to ethernet if it is plugged in, one way would be to have each device detect if a connection is available
-            if(ni_drivers[j].present)ni_drivers[j].init(ni_drivers[j].pci_index);
+            if(ni_drivers[j].present)
+	    {
+	      ni_drivers[j].init(ni_drivers[j].pci_index);
+	      ni_index = j;
+	    }
 
             j++;
         }
+}
+
+uint32_t
+NI_TransmitPacket(void     *packet,
+                  uint16_t  len)
+{
+  if(packet == NULL | len == 0)return -1;
+  if(ni_drivers[ni_index].transmit != NULL)ni_drivers[ni_index].transmit(packet, len);
 }

@@ -71,7 +71,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
     kmalloc_init();
 
     //Attempt to initialize all PCI drivers here so they can mark their MMIO space as used
-    AHCI_Initialize();
+    //AHCI_Initialize();
     NI_Initialize();
 
     ThreadMan_Setup();

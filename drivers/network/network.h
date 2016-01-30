@@ -43,4 +43,7 @@ void
 NI_NotifyPacketRecieved(void *packet,
                         uint16_t len);
 
+void
+NI_TransmitPacket(void     *packet,
+                  uint16_t  len);
 #endif

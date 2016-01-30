@@ -39,7 +39,6 @@ SOURCES=graphics/graphics.o	\
 				drivers/pci/pci.o	drivers/pci/pci_devices.o \
 				drivers/pit/pit.o \
 				drivers/ps2/ps2.o drivers/ps2/ps2_keyboard.o drivers/ps2/ps2_mouse.o \
-				drivers/ahci/ahci.o \
 				drivers/ihda/ihda.o \
 				drivers/chipsets/chipset_detect.o \
 				drivers/chipsets/lpc_ctrl/lpc.o \

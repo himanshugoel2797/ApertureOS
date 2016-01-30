@@ -64,21 +64,21 @@ filesystem_Initialize(void)
 
     retVal = 0xFFFF;
     //Attempt to setup with MBR
-    retVal = MBR_Setup(AHCI_0_Read, AHCI_0_Write);
+    //retVal = MBR_Setup(AHCI_0_Read, AHCI_0_Write);
 
     if(retVal >= 0)
         goto success_ret;
 
 
     //Try again with GPT
-    retVal = GPT_Setup(AHCI_0_Read, AHCI_0_Write, &fs_drivers->sector_size);
+    //retVal = GPT_Setup(AHCI_0_Read, AHCI_0_Write, &fs_drivers->sector_size);
 
     if(retVal >= 0)
         goto success_ret;
 
     //Last attempt, just try directly
     //Setup the first boot disk as the specified type of FS
-    retVal = Filesystem_RegisterDescriptor("/", AHCI_0_Read, AHCI_0_Write, BOOT_FS);
+    //retVal = Filesystem_RegisterDescriptor("/", AHCI_0_Read, AHCI_0_Write, BOOT_FS);
 
     if(retVal  == 0)
         goto success_ret;
