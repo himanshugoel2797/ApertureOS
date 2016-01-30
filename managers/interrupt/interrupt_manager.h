@@ -2,7 +2,7 @@
 #define _INTERRUPT_MANAGER_H_
 
 #include "types.h"
-#include "idt.h"
+#include "idt/idt.h"
 
 typedef uint32_t (*InterruptHandler)(Registers*);
 

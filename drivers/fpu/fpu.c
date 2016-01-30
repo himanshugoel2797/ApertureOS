@@ -1,5 +1,5 @@
 #include "fpu.h"
-#include "cpuid.h"
+#include "cpuid/cpuid.h"
 #include "managers.h"
 
 uint32_t FPU_StateHandler(Registers *regs);

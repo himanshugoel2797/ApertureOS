@@ -12,8 +12,8 @@
 #include "elf.h"
 #include "globals.h"
 
-#include "gdt.h"
-#include "idt.h"
+#include "gdt/gdt.h"
+#include "idt/idt.h"
 #include "kmalloc.h"
 
 #include "drivers/drivers.h"
@@ -83,7 +83,7 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
 
     Mouse_Initialize();
     SyscallManager_Initialize();
-    
+
     Interrupts_Unlock();
 
     while(1);
@@ -92,11 +92,11 @@ void setup_kernel_core(multiboot_info_t* mbd, uint32_t magic)
 //extern "C" /* Use C linkage for kernel_main. */
 void kernel_main(int argc, char** isKernelMode)
 {
-    
+
     Filesystem_Setup();
     ProcessManager_Initialize();
     Socket_Initialize();
-    
+
     NI_Start();
     Terminal_Start();
     while(1);

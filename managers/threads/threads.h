@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "managers.h"
-#include "idt.h"
+#include "idt/idt.h"
 
 #define MAX_K_SEMAPHORE_COUNT 2048
 

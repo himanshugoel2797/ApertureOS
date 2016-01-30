@@ -3,7 +3,7 @@
 #include "drivers.h"
 #include "managers.h"
 #include "utils/common.h"
-#include "gdt.h"
+#include "gdt/gdt.h"
 
 static SystemData *thread_sys = NULL;
 static uint32_t threadMan_Initialize();

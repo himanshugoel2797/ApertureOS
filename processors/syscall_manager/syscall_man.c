@@ -2,7 +2,7 @@
 #include "syscalls.h"
 #include "utils/common.h"
 #include "globals.h"
-#include "idt.h"
+#include "idt/idt.h"
 
 typedef struct
 {

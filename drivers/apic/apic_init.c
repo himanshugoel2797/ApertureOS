@@ -5,7 +5,7 @@
 #include "acpi_tables/madt.h"
 
 #include "drivers.h"
-#include "cpuid.h"
+#include "cpuid/cpuid.h"
 
 uint32_t APIC_Initialize()
 {

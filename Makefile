@@ -1,6 +1,6 @@
 # Environment
 
-PLATFORM=~/opt/cross/bin/i686
+PLATFORM=i686
 INCLUDES=-I. -Idrivers -Imanagers -Iprocessors -Ikmalloc
 DEFINES=#-DLOG_SYSCALL
 
@@ -9,7 +9,7 @@ BLOCK_ALLOCATOR=kmalloc/block_alloc.o
 
 ALLOCATOR=$(CHAIN_ALLOCATOR)
 
-PRE_FPU_BOOT=crt0.o gdt.o idt.o cpuid.o \
+PRE_FPU_BOOT=crt0.o gdt/gdt.o idt/idt.o cpuid/cpuid.o \
 				boot.o \
 				drivers/serial/COM.o	\
 				drivers/acpi_tables/acpi_tables.o \

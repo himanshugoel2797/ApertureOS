@@ -2,8 +2,8 @@
 #include "priv_apic.h"
 #include "pic/pic.h"
 
-#include "idt.h"
-#include "cpuid.h"
+#include "idt/idt.h"
+#include "cpuid/cpuid.h"
 #include "serial/COM.h"
 
 #include "utils/common.h"

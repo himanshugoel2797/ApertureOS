@@ -1,5 +1,5 @@
 #include "pic.h"
-#include "idt.h"
+#include "idt/idt.h"
 #include "utils/native.h"
 #include "utils/common.h"
 
